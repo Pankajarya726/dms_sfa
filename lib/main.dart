@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sfa/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
+  // SystemChrome.setSystemUIOverlayStyle();
 }
 
 class MyApp extends StatelessWidget {
