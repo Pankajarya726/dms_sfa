@@ -32,11 +32,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
-                "Employee Designation",
+                "  Employee Designation  ",
                 style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    backgroundColor: Colors.white30),
+                  color: Colors.white,
+                  fontSize: 16,
+                  backgroundColor: Colors.white30,
+                ),
               ),
               trailing: CircleAvatar(
                 radius: 14,
