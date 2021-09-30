@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sfa/splash_screen/splash_screen.dart';
+import 'package:sfa/ui/splash_screen/splash_screen.dart';
 import 'package:sfa/utility/colors.dart';
 
 void main() {

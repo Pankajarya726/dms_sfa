@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sfa/ui/home_screen/home_screen.dart';
 import 'package:sfa/utility/colors.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -151,15 +152,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            InkWell(
-              child: Container(
-                margin: const EdgeInsets.fromLTRB(0, 50, 0, 0),
-                alignment: Alignment.center,
-                height: 60,
-                width: 240,
-                decoration: BoxDecoration(
-                    color: colorPrimary,
-                    borderRadius: BorderRadius.circular(50)),
+            Container(
+              margin: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+              alignment: Alignment.center,
+              height: 60,
+              width: 240,
+              decoration: BoxDecoration(
+                  color: colorPrimary, borderRadius: BorderRadius.circular(50)),
+              child: InkWell(
                 child: const Text(
                   "Log in",
                   style: TextStyle(
@@ -167,8 +167,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       fontWeight: FontWeight.bold,
                       fontSize: 22),
                 ),
+                onTap: () {
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (BuildContext context) => const HomeScreen()));
+                },
               ),
-              onTap: () {},
             )
           ],
         ),
