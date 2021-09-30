@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sfa/splash_screen.dart';
+import 'package:sfa/splash_screen/splash_screen.dart';
+import 'package:sfa/utility/colors.dart';
 
 void main() {
   runApp(const MyApp());
-  // SystemChrome.setSystemUIOverlayStyle();
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: colorPrimary,
+  ));
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
