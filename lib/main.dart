@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sfa/attendence_home/attendence_home_screen.dart';
 import 'package:sfa/splash_screen/splash_screen.dart';
 import 'package:sfa/utility/colors.dart';
 
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: const SplashScreen(),
+      home: const AttendenceHomeScreen(),
     );
   }
 }
