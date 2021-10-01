@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ListTile(
                 leading: const CircleAvatar(
                   radius: 30,
-                  backgroundImage: AssetImage("assets/accept.png"),
+                  backgroundImage: AssetImage("assets/reject.png"),
                 ),
                 title: const Text(
                   "Smith Johnson",
