@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:sfa/ui/attendence_home/attendence_home_screen.dart';
 import 'package:sfa/utility/colors.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -37,9 +38,6 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
   @override
   Widget build(BuildContext context) {
-
-
-    
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -103,6 +101,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: ListTile(
                       onTap: () {
                         log(index.toString());
+                        if (index == 0) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AttendenceHomeScreen()));
+                        }
                       },
                       horizontalTitleGap: 20,
                       leading: Padding(
