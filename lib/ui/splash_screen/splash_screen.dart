@@ -42,6 +42,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ),
           Container(
+
             margin: const EdgeInsets.fromLTRB(0, 120, 0, 0),
             alignment: Alignment.center,
             height: 45,

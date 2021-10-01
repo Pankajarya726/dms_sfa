@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sfa/ui/absent/absent_screen.dart';
 import 'package:sfa/ui/attendence_clock_in_out/attendence_clock_in_out.dart';
 import 'package:sfa/ui/team_members/team_members_screen.dart';
+import 'package:sfa/utility/colors.dart';
 
 class AttendenceHomeScreen extends StatefulWidget {
   const AttendenceHomeScreen({Key? key}) : super(key: key);
@@ -21,6 +22,8 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: colorPrimary,
         title: const Text("Attendence"),
         centerTitle: true,
         actions: [
@@ -29,8 +32,8 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
               Navigator.pop(context);
             },
             icon: const Image(
-              height: 100,
-              width: 100,
+              fit: BoxFit.contain,
+              width: 25,
               image: AssetImage("assets/home.png"),
             ),
           )
