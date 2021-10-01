@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sfa/absent/absent_screen.dart';
-import 'package:sfa/attendence_clock_in_out/attendence_clock_in_out.dart';
-import 'package:sfa/team_members/team_members_screen.dart';
+import 'package:sfa/ui/absent/absent_screen.dart';
+import 'package:sfa/ui/attendence_clock_in_out/attendence_clock_in_out.dart';
+import 'package:sfa/ui/team_members/team_members_screen.dart';
 
 class AttendenceHomeScreen extends StatefulWidget {
   const AttendenceHomeScreen({Key? key}) : super(key: key);
@@ -28,8 +28,10 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
             onPressed: () {
               Navigator.pop(context);
             },
-            icon: const Icon(
-              Icons.home,
+            icon: const Image(
+              height: 100,
+              width: 100,
+              image: AssetImage("assets/home.png"),
             ),
           )
         ],
