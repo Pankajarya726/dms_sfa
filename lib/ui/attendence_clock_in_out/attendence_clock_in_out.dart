@@ -186,7 +186,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
           const SizedBox(
             height: 20,
           ),
-          roundedButton(context),
+          roundedButtonWithIcon(context),
         ],
       ),
     );
@@ -202,7 +202,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     });
   }
 
-  Widget roundedButton(context) {
+  Widget roundedButtonWithIcon(context) {
     return Center(
       child: SizedBox(
         width: MediaQuery.of(context).size.width * 0.40,
@@ -226,7 +226,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                       "Clock In",
                       style: TextStyle(
                         color: Colors.white,
-                        fontWeight: FontWeight.bold,
                         fontSize: 20,
                       ),
                     )
@@ -234,7 +233,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                       "Clock Out",
                       style: TextStyle(
                         color: Colors.white,
-                        fontWeight: FontWeight.bold,
                         fontSize: 20,
                       ),
                     ),

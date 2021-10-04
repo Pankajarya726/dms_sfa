@@ -22,11 +22,26 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         automaticallyImplyLeading: false,
         backgroundColor: colorPrimary,
-        title: const Text("Attendence"),
+        title: currentBottomTabIndex == 0
+            ? const Text("Attendence")
+            : currentBottomTabIndex == 1
+                ? const Text("Absent")
+                : const Text("Team Members"),
         centerTitle: true,
         actions: [
+          currentBottomTabIndex == 2
+              ? IconButton(
+                  onPressed: () {},
+                  icon: const Image(
+                    fit: BoxFit.contain,
+                    width: 25,
+                    image: AssetImage("assets/filter.png"),
+                  ),
+                )
+              : Container(),
           IconButton(
             onPressed: () {
               Navigator.pop(context);
