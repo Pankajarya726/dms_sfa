@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:sfa/ui/attendence_home/attendence_home_screen.dart';
+import 'package:sfa/ui/report_screen/report_screen.dart';
 import 'package:sfa/utility/colors.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -107,6 +108,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               MaterialPageRoute(
                                   builder: (context) =>
                                       const AttendenceHomeScreen()));
+                        }
+                        if (index == 1) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const ReportScreen()));
                         }
                       },
                       horizontalTitleGap: 20,

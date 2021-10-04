@@ -9,3 +9,4 @@ const colorRed = Color(0xfff0111f);
 const colorGreen = Color(0xff2cb743);
 const colorTabBG = Color(0xfffbcacd);
 const colorCalenderDateBG = Color(0xfff8a5aa);
+const reportBG = Color(0xfff7f7f7);
