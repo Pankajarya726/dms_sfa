@@ -14,7 +14,7 @@ class ReportScreen extends StatefulWidget {
 }
 
 class _ReportScreenState extends State<ReportScreen> {
-  bool isPressed1 = true;
+  bool isPressed1 = false;
   bool isPressed2 = false;
   bool isPressed3 = false;
   bool isPressed4 = false;
@@ -63,10 +63,14 @@ class _ReportScreenState extends State<ReportScreen> {
                     children: [
                       InkWell(
                         onTap: () {
-                          isPressed1 = !isPressed1;
-                          isPressed2 = false;
-                          isPressed3 = false;
-                          isPressed4 = false;
+                          if (isPressed1 == true) {
+                            isPressed1 != isPressed1;
+                          } else {
+                            isPressed1 = !isPressed1;
+                            isPressed2 = false;
+                            isPressed3 = false;
+                            isPressed4 = false;
+                          }
                           setState(() {});
                         },
                         child: Container(
@@ -107,10 +111,14 @@ class _ReportScreenState extends State<ReportScreen> {
                       ),
                       InkWell(
                         onTap: () {
-                          isPressed1 = false;
-                          isPressed2 = !isPressed2;
-                          isPressed3 = false;
-                          isPressed4 = false;
+                          if (isPressed2 == true) {
+                            isPressed1 != isPressed1;
+                          } else {
+                            isPressed1 = false;
+                            isPressed2 = !isPressed2;
+                            isPressed3 = false;
+                            isPressed4 = false;
+                          }
                           setState(() {});
                         },
                         child: Container(
@@ -142,10 +150,14 @@ class _ReportScreenState extends State<ReportScreen> {
                       ),
                       InkWell(
                         onTap: () {
-                          isPressed1 = false;
-                          isPressed2 = false;
-                          isPressed3 = !isPressed3;
-                          isPressed4 = false;
+                          if (isPressed3 == true) {
+                            isPressed1 != isPressed1;
+                          } else {
+                            isPressed1 = false;
+                            isPressed2 = false;
+                            isPressed3 = !isPressed3;
+                            isPressed4 = false;
+                          }
                           setState(() {});
                         },
                         child: Container(
@@ -176,10 +188,14 @@ class _ReportScreenState extends State<ReportScreen> {
                       ),
                       InkWell(
                         onTap: () {
-                          isPressed2 = false;
-                          isPressed3 = false;
-                          isPressed1 = false;
-                          isPressed4 = !isPressed4;
+                          if (isPressed4 == true) {
+                            isPressed1 != isPressed1;
+                          } else {
+                            isPressed1 = false;
+                            isPressed2 = false;
+                            isPressed3 = false;
+                            isPressed4 = !isPressed4;
+                          }
                           setState(() {});
                         },
                         child: Container(
