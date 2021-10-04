@@ -274,7 +274,7 @@ class _ReportScreenState extends State<ReportScreen> {
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10.0),
                     child: Stack(
                       children: <Widget>[
                         SizedBox(
