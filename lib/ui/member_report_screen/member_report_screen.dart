@@ -9,14 +9,14 @@ import 'package:intl/intl.dart';
 import 'package:sfa/utility/colors.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-class ReportScreen extends StatefulWidget {
-  const ReportScreen({Key? key}) : super(key: key);
+class MemberReportScreen extends StatefulWidget {
+  const MemberReportScreen({Key? key}) : super(key: key);
 
   @override
-  _ReportScreenState createState() => _ReportScreenState();
+  _MemberReportScreen createState() => _MemberReportScreen();
 }
 
-class _ReportScreenState extends State<ReportScreen> {
+class _MemberReportScreen extends State<MemberReportScreen> {
   bool isPressed1 = false;
   bool isPressed2 = false;
   bool isPressed3 = false;
@@ -31,33 +31,21 @@ class _ReportScreenState extends State<ReportScreen> {
       backgroundColor: colorPrimary,
       appBar: AppBar(
         title: const Text(
-          "Report",
+          "Members Report",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0.0,
-        actions: [
-          IconButton(
-            onPressed: () {
-              showFilters();
-            },
-            icon: const Image(
-              height: 100,
-              width: 100,
-              image: AssetImage("assets/filter.png"),
-            ),
-          ),
-        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(125),
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
+                padding: const EdgeInsets.fromLTRB(16, 0, 0, 4),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
                       height: 40,
@@ -245,31 +233,6 @@ class _ReportScreenState extends State<ReportScreen> {
                             ),
                           ),
                         ],
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {},
-                      child: Container(
-                        height: 32,
-                        width: MediaQuery.of(context).size.width * 0.23,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
-                          color: Colors.white,
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Image.asset("assets/download.png"),
-                            const Text(
-                              "All Staff",
-                              style: TextStyle(
-                                  color: colorPrimary,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
                       ),
                     ),
                   ],
@@ -530,177 +493,6 @@ class _ReportScreenState extends State<ReportScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  void showFilters() async {
-    return showModalBottomSheet(
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      context: context,
-      builder: (context) {
-        return SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
-            child: IntrinsicHeight(
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                decoration: const BoxDecoration(
-                  color: reportBG,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20.0),
-                    topRight: Radius.circular(20.0),
-                  ),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: const Text(
-                          "Filter",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: colorGrayDark,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 15, 20, 10),
-                      child: TextFormField(
-                        style: const TextStyle(
-                            color: colorGrayDark,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17),
-                        autocorrect: true,
-                        enableSuggestions: true,
-                        maxLines: 1,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: colorGrayLite,
-                          hintText: "Name",
-                          prefixText: "   ",
-                          hintStyle: const TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: colorGray),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 2.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 2.0),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
-                      child: TextFormField(
-                        style: const TextStyle(
-                            color: colorGrayDark,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17),
-                        autocorrect: true,
-                        enableSuggestions: true,
-                        maxLines: 1,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: colorGrayLite,
-                          hintText: "Designation",
-                          prefixText: "   ",
-                          hintStyle: const TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: colorGray),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 2.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 2.0),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
-                      child: TextFormField(
-                        style: const TextStyle(
-                            color: colorGrayDark,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17),
-                        autocorrect: true,
-                        enableSuggestions: true,
-                        maxLines: 1,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: colorGrayLite,
-                          hintText: "Location",
-                          prefixText: "   ",
-                          hintStyle: const TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: colorGray),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 2.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 2.0),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 5, 20, 14),
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          height: 50,
-                          width: 180,
-                          decoration: BoxDecoration(
-                            color: colorPrimary,
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "Done",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 

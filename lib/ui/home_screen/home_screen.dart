@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:sfa/ui/attendence_home/attendence_home_screen.dart';
+import 'package:sfa/ui/member_report_screen/member_report_screen.dart';
 import 'package:sfa/utility/colors.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -99,13 +100,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     child: ListTile(
                       onTap: () {
-                        log(index.toString());
                         if (index == 0) {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
                                       const AttendenceHomeScreen()));
+                        }
+                        if (index == 1) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const MemberReportScreen()));
                         }
                       },
                       horizontalTitleGap: 20,
