@@ -32,7 +32,7 @@ class _MemberReportScreen extends State<MemberReportScreen> {
       appBar: AppBar(
         title: const Text(
           "Members Report",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
         backgroundColor: Colors.transparent,

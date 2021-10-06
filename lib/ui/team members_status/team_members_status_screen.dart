@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
+import 'package:sfa/ui/team_member_details/team_members_details.dart';
 import 'package:sfa/utility/colors.dart';
 
 class TeamMembersStatusScreen extends StatefulWidget {
@@ -28,6 +29,14 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
     "Present",
     "Present",
     "Mark attendence",
+  ];
+  List<String> statusIcons = [
+    "assets/accept.png",
+    "assets/reject.png",
+    "assets/accept.png",
+    "assets/reject.png",
+    "assets/accept.png",
+    "assets/accept.png",
   ];
 
   @override
@@ -84,9 +93,15 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                     ],
                   ),
                   child: ListTile(
-                    contentPadding: const EdgeInsets.all(0),
+                    contentPadding: EdgeInsets.all(0),
                     dense: true,
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const TeamMembersDetails()));
+                    },
                     title: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -110,6 +125,7 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                         ),
                       ],
                     ),
+
                     trailing: IntrinsicWidth(
                       child: Row(
                         children: [
@@ -134,6 +150,38 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                         ],
                       ),
                     ),
+                    // children: [
+                    //   InkWell(
+                    //     onTap: () {
+                    //       print("clickdd");
+                    //     },
+                    //     child: Expanded(
+                    //       child: Column(
+                    //         crossAxisAlignment: CrossAxisAlignment.start,
+                    //         children: [
+                    //           Text(
+                    //             names[index],
+                    //             style: const TextStyle(
+                    //               fontSize: 20,
+                    //               fontWeight: FontWeight.bold,
+                    //             ),
+                    //           ),
+                    //           const SizedBox(
+                    //             height: 5,
+                    //           ),
+                    //           Text(
+                    //             status[index],
+                    //             style: const TextStyle(
+                    //               color: Color(0xff303030),
+                    //               fontSize: 16,
+                    //               fontWeight: FontWeight.w500,
+                    //             ),
+                    //           ),
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ],
                   ),
                 );
               },
