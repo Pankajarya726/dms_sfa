@@ -37,7 +37,7 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
                   onPressed: () {},
                   icon: const Image(
                     fit: BoxFit.contain,
-                    width: 25,
+                    width: 23,
                     image: AssetImage("assets/filter.png"),
                   ),
                 )
@@ -48,7 +48,7 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
             },
             icon: const Image(
               fit: BoxFit.contain,
-              width: 25,
+              width: 23,
               image: AssetImage("assets/home.png"),
             ),
           )

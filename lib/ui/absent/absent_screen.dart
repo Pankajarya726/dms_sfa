@@ -46,22 +46,24 @@ class AbsentScreen extends StatelessWidget {
             height: 80,
           ),
           Center(
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.40,
-              child: MaterialButton(
-                height: 45,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                color: colorPrimary,
-                child: const Text(
-                  "Submit",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
+            child: ElevatedButton(
+              onPressed: () {},
+              style: ButtonStyle(
+                fixedSize: MaterialStateProperty.all(const Size(180, 50)),
+                backgroundColor: MaterialStateProperty.all(colorPrimary),
+                elevation: MaterialStateProperty.all(0),
+                shape: MaterialStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                onPressed: () {},
+              ),
+              child: const Text(
+                "Submit",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
               ),
             ),
           ),

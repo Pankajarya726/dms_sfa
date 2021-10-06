@@ -5,6 +5,7 @@ const colorLightPrimary = Color(0xfff17078);
 const colorGray = Color(0xff717171);
 const colorGrayLite = Color(0xfff2f2f2);
 const colorGrayDark = Color(0xff555555);
+const colorLightBlack = Color(0xff303030);
 const colorYellow = Color(0xfff6ac56);
 const colorRed = Color(0xfff0111f);
 const colorGreen = Color(0xff2cb743);

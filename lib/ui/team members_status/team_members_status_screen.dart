@@ -29,14 +29,6 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
     "Present",
     "Mark attendence",
   ];
-  List<String> statusIcons = [
-    "assets/accept.png",
-    "assets/reject.png",
-    "assets/accept.png",
-    "assets/reject.png",
-    "assets/accept.png",
-    "assets/accept.png",
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -92,11 +84,9 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                     ],
                   ),
                   child: ListTile(
-                    contentPadding: EdgeInsets.all(0),
+                    contentPadding: const EdgeInsets.all(0),
                     dense: true,
-                    onTap: () {
-                      print("clickdd $index");
-                    },
+                    onTap: () {},
                     title: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -120,7 +110,6 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                         ),
                       ],
                     ),
-
                     trailing: IntrinsicWidth(
                       child: Row(
                         children: [
@@ -131,45 +120,20 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                                   : status[index] == "Present.."
                                       ? statusIncompleteHoursButAccepted()
                                       : statusMarkAttendence(),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.more_vert),
+                          SizedBox(
+                            width: 40,
+                            child: IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.more_vert,
+                                color: Colors.black,
+                                size: 27,
+                              ),
+                            ),
                           )
                         ],
                       ),
                     ),
-                    // children: [
-                    //   InkWell(
-                    //     onTap: () {
-                    //       print("clickdd");
-                    //     },
-                    //     child: Expanded(
-                    //       child: Column(
-                    //         crossAxisAlignment: CrossAxisAlignment.start,
-                    //         children: [
-                    //           Text(
-                    //             names[index],
-                    //             style: const TextStyle(
-                    //               fontSize: 20,
-                    //               fontWeight: FontWeight.bold,
-                    //             ),
-                    //           ),
-                    //           const SizedBox(
-                    //             height: 5,
-                    //           ),
-                    //           Text(
-                    //             status[index],
-                    //             style: const TextStyle(
-                    //               color: Color(0xff303030),
-                    //               fontSize: 16,
-                    //               fontWeight: FontWeight.w500,
-                    //             ),
-                    //           ),
-                    //         ],
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ],
                   ),
                 );
               },
@@ -201,23 +165,19 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
   }
 
   Widget statusIncompleteHoursButAccepted() {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.21,
-      height: 25,
-      child: MaterialButton(
-        height: 30,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50),
-        ),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(50),
         color: colorYellow,
-        child: const Text(
+      ),
+      child: const Padding(
+        padding: EdgeInsets.fromLTRB(7, 3, 7, 3),
+        child: Text(
           "Present",
           style: TextStyle(
             color: Colors.white,
           ),
         ),
-        onPressed: () {},
       ),
     );
   }

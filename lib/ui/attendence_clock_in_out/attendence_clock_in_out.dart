@@ -1,10 +1,8 @@
 import 'dart:io';
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:sfa/utility/colors.dart';
 
 class AttendenceClockInOut extends StatefulWidget {
@@ -28,7 +26,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
         children: [
           Container(
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height / 5,
             padding: const EdgeInsets.symmetric(vertical: 10),
             decoration: BoxDecoration(
               gradient: clockInOut == false
@@ -62,12 +59,15 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                     ),
                   ),
                 ),
-                const Text(
-                  "00:00:00",
-                  style: TextStyle(
-                    fontSize: 50.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                const Padding(
+                  padding: EdgeInsets.only(top: 20, bottom: 20),
+                  child: Text(
+                    "00:00:00",
+                    style: TextStyle(
+                      fontSize: 50.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 Container(
@@ -83,15 +83,25 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                   ),
                   child: Row(
                     children: [
-                      Image.asset("assets/zone-clock.png"),
+                      Flexible(
+                        flex: 1,
+                        child: SizedBox(
+                          width: 15,
+                          child: Image.asset("assets/zone-clock.png"),
+                        ),
+                      ),
                       const SizedBox(
                         width: 5,
                       ),
-                      const Text(
-                        "Time zone in Indore, Madhya Pradesh, India (GMT+5:30)",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
+                      const Flexible(
+                        flex: 20,
+                        child: Text(
+                          "Time zone in Indore, Madhya Pradesh, India (GMT+5:30)",
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                          ),
                         ),
                       ),
                     ],
@@ -146,6 +156,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
           ),
           clockInOut == false
               ? Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     SizedBox(
                       width: 20,
@@ -192,57 +203,52 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     );
   }
 
-  _imgFromCamera() async {
-    // File image = await ImagePicker.pickImage(
-    //     source: ImageSource.camera, imageQuality: 50);
-    final ImagePicker _picker = ImagePicker();
-    final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
-    setState(() {
-      // _image = image;
-    });
-  }
-
   Widget roundedButtonWithIcon(context) {
     return Center(
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.40,
-        child: MaterialButton(
-          height: 45,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(50),
+      child: ElevatedButton(
+        onPressed: () {
+          setState(() {
+            clockInOut = !clockInOut;
+          });
+        },
+        style: ButtonStyle(
+          fixedSize: MaterialStateProperty.all(const Size(180, 50)),
+          backgroundColor: clockInOut == false
+              ? MaterialStateProperty.all(colorGreen)
+              : MaterialStateProperty.all(colorPrimary),
+          elevation: MaterialStateProperty.all(0),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
           ),
-          color: clockInOut == false ? colorGreen : colorPrimary,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                "assets/clock.png",
-                width: 25,
-                fit: BoxFit.fill,
-              ),
-              const SizedBox(width: 10),
-              clockInOut == false
-                  ? const Text(
-                      "Clock In",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
-                    )
-                  : const Text(
-                      "Clock Out",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              "assets/clock.png",
+              width: 25,
+              fit: BoxFit.fill,
+            ),
+            const SizedBox(width: 10),
+            clockInOut == false
+                ? const Text(
+                    "Clock In",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
                     ),
-            ],
-          ),
-          onPressed: () {
-            setState(() {
-              clockInOut = !clockInOut;
-            });
-          },
+                  )
+                : const Text(
+                    "Clock Out",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  ),
+          ],
         ),
       ),
     );
