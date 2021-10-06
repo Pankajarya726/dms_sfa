@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sfa/ui/report_screen/report_screen.dart';
+import 'package:sfa/ui/team%20members_status/team_members_status_screen.dart';
+import 'package:sfa/ui/team_members_absent/team_members_absent_screen.dart';
+import 'package:sfa/ui/team_members_clockout/team_members_clockout_screen.dart';
 import 'package:sfa/utility/colors.dart';
 
 class TeamMembersScreen extends StatefulWidget {
@@ -181,7 +184,6 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
           ],
         ),
       ),
-      body: Container(),
     );
   }
 }
