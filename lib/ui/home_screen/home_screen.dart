@@ -107,13 +107,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   builder: (context) =>
                                       const AttendenceHomeScreen()));
                         }
-                        if (index == 1) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const MemberReportScreen()));
-                        }
                       },
                       horizontalTitleGap: 20,
                       leading: Padding(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
+import 'package:sfa/ui/team_member_details/team_members_details.dart';
 import 'package:sfa/utility/colors.dart';
 
 class TeamMembersStatusScreen extends StatefulWidget {
@@ -92,10 +93,14 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                     ],
                   ),
                   child: ListTile(
-                    contentPadding: EdgeInsets.all(0),
+                    contentPadding: const EdgeInsets.all(0),
                     dense: true,
                     onTap: () {
-                      print("clickdd $index");
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const TeamMembersDetails()));
                     },
                     title: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

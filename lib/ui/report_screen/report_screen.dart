@@ -32,7 +32,7 @@ class _ReportScreenState extends State<ReportScreen> {
       appBar: AppBar(
         title: const Text(
           "Report",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
