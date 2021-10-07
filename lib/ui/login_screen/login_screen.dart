@@ -152,25 +152,32 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            Container(
-              margin: const EdgeInsets.fromLTRB(0, 50, 0, 0),
-              alignment: Alignment.center,
-              height: 60,
-              width: 240,
-              decoration: BoxDecoration(
-                  color: colorPrimary, borderRadius: BorderRadius.circular(50)),
-              child: InkWell(
-                child: const Text(
-                  "Log in",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+              child: Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (BuildContext context) => const HomeScreen()));
+                  },
+                  style: ButtonStyle(
+                    fixedSize: MaterialStateProperty.all(const Size(220, 60)),
+                    backgroundColor: MaterialStateProperty.all(colorPrimary),
+                    elevation: MaterialStateProperty.all(0),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                  ),
+                  child: const Text(
+                    "Log in",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
-                onTap: () {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (BuildContext context) => const HomeScreen()));
-                },
               ),
             )
           ],

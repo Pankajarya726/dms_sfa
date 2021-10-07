@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sfa/ui/member_report_screen/member_report_screen.dart';
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_screen.dart';
+import 'package:sfa/ui/team_member_track_screen/team_member_track_screen.dart';
 import 'package:sfa/ui/team_members_absent/team_members_absent_screen.dart';
 import 'package:sfa/ui/team_members_clockout/team_members_clockout_screen.dart';
 import 'package:sfa/ui/team_members_details_screen/team_member_details_screen.dart';
@@ -224,7 +225,7 @@ class _TeamMembersDetailsState extends State<TeamMembersDetails> {
                   children: [
                     TeamMemberDetailsScreen(),
                     TeamMemberAttendenceScreen(),
-                    TeamMembersAbsentScreen()
+                    TeamMemberTrackScreen(),
                   ],
                 ),
               ),
