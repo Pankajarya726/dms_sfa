@@ -40,7 +40,6 @@ class MyApp extends StatelessWidget {
         appBarTheme: const AppBarTheme(
           // ignore: deprecated_member_use
           brightness: Brightness.light,
-          systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
       ),
       home: const SplashScreen(),
