@@ -30,14 +30,6 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
     "Present",
     "Mark attendence",
   ];
-  List<String> statusIcons = [
-    "assets/accept.png",
-    "assets/reject.png",
-    "assets/accept.png",
-    "assets/reject.png",
-    "assets/accept.png",
-    "assets/accept.png",
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +85,7 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                     ],
                   ),
                   child: ListTile(
-                    contentPadding: EdgeInsets.all(0),
+                    contentPadding: const EdgeInsets.all(0),
                     dense: true,
                     onTap: () {
                       Navigator.push(
@@ -125,7 +117,6 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                         ),
                       ],
                     ),
-
                     trailing: IntrinsicWidth(
                       child: Row(
                         children: [
@@ -150,38 +141,6 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                         ],
                       ),
                     ),
-                    // children: [
-                    //   InkWell(
-                    //     onTap: () {
-                    //       print("clickdd");
-                    //     },
-                    //     child: Expanded(
-                    //       child: Column(
-                    //         crossAxisAlignment: CrossAxisAlignment.start,
-                    //         children: [
-                    //           Text(
-                    //             names[index],
-                    //             style: const TextStyle(
-                    //               fontSize: 20,
-                    //               fontWeight: FontWeight.bold,
-                    //             ),
-                    //           ),
-                    //           const SizedBox(
-                    //             height: 5,
-                    //           ),
-                    //           Text(
-                    //             status[index],
-                    //             style: const TextStyle(
-                    //               color: Color(0xff303030),
-                    //               fontSize: 16,
-                    //               fontWeight: FontWeight.w500,
-                    //             ),
-                    //           ),
-                    //         ],
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ],
                   ),
                 );
               },

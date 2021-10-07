@@ -44,7 +44,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
               ),
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10),
@@ -225,7 +224,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
           children: [
             Image.asset(
               "assets/clock.png",
