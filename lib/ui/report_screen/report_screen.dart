@@ -43,9 +43,10 @@ class _ReportScreenState extends State<ReportScreen> {
               showFilters();
             },
             icon: const Image(
-              height: 100,
-              width: 100,
+              height: 23,
+              width: 23,
               image: AssetImage("assets/filter.png"),
+              fit: BoxFit.cover,
             ),
           ),
         ],
