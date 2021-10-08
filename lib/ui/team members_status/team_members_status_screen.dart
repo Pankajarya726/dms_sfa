@@ -30,14 +30,6 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
     "Present",
     "Mark attendence",
   ];
-  List<String> statusIcons = [
-    "assets/accept.png",
-    "assets/reject.png",
-    "assets/accept.png",
-    "assets/reject.png",
-    "assets/accept.png",
-    "assets/accept.png",
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +85,7 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                     ],
                   ),
                   child: ListTile(
-                    contentPadding: EdgeInsets.all(0),
+                    contentPadding: const EdgeInsets.all(0),
                     dense: true,
                     onTap: () {
                       Navigator.push(
@@ -125,7 +117,6 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                         ),
                       ],
                     ),
-
                     trailing: IntrinsicWidth(
                       child: Row(
                         children: [
@@ -139,7 +130,9 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                           SizedBox(
                             width: 40,
                             child: IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                showStatusBottomSheet();
+                              },
                               icon: const Icon(
                                 Icons.more_vert,
                                 color: Colors.black,
@@ -150,38 +143,6 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                         ],
                       ),
                     ),
-                    // children: [
-                    //   InkWell(
-                    //     onTap: () {
-                    //       print("clickdd");
-                    //     },
-                    //     child: Expanded(
-                    //       child: Column(
-                    //         crossAxisAlignment: CrossAxisAlignment.start,
-                    //         children: [
-                    //           Text(
-                    //             names[index],
-                    //             style: const TextStyle(
-                    //               fontSize: 20,
-                    //               fontWeight: FontWeight.bold,
-                    //             ),
-                    //           ),
-                    //           const SizedBox(
-                    //             height: 5,
-                    //           ),
-                    //           Text(
-                    //             status[index],
-                    //             style: const TextStyle(
-                    //               color: Color(0xff303030),
-                    //               fontSize: 16,
-                    //               fontWeight: FontWeight.w500,
-                    //             ),
-                    //           ),
-                    //         ],
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ],
                   ),
                 );
               },
@@ -189,6 +150,106 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void showStatusBottomSheet() async {
+    return showModalBottomSheet(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      context: context,
+      builder: (context) {
+        return SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: IntrinsicHeight(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                decoration: const BoxDecoration(
+                  color: reportBG,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20.0),
+                    topRight: Radius.circular(20.0),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: const Text(
+                          "Oliver",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 21,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey,
+                              blurRadius: 10.0, // soften the shadow
+                              spreadRadius: -1.5, //extend the shadow
+                              offset: Offset(
+                                0, // Move to right 10  horizontally
+                                0, // Move to bottom 10 Vertically
+                              ),
+                            )
+                          ],
+                          color: colorYellow,
+                        ),
+                        child: Column(
+                          children: const [
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              "05:00:20",
+                              style: TextStyle(
+                                letterSpacing: 5,
+                                fontSize: 50.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              "Log in: 10:25 AM",
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 

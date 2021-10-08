@@ -22,6 +22,10 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
       borderRadius: BorderRadius.circular(50),
       color: colorPrimary,
     ),
+    labelStyle: const TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.bold,
+    ),
     tabs: const [
       Tab(
         text: "Status",
