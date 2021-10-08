@@ -75,7 +75,7 @@ class _TeamMemberAttendenceScreenState
                       },
                       child: SizedBox(
                         height: 30,
-                        width: MediaQuery.of(context).size.width * 0.35,
+                        width: MediaQuery.of(context).size.width * 0.30,
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -100,7 +100,7 @@ class _TeamMemberAttendenceScreenState
                     ),
                     SizedBox(
                       height: 30,
-                      width: MediaQuery.of(context).size.width * 0.20,
+                      width: MediaQuery.of(context).size.width * 0.18,
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
