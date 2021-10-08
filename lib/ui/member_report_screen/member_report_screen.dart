@@ -368,8 +368,8 @@ class _MemberReportScreen extends State<MemberReportScreen> {
                               Text("Oliver",
                                   style: TextStyle(
                                       color: Colors.black,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600)),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w800)),
                               SizedBox(height: 3),
                               Text("31 Aug 2021 - 14 Sep 2021",
                                   style: TextStyle(

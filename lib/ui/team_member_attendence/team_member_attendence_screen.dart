@@ -58,7 +58,7 @@ class _TeamMemberAttendenceScreenState
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(14, 0, 14, 0),
+                padding: const EdgeInsets.symmetric(horizontal: 14),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -73,12 +73,12 @@ class _TeamMemberAttendenceScreenState
                         date = format.format(dateTime!);
                         setState(() {});
                       },
-                      child: Container(
+                      child: SizedBox(
                         height: 30,
                         width: MediaQuery.of(context).size.width * 0.35,
-                        padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Image.asset(
                               "assets/calendar.png",
@@ -98,12 +98,12 @@ class _TeamMemberAttendenceScreenState
                         ),
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       height: 30,
                       width: MediaQuery.of(context).size.width * 0.20,
-                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           InkWell(
                             onTap: () {
@@ -139,130 +139,145 @@ class _TeamMemberAttendenceScreenState
                 ),
               ),
             ),
-            Container(
-              padding: const EdgeInsets.only(top: 14),
-              height: MediaQuery.of(context).size.height * 0.7358,
-              width: MediaQuery.of(context).size.width,
-              decoration: const BoxDecoration(
-                color: reportBG,
-                borderRadius: BorderRadius.only(
+            Expanded(
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
                 ),
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: List.generate(
-                    status.length,
-                    (index) {
-                      return Stack(
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.fromLTRB(10, 0, 10, 15),
-                            padding: const EdgeInsets.fromLTRB(15, 12, 0, 12),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: -8,
-                                  blurRadius: 7,
-                                  offset: const Offset(0, 3),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  decoration: const BoxDecoration(
+                    color: reportBG,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 15),
+                      child: Column(
+                        children: List.generate(
+                          status.length,
+                          (index) {
+                            return Stack(
+                              children: [
+                                Container(
+                                  height: 85,
+                                  margin:
+                                      const EdgeInsets.fromLTRB(10, 15, 10, 0),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(12, 12, 0, 12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.5),
+                                        spreadRadius: -8,
+                                        blurRadius: 7,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: ListTile(
+                                    dense: true,
+                                    onTap: () {},
+                                    title: Padding(
+                                      padding: const EdgeInsets.only(left: 48),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            names[index],
+                                            style: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          Text(
+                                            status[index],
+                                            style: const TextStyle(
+                                              color: Color(0xff303030),
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    trailing: IntrinsicWidth(
+                                      child: Row(
+                                        children: [
+                                          status[index] == "Present"
+                                              ? statusAccepted()
+                                              : status[index] == "Absent"
+                                                  ? statusRejected()
+                                                  : status[index] == "Present.."
+                                                      ? statusIncompleteHoursButAccepted()
+                                                      : statusMarkAttendence(),
+                                          SizedBox(
+                                            width: 40,
+                                            child: IconButton(
+                                              onPressed: () {},
+                                              icon: const Icon(
+                                                Icons.more_vert,
+                                                color: Colors.black,
+                                                size: 27,
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  left: 10,
+                                  top: 15,
+                                  child: Container(
+                                    height: 85,
+                                    width: 65,
+                                    decoration: const BoxDecoration(
+                                      color: colorCalenderDateBG,
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        bottomLeft: Radius.circular(10),
+                                      ),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: const [
+                                        Text(
+                                          "Sep",
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          "20",
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.w900),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ],
-                            ),
-                            child: ListTile(
-                              dense: true,
-                              onTap: () {},
-                              title: Padding(
-                                padding: const EdgeInsets.only(left: 50),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      names[index],
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      status[index],
-                                      style: const TextStyle(
-                                        color: Color(0xff303030),
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              trailing: IntrinsicWidth(
-                                child: Row(
-                                  children: [
-                                    status[index] == "Present"
-                                        ? statusAccepted()
-                                        : status[index] == "Absent"
-                                            ? statusRejected()
-                                            : status[index] == "Present.."
-                                                ? statusIncompleteHoursButAccepted()
-                                                : statusMarkAttendence(),
-                                    SizedBox(
-                                      width: 40,
-                                      child: IconButton(
-                                        onPressed: () {},
-                                        icon: const Icon(
-                                          Icons.more_vert,
-                                          color: Colors.black,
-                                          size: 27,
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            left: 10,
-                            child: Container(
-                              height: 86,
-                              width: 65,
-                              decoration: const BoxDecoration(
-                                color: colorCalenderDateBG,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10),
-                                  bottomLeft: Radius.circular(10),
-                                ),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Text(
-                                    "Sep",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    "20",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.w900),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
+                            );
+                          },
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
