@@ -78,7 +78,10 @@ class _TeamMembersDetailsState extends State<TeamMembersDetails> {
                 color: colorTabBG,
                 borderRadius: BorderRadius.circular(50),
                 child: TabBar(
-                  labelColor: Colors.white,
+                  labelStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                   indicatorColor: colorPrimary,
                   unselectedLabelColor: colorPrimary,
                   indicator: BoxDecoration(
