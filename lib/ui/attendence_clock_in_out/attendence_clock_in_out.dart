@@ -28,6 +28,17 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
             width: MediaQuery.of(context).size.width,
             padding: const EdgeInsets.symmetric(vertical: 10),
             decoration: BoxDecoration(
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.grey,
+                  blurRadius: 10.0, // soften the shadow
+                  spreadRadius: -1.5, //extend the shadow
+                  offset: Offset(
+                    0, // Move to right 10  horizontally
+                    0, // Move to bottom 10 Vertically
+                  ),
+                )
+              ],
               gradient: clockInOut == false
                   ? const LinearGradient(
                       begin: Alignment.bottomLeft,
@@ -116,16 +127,23 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
           const SizedBox(
             height: 20,
           ),
-          const Text(
-            "Clock In Selfie",
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 17,
-            ),
-          ),
+          clockInOut == false
+              ? const Text(
+                  "Clock In Selfie",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                  ),
+                )
+              : const Text(
+                  "Clock Out Selfie",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                  ),
+                ),
           const SizedBox(
-            height: 20,
+            height: 12,
           ),
           Container(
             width: 150,

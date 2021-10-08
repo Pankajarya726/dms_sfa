@@ -60,6 +60,7 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentBottomTabIndex,
         onTap: ontemTaped,
+        elevation: 20,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
