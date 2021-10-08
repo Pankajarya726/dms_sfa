@@ -18,32 +18,29 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.40,
-              width: MediaQuery.of(context).size.width,
-              child: Stack(
-                children: <Widget>[
-                  Image.asset(
-                    "assets/login-banner.png",
+            Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                Image.asset(
+                  "assets/login-banner.png",
+                  fit: BoxFit.contain,
+                  width: MediaQuery.of(context).size.width,
+                ),
+                const Positioned(
+                  bottom: -6,
+                  child: Text(
+                    "LOGIN",
+                    style: TextStyle(
+                        color: colorGrayDark,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24),
                   ),
-                  const Center(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 280),
-                      child: Text(
-                        "LOGIN",
-                        style: TextStyle(
-                            color: colorGrayDark,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
             Center(
               child: Padding(
-                padding: const EdgeInsets.only(top: 10),
+                padding: const EdgeInsets.only(top: 15),
                 child: Container(
                   height: 2,
                   width: 40,
@@ -153,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+              padding: const EdgeInsets.fromLTRB(0, 50, 0, 20),
               child: Center(
                 child: ElevatedButton(
                   onPressed: () {
