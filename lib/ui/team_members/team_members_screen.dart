@@ -151,9 +151,11 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
                   ),
                   onPressed: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ReportScreen()));
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ReportScreen(),
+                      ),
+                    );
                   },
                 ),
               ],
