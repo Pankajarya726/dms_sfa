@@ -1,10 +1,26 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sfa/provider/repository.dart';
+import 'package:sfa/provider/url.dart';
 import 'package:sfa/ui/splash_screen/splash_screen.dart';
 import 'package:sfa/utility/colors.dart';
 
+BaseOptions options = BaseOptions(
+  baseUrl: Url.baseUrl,
+  connectTimeout: 60000,
+  sendTimeout: 60000,
+  receiveTimeout: 60000,
+);
+Dio dio = Dio(options);
+ApiRepository repository = ApiRepository();
+
 void main() {
   runApp(const MyApp());
+
+  // Map<String,dynamic> header = {"Autherization":"Bearer $token", "user_id":"$userid"};
+  // options.headers.addAll(header);
+
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: colorPrimary,
