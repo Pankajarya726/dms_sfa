@@ -14,14 +14,14 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
-    // Timer(
-    //   const Duration(seconds: 3),
-    //   () => Navigator.of(context).pushReplacement(
-    //     MaterialPageRoute(
-    //       builder: (BuildContext context) => const LoginScreen(),
-    //     ),
-    //   ),
-    // );
+    Timer(
+      const Duration(seconds: 3),
+      () => Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (BuildContext context) => const LoginScreen(),
+        ),
+      ),
+    );
     return Scaffold(
       backgroundColor: colorPrimary,
       body: Column(
