@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:sfa/main.dart';
 import 'package:sfa/provider/url.dart';
@@ -12,27 +14,29 @@ class ApiRepository {
 
   ApiRepository.internal();
 
-  Future<LoginResponse> login(Map input) async {
+  Future<LoginResponse> login(String mobileNumber, String password) async {
+    Map<String, dynamic> data = {
+      "mobile_number": mobileNumber,
+      "password": password
+    };
+    log(data.toString());
     try {
       Response response = await dio.post(
         Url.login,
-        data: input,
+        data: data,
       );
       if (response.statusCode == 200) {
-        LoginResponse res = LoginResponse.fromJson(response.toString());
-        return res;
+        LoginResponse loginDetails =
+            LoginResponse.fromJson(response.toString());
+        return loginDetails;
       } else {
         return LoginResponse(
-            success: false,
-            message: "Please try again later",
-            id: 0,
-            accessToken: "",
-            tokenType: "");
+            success: false, message: "", id: 0, accessToken: "", tokenType: "");
       }
     } catch (exception) {
       return LoginResponse(
           success: false,
-          message: "Please try again later",
+          message: "Something went wrong!",
           id: 0,
           accessToken: "",
           tokenType: "");

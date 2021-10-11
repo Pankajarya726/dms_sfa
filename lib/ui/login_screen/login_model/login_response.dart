@@ -23,9 +23,9 @@ class LoginResponse {
   factory LoginResponse.fromMap(Map<String, dynamic> json) => LoginResponse(
         success: json["success"],
         message: json["message"],
-        id: json["id"],
-        accessToken: json["access_token"],
-        tokenType: json["token_type"],
+        id: json["id"] ?? 0,
+        accessToken: json["access_token"] ?? "",
+        tokenType: json["token_type"] ?? "",
       );
 
   Map<String, dynamic> toMap() => {
