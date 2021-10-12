@@ -43,6 +43,7 @@ dependencies:
   dio: 
   flutter_bloc: 
   equatable:
+  ntp:
 
 
 dev_dependencies:

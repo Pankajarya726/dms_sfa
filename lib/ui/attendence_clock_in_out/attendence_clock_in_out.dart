@@ -1,8 +1,16 @@
-import 'dart:io';
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
+import 'package:location/location.dart';
+import 'package:ntp/ntp.dart';
+import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_bloc.dart';
+import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_events.dart';
+import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_states.dart';
 import 'package:sfa/utility/colors.dart';
 
 class AttendenceClockInOut extends StatefulWidget {
@@ -15,7 +23,57 @@ class AttendenceClockInOut extends StatefulWidget {
 class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   bool gpsLocation = false;
   bool clockInOut = false;
-  late File _image;
+  String timerHours = "00";
+  String timerMinutes = "00";
+  String timerSeconds = "00";
+  late StreamController<int> streamController;
+  Duration timerInterval = const Duration(seconds: 1);
+  var timerSubscription;
+  var timerStream;
+  late Timer timer;
+  int counter = 0;
+  LatLng? currenPosition;
+  Location location = Location();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timer.cancel();
+  }
+
+  Future getUserLocation() async {
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+    LocationData _locationData;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      print("permission denied");
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+    LocationData position = await location.getLocation();
+    setState(() {
+      currenPosition = LatLng(position.latitude!, position.longitude!);
+    });
+    debugPrint("Current Position" + currenPosition.toString());
+    _locationData = await location.getLocation();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,24 +114,49 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
             ),
             child: Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      "14 Sept 2021 at 9:51 AM",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                BlocProvider(
+                  create: (context) => ClockInOutBloc(),
+                  child: BlocBuilder<ClockInOutBloc, ClockInOutStates>(
+                    builder: (context, state) {
+                      return BlocBuilder<ClockInOutBloc, ClockInOutStates>(
+                        builder: (context, state) {
+                          if (state is ClockInOutInitialState) {
+                            BlocProvider.of<ClockInOutBloc>(context)
+                                .add(ClockInOutInitialEvent());
+                          }
+                          if (state is ClockInOutCurrentNTPState) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  "${state.date}${state.at}${state.currentHours}${state.seperator}${state.currentMinutes}",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                          return const Text(
+                            "",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 20, bottom: 20),
+                Padding(
+                  padding: const EdgeInsets.only(top: 20, bottom: 20),
                   child: Text(
-                    "00:00:00",
-                    style: TextStyle(
+                    "$timerHours:$timerMinutes:$timerSeconds",
+                    style: const TextStyle(
                       fontSize: 50.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -184,6 +267,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                         activeColor: colorPrimary,
                         checkColor: Colors.white,
                         onChanged: (value) {
+                          getUserLocation();
                           setState(() {
                             gpsLocation = value!;
                           });
@@ -227,6 +311,29 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
           setState(() {
             clockInOut = !clockInOut;
           });
+          if (clockInOut) {
+            timerStream = stopWatchStream();
+            timerSubscription = timerStream!.listen((int newTick) {
+              setState(() {
+                timerHours = ((newTick / (60 * 60)) % 60)
+                    .floor()
+                    .toString()
+                    .padLeft(2, '0');
+                timerMinutes =
+                    ((newTick / 60) % 60).floor().toString().padLeft(2, '0');
+                timerSeconds =
+                    (newTick % 60).floor().toString().padLeft(2, '0');
+              });
+            });
+          } else {
+            timerSubscription.cancel();
+            timerStream = null;
+            setState(() {
+              timerHours = '00';
+              timerMinutes = '00';
+              timerSeconds = '00';
+            });
+          }
         },
         style: ButtonStyle(
           fixedSize: MaterialStateProperty.all(const Size(180, 50)),
@@ -304,5 +411,31 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
         ),
       ],
     );
+  }
+
+  Stream<int> stopWatchStream() {
+    void stopTimer() {
+      timer.cancel();
+      counter = 0;
+      streamController.close();
+    }
+
+    void tick(_) {
+      counter++;
+      streamController.add(counter);
+    }
+
+    void startTimer() {
+      timer = Timer.periodic(timerInterval, tick);
+    }
+
+    streamController = StreamController<int>(
+      onListen: startTimer,
+      onCancel: stopTimer,
+      onResume: startTimer,
+      onPause: stopTimer,
+    );
+
+    return streamController.stream;
   }
 }
