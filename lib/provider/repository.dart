@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:sfa/main.dart';
 import 'package:sfa/provider/url.dart';
@@ -19,7 +17,7 @@ class ApiRepository {
       "mobile_number": mobileNumber,
       "password": password
     };
-    log(data.toString());
+
     try {
       Response response = await dio.post(
         Url.login,
@@ -31,7 +29,11 @@ class ApiRepository {
         return loginDetails;
       } else {
         return LoginResponse(
-            success: false, message: "", id: 0, accessToken: "", tokenType: "");
+            success: false,
+            message: "Invalid Login details",
+            id: 0,
+            accessToken: "",
+            tokenType: "");
       }
     } catch (exception) {
       return LoginResponse(

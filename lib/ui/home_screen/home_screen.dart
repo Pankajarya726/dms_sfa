@@ -37,53 +37,53 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.only(top: 40),
-              color: colorPrimary,
-              height: MediaQuery.of(context).size.height * 0.16,
-              width: MediaQuery.of(context).size.width,
-              child: ListTile(
-                leading: const CircleAvatar(
-                  radius: 30,
-                  backgroundImage: AssetImage("assets/reject.png"),
-                ),
-                title: const Text(
-                  "Smith Johnson",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold),
-                ),
-                subtitle: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white30,
-                            borderRadius: BorderRadius.circular(10)),
-                        child: const Text(
-                          "  Employee Designation  ",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                          ),
+      body: Column(
+        children: [
+          Container(
+            alignment: Alignment.center,
+            color: colorPrimary,
+            padding: const EdgeInsets.only(top: 40),
+            height: 135,
+            width: MediaQuery.of(context).size.width,
+            child: ListTile(
+              leading: const CircleAvatar(
+                radius: 30,
+                backgroundImage: AssetImage("assets/reject.png"),
+              ),
+              title: const Text(
+                "Smith Johnson",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold),
+              ),
+              subtitle: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white30,
+                          borderRadius: BorderRadius.circular(10)),
+                      child: const Text(
+                        "  Employee Designation  ",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
                         ),
                       ),
                     ),
-                  ],
-                ),
-                trailing: const CircleAvatar(
-                  radius: 12,
-                  backgroundImage: AssetImage("assets/edit.png"),
-                ),
+                  ),
+                ],
+              ),
+              trailing: const CircleAvatar(
+                radius: 12,
+                backgroundImage: AssetImage("assets/edit.png"),
               ),
             ),
-            Container(
-              height: MediaQuery.of(context).size.height * 0.84,
+          ),
+          Expanded(
+            child: Container(
               width: MediaQuery.of(context).size.width,
               color: colorGrayLite,
               child: ListView.builder(
@@ -153,8 +153,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
