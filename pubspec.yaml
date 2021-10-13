@@ -43,8 +43,9 @@ dependencies:
   dio: 
   flutter_bloc: 
   equatable:
-  fluttertoast: 
-  shared_preferences: 
+  ntp:
+  fluttertoast:
+  shared_preferences:
 
 
 dev_dependencies:
