@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:ntp/ntp.dart';
@@ -34,6 +36,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   int counter = 0;
   LatLng? currenPosition;
   Location location = Location();
+  XFile? _image;
 
   @override
   void initState() {
@@ -437,5 +440,12 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     );
 
     return streamController.stream;
+  }
+
+  _imgFromCamera() async {
+    // XFile? image = await ImagePicker.pickImage(
+    //   source: ImageSource.camera,
+    //   imageQuality: 50,
+    // );
   }
 }

@@ -15,7 +15,6 @@ class ClockInOutCurrentNTPState extends ClockInOutStates {
   String at = "";
   String seperator = "";
 
-  @override
   ClockInOutCurrentNTPState({
     required this.date,
     required this.currentHours,
@@ -24,13 +23,7 @@ class ClockInOutCurrentNTPState extends ClockInOutStates {
     required this.at,
     required this.seperator,
   });
-
-  List<Object?> get props => [
-        this.date,
-        this.currentHours,
-        this.currentMinutes,
-        this.currentSeconds,
-        this.at,
-        this.seperator
-      ];
+  @override
+  List<Object?> get props =>
+      [date, currentHours, currentMinutes, currentSeconds, at, seperator];
 }
