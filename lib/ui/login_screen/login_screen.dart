@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sfa/ui/home_screen/home_screen.dart';
 import 'package:sfa/ui/login_screen/login_bloc/login_bloc.dart';
 import 'package:sfa/ui/login_screen/login_bloc/login_event.dart';
 import 'package:sfa/ui/login_screen/login_bloc/login_state.dart';
@@ -25,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocProvider(
       create: (context) => LoginBloc(),
       child: BlocListener<LoginBloc, LoginState>(
-        listener: (context, state) {
+        listener: (context, state) async {
           if (state is LoginSuccessState) {
             SharedPrefrence.setStringPreference(
                 "mobile_number", mobileNumber.toString());
@@ -36,14 +37,14 @@ class _LoginScreenState extends State<LoginScreen> {
             SharedPrefrence.setStringPreference(
                 "id", state.loginResponse.id.toString());
 
-            SharedPrefrence.setStringPreference(
-                "access_token", state.loginResponse.accessToken.toString());
+            SharedPrefrence.setBooleanPreference(
+                "login", state.loginResponse.success);
 
-            // Navigator.of(context).pushReplacement(
-            //     MaterialPageRoute(
-            //         builder: (BuildContext context) =>
-            //
-            //            const HomeScreen()));
+            SharedPrefrence.setStringPreference(
+                "token", state.loginResponse.accessToken.toString());
+
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (BuildContext context) => const HomeScreen()));
 
             Fluttertoast.showToast(msg: state.loginResponse.message.toString());
           }
