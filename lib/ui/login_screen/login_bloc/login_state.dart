@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:sfa/ui/login_screen/login_model/login_response.dart';
 
 class LoginState extends Equatable {
   @override
@@ -9,6 +10,15 @@ class LoginInitialState extends LoginState {}
 
 class LoginLoadingState extends LoginState {}
 
-class LoginSuccessState extends LoginState {}
+class LoginSuccessState extends LoginState {
+  final LoginResponse loginResponse;
 
-class LoginFailureState extends LoginState {}
+  LoginSuccessState({required this.loginResponse});
+  @override
+  List<Object?> get props => [loginResponse];
+}
+
+class LoginFailureState extends LoginState {
+  final String message;
+  LoginFailureState({required this.message});
+}

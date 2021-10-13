@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:sfa/ui/home_screen/home_screen.dart';
 import 'package:sfa/ui/login_screen/login_screen.dart';
 import 'package:sfa/utility/colors.dart';
+import 'package:sfa/utility/shared_prefrence.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -13,15 +15,13 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
+  void initState() {
+    getLogin();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Timer(
-      const Duration(seconds: 3),
-      () => Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (BuildContext context) => const LoginScreen(),
-        ),
-      ),
-    );
     return Scaffold(
       backgroundColor: colorPrimary,
       body: Column(
@@ -56,5 +56,29 @@ class _SplashScreenState extends State<SplashScreen> {
         ],
       ),
     );
+  }
+
+  getLogin() async {
+    bool login =
+        await SharedPrefrence.getBooleanPreference(SharedPrefrence.login);
+    if (login == true) {
+      Timer(
+        const Duration(seconds: 3),
+        () => Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (BuildContext context) => const HomeScreen(),
+          ),
+        ),
+      );
+    } else {
+      Timer(
+        const Duration(seconds: 3),
+        () => Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (BuildContext context) => const LoginScreen(),
+          ),
+        ),
+      );
+    }
   }
 }

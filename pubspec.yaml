@@ -44,6 +44,8 @@ dependencies:
   flutter_bloc: 
   equatable:
   ntp:
+  fluttertoast:
+  shared_preferences:
 
 
 dev_dependencies:

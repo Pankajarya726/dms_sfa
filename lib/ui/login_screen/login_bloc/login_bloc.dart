@@ -10,14 +10,18 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   @override
   Stream<LoginState> mapEventToState(LoginEvent event) async* {
     if (event is LoginEvent) {
-      yield* login();
+      yield LoginLoadingState();
+      yield* login(event);
     }
   }
 
-  Stream<LoginState> login() async* {
-    LoginResponse response = await repository.login({});
-
+  Stream<LoginState> login(LoginEvent event) async* {
+    LoginResponse response =
+        await repository.login(event.mobileNumber, event.password);
     if (response.success) {
-    } else {}
+      yield LoginSuccessState(loginResponse: response);
+    } else {
+      yield LoginFailureState(message: response.message);
+    }
   }
 }
