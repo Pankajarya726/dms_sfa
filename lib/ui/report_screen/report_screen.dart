@@ -357,175 +357,178 @@ class _ReportScreenState extends State<ReportScreen> {
         ),
       ),
       body: IntrinsicHeight(
-        child: Container(
-          height: MediaQuery.of(context).size.height * 0.75,
-          width: MediaQuery.of(context).size.width,
-          color: reportBG,
-          child: SingleChildScrollView(
-            child: Column(
-              children: List.generate(
-                10,
-                (index) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                          spreadRadius: -10,
-                          blurRadius: 10,
-                        ),
-                      ],
-                    ),
-                    child: GFAccordion(
-                      onToggleCollapsed: (expand) {
-                        accordionStatus = expand;
-                        setState(() {});
-                      },
-                      showAccordion: accordionStatus,
-                      titleBorderRadius: !accordionStatus
-                          ? BorderRadius.circular(5)
-                          : const BorderRadius.only(
-                              topLeft: Radius.circular(5),
-                              topRight: Radius.circular(5),
-                              bottomLeft: Radius.circular(0),
-                              bottomRight: Radius.circular(0),
-                            ),
-                      contentBorderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(5),
-                        bottomRight: Radius.circular(5),
-                      ),
-                      expandedTitleBackgroundColor: Colors.white,
-                      contentBackgroundColor: Colors.white,
-                      contentPadding: const EdgeInsets.all(0),
-                      titleChild: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text("Oliver",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w800)),
-                              SizedBox(height: 3),
-                              Text("31 Aug 2021 - 14 Sep 2021",
-                                  style: TextStyle(
-                                      color: Color(0xff555555),
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w500)),
-                            ],
-                          ),
-                          GestureDetector(
-                            child: Container(
-                              margin: const EdgeInsets.only(right: 7),
-                              child: Image.asset("assets/download-bg.png",
-                                  width: 27, fit: BoxFit.contain),
-                            ),
-                            onTap: () {},
+        child: Expanded(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            color: reportBG,
+            child: SingleChildScrollView(
+              child: Column(
+                children: List.generate(
+                  10,
+                  (index) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.3),
+                            spreadRadius: -10,
+                            blurRadius: 10,
                           ),
                         ],
                       ),
-                      contentChild: Column(
-                        children: [
-                          const Divider(height: 1, color: Color(0xff898989)),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                RichText(
-                                  text: const TextSpan(children: [
-                                    TextSpan(
-                                      text: "Full Day : ",
-                                      style: TextStyle(
-                                          color: Color(0xff555555),
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    TextSpan(
-                                      text: "28 Days",
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ]),
-                                ),
-                                RichText(
-                                  text: const TextSpan(
-                                    children: [
+                      child: GFAccordion(
+                        onToggleCollapsed: (expand) {
+                          accordionStatus = expand;
+                          setState(() {});
+                        },
+                        showAccordion: accordionStatus,
+                        titleBorderRadius: !accordionStatus
+                            ? BorderRadius.circular(5)
+                            : const BorderRadius.only(
+                                topLeft: Radius.circular(5),
+                                topRight: Radius.circular(5),
+                                bottomLeft: Radius.circular(0),
+                                bottomRight: Radius.circular(0),
+                              ),
+                        contentBorderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(5),
+                          bottomRight: Radius.circular(5),
+                        ),
+                        expandedTitleBackgroundColor: Colors.white,
+                        contentBackgroundColor: Colors.white,
+                        contentPadding: const EdgeInsets.all(0),
+                        titleChild: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text("Oliver",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w800)),
+                                SizedBox(height: 3),
+                                Text("31 Aug 2021 - 14 Sep 2021",
+                                    style: TextStyle(
+                                        color: Color(0xff555555),
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500)),
+                              ],
+                            ),
+                            GestureDetector(
+                              child: Container(
+                                margin: const EdgeInsets.only(right: 7),
+                                child: Image.asset("assets/download-bg.png",
+                                    width: 27, fit: BoxFit.contain),
+                              ),
+                              onTap: () {},
+                            ),
+                          ],
+                        ),
+                        contentChild: Column(
+                          children: [
+                            const Divider(height: 1, color: Color(0xff898989)),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  RichText(
+                                    text: const TextSpan(children: [
                                       TextSpan(
-                                        text: "Absent : ",
+                                        text: "Full Day : ",
                                         style: TextStyle(
                                             color: Color(0xff555555),
                                             fontSize: 15,
                                             fontWeight: FontWeight.w500),
                                       ),
                                       TextSpan(
-                                        text: "1",
+                                        text: "28 Days",
                                         style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 15,
                                             fontWeight: FontWeight.w500),
                                       ),
-                                    ],
+                                    ]),
                                   ),
-                                ),
-                              ],
+                                  RichText(
+                                    text: const TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: "Absent : ",
+                                          style: TextStyle(
+                                              color: Color(0xff555555),
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                        TextSpan(
+                                          text: "1",
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                RichText(
-                                  text: const TextSpan(children: [
-                                    TextSpan(
-                                      text: "Half Day : ",
-                                      style: TextStyle(
-                                          color: Color(0xff555555),
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    TextSpan(
-                                      text: "2 Days",
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ]),
-                                ),
-                                RichText(
-                                  text: const TextSpan(children: [
-                                    TextSpan(
-                                      text: "Unmarked Attendance : ",
-                                      style: TextStyle(
-                                          color: Color(0xff555555),
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    TextSpan(
-                                      text: "2",
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ]),
-                                ),
-                              ],
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  RichText(
+                                    text: const TextSpan(children: [
+                                      TextSpan(
+                                        text: "Half Day : ",
+                                        style: TextStyle(
+                                            color: Color(0xff555555),
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      TextSpan(
+                                        text: "2 Days",
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ]),
+                                  ),
+                                  RichText(
+                                    text: const TextSpan(children: [
+                                      TextSpan(
+                                        text: "Unmarked Attendance : ",
+                                        style: TextStyle(
+                                            color: Color(0xff555555),
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      TextSpan(
+                                        text: "2",
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ]),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ),
