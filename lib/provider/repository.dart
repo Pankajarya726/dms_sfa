@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:sfa/main.dart';
 import 'package:sfa/provider/url.dart';
@@ -49,7 +48,6 @@ class ApiRepository {
 
   Future<UserData> getUserDetailsByUserId(String id) async {
     Map<String, dynamic> userId = {"id": id};
-    log(userId.toString());
 
     try {
       Response response = await dio.post(
@@ -58,8 +56,8 @@ class ApiRepository {
       );
 
       if (response.statusCode == 200) {
-        UserData userDetails = UserData.fromJson(response.toString());
-        return userDetails;
+        UserData userData = UserData.fromJson(response.toString());
+        return userData;
       } else {
         return UserData(
             success: false,
