@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -115,6 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       enableSuggestions: true,
                       maxLines: 1,
                       textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         prefixText: "   ",
                         filled: true,
@@ -201,16 +200,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         padding: const EdgeInsets.fromLTRB(0, 50, 0, 20),
                         child: ElevatedButton(
                           onPressed: () {
-                            log(mobileNumber.text.toString() +
-                                " " +
+                            sendLoginData(context, mobileNumber.text.toString(),
                                 password.text.toString());
-
-                            BlocProvider.of<LoginBloc>(context).add(
-                              LoginEvent(
-                                mobileNumber: mobileNumber.text.toString(),
-                                password: password.text.toString(),
-                              ),
-                            );
                           },
                           style: ButtonStyle(
                             fixedSize:
@@ -242,5 +233,32 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  sendLoginData(
+    BuildContext context,
+    String mobileNumber,
+    String password,
+  ) {
+    RegExp regxMobile = RegExp(r'(^[0-9]{10}$)');
+    RegExp regxPassword =
+        RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+    if (mobileNumber.isEmpty && password.isEmpty) {
+      Fluttertoast.showToast(msg: "Field can't be Empty");
+    } else if (mobileNumber.isEmpty) {
+      Fluttertoast.showToast(msg: "Please enter Mobile Number");
+    } else if (!regxMobile.hasMatch(mobileNumber)) {
+      Fluttertoast.showToast(msg: "Mobile number must be 10 digits");
+    } else if (password.isEmpty) {
+      Fluttertoast.showToast(msg: "Please enter Password");
+    }
+    // else if (!regxPassword.hasMatch(password)) {
+    //   Fluttertoast.showToast(msg: "Please enter Valid Password");
+    // }
+    else {
+      BlocProvider.of<LoginBloc>(context).add(
+        LoginEvent(mobileNumber: mobileNumber, password: password),
+      );
+    }
   }
 }
