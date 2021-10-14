@@ -125,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       trailing: const CircleAvatar(
                         radius: 12,
-                        backgroundImage: AssetImage("assets/edit.png"),
+                        backgroundImage: AssetImage("assets/setting.png"),
                       ),
                     );
                   },
