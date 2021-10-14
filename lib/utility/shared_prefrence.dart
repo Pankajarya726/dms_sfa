@@ -7,8 +7,6 @@ class SharedPrefrence {
   static const password = "password";
   static const mobileNumber = "mobile_number";
   static const id = "id";
-  static const timerValue = "timer_hours";
-  static const clockInOut = "clock_in_out";
 
   static Future<bool> setStringPreference(String key, String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
