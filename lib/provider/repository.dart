@@ -1,6 +1,8 @@
+import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:sfa/main.dart';
 import 'package:sfa/provider/url.dart';
+import 'package:sfa/ui/home_screen/home_screen_model/home_screen_model.dart';
 import 'package:sfa/ui/login_screen/login_model/login_response.dart';
 
 class ApiRepository {
@@ -42,6 +44,43 @@ class ApiRepository {
           id: 0,
           accessToken: "",
           tokenType: "");
+    }
+  }
+
+  Future<UserData> getUserDetailsByUserId(String id) async {
+    Map<String, dynamic> userId = {"id": id};
+    log(userId.toString());
+
+    try {
+      Response response = await dio.post(
+        Url.getUserDetailsByUserId,
+        data: userId,
+      );
+
+      if (response.statusCode == 200) {
+        UserData userDetails = UserData.fromJson(response.toString());
+        return userDetails;
+      } else {
+        return UserData(
+            success: false,
+            message: "Data not found",
+            id: 0,
+            name: "",
+            email: "",
+            mobileNumber: "",
+            image: "",
+            designation: "");
+      }
+    } catch (exception) {
+      return UserData(
+          success: false,
+          message: "Something went wrong!",
+          id: 0,
+          name: "",
+          email: "",
+          mobileNumber: "",
+          image: "",
+          designation: "");
     }
   }
 }

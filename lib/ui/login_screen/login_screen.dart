@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -258,7 +256,6 @@ class _LoginScreenState extends State<LoginScreen> {
     //   Fluttertoast.showToast(msg: "Please enter Valid Password");
     // }
     else {
-      log("Login Event Call");
       BlocProvider.of<LoginBloc>(context).add(
         LoginEvent(mobileNumber: mobileNumber, password: password),
       );
