@@ -7,15 +7,15 @@ class ClockInOutStates extends Equatable {
 
 class ClockInOutInitialState extends ClockInOutStates {}
 
-class ClockInOutCurrentNTPState extends ClockInOutStates {
-  String date = "";
-  int currentHours = 0;
-  int currentMinutes = 0;
-  int currentSeconds = 0;
-  String at = "";
-  String seperator = "";
+class ClockInOutSuccessState extends ClockInOutStates {
+  String date;
+  int currentHours;
+  int currentMinutes;
+  int currentSeconds;
+  String at;
+  String seperator;
 
-  ClockInOutCurrentNTPState({
+  ClockInOutSuccessState({
     required this.date,
     required this.currentHours,
     required this.currentMinutes,
@@ -24,6 +24,24 @@ class ClockInOutCurrentNTPState extends ClockInOutStates {
     required this.seperator,
   });
   @override
-  List<Object?> get props =>
-      [date, currentHours, currentMinutes, currentSeconds, at, seperator];
+  List<Object?> get props => [
+        date,
+        currentHours,
+        currentMinutes,
+        currentSeconds,
+        at,
+        seperator,
+      ];
+}
+
+class ClockInOutTimerState extends ClockInOutStates {
+  String timerHours;
+  String timerMinutes;
+  String timerSeconds;
+  ClockInOutTimerState(
+      {required this.timerHours,
+      required this.timerMinutes,
+      required this.timerSeconds});
+  @override
+  List<Object?> get props => [timerHours, timerMinutes, timerSeconds];
 }
