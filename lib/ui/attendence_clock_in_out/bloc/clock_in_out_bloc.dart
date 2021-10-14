@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
 import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_events.dart';
 import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_states.dart';
+import 'package:sfa/utility/shared_prefrence.dart';
 
 class ClockInOutBloc extends Bloc<ClockInOutEvents, ClockInOutStates> {
   ClockInOutBloc() : super(ClockInOutInitialState());
@@ -13,7 +14,8 @@ class ClockInOutBloc extends Bloc<ClockInOutEvents, ClockInOutStates> {
       DateTime _ntpTime;
       _ntpTime = await NTP.now();
       var format = DateFormat("dd-MMM-yyyy");
-      yield ClockInOutCurrentNTPState(
+
+      yield ClockInOutSuccessState(
         date: format.format(_ntpTime),
         at: " at ",
         seperator: ":",
