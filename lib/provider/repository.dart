@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+
 import 'package:sfa/main.dart';
 import 'package:sfa/provider/url.dart';
 import 'package:sfa/ui/absent/bloc/model/mark_absent_by_user.dart';
@@ -28,7 +28,6 @@ class ApiRepository {
         Url.markAbsentByUser,
         data: data,
       );
-      log(data.toString());
       if (response.statusCode == 200) {
         MarkAbsentByUserResponse markAbsentByUserResponse =
             MarkAbsentByUserResponse.fromJson(response.toString());
