@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
 
-class ClockOutEvents extends Equatable {
+class ClockInOutEvents extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
-class ClockOutSuccessEvent extends ClockOutEvents {
+class ClockInOutSuccessEvent extends ClockInOutEvents {
   @override
   List<Object?> get props => [];
 }

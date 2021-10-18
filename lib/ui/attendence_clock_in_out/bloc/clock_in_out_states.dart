@@ -1,13 +1,13 @@
 import 'package:equatable/equatable.dart';
 
-class ClockInStates extends Equatable {
+class ClockInOutStates extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
-class ClockInInitialState extends ClockInStates {}
+class ClockInOutInitialState extends ClockInOutStates {}
 
-class ClockInSuccessState extends ClockInStates {
+class ClockInOutSuccessState extends ClockInOutStates {
   String date;
   int currentHours;
   int currentMinutes;
@@ -15,7 +15,7 @@ class ClockInSuccessState extends ClockInStates {
   String at;
   String seperator;
 
-  ClockInSuccessState({
+  ClockInOutSuccessState({
     required this.date,
     required this.currentHours,
     required this.currentMinutes,
@@ -34,11 +34,11 @@ class ClockInSuccessState extends ClockInStates {
       ];
 }
 
-class ClockInTimerState extends ClockInStates {
+class ClockInOutTimerState extends ClockInOutStates {
   String timerHours;
   String timerMinutes;
   String timerSeconds;
-  ClockInTimerState(
+  ClockInOutTimerState(
       {required this.timerHours,
       required this.timerMinutes,
       required this.timerSeconds});

@@ -1,9 +1,24 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
+import 'package:ntp/ntp.dart';
+import 'package:sfa/ui/absent/bloc/absent_bloc.dart';
+import 'package:sfa/ui/absent/bloc/absent_events.dart';
+import 'package:sfa/ui/absent/bloc/absent_states.dart';
 import 'package:sfa/utility/colors.dart';
 
-class AbsentScreen extends StatelessWidget {
+class AbsentScreen extends StatefulWidget {
   const AbsentScreen({Key? key}) : super(key: key);
 
+  @override
+  State<AbsentScreen> createState() => _AbsentScreenState();
+}
+
+class _AbsentScreenState extends State<AbsentScreen> {
+  final absentReason = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -24,6 +39,7 @@ class AbsentScreen extends StatelessWidget {
           ),
           TextFormField(
             maxLines: 4,
+            controller: absentReason,
             keyboardType: TextInputType.text,
             style: const TextStyle(
               color: Color(0xff303030),
@@ -45,26 +61,45 @@ class AbsentScreen extends StatelessWidget {
           const SizedBox(
             height: 80,
           ),
-          Center(
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ButtonStyle(
-                fixedSize: MaterialStateProperty.all(const Size(180, 50)),
-                backgroundColor: MaterialStateProperty.all(colorPrimary),
-                elevation: MaterialStateProperty.all(0),
-                shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+          BlocProvider(
+            create: (context) => AbsentBloc(),
+            child: BlocConsumer<AbsentBloc, AbsentStates>(
+              listener: (context, state) {
+                if (state is AbsentSuccessState) {
+                  Fluttertoast.showToast(
+                      msg: state.markAbsentByUserResponse.message);
+                }
+                if (state is AbsentFailureState) {
+                  Fluttertoast.showToast(msg: state.failureMessage);
+                }
+              },
+              builder: (context, state) {
+                return Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      BlocProvider.of<AbsentBloc>(context).add(
+                          AbsentSuccessEvent(absentReason: absentReason.text));
+                    },
+                    style: ButtonStyle(
+                      fixedSize: MaterialStateProperty.all(const Size(180, 50)),
+                      backgroundColor: MaterialStateProperty.all(colorPrimary),
+                      elevation: MaterialStateProperty.all(0),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                    ),
+                    child: const Text(
+                      "Submit",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              child: const Text(
-                "Submit",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
-              ),
+                );
+              },
             ),
           ),
         ],

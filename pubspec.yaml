@@ -46,7 +46,7 @@ dependencies:
   ntp:
   fluttertoast:
   shared_preferences:
-  
+  connectivity:
 
 
 dev_dependencies:

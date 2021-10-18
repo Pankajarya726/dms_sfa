@@ -4,4 +4,5 @@ class Url {
   static const String getUserDetailsByUserId = "getUserDetailsByUserId";
   static const String clockIn = "clockInByUser";
   static const String clockOut = "clockOutByUser";
+  static const String markAbsentByUser = "absentMarkByUser";
 }
