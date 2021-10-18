@@ -3,6 +3,7 @@ import 'package:sfa/main.dart';
 import 'package:sfa/ui/login_screen/login_bloc/login_event.dart';
 import 'package:sfa/ui/login_screen/login_bloc/login_state.dart';
 import 'package:sfa/ui/login_screen/login_model/login_response.dart';
+import 'package:sfa/utility/shared_prefrence.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(LoginInitialState());
@@ -19,6 +20,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     LoginResponse response =
         await repository.login(event.mobileNumber, event.password);
     if (response.success) {
+      SharedPrefrence.setStringPreference(
+          SharedPrefrence.token, response.accessToken);
+      options.headers.addAll({
+        "Authorization": "Bearer ${response.accessToken}",
+      });
       yield LoginSuccessState(loginResponse: response);
     } else {
       yield LoginFailureState(message: response.message);

@@ -30,16 +30,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 "mobile_number", mobileNumber.toString());
 
             SharedPrefrence.setStringPreference(
-                "password", password.toString());
-
-            SharedPrefrence.setStringPreference(
                 "id", state.loginResponse.id.toString());
 
             SharedPrefrence.setBooleanPreference(
                 "login", state.loginResponse.success);
-
-            SharedPrefrence.setStringPreference(
-                "token", state.loginResponse.accessToken.toString());
 
             Navigator.of(context).pushReplacement(MaterialPageRoute(
                 builder: (BuildContext context) => const HomeScreen()));
@@ -241,8 +235,8 @@ class _LoginScreenState extends State<LoginScreen> {
     String password,
   ) {
     RegExp regxMobile = RegExp(r'(^[0-9]{10}$)');
-    RegExp regxPassword =
-        RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+    // RegExp regxPassword =
+    RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
     if (mobileNumber.isEmpty && password.isEmpty) {
       Fluttertoast.showToast(msg: "Field can't be Empty");
     } else if (mobileNumber.isEmpty) {

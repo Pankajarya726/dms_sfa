@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final userData = userDataFromMap(jsonString);
-
 import 'dart:convert';
 
 class UserData {
