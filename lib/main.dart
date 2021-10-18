@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +8,7 @@ import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/shared_prefrence.dart';
 
 BaseOptions options = BaseOptions(
+  responseType: ResponseType.json,
   baseUrl: Url.baseUrl,
   connectTimeout: 60000,
   sendTimeout: 60000,
@@ -35,7 +34,8 @@ void main() {
 void getToken() async {
   var token = await SharedPrefrence.getStringPreference(SharedPrefrence.token);
   Map<String, dynamic> header = {
-    "Autherization": "Bearer $token",
+    "Authorization": "Bearer $token",
+    "Accept": "application/json"
   };
   options.headers.addAll(header);
 }

@@ -7,6 +7,7 @@ import 'package:sfa/ui/attendence_home/attendence_home_screen.dart';
 import 'package:sfa/ui/home_screen/home_screen_bloc/home_screen_bloc.dart';
 import 'package:sfa/ui/home_screen/home_screen_bloc/home_screen_event.dart';
 import 'package:sfa/ui/home_screen/home_screen_bloc/home_screen_state.dart';
+import 'package:sfa/ui/settings/settings_screen.dart';
 import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/shared_prefrence.dart';
 
@@ -43,10 +44,9 @@ class _HomeScreenState extends State<HomeScreen> {
     "Lorem ipsum dolor sit amet",
     "Lorem ipsum dolor sit amet",
   ];
-  String imageUrl =
-      "https://i.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI";
-  String employeeName = "Employee Name";
-  String designation = "Employee Designation";
+  String imageUrl = "";
+  String employeeName = "";
+  String designation = "";
 
   @override
   void initState() {
@@ -64,7 +64,6 @@ class _HomeScreenState extends State<HomeScreen> {
             const CircularProgressIndicator();
           }
           if (state is HomeScreenSuccessState) {
-            log(state.userData.mobileNumber);
             imageUrl = state.userData.image;
             employeeName = state.userData.name;
             designation = state.userData.designation;
@@ -85,25 +84,48 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: BlocBuilder<HomeScreenBloc, HomeScreenState>(
                   builder: (context, state) {
                     return ListTile(
-                      leading: Container(
-                        width: 58.0,
-                        height: 58.0,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(imageUrl),
-                            fit: BoxFit.cover,
-                          ),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(50.0)),
-                        ),
-                      ),
-                      title: Text(
-                        employeeName,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold),
-                      ),
+                      leading: imageUrl.isNotEmpty
+                          ? Container(
+                              width: 58.0,
+                              height: 58.0,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage(imageUrl),
+                                  fit: BoxFit.cover,
+                                ),
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(50.0)),
+                              ),
+                            )
+                          : Container(
+                              width: 58.0,
+                              height: 58.0,
+                              decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(50.0)),
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                    "assets/placeholder.png",
+                                  ),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                      title: employeeName.isNotEmpty
+                          ? Text(
+                              employeeName,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          : const Text(
+                              "Username",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold),
+                            ),
                       subtitle: Row(
                         children: [
                           Padding(
@@ -112,20 +134,36 @@ class _HomeScreenState extends State<HomeScreen> {
                               decoration: BoxDecoration(
                                   color: Colors.white30,
                                   borderRadius: BorderRadius.circular(10)),
-                              child: Text(
-                                "  " + designation + "  ",
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
-                              ),
+                              child: designation.isNotEmpty
+                                  ? Text(
+                                      "  " + designation + "  ",
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    )
+                                  : const Text(
+                                      "  Designation  ",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    ),
                             ),
                           ),
                         ],
                       ),
-                      trailing: const CircleAvatar(
-                        radius: 12,
-                        backgroundImage: AssetImage("assets/setting.png"),
+                      trailing: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SettingsScreen()));
+                        },
+                        child: const CircleAvatar(
+                          radius: 12,
+                          backgroundImage: AssetImage("assets/setting.png"),
+                        ),
                       ),
                     );
                   },
