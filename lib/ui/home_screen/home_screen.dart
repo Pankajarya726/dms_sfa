@@ -84,6 +84,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: BlocBuilder<HomeScreenBloc, HomeScreenState>(
                   builder: (context, state) {
                     return ListTile(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MyProfileHome()));
+                      },
                       leading: imageUrl.isNotEmpty
                           ? Container(
                               width: 58.0,
