@@ -27,10 +27,6 @@ class ApiRepository {
         Url.markAbsentByUser,
         data: data,
       );
-<<<<<<< HEAD
-=======
-
->>>>>>> ee4523a11ddb29a43058835d2ef9f73c46bf7d6c
       if (response.statusCode == 200) {
         MarkAbsentByUserResponse markAbsentByUserResponse =
             MarkAbsentByUserResponse.fromJson(response.toString());
