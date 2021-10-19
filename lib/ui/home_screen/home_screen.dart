@@ -7,7 +7,7 @@ import 'package:sfa/ui/attendence_home/attendence_home_screen.dart';
 import 'package:sfa/ui/home_screen/home_screen_bloc/home_screen_bloc.dart';
 import 'package:sfa/ui/home_screen/home_screen_bloc/home_screen_event.dart';
 import 'package:sfa/ui/home_screen/home_screen_bloc/home_screen_state.dart';
-import 'package:sfa/ui/settings/settings_screen.dart';
+import 'package:sfa/ui/settings_screen/settings_screen.dart';
 import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/shared_prefrence.dart';
 
@@ -84,6 +84,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: BlocBuilder<HomeScreenBloc, HomeScreenState>(
                   builder: (context, state) {
                     return ListTile(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MyProfileHome()));
+                      },
                       leading: imageUrl.isNotEmpty
                           ? Container(
                               width: 58.0,
@@ -158,7 +164,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => SettingsScreen()));
+                                  builder: (context) => SettingsScreen(
+                                        name: employeeName,
+                                        designation: designation,
+                                        image: imageUrl,
+                                      )));
                         },
                         child: const CircleAvatar(
                           radius: 12,

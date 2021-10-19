@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sfa/ui/forgot_password/frogot_password.dart';
 import 'package:sfa/ui/home_screen/home_screen.dart';
 import 'package:sfa/ui/login_screen/login_bloc/login_bloc.dart';
 import 'package:sfa/ui/login_screen/login_bloc/login_event.dart';
@@ -169,13 +170,19 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                InkWell(
-                  onTap: () {},
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 5, 25, 0),
-                      child: Container(
-                        alignment: Alignment.centerRight,
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 5, 25, 0),
+                    child: Container(
+                      alignment: Alignment.centerRight,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ForgotPasswordScreen()));
+                        },
                         child: const Text(
                           "Forgot Password ?",
                           style: TextStyle(

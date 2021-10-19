@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sfa/utility/colors.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({Key? key}) : super(key: key);
+  final String image;
+  const EditProfileScreen({required this.image, Key? key}) : super(key: key);
 
   @override
   _EditProfileScreenState createState() => _EditProfileScreenState();
@@ -29,21 +30,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(100),
-                  child: Image.network(
-                      "https://cdn.pixabay.com/photo/2021/08/25/20/42/field-6574455__480.jpg",
-                      width: 125,
-                      height: 125,
-                      fit: BoxFit.cover),
+                  child: widget.image.isNotEmpty
+                      ? Image.network(widget.image,
+                          width: 90, height: 90, fit: BoxFit.cover)
+                      : Image.asset("assets/placeholder.png",
+                          width: 90, height: 90, fit: BoxFit.cover),
                 ),
                 Positioned(
                   top: 10,
-                  right: 5,
+                  right: 0,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(100),
                     child: Image.asset(
                       "assets/edit.png",
-                      width: 25,
-                      height: 25,
+                      width: 24,
+                      height: 24,
                       fit: BoxFit.cover,
                       color: colorPrimary,
                     ),
