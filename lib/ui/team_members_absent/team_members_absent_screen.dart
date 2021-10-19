@@ -174,33 +174,6 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
                           color: Color(0xff303030),
                         ),
                       ),
-                      // TextFormField(
-                      //   readOnly: true,
-                      //   maxLines: 5,
-                      //   enableInteractiveSelection: false,
-                      //   initialValue:
-                      //       "Lorem Ipsum is simply dummy text of the text printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text. It is a long established fact that a reader will be distracted.It is a long established fact that a reader will be distractedIt is a long established fact that a reader will be distractedIt is a long established fact that a reader will be distracted",
-                      //   keyboardType: TextInputType.text,
-                      //   style: const TextStyle(
-                      //     color: Color(0xff303030),
-                      //     fontWeight: FontWeight.w600,
-                      //     fontSize: 16,
-                      //   ),
-                      //   decoration: const InputDecoration(
-                      //     focusedBorder: UnderlineInputBorder(
-                      //       borderSide: BorderSide(
-                      //         width: 1,
-                      //         color: Color(0xff555555),
-                      //       ),
-                      //     ),
-                      //     enabledBorder: UnderlineInputBorder(
-                      //       borderSide: BorderSide(
-                      //         width: 1,
-                      //         color: Color(0xff555555),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
                       const SizedBox(
                         height: 20,
                       ),

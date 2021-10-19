@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sfa/ui/member_report_screen/member_report_screen.dart';
 import 'package:sfa/ui/my_profile_attendence/my_profile_attendence.dart';
 import 'package:sfa/ui/my_profile_details/my_profile_details.dart';
 import 'package:sfa/utility/colors.dart';
@@ -15,6 +16,7 @@ class _MyProfileHomeState extends State<MyProfileHome> {
   var format = DateFormat("dd-MMM-yyyy");
   DateTime? dateTime = DateTime.now();
   String date = "";
+  int index = 0;
   final TabBar _tabBar = TabBar(
     labelColor: Colors.white,
     indicatorColor: colorPrimary,
@@ -41,44 +43,115 @@ class _MyProfileHomeState extends State<MyProfileHome> {
   Widget build(BuildContext context) {
     date = format.format(dateTime!);
     return DefaultTabController(
-      initialIndex: 0,
+      initialIndex: index,
       length: 2,
       child: Scaffold(
         backgroundColor: reportBG,
         appBar: AppBar(
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          backgroundColor: colorPrimary,
           title: const Text(
             "My Profile",
             style: TextStyle(color: Colors.white),
           ),
+          elevation: 0.0,
           centerTitle: true,
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(62),
-            child: Container(
-              margin: const EdgeInsets.only(top: 50),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              decoration: const BoxDecoration(
-                color: Color(0xfff7f7f7),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
+          backgroundColor: colorPrimary,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: MaterialButton(
+                height: 30,
+                padding: const EdgeInsets.symmetric(horizontal: 0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(3),
                 ),
+                color: Colors.white70,
+                elevation: 0,
+                child: Row(
+                  children: [
+                    Image.asset(
+                      "assets/report.png",
+                      width: 15,
+                      fit: BoxFit.fill,
+                    ),
+                    const SizedBox(width: 10),
+                    const Text(
+                      "Report",
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const MemberReportScreen(),
+                    ),
+                  );
+                },
               ),
+            ),
+          ],
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(72),
+            child: Container(
+              color: reportBG,
+              padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
               child: Material(
                 color: colorTabBG,
-                child: _tabBar,
                 borderRadius: BorderRadius.circular(50),
+                child: TabBar(
+                  labelStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  indicatorColor: colorPrimary,
+                  unselectedLabelColor: colorPrimary,
+                  indicator: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: colorPrimary,
+                  ),
+                  tabs: const [
+                    Tab(
+                      text: "Details",
+                    ),
+                    Tab(
+                      text: "Attendence",
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-        body: const TabBarView(
-          children: [
-            MyProfileDetails(),
-            MyProfileAttendence(),
-          ],
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          decoration: const BoxDecoration(
+            color: colorPrimary,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            decoration: const BoxDecoration(
+              color: reportBG,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+            ),
+            child: const TabBarView(
+              children: [
+                MyProfileDetails(),
+                MyProfileAttendence(),
+              ],
+            ),
+          ),
         ),
       ),
     );

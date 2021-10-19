@@ -137,402 +137,159 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                       ),
                     ),
                     child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.fromLTRB(16, 12, 0, 4),
-                            child: const Text(
-                              "Attendence Details",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            margin: const EdgeInsets.all(10),
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              RichText(
+                                text: const TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: 'Clock in : ',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: '8:00:50 AM',
+                                      style: TextStyle(
+                                        color: colorGreen,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                            child: Column(
-                              children: [
-                                Container(
-                                  height: 50,
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      topRight: Radius.circular(10),
+                              RichText(
+                                text: const TextSpan(
+                                  children: [
+                                    TextSpan(
+                                        text: 'Clock out : ',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        )),
+                                    TextSpan(
+                                      text: '4:00:50 PM',
+                                      style: TextStyle(
+                                        color: colorPrimary,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: const <Widget>[
-                                      Text(
-                                        "Monthly Days",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      Text(
-                                        "30",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
+                                  ],
                                 ),
-                                Container(
-                                  height: 50,
-                                  color: Colors.white,
-                                  margin: const EdgeInsets.only(top: 2),
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: const <Widget>[
-                                      Text(
-                                        "Full Days",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      Text(
-                                        "25",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  height: 50,
-                                  color: Colors.white,
-                                  margin: const EdgeInsets.only(top: 2),
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: const <Widget>[
-                                      Text(
-                                        "Half Days",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      Text(
-                                        "2",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  height: 50,
-                                  color: Colors.white,
-                                  margin: const EdgeInsets.only(top: 2),
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: const <Widget>[
-                                      Text(
-                                        "Absent",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      Text(
-                                        "1",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  height: 50,
-                                  margin: const EdgeInsets.only(top: 2),
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                                  decoration: const BoxDecoration(
-                                    color: colorGrayLite,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(10),
-                                      bottomRight: Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: const <Widget>[
-                                      Text(
-                                        "Monthly Days",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      Text(
-                                        "30",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.fromLTRB(16, 4, 0, 4),
-                            child: const Text(
-                              "Salary Details",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            margin: const EdgeInsets.all(10),
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
                               ),
-                            ),
-                            child: Column(
-                              children: [
-                                Container(
-                                  height: 50,
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      topRight: Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: const <Widget>[
-                                      Text(
-                                        "Monthly Salary",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      Text(
-                                        "15000",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  height: 50,
-                                  color: Colors.white,
-                                  margin: const EdgeInsets.only(top: 2),
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: const <Widget>[
-                                      Text(
-                                        "Total Working Days",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      Text(
-                                        "26",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  height: 50,
-                                  margin: const EdgeInsets.only(top: 2),
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                                  decoration: const BoxDecoration(
-                                    color: colorGrayLite,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(10),
-                                      bottomRight: Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: const <Widget>[
-                                      Text(
-                                        "Total Salary",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      Text(
-                                        "13000",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          const Text(
+                            "PJP",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.fromLTRB(16, 6, 0, 0),
-                            child: const Text(
-                              "Working Plan",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          const Text(
+                            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
                             ),
                           ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.fromLTRB(16, 4, 0, 4),
-                            child: const Text(
-                              "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-                              style: TextStyle(
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          const Text(
+                            "Working Plan",
+                            style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 16,
-                              ),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          const Text(
+                            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          const Text(
+                            "Clock-in Selfie",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.fromLTRB(16, 14, 0, 4),
-                            child: const Text(
-                              "Clock-in Salfie",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
+                            height: 150,
+                            width: 150,
+                            margin: const EdgeInsets.only(top: 5),
+                            decoration: BoxDecoration(
+                              color: colorGray,
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          Row(children: [
-                            Container(
-                              alignment: Alignment.centerLeft,
-                              height: 150,
-                              width: 150,
-                              margin: const EdgeInsets.fromLTRB(16, 4, 0, 10),
-                              decoration: BoxDecoration(
-                                color: colorGray,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                          ]),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.fromLTRB(16, 6, 0, 4),
-                            child: const Text(
-                              "Comment",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          const Text(
+                            "Comment",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.fromLTRB(16, 0, 0, 4),
-                            child: const Text(
-                              "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-                              style: TextStyle(
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          const Text(
+                            "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          const Text(
+                            "Clock-out Selfie",
+                            style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 16,
-                              ),
-                            ),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.fromLTRB(16, 14, 0, 4),
-                            child: const Text(
-                              "Clock-out Salfie",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
+                            height: 150,
+                            width: 150,
+                            margin: const EdgeInsets.only(top: 5),
+                            decoration: BoxDecoration(
+                              color: colorGray,
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          Row(children: [
-                            Container(
-                              alignment: Alignment.centerLeft,
-                              height: 150,
-                              width: 150,
-                              margin: const EdgeInsets.fromLTRB(16, 4, 0, 10),
-                              decoration: BoxDecoration(
-                                color: colorGray,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                          ]),
                         ],
                       ),
                     ),

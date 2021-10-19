@@ -12,6 +12,7 @@ import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_bloc.dart';
 import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_events.dart';
 import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_states.dart';
 import 'package:sfa/utility/colors.dart';
+import 'package:sfa/utility/constants.dart';
 
 class AttendenceClockInOut extends StatefulWidget {
   const AttendenceClockInOut({Key? key}) : super(key: key);
@@ -40,11 +41,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   @override
   void initState() {
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -161,7 +157,11 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                   const SizedBox(
                     height: 20,
                   ),
-                  clockInOutTextField(),
+                  commonTextField("PJP", 17.0, 3, true),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  workingPlanTextField(),
                   const SizedBox(
                     height: 20,
                   ),
@@ -377,20 +377,22 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     _locationData = await location.getLocation();
   }
 
-  Widget clockInOutTextField() {
+  Widget commonTextField(headingText, myFontSize, myMaxLines, enableDisable) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Working plan",
+        Text(
+          headingText,
           textAlign: TextAlign.left,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 17,
+            fontSize: myFontSize,
           ),
         ),
         TextFormField(
-          maxLines: 4,
+          readOnly: enableDisable,
+          maxLines: myMaxLines,
+          initialValue: LOREUMIPSUM,
           keyboardType: TextInputType.text,
           style: const TextStyle(
             color: Color(0xff303030),
@@ -399,7 +401,66 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
           ),
           decoration: const InputDecoration(
             focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: colorPrimary),
+              borderSide: BorderSide(color: Color(0xff555555)),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                width: 1,
+                color: Color(0xff555555),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget workingPlanTextField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Expanded(
+              child: Text(
+                "Working Plan",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17,
+                ),
+              ),
+            ),
+            IconButton(
+              constraints: const BoxConstraints(),
+              padding: const EdgeInsets.symmetric(horizontal: 7),
+              onPressed: () {},
+              icon: const Icon(Icons.thumb_up),
+            ),
+            IconButton(
+              constraints: const BoxConstraints(),
+              padding: const EdgeInsets.symmetric(horizontal: 7),
+              onPressed: () {
+                showUpdateAndConfirmBottomSheet();
+              },
+              icon: const Icon(Icons.edit),
+            )
+          ],
+        ),
+        TextFormField(
+          maxLines: 3,
+          readOnly: true,
+          initialValue: LOREUMIPSUM,
+          keyboardType: TextInputType.text,
+          style: const TextStyle(
+            color: Color(0xff303030),
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+          decoration: const InputDecoration(
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xff555555)),
             ),
             enabledBorder: UnderlineInputBorder(
               borderSide: BorderSide(
@@ -446,5 +507,76 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     setState(() {
       _image = image;
     });
+  }
+
+  void showUpdateAndConfirmBottomSheet() async {
+    return showModalBottomSheet(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      context: context,
+      builder: (context) {
+        return SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: IntrinsicHeight(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                decoration: const BoxDecoration(
+                  color: reportBG,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20.0),
+                    topRight: Radius.circular(20.0),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      commonTextField("Working Plan", 20.0, 5, false),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      roundedButton(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget roundedButton() {
+    return Center(
+      child: ElevatedButton(
+        onPressed: () {},
+        style: ButtonStyle(
+          padding: MaterialStateProperty.all(
+            EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          ),
+          backgroundColor: MaterialStateProperty.all(colorPrimary),
+          elevation: MaterialStateProperty.all(0),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+          ),
+        ),
+        child: const Text(
+          "Update & Confirm",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+          ),
+        ),
+      ),
+    );
   }
 }

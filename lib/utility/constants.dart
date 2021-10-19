@@ -1,0 +1,2 @@
+const LOREUMIPSUM =
+    "Lorem Ipsum is simply dummy text of the text printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text. It is a long established fact that a reader will be distracted.It is a long established fact that a reader will be distractedIt is a long established fact that a reader will be distractedIt is a long established fact that a reader will be distracted";
