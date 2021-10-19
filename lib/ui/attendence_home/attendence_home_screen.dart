@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sfa/ui/absent/absent_screen.dart';
+import 'package:sfa/ui/add_pjp_screen/add_pjp_screen.dart';
 import 'package:sfa/ui/attendence_clock_in_out/attendence_clock_in_out.dart';
+import 'package:sfa/ui/pjp_screen/pjp_screen.dart';
 import 'package:sfa/ui/team_members/team_members_screen.dart';
 import 'package:sfa/utility/colors.dart';
 
@@ -16,7 +18,8 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
   List<Widget> navigationScreens = [
     const AttendenceClockInOut(),
     const AbsentScreen(),
-    const TeamMembersScreen()
+    const TeamMembersScreen(),
+    const PJPScreen(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -29,7 +32,9 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
             ? const Text("Attendence")
             : currentBottomTabIndex == 1
                 ? const Text("Absent")
-                : const Text("Team Members"),
+                : currentBottomTabIndex == 3
+                    ? const Text("PJP")
+                    : const Text("Team Members"),
         centerTitle: true,
         actions: [
           currentBottomTabIndex == 2
@@ -44,36 +49,89 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
                   ),
                 )
               : Container(),
-          IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Image(
-              fit: BoxFit.contain,
-              width: 23,
-              image: AssetImage("assets/home.png"),
-            ),
-          )
+          currentBottomTabIndex == 3
+              ? Container()
+              : IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Image(
+                    fit: BoxFit.contain,
+                    width: 23,
+                    image: AssetImage("assets/home.png"),
+                  ),
+                ),
+          currentBottomTabIndex == 3
+              ? Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: MaterialButton(
+                    height: 30,
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                    color: Colors.white70,
+                    elevation: 0,
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          "assets/report.png",
+                          width: 15,
+                          fit: BoxFit.fill,
+                        ),
+                        const SizedBox(width: 10),
+                        const Text(
+                          "Add PJP",
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AddPjpScreen()));
+                    },
+                  ),
+                )
+              : Container(),
         ],
       ),
       body: navigationScreens[currentBottomTabIndex],
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: colorPrimary,
+        showUnselectedLabels: true,
+        unselectedItemColor: colorGrayDark,
         currentIndex: currentBottomTabIndex,
         onTap: ontemTaped,
         elevation: 20,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(
+              Icons.home,
+            ),
             label: "Home",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.card_travel),
+            icon: Icon(
+              Icons.card_travel,
+            ),
             label: "Absent",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.group),
+            icon: Icon(
+              Icons.group,
+            ),
             label: "Team",
-          )
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.ac_unit,
+            ),
+            label: "PJP",
+          ),
         ],
       ),
     );
