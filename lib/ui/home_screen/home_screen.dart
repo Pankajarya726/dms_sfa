@@ -158,7 +158,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => SettingsScreen()));
+                                  builder: (context) => SettingsScreen(
+                                        name: employeeName,
+                                        designation: designation,
+                                        image: imageUrl,
+                                      )));
                         },
                         child: const CircleAvatar(
                           radius: 12,

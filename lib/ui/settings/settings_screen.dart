@@ -6,7 +6,15 @@ import 'package:sfa/ui/login_screen/login_screen.dart';
 import 'package:sfa/utility/shared_prefrence.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  final String name;
+  final String designation;
+  final String image;
+  const SettingsScreen(
+      {required this.name,
+      required this.designation,
+      required this.image,
+      Key? key})
+      : super(key: key);
 
   @override
   _SettingScreenState createState() => _SettingScreenState();
@@ -20,12 +28,6 @@ class _SettingScreenState extends State<SettingsScreen> {
     "Rate App",
     "Share App",
     "Logout"
-  ];
-
-  final List<Widget> settingsNavigation = [
-    const EditProfileScreen(),
-    const ChangePasswordScreen(),
-    const AboutUsScreen()
   ];
 
   @override
@@ -83,18 +85,30 @@ class _SettingScreenState extends State<SettingsScreen> {
                         ),
                       ),
                       child: Column(
-                        children: const [
-                          Text("Smith Johnson",
-                              style: TextStyle(
-                                  color: Color(0xfff24b55),
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600)),
-                          SizedBox(height: 8),
-                          Text("Employee designation",
-                              style: TextStyle(
-                                  color: Color(0xff303030),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600)),
+                        children: [
+                          widget.name.isNotEmpty
+                              ? Text(widget.name,
+                                  style: const TextStyle(
+                                      color: Color(0xfff24b55),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600))
+                              : const Text("Username",
+                                  style: TextStyle(
+                                      color: Color(0xfff24b55),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600)),
+                          const SizedBox(height: 8),
+                          widget.designation.isNotEmpty
+                              ? Text(widget.designation,
+                                  style: const TextStyle(
+                                      color: Color(0xff303030),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600))
+                              : const Text("Designation",
+                                  style: TextStyle(
+                                      color: Color(0xff303030),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600)),
                         ],
                       ),
                     ),
@@ -111,16 +125,16 @@ class _SettingScreenState extends State<SettingsScreen> {
                               offset: Offset(0, 0),
                               blurRadius: 5,
                               spreadRadius: 5,
-                            ), //BoxShadow/BoxShadow
+                            ),
                           ],
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(100),
-                          child: Image.network(
-                              "https://cdn.pixabay.com/photo/2021/08/25/20/42/field-6574455__480.jpg",
-                              width: 90,
-                              height: 90,
-                              fit: BoxFit.cover),
+                          child: widget.image.isNotEmpty
+                              ? Image.network(widget.image,
+                                  width: 90, height: 90, fit: BoxFit.cover)
+                              : Image.asset("assets/placeholder.png",
+                                  width: 90, height: 90, fit: BoxFit.cover),
                         ),
                       ),
                     ),
@@ -162,15 +176,35 @@ class _SettingScreenState extends State<SettingsScreen> {
                   ),
                 ),
                 onTap: () {
-                  index <= 2
-                      ? Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => settingsNavigation[index]),
-                        )
-                      : index == 3 || index == 4
-                          ? Container()
-                          : logoutDialog(context);
+                  if (index == 0) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            EditProfileScreen(image: widget.image),
+                      ),
+                    );
+                  }
+                  if (index == 1) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ChangePasswordScreen(),
+                      ),
+                    );
+                  }
+                  if (index == 2) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AboutUsScreen(),
+                      ),
+                    );
+                  }
+
+                  if (index == 5) {
+                    logoutDialog(context);
+                  }
                 });
           }),
         ),
