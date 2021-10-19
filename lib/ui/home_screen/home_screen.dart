@@ -7,7 +7,7 @@ import 'package:sfa/ui/attendence_home/attendence_home_screen.dart';
 import 'package:sfa/ui/home_screen/home_screen_bloc/home_screen_bloc.dart';
 import 'package:sfa/ui/home_screen/home_screen_bloc/home_screen_event.dart';
 import 'package:sfa/ui/home_screen/home_screen_bloc/home_screen_state.dart';
-import 'package:sfa/ui/settings/settings_screen.dart';
+import 'package:sfa/ui/settings_screen/settings_screen.dart';
 import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/shared_prefrence.dart';
 
