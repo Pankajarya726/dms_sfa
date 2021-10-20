@@ -130,14 +130,13 @@ class ApiRepository {
 
       if (response.statusCode == 200) {
         AddPjpResponse result = AddPjpResponse.fromJson(response.toString());
-        log(result.toString());
         return result;
       } else {
         return AddPjpResponse(
             message: response.statusMessage.toString(), success: false);
       }
     } catch (exception) {
-      return AddPjpResponse(message: "catch", success: false);
+      return AddPjpResponse(message: "Something went Wrong!", success: false);
     }
   }
 }
