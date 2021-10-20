@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sfa/utility/colors.dart';
+import 'package:sfa/utility/constants.dart';
 
 class TeamMembersClockoutScreen extends StatefulWidget {
   const TeamMembersClockoutScreen({Key? key}) : super(key: key);
@@ -146,7 +147,7 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen> {
                           "Oliver",
                           textAlign: TextAlign.left,
                           style: TextStyle(
-                            color: Colors.black,
+                            color: colorPrimary,
                             fontSize: 21,
                             fontWeight: FontWeight.bold,
                           ),
@@ -202,11 +203,11 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen> {
                               ),
                             ),
                             const Padding(
-                              padding: EdgeInsets.only(top: 20, bottom: 20),
+                              padding: EdgeInsets.only(top: 10, bottom: 10),
                               child: Text(
                                 "08:08:35",
                                 style: TextStyle(
-                                  fontSize: 50.0,
+                                  fontSize: 45.0,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                   letterSpacing: 5,
@@ -255,7 +256,15 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen> {
                         ),
                       ),
                       const SizedBox(
-                        height: 30,
+                        height: 20,
+                      ),
+                      commonTextField("PJP"),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      commonTextField("Working plan"),
+                      const SizedBox(
+                        height: 20,
                       ),
                       Row(
                         children: [
@@ -280,6 +289,44 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget commonTextField(headingText) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          headingText,
+          textAlign: TextAlign.left,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 17,
+          ),
+        ),
+        TextFormField(
+          readOnly: true,
+          maxLines: 3,
+          initialValue: LOREUMIPSUM,
+          keyboardType: TextInputType.text,
+          style: const TextStyle(
+            color: Color(0xff303030),
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+          decoration: const InputDecoration(
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xff555555)),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                width: 1,
+                color: Color(0xff555555),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

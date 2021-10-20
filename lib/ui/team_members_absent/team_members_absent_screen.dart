@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sfa/ui/team_members_absent/bloc/team_members_absent_bloc.dart';
+import 'package:sfa/ui/team_members_absent/bloc/team_members_absent_events.dart';
+import 'package:sfa/ui/team_members_absent/bloc/team_members_absent_states.dart';
 import 'package:sfa/utility/colors.dart';
 
 class TeamMembersAbsentScreen extends StatefulWidget {
@@ -10,33 +14,26 @@ class TeamMembersAbsentScreen extends StatefulWidget {
 }
 
 class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
-  List<String> names = [
-    "Oliver",
-    "William",
-    "Noah",
-    "Peter",
-    "Benjamin",
-    "George",
-  ];
-  List<String> absentReason = [
-    "Absent due to health Absent due to health Absent due to health",
-    "Absent due to urgent Absent due to urgent Absent due to urgent",
-    "Absent due to health Absent due to health Absent due to health",
-    "Absent due to traffic Absent due to traffic Absent due to traffic",
-    "Absent due to urgent Absent due to urgent Absent due to urgent",
-    "Absent due to health Absent due to health Absent due to health",
-  ];
+  TeamMembersAbsentBloc teamMembersAbsentBloc = TeamMembersAbsentBloc();
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Column(
-        children: [
-          Column(
-            children: List.generate(
-              absentReason.length,
-              (index) {
+    return BlocProvider(
+      create: (context) => teamMembersAbsentBloc,
+      child: BlocBuilder<TeamMembersAbsentBloc, TeamMembersAbsentStates>(
+        builder: (context, state) {
+          if (state is TeamMembersAbsentInitialState) {
+            teamMembersAbsentBloc
+                .add(TeamMembersAbsentSuccessEvent(currentDate: "2021-10-18"));
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (state is TeamMembersAbsentSuccessState) {
+            return ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              itemCount: state.getAbsentDataResponse.data!.length,
+              itemBuilder: (context, index) {
                 return Container(
                   margin: const EdgeInsets.only(bottom: 15),
                   padding: const EdgeInsets.fromLTRB(15, 12, 0, 12),
@@ -61,7 +58,7 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          names[index],
+                          state.getAbsentDataResponse.data![index].name,
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -71,7 +68,7 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
                           height: 5,
                         ),
                         Text(
-                          absentReason[index],
+                          state.getAbsentDataResponse.data![index].absentReason,
                           style: const TextStyle(
                             overflow: TextOverflow.ellipsis,
                             color: colorLightBlack,
@@ -108,9 +105,18 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
                   ),
                 );
               },
-            ),
-          ),
-        ],
+            );
+          }
+          if (state is TeamMembersAbsentFailureState) {
+            if (state.failureMessage == "Data not found") {
+              return Image.asset("assets/no-data.gif");
+            }
+            return Center(
+              child: Text(state.failureMessage),
+            );
+          }
+          return Container();
+        },
       ),
     );
   }
