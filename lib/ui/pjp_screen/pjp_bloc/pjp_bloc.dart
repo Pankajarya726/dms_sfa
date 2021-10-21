@@ -34,7 +34,7 @@ class PjpBloc extends Bloc<PjpEvents, PjpState> {
     if (responce.success) {
       yield UpdateSuccessState(response: responce);
     } else {
-      yield UpdatePjpFailureState(message: responce.message);
+      yield UpdateFailureState(message: responce.message);
     }
   }
 }

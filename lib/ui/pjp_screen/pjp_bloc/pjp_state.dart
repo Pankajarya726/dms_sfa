@@ -23,7 +23,7 @@ class PjpFailureState extends PjpState {
   PjpFailureState({required this.message});
 }
 
-class UpdatePjpInitialState extends PjpState {}
+class UpdateInitialState extends PjpState {}
 
 class UpdateLoadingState extends PjpState {}
 
@@ -32,7 +32,7 @@ class UpdateSuccessState extends PjpState {
   UpdateSuccessState({required this.response});
 }
 
-class UpdatePjpFailureState extends PjpState {
+class UpdateFailureState extends PjpState {
   final String message;
-  UpdatePjpFailureState({required this.message});
+  UpdateFailureState({required this.message});
 }
