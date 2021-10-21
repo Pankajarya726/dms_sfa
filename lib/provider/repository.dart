@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:sfa/main.dart';
 import 'package:sfa/provider/url.dart';
@@ -5,6 +7,8 @@ import 'package:sfa/ui/absent/bloc/model/mark_absent_by_user.dart';
 import 'package:sfa/ui/add_pjp_screen/add_pjp_model/add_pjp_model.dart';
 import 'package:sfa/ui/home_screen/home_screen_model/home_screen_model.dart';
 import 'package:sfa/ui/login_screen/login_model/login_response.dart';
+import 'package:sfa/ui/pjp_screen/pjp_model/pjp_model.dart';
+import 'package:sfa/ui/pjp_screen/update_pjp_model/update_pjp_model.dart';
 import 'package:sfa/ui/team_members_absent/model/get_absent_data_response.dart';
 
 class ApiRepository {
@@ -163,6 +167,56 @@ class ApiRepository {
       }
     } catch (exception) {
       return AddPjpResponse(message: "Something went Wrong!", success: false);
+    }
+  }
+
+  Future<PjpResponse> getPjpData(String id, String month) async {
+    Map<String, dynamic> params = {
+      "user_id": id,
+      "month": month,
+    };
+
+    try {
+      Response response = await dio.post(
+        Url.pjpGetCurrentMonthData,
+        data: params,
+      );
+
+      if (response.statusCode == 200) {
+        PjpResponse result = PjpResponse.fromJson(response.toString());
+
+        return result;
+      } else {
+        return PjpResponse(
+            message: response.statusMessage.toString(), success: false);
+      }
+    } catch (exception) {
+      return PjpResponse(message: "Something went Wrong!", success: false);
+    }
+  }
+
+  Future<UpdateResponce> updatePjpData(String id, String description) async {
+    Map<String, dynamic> params = {
+      "id": id,
+      "pjp_description": description,
+    };
+
+    try {
+      Response response = await dio.post(
+        Url.updatePjp,
+        data: params,
+      );
+
+      if (response.statusCode == 200) {
+        UpdateResponce result = UpdateResponce.fromJson(response.toString());
+
+        return result;
+      } else {
+        return UpdateResponce(
+            message: response.statusMessage.toString(), success: false);
+      }
+    } catch (exception) {
+      return UpdateResponce(message: "Something went Wrong!", success: false);
     }
   }
 }

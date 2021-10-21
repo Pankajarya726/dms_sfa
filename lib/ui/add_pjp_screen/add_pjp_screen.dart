@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -146,7 +144,15 @@ class _AddPjpScreenState extends State<AddPjpScreen> {
                                 String id =
                                     await SharedPrefrence.getStringPreference(
                                         SharedPrefrence.id);
-
+                                if (getDescription.text.isNotEmpty) {
+                                  addPJPBloc.add(AddPJPEvent(
+                                      id: id,
+                                      date: pjpDate,
+                                      description: getDescription.text));
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: "Field can't be empty");
+                                }
                                 addPJPBloc.add(AddPJPEvent(
                                     id: id,
                                     date: pjpDate,
