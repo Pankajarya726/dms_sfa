@@ -13,6 +13,7 @@ import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_events.dart';
 import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_states.dart';
 import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/constants.dart';
+import 'package:sfa/utility/shared_prefrence.dart';
 
 class AttendenceClockInOut extends StatefulWidget {
   const AttendenceClockInOut({Key? key}) : super(key: key);
@@ -187,34 +188,50 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                     onTap: () {
                       _imgFromCamera();
                     },
-                    child: Container(
-                      width: 150,
-                      height: 150,
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                        border: Border.all(
-                          color: Colors.grey,
-                          style: BorderStyle.solid,
-                          width: 2,
-                        ),
-                      ),
-                      child: _image != null
-                          ? Image.file(
-                              File(_image!.path),
+                    child: _image == null
+                        ? Container(
+                            width: 150,
+                            height: 150,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                              border: Border.all(
+                                color: Colors.grey,
+                                style: BorderStyle.solid,
+                                width: 2,
+                              ),
+                            ),
+                            child: Image.asset(
+                              "assets/camera.png",
+                              width: 10,
                               fit: BoxFit.cover,
-                            )
-                          : Container(
-                              height: 50,
-                              width: 50,
-                              padding: const EdgeInsets.all(55),
-                              child: const Image(
-                                image: AssetImage("assets/camera.png"),
+                            ),
+                          )
+                        : ClipRRect(
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(15),
+                            ),
+                            child: Container(
+                              width: 150,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(15),
+                                ),
+                                border: Border.all(
+                                  color: Colors.grey,
+                                  style: BorderStyle.solid,
+                                  width: 2,
+                                ),
+                              ),
+                              child: Image.file(
+                                File(_image!.path),
                                 fit: BoxFit.cover,
                               ),
                             ),
-                    ),
+                          ),
                   ),
                   const SizedBox(
                     height: 10,
@@ -245,6 +262,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                             ),
                             InkWell(
                               onTap: () {
+                                getUserLocation();
                                 setState(() {
                                   gpsLocation = !gpsLocation;
                                 });
@@ -432,19 +450,32 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                 ),
               ),
             ),
-            IconButton(
-              constraints: const BoxConstraints(),
-              padding: const EdgeInsets.symmetric(horizontal: 7),
-              onPressed: () {},
-              icon: const Icon(Icons.thumb_up),
+            SizedBox(
+              height: 30,
+              child: IconButton(
+                // constraints: const BoxConstraints(),
+                padding: const EdgeInsets.symmetric(horizontal: 7),
+                onPressed: () {},
+                icon: Image.asset(
+                  "assets/confirm.png",
+                  width: 30,
+                  fit: BoxFit.contain,
+                ),
+              ),
             ),
-            IconButton(
-              constraints: const BoxConstraints(),
-              padding: const EdgeInsets.symmetric(horizontal: 7),
-              onPressed: () {
-                showUpdateAndConfirmBottomSheet();
-              },
-              icon: const Icon(Icons.edit),
+            SizedBox(
+              height: 30,
+              child: IconButton(
+                padding: const EdgeInsets.symmetric(horizontal: 7),
+                onPressed: () {
+                  showUpdateAndConfirmBottomSheet();
+                },
+                icon: Image.asset(
+                  "assets/update.png",
+                  width: 30,
+                  fit: BoxFit.contain,
+                ),
+              ),
             )
           ],
         ),

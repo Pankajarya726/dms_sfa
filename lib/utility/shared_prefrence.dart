@@ -7,6 +7,7 @@ class SharedPrefrence {
   static const password = "password";
   static const mobileNumber = "mobile_number";
   static const id = "id";
+  static const confirmEditIcon = "confirm_edit_icon";
 
   static Future<bool> setStringPreference(String key, String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

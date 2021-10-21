@@ -152,7 +152,7 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
                           "Oliver",
                           textAlign: TextAlign.left,
                           style: TextStyle(
-                            color: Colors.black,
+                            color: colorPrimary,
                             fontSize: 21,
                             fontWeight: FontWeight.bold,
                           ),
@@ -165,8 +165,8 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
                         "Reason",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 17,
-                          color: colorPrimary,
+                          fontSize: 18,
+                          color: Colors.black,
                         ),
                       ),
                       const SizedBox(

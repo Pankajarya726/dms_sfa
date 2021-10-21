@@ -101,34 +101,71 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
       ),
       body: navigationScreens[currentBottomTabIndex],
       bottomNavigationBar: BottomNavigationBar(
+        selectedFontSize: 15,
         selectedItemColor: colorPrimary,
         showUnselectedLabels: true,
         unselectedItemColor: colorGrayDark,
         currentIndex: currentBottomTabIndex,
         onTap: ontemTaped,
         elevation: 20,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
+            icon: SizedBox(
+              width: 26,
+              child: currentBottomTabIndex == 0
+                  ? Image.asset(
+                      "assets/f1-a.png",
+                      fit: BoxFit.fill,
+                    )
+                  : Image.asset(
+                      "assets/f1.png",
+                      fit: BoxFit.fill,
+                    ),
             ),
             label: "Home",
           ),
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.card_travel,
+            icon: SizedBox(
+              width: 26,
+              child: currentBottomTabIndex == 1
+                  ? Image.asset(
+                      "assets/f2-a.png",
+                      fit: BoxFit.fill,
+                    )
+                  : Image.asset(
+                      "assets/f2.png",
+                      fit: BoxFit.fill,
+                    ),
             ),
             label: "Absent",
           ),
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.group,
+            icon: SizedBox(
+              width: 26,
+              child: currentBottomTabIndex == 2
+                  ? Image.asset(
+                      "assets/f3-a.png",
+                      fit: BoxFit.fill,
+                    )
+                  : Image.asset(
+                      "assets/f3.png",
+                      fit: BoxFit.fill,
+                    ),
             ),
             label: "Team",
           ),
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.ac_unit,
+            icon: SizedBox(
+              width: 26,
+              child: currentBottomTabIndex == 3
+                  ? Image.asset(
+                      "assets/f4-a.png",
+                      fit: BoxFit.fill,
+                    )
+                  : Image.asset(
+                      "assets/f4.png",
+                      fit: BoxFit.fill,
+                    ),
             ),
             label: "PJP",
           ),
