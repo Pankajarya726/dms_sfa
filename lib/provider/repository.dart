@@ -2,8 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:sfa/main.dart';
 import 'package:sfa/provider/url.dart';
 import 'package:sfa/ui/absent/bloc/model/mark_absent_by_user.dart';
+import 'package:sfa/ui/add_pjp_screen/add_pjp_model/add_pjp_model.dart';
 import 'package:sfa/ui/home_screen/home_screen_model/home_screen_model.dart';
 import 'package:sfa/ui/login_screen/login_model/login_response.dart';
+import 'package:sfa/ui/team_members_absent/model/get_absent_data_response.dart';
 
 class ApiRepository {
   static final ApiRepository repository = ApiRepository.internal();
@@ -13,62 +15,6 @@ class ApiRepository {
   }
 
   ApiRepository.internal();
-
-  Future<GetAbsentDataResponse> getAbsentData(userId, absentDate) async {
-    Map<String, dynamic> data = {
-      "user_id": userId,
-      "date_added": absentDate,
-    };
-
-    try {
-      Response response = await dio.post(
-        Url.getAbsentData,
-        data: data,
-      );
-      if (response.statusCode == 200) {
-        GetAbsentDataResponse getAbsentDataResponse =
-            GetAbsentDataResponse.fromJson(response.toString());
-        return getAbsentDataResponse;
-      } else {
-        return GetAbsentDataResponse(
-            success: false, message: "Something went wrong");
-      }
-    } catch (exception) {
-      return GetAbsentDataResponse(
-        success: false,
-        message: "Something went wrong",
-      );
-    }
-  }
-
-  Future<MarkAbsentByUserResponse> markAbsentByUser(
-      userId, absentDate, absentReason) async {
-    Map<String, dynamic> data = {
-      "user_id": userId,
-      "absent_date": absentDate,
-      "absent_reason": absentReason,
-    };
-
-    try {
-      Response response = await dio.post(
-        Url.markAbsentByUser,
-        data: data,
-      );
-      if (response.statusCode == 200) {
-        MarkAbsentByUserResponse markAbsentByUserResponse =
-            MarkAbsentByUserResponse.fromJson(response.toString());
-        return markAbsentByUserResponse;
-      } else {
-        return MarkAbsentByUserResponse(
-            success: false, message: "Something went wrong");
-      }
-    } catch (exception) {
-      return MarkAbsentByUserResponse(
-        success: false,
-        message: "Something went wrong",
-      );
-    }
-  }
 
   Future<LoginResponse> login(String mobileNumber, String password) async {
     Map<String, dynamic> data = {
@@ -167,6 +113,33 @@ class ApiRepository {
     }
   }
 
+  Future<GetAbsentDataResponse> getAbsentData(userId, absentDate) async {
+    Map<String, dynamic> data = {
+      "user_id": userId,
+      "date_added": absentDate,
+    };
+
+    try {
+      Response response = await dio.post(
+        Url.getAbsentData,
+        data: data,
+      );
+      if (response.statusCode == 200) {
+        GetAbsentDataResponse getAbsentDataResponse =
+            GetAbsentDataResponse.fromJson(response.toString());
+        return getAbsentDataResponse;
+      } else {
+        return GetAbsentDataResponse(
+            success: false, message: "Something went wrong");
+      }
+    } catch (exception) {
+      return GetAbsentDataResponse(
+        success: false,
+        message: "Something went wrong",
+      );
+    }
+  }
+
   Future<AddPjpResponse> addPjp(
       String id, String date, String description) async {
     Map<String, dynamic> pjpData = {
@@ -174,7 +147,7 @@ class ApiRepository {
       "pjp_date": date,
       "pjp_description": description
     };
-    log("Data--->" + pjpData.toString());
+
     try {
       Response response = await dio.post(
         Url.addPjp,
