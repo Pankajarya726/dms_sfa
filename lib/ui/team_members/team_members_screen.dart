@@ -31,7 +31,7 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
         text: "Status",
       ),
       Tab(
-        text: "Clock-out",
+        text: "Clock-in",
       ),
       Tab(
         text: "Absent",
@@ -45,7 +45,7 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // date = format.format(dateTime!);
+    date = format.format(dateTime!);
     return DefaultTabController(
       initialIndex: 0,
       length: 3,

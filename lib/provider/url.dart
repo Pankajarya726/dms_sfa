@@ -5,5 +5,6 @@ class Url {
   static const String clockIn = "clockInByUser";
   static const String clockOut = "clockOutByUser";
   static const String markAbsentByUser = "absentMarkByUser";
+  static const String getAbsentData = "getAllUserForApprovingAbsents";
   static const String addPjp = "pjpAddDatabyUser";
 }
