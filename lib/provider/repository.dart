@@ -4,7 +4,6 @@ import 'package:sfa/provider/url.dart';
 import 'package:sfa/ui/absent/bloc/model/mark_absent_by_user.dart';
 import 'package:sfa/ui/home_screen/home_screen_model/home_screen_model.dart';
 import 'package:sfa/ui/login_screen/login_model/login_response.dart';
-import 'package:sfa/ui/team_members_absent/model/get_absent_data_response.dart';
 
 class ApiRepository {
   static final ApiRepository repository = ApiRepository.internal();
@@ -137,6 +136,60 @@ class ApiRepository {
           mobileNumber: "",
           image: "",
           designation: "");
+    }
+  }
+
+  Future<MarkAbsentByUserResponse> markAbsentByUser(
+      userId, absentDate, absentReason) async {
+    Map<String, dynamic> data = {
+      "user_id": userId,
+      "absent_date": absentDate,
+      "absent_reason": absentReason,
+    };
+    try {
+      Response response = await dio.post(
+        Url.markAbsentByUser,
+        data: data,
+      );
+      if (response.statusCode == 200) {
+        MarkAbsentByUserResponse markAbsentByUserResponse =
+            MarkAbsentByUserResponse.fromJson(response.toString());
+        return markAbsentByUserResponse;
+      } else {
+        return MarkAbsentByUserResponse(
+            success: false, message: "Something went wrong");
+      }
+    } catch (exception) {
+      return MarkAbsentByUserResponse(
+        success: false,
+        message: "Something went wrong",
+      );
+    }
+  }
+
+  Future<AddPjpResponse> addPjp(
+      String id, String date, String description) async {
+    Map<String, dynamic> pjpData = {
+      "user_id": id,
+      "pjp_date": date,
+      "pjp_description": description
+    };
+    log("Data--->" + pjpData.toString());
+    try {
+      Response response = await dio.post(
+        Url.addPjp,
+        data: pjpData,
+      );
+
+      if (response.statusCode == 200) {
+        AddPjpResponse result = AddPjpResponse.fromJson(response.toString());
+        return result;
+      } else {
+        return AddPjpResponse(
+            message: response.statusMessage.toString(), success: false);
+      }
+    } catch (exception) {
+      return AddPjpResponse(message: "Something went Wrong!", success: false);
     }
   }
 }
