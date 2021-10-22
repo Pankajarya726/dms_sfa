@@ -7,6 +7,7 @@ class PjpState extends Equatable {
   List<Object?> get props => throw UnimplementedError();
 }
 
+// PJP States
 class PjpInitialState extends PjpState {}
 
 class PjpLoadingState extends PjpState {}
@@ -23,6 +24,7 @@ class PjpFailureState extends PjpState {
   PjpFailureState({required this.message});
 }
 
+// PJP Update States
 class UpdateInitialState extends PjpState {}
 
 class UpdateLoadingState extends PjpState {}
@@ -35,4 +37,16 @@ class UpdateSuccessState extends PjpState {
 class UpdateFailureState extends PjpState {
   final String message;
   UpdateFailureState({required this.message});
+}
+
+// PJP Date States
+
+class DateIncrementState extends PjpState {
+  final String dateTime;
+  DateIncrementState({required this.dateTime});
+}
+
+class DateDecrementState extends PjpState {
+  final String dateTime;
+  DateDecrementState({required this.dateTime});
 }

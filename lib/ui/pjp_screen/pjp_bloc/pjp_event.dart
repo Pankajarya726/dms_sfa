@@ -20,3 +20,7 @@ class UpdatePjpEvent extends PjpEvents {
   @override
   List<Object?> get props => [id, description];
 }
+
+class DateIncrementEvent extends PjpEvents {}
+
+class DateDecrementEvent extends PjpEvents {}

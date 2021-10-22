@@ -149,6 +149,7 @@ class _AddPjpScreenState extends State<AddPjpScreen> {
                                       id: id,
                                       date: pjpDate,
                                       description: getDescription.text));
+                                  getDescription.clear();
                                 } else {
                                   Fluttertoast.showToast(
                                       msg: "Field can't be empty");
