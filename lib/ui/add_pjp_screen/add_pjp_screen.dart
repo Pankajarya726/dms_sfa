@@ -154,10 +154,6 @@ class _AddPjpScreenState extends State<AddPjpScreen> {
                                   Fluttertoast.showToast(
                                       msg: "Field can't be empty");
                                 }
-                                addPJPBloc.add(AddPJPEvent(
-                                    id: id,
-                                    date: pjpDate,
-                                    description: getDescription.text));
                               },
                               style: ButtonStyle(
                                 fixedSize: MaterialStateProperty.all(

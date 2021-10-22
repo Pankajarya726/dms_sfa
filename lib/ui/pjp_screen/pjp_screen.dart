@@ -1,10 +1,8 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
-import 'package:ntp/ntp.dart';
 import 'package:sfa/ui/pjp_screen/pjp_bloc/pjp_bloc.dart';
 import 'package:sfa/ui/pjp_screen/pjp_bloc/pjp_event.dart';
 import 'package:sfa/ui/pjp_screen/pjp_bloc/pjp_state.dart';
@@ -355,7 +353,7 @@ class _PJPScreenState extends State<PJPScreen> {
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom),
             child: IntrinsicHeight(
-              child: 1 == 1
+              child: DateTime.now().isBefore(pjpDate)
                   ? Container(
                       width: MediaQuery.of(context).size.width,
                       decoration: const BoxDecoration(
@@ -449,8 +447,6 @@ class _PJPScreenState extends State<PJPScreen> {
                             child: InkWell(
                               onTap: () {
                                 if (controller.text.isNotEmpty) {
-                                  log("==3${controller.text}");
-
                                   pjpBloc.add(UpdatePjpEvent(
                                       id: pjpId, description: controller.text));
                                   controller.clear();
