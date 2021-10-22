@@ -1,3 +1,6 @@
+import 'dart:developer';
+import 'dart:math';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
@@ -19,13 +22,14 @@ class PjpBloc extends Bloc<PjpEvents, PjpState> {
       yield UpdateLoadingState();
       yield* updatePjp(event);
     }
+    if (event is DateSelectEvent) {
+      yield DateSelectState(dateTime: event.dateTime);
+    }
     if (event is DateIncrementEvent) {
-      yield UpdateLoadingState();
-      yield* incrementDate();
+      yield DateIncrementState(dateTime: event.dateTime);
     }
     if (event is DateDecrementEvent) {
-      yield UpdateLoadingState();
-      yield* inecrementDate();
+      yield DateDecrementState(dateTime: event.dateTime);
     }
   }
 
@@ -46,17 +50,5 @@ class PjpBloc extends Bloc<PjpEvents, PjpState> {
     } else {
       yield UpdateFailureState(message: responce.message);
     }
-  }
-
-  Stream<PjpState> incrementDate() async* {
-    DateTime dateTime = await NTP.now();
-    var format = DateFormat("MMM-yyyy");
-    yield DateIncrementState(dateTime: format.format(dateTime));
-  }
-
-  Stream<PjpState> inecrementDate() async* {
-    DateTime dateTime = await NTP.now();
-    var format = DateFormat("MMM-yyyy");
-    yield DateDecrementState(dateTime: format.format(dateTime));
   }
 }

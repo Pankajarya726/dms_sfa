@@ -21,6 +21,23 @@ class UpdatePjpEvent extends PjpEvents {
   List<Object?> get props => [id, description];
 }
 
-class DateIncrementEvent extends PjpEvents {}
+class DateSelectEvent extends PjpEvents {
+  final DateTime dateTime;
+  DateSelectEvent({required this.dateTime});
+  @override
+  List<Object?> get props => [dateTime];
+}
 
-class DateDecrementEvent extends PjpEvents {}
+class DateIncrementEvent extends PjpEvents {
+  final DateTime dateTime;
+  DateIncrementEvent({required this.dateTime});
+  @override
+  List<Object?> get props => [dateTime];
+}
+
+class DateDecrementEvent extends PjpEvents {
+  final DateTime dateTime;
+  DateDecrementEvent({required this.dateTime});
+  @override
+  List<Object?> get props => [dateTime];
+}

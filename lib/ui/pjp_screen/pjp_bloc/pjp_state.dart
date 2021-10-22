@@ -4,7 +4,7 @@ import 'package:sfa/ui/pjp_screen/update_pjp_model/update_pjp_model.dart';
 
 class PjpState extends Equatable {
   @override
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [];
 }
 
 // PJP States
@@ -37,16 +37,29 @@ class UpdateSuccessState extends PjpState {
 class UpdateFailureState extends PjpState {
   final String message;
   UpdateFailureState({required this.message});
+  @override
+  List<Object?> get props => [message];
 }
 
 // PJP Date States
 
+class DateSelectState extends PjpState {
+  final DateTime dateTime;
+  DateSelectState({required this.dateTime});
+  @override
+  List<Object?> get props => [dateTime];
+}
+
 class DateIncrementState extends PjpState {
-  final String dateTime;
+  final DateTime dateTime;
   DateIncrementState({required this.dateTime});
+  @override
+  List<Object?> get props => [dateTime];
 }
 
 class DateDecrementState extends PjpState {
-  final String dateTime;
+  final DateTime dateTime;
   DateDecrementState({required this.dateTime});
+  @override
+  List<Object?> get props => [dateTime];
 }

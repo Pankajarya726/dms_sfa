@@ -1,13 +1,13 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:month_picker_dialog/month_picker_dialog.dart';
+import 'package:ntp/ntp.dart';
 import 'package:sfa/ui/pjp_screen/pjp_bloc/pjp_bloc.dart';
 import 'package:sfa/ui/pjp_screen/pjp_bloc/pjp_event.dart';
 import 'package:sfa/ui/pjp_screen/pjp_bloc/pjp_state.dart';
-
 import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/shared_prefrence.dart';
 
@@ -21,6 +21,7 @@ class PJPScreen extends StatefulWidget {
 class _PJPScreenState extends State<PJPScreen> {
   PjpBloc pjpBloc = PjpBloc();
   TextEditingController controller = TextEditingController();
+  DateTime dateTime = DateTime.now();
 
   @override
   initState() {
@@ -39,6 +40,18 @@ class _PJPScreenState extends State<PJPScreen> {
           }
           if (state is UpdateSuccessState) {
             Fluttertoast.showToast(msg: state.response.message);
+          }
+          if (state is DateSelectState) {
+            dateTime = state.dateTime;
+            getPjp();
+          }
+          if (state is DateIncrementState) {
+            dateTime = state.dateTime;
+            getPjp();
+          }
+          if (state is DateDecrementState) {
+            dateTime = state.dateTime;
+            getPjp();
           }
         },
         child: Scaffold(
@@ -79,28 +92,28 @@ class _PJPScreenState extends State<PJPScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Image.asset(
-                                  "assets/calendar.png",
-                                  color: Colors.white,
+                                InkWell(
+                                  onTap: () {
+                                    datePicker();
+                                  },
+                                  child: Image.asset(
+                                    "assets/calendar.png",
+                                    color: Colors.white,
+                                  ),
                                 ),
                                 const SizedBox(
                                   width: 10,
                                 ),
                                 BlocBuilder<PjpBloc, PjpState>(
-                                  builder: (context, state) {
-                                    if (state is DateDecrementState) {
-                                      log(state.dateTime);
-                                      return Text(
-                                        state.dateTime,
-                                        style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14),
-                                      );
-                                    }
-                                    return Container();
-                                  },
-                                )
+                                    builder: (context, state) {
+                                  return Text(
+                                    DateFormat("MMM-yyyy").format(dateTime),
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14),
+                                  );
+                                })
                               ],
                             ),
                           ),
@@ -113,7 +126,12 @@ class _PJPScreenState extends State<PJPScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  dateTime = DateTime(dateTime.year,
+                                      dateTime.month - 1, dateTime.day);
+                                  pjpBloc.add(
+                                      DateDecrementEvent(dateTime: dateTime));
+                                },
                                 child: Image.asset(
                                   "assets/icon_previous.png",
                                   width: 25,
@@ -123,7 +141,12 @@ class _PJPScreenState extends State<PJPScreen> {
                                 width: 10,
                               ),
                               InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  dateTime = DateTime(dateTime.year,
+                                      dateTime.month + 1, dateTime.day);
+                                  pjpBloc.add(
+                                      DateIncrementEvent(dateTime: dateTime));
+                                },
                                 child: Image.asset(
                                   "assets/icon_next.png",
                                   width: 25,
@@ -532,6 +555,18 @@ class _PJPScreenState extends State<PJPScreen> {
 
   Future<void> getPjp() async {
     var id = await SharedPrefrence.getStringPreference(SharedPrefrence.id);
-    pjpBloc.add(PjpEvent(id: id, month: "11"));
+    pjpBloc.add(PjpEvent(id: id, month: DateFormat("MM").format(dateTime)));
+  }
+
+  datePicker() {
+    showMonthPicker(
+      context: context,
+      firstDate: DateTime(DateTime.now().year - 0),
+      lastDate: DateTime(DateTime.now().year + 0, 12),
+      initialDate: dateTime,
+      locale: const Locale("en"),
+    ).then((date) {
+      pjpBloc.add(DateSelectEvent(dateTime: date!));
+    });
   }
 }
