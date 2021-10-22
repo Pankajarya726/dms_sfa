@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:month_picker_dialog/month_picker_dialog.dart';
+import 'package:sfa/ui/pjp_screen/pjp_bloc/pjp_bloc.dart';
+import 'package:sfa/ui/pjp_screen/pjp_bloc/pjp_event.dart';
+import 'package:sfa/ui/pjp_screen/pjp_bloc/pjp_state.dart';
 import 'package:sfa/utility/colors.dart';
+import 'package:sfa/utility/shared_prefrence.dart';
 
 class PJPScreen extends StatefulWidget {
   const PJPScreen({Key? key}) : super(key: key);
@@ -10,277 +17,332 @@ class PJPScreen extends StatefulWidget {
 }
 
 class _PJPScreenState extends State<PJPScreen> {
-  var format = DateFormat("dd-MMM-yyyy");
-  DateTime? dateTime = DateTime.now();
-  String date = "";
+  PjpBloc pjpBloc = PjpBloc();
+  TextEditingController controller = TextEditingController();
+  DateTime dateTime = DateTime.now();
+
+  @override
+  initState() {
+    super.initState();
+    getPjp();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // date = format.format(dateTime!);
-    List<String> names = [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
-    List<String> status = [
-      "Lorem Ipsum is simply dummy text.",
-      "Lorem Ipsum is simply dummy text.",
-      "Lorem Ipsum is simply dummy text.",
-      "Lorem Ipsum is simply dummy text.",
-      "Lorem Ipsum is simply dummy text.",
-      "Lorem Ipsum is simply dummy text.",
-    ];
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Container(
-        margin: const EdgeInsets.only(top: 8),
-        decoration: const BoxDecoration(
-          color: colorPrimary,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        child: Column(
-          children: [
-            Container(
-              height: 45,
-              width: MediaQuery.of(context).size.width,
-              decoration: const BoxDecoration(
-                color: colorPrimary,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      onTap: () async {
-                        dateTime = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(1950),
-                            lastDate: DateTime.now());
-                        date = format.format(dateTime!);
-                        setState(() {});
-                      },
-                      child: SizedBox(
-                        height: 30,
-                        width: MediaQuery.of(context).size.width * 0.30,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Image.asset(
-                              "assets/calendar.png",
-                              color: Colors.white,
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              date,
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 30,
-                      width: MediaQuery.of(context).size.width * 0.18,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              dateTime = DateTime(dateTime!.year,
-                                  dateTime!.month, dateTime!.day - 1);
-                              date = format.format(dateTime!);
-                              setState(() {});
-                            },
-                            child: Image.asset(
-                              "assets/icon_previous.png",
-                              width: 25,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              dateTime = DateTime(dateTime!.year,
-                                  dateTime!.month, dateTime!.day + 1);
-                              date = format.format(dateTime!);
-                              setState(() {});
-                            },
-                            child: Image.asset(
-                              "assets/icon_next.png",
-                              width: 25,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+    return BlocProvider<PjpBloc>(
+      create: (context) => pjpBloc,
+      child: BlocListener<PjpBloc, PjpState>(
+        listener: (context, state) {
+          if (state is UpdateFailureState) {
+            Fluttertoast.showToast(msg: state.message);
+          }
+          if (state is UpdateSuccessState) {
+            Fluttertoast.showToast(msg: state.response.message);
+          }
+          if (state is DateSelectState) {
+            dateTime = state.dateTime;
+            getPjp();
+          }
+          if (state is DateIncrementState) {
+            dateTime = state.dateTime;
+            getPjp();
+          }
+          if (state is DateDecrementState) {
+            dateTime = state.dateTime;
+            getPjp();
+          }
+        },
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          body: Container(
+            margin: const EdgeInsets.only(top: 8),
+            decoration: const BoxDecoration(
+              color: colorPrimary,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
               ),
             ),
-            Expanded(
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-                child: Container(
+            child: Column(
+              children: [
+                Container(
+                  height: 45,
                   width: MediaQuery.of(context).size.width,
                   decoration: const BoxDecoration(
-                    color: reportBG,
+                    color: colorPrimary,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20),
                     ),
                   ),
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 15),
-                      child: Column(
-                        children: List.generate(
-                          status.length,
-                          (index) {
-                            return Stack(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        InkWell(
+                          onTap: () async {},
+                          child: SizedBox(
+                            height: 30,
+                            width: MediaQuery.of(context).size.width * 0.30,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Container(
-                                  height: 85,
-                                  margin:
-                                      const EdgeInsets.fromLTRB(10, 15, 10, 0),
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 12, 0, 12),
-                                  decoration: BoxDecoration(
+                                InkWell(
+                                  onTap: () {
+                                    datePicker();
+                                  },
+                                  child: Image.asset(
+                                    "assets/calendar.png",
                                     color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.5),
-                                        spreadRadius: -8,
-                                        blurRadius: 7,
-                                        offset: const Offset(0, 3),
-                                      ),
-                                    ],
                                   ),
-                                  child: ListTile(
-                                    dense: true,
-                                    horizontalTitleGap: 0,
-                                    title: Padding(
-                                      padding: const EdgeInsets.only(left: 48),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                BlocBuilder<PjpBloc, PjpState>(
+                                    builder: (context, state) {
+                                  return Text(
+                                    DateFormat("MMM-yyyy").format(dateTime),
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14),
+                                  );
+                                })
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 30,
+                          width: MediaQuery.of(context).size.width * 0.18,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  dateTime = DateTime(dateTime.year,
+                                      dateTime.month - 1, dateTime.day);
+                                  pjpBloc.add(
+                                      DateDecrementEvent(dateTime: dateTime));
+                                },
+                                child: Image.asset(
+                                  "assets/icon_previous.png",
+                                  width: 25,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  dateTime = DateTime(dateTime.year,
+                                      dateTime.month + 1, dateTime.day);
+                                  pjpBloc.add(
+                                      DateIncrementEvent(dateTime: dateTime));
+                                },
+                                child: Image.asset(
+                                  "assets/icon_next.png",
+                                  width: 25,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      decoration: const BoxDecoration(
+                        color: reportBG,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        ),
+                      ),
+                      child: BlocBuilder<PjpBloc, PjpState>(
+                        builder: (context, state) {
+                          if (state is PjpLoadingState) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                          if (state is PjpSuccessState) {
+                            return SingleChildScrollView(
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 15),
+                                child: Column(
+                                  children: List.generate(
+                                    state.response.length,
+                                    (index) {
+                                      return Stack(
                                         children: [
-                                          Text(
-                                            names[index],
-                                            style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
+                                          Container(
+                                            height: 85,
+                                            margin: const EdgeInsets.fromLTRB(
+                                                10, 15, 10, 0),
+                                            padding: const EdgeInsets.fromLTRB(
+                                                12, 12, 0, 12),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.grey
+                                                      .withOpacity(0.5),
+                                                  spreadRadius: -8,
+                                                  blurRadius: 7,
+                                                  offset: const Offset(0, 3),
+                                                ),
+                                              ],
+                                            ),
+                                            child: ListTile(
+                                              dense: true,
+                                              horizontalTitleGap: 0,
+                                              title: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 48),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      DateFormat('EEE').format(
+                                                          state.response[index]
+                                                              .pjpDate!),
+                                                      style: const TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Text(
+                                                      state.response[index]
+                                                          .pjpDescription,
+                                                      style: const TextStyle(
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        color:
+                                                            Color(0xff303030),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              trailing: InkWell(
+                                                onTap: () {
+                                                  showPJP(
+                                                      state.response[index]
+                                                          .pjpDescription,
+                                                      state.response[index]
+                                                          .pjpDate!,
+                                                      state.response[index].id
+                                                          .toString());
+                                                },
+                                                child: Container(
+                                                  width: 20,
+                                                  margin: const EdgeInsets.only(
+                                                      right: 8),
+                                                  child: IconButton(
+                                                    onPressed: () {},
+                                                    icon: const Icon(
+                                                      Icons.more_vert,
+                                                      color: Colors.black,
+                                                      size: 27,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            status[index],
-                                            style: const TextStyle(
-                                              overflow: TextOverflow.ellipsis,
-                                              color: Color(0xff303030),
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500,
+                                          Positioned(
+                                            left: 10,
+                                            top: 15,
+                                            child: Container(
+                                              height: 85,
+                                              width: 65,
+                                              decoration: const BoxDecoration(
+                                                color: colorCalenderDateBG,
+                                                borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(10),
+                                                  bottomLeft:
+                                                      Radius.circular(10),
+                                                ),
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    DateFormat('MMM').format(
+                                                        state.response[index]
+                                                            .pjpDate!),
+                                                    style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Text(
+                                                    DateFormat('dd').format(
+                                                        state.response[index]
+                                                            .pjpDate!),
+                                                    style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 24,
+                                                        fontWeight:
+                                                            FontWeight.w900),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ],
-                                      ),
-                                    ),
-                                    trailing: InkWell(
-                                      onTap: () {
-                                        showPJP();
-                                      },
-                                      child: Container(
-                                        width: 20,
-                                        margin: const EdgeInsets.only(right: 8),
-                                        child: IconButton(
-                                          onPressed: () {},
-                                          icon: const Icon(
-                                            Icons.more_vert,
-                                            color: Colors.black,
-                                            size: 27,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                      );
+                                    },
                                   ),
                                 ),
-                                Positioned(
-                                  left: 10,
-                                  top: 15,
-                                  child: Container(
-                                    height: 85,
-                                    width: 65,
-                                    decoration: const BoxDecoration(
-                                      color: colorCalenderDateBG,
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        bottomLeft: Radius.circular(10),
-                                      ),
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: const [
-                                        Text(
-                                          "Sep",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Text(
-                                          "20",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.w900),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             );
-                          },
-                        ),
+                          }
+                          if (state is PjpFailureState) {
+                            return Center(
+                              child: Text(state.message),
+                            );
+                          }
+                          return Container();
+                        },
                       ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  void showPJP() async {
+  showPJP(String pjpDescription, DateTime pjpDate, String pjpId) async {
     return showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -291,7 +353,7 @@ class _PJPScreenState extends State<PJPScreen> {
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom),
             child: IntrinsicHeight(
-              child: 1 != 1
+              child: DateTime.now().isBefore(pjpDate)
                   ? Container(
                       width: MediaQuery.of(context).size.width,
                       decoration: const BoxDecoration(
@@ -308,10 +370,10 @@ class _PJPScreenState extends State<PJPScreen> {
                             padding: const EdgeInsets.fromLTRB(14, 14, 0, 0),
                             child: SizedBox(
                               width: MediaQuery.of(context).size.width,
-                              child: const Text(
-                                "Wed 20 Oct",
+                              child: Text(
+                                DateFormat('EEE dd MMM').format(pjpDate),
                                 textAlign: TextAlign.left,
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: colorPrimary,
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold),
@@ -336,10 +398,10 @@ class _PJPScreenState extends State<PJPScreen> {
                             padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
                             child: SizedBox(
                               width: MediaQuery.of(context).size.width,
-                              child: const Text(
-                                "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries.",
+                              child: Text(
+                                pjpDescription,
                                 textAlign: TextAlign.justify,
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Colors.black, fontSize: 17),
                               ),
                             ),
@@ -359,6 +421,7 @@ class _PJPScreenState extends State<PJPScreen> {
                           Padding(
                             padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
                             child: TextFormField(
+                              controller: controller,
                               maxLines: 4,
                               keyboardType: TextInputType.text,
                               style: const TextStyle(
@@ -383,7 +446,17 @@ class _PJPScreenState extends State<PJPScreen> {
                             padding: const EdgeInsets.fromLTRB(20, 6, 20, 14),
                             child: InkWell(
                               onTap: () {
-                                Navigator.pop(context);
+                                if (controller.text.isNotEmpty) {
+                                  pjpBloc.add(UpdatePjpEvent(
+                                      id: pjpId, description: controller.text));
+                                  controller.clear();
+
+                                  pjpBloc.add(PjpEvent(id: "15", month: "11"));
+                                  Navigator.pop(context);
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: "Field can't be empty");
+                                }
                               },
                               child: Container(
                                 height: 50,
@@ -409,6 +482,7 @@ class _PJPScreenState extends State<PJPScreen> {
                     )
                   : Container(
                       width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.40,
                       decoration: const BoxDecoration(
                         color: reportBG,
                         borderRadius: BorderRadius.only(
@@ -422,10 +496,10 @@ class _PJPScreenState extends State<PJPScreen> {
                             padding: const EdgeInsets.fromLTRB(14, 14, 0, 0),
                             child: SizedBox(
                               width: MediaQuery.of(context).size.width,
-                              child: const Text(
-                                "Wed 20 Oct",
+                              child: Text(
+                                DateFormat('EEE dd MMM').format(pjpDate),
                                 textAlign: TextAlign.left,
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: colorPrimary,
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold),
@@ -446,16 +520,23 @@ class _PJPScreenState extends State<PJPScreen> {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              child: const Text(
-                                "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries.",
-                                textAlign: TextAlign.justify,
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 17),
-                              ),
+                          SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(14, 10, 14, 14),
+                                  child: SizedBox(
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Text(
+                                      pjpDescription,
+                                      textAlign: TextAlign.justify,
+                                      style: const TextStyle(
+                                          color: Colors.black, fontSize: 17),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -466,5 +547,22 @@ class _PJPScreenState extends State<PJPScreen> {
         );
       },
     );
+  }
+
+  Future<void> getPjp() async {
+    var id = await SharedPrefrence.getStringPreference(SharedPrefrence.id);
+    pjpBloc.add(PjpEvent(id: id, month: DateFormat("MM").format(dateTime)));
+  }
+
+  datePicker() {
+    showMonthPicker(
+      context: context,
+      firstDate: DateTime(DateTime.now().year - 0),
+      lastDate: DateTime(DateTime.now().year + 0, 12),
+      initialDate: dateTime,
+      locale: const Locale("en"),
+    ).then((date) {
+      pjpBloc.add(DateSelectEvent(dateTime: date!));
+    });
   }
 }

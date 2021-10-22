@@ -1,11 +1,7 @@
-// To parse this JSON data, do
-//
-//     final addPjpResponse = addPjpResponseFromMap(jsonString);
-
 import 'dart:convert';
 
-class AddPjpResponse {
-  AddPjpResponse({
+class PjpResponse {
+  PjpResponse({
     required this.success,
     required this.message,
     this.data,
@@ -13,63 +9,62 @@ class AddPjpResponse {
 
   bool success;
   String message;
-  Data? data;
+  List<PjpData>? data;
 
-  factory AddPjpResponse.fromJson(String str) =>
-      AddPjpResponse.fromMap(json.decode(str));
+  factory PjpResponse.fromJson(String str) =>
+      PjpResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory AddPjpResponse.fromMap(Map<String, dynamic> json) => AddPjpResponse(
+  factory PjpResponse.fromMap(Map<String, dynamic> json) => PjpResponse(
         success: json["success"] == null ? null : json["success"],
         message: json["message"] == null ? null : json["message"],
-        data: json["data"] == null ? null : Data.fromMap(json["data"]),
+        data: json["data"] == null
+            ? null
+            : List<PjpData>.from(json["data"].map((x) => PjpData.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
         "success": success == null ? null : success,
         "message": message == null ? null : message,
-        "data": data == null ? null : data!.toMap(),
+        "data": data == null
+            ? null
+            : List<dynamic>.from(data!.map((x) => x.toMap())),
       };
 }
 
-class Data {
-  Data({
+class PjpData {
+  PjpData({
     required this.userId,
-    required this.pjpDescription,
     required this.pjpDate,
-    required this.status,
+    required this.pjpDescription,
     required this.id,
   });
 
-  String userId;
-  String pjpDescription;
+  int userId;
   DateTime? pjpDate;
-  int status;
-
+  String pjpDescription;
   int id;
 
-  factory Data.fromJson(String str) => Data.fromMap(json.decode(str));
+  factory PjpData.fromJson(String str) => PjpData.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory Data.fromMap(Map<String, dynamic> json) => Data(
+  factory PjpData.fromMap(Map<String, dynamic> json) => PjpData(
         userId: json["user_id"] == null ? null : json["user_id"],
-        pjpDescription:
-            json["pjp_description"] == null ? null : json["pjp_description"],
         pjpDate:
             json["pjp_date"] == null ? null : DateTime.parse(json["pjp_date"]),
-        status: json["status"] == null ? null : json["status"],
+        pjpDescription:
+            json["pjp_description"] == null ? null : json["pjp_description"],
         id: json["id"] == null ? null : json["id"],
       );
 
   Map<String, dynamic> toMap() => {
         "user_id": userId == null ? null : userId,
-        "pjp_description": pjpDescription == null ? null : pjpDescription,
         "pjp_date": pjpDate == null
             ? null
             : "${pjpDate!.year.toString().padLeft(4, '0')}-${pjpDate!.month.toString().padLeft(2, '0')}-${pjpDate!.day.toString().padLeft(2, '0')}",
-        "status": status == null ? null : status,
+        "pjp_description": pjpDescription == null ? null : pjpDescription,
         "id": id == null ? null : id,
       };
 }
