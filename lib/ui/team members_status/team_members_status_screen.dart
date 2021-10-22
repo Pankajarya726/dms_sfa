@@ -3,6 +3,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sfa/ui/team_member_details/team_members_details.dart';
 import 'package:sfa/utility/colors.dart';
+import 'package:sfa/utility/constants.dart';
 
 class TeamMembersStatusScreen extends StatefulWidget {
   const TeamMembersStatusScreen({Key? key}) : super(key: key);
@@ -97,7 +98,7 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                         width: 40,
                         child: IconButton(
                           onPressed: () {
-                            showStatusBottomSheet();
+                            showTeamMemberStatusSheet();
                           },
                           icon: const Icon(
                             Icons.more_vert,
@@ -117,7 +118,7 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
     );
   }
 
-  void showStatusBottomSheet() async {
+  void showTeamMemberStatusSheet() async {
     return showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -148,7 +149,7 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                           "Oliver",
                           textAlign: TextAlign.left,
                           style: TextStyle(
-                            color: Colors.black,
+                            color: colorPrimary,
                             fontSize: 21,
                             fontWeight: FontWeight.bold,
                           ),
@@ -159,10 +160,8 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
                         decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10),
-                          ),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.grey,
@@ -174,37 +173,94 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                               ),
                             )
                           ],
-                          color: colorYellow,
+                          gradient: LinearGradient(
+                            begin: Alignment.bottomLeft,
+                            end: Alignment.topRight,
+                            colors: [colorGreen, colorLightGreen],
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
                         ),
                         child: Column(
-                          children: const [
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              "05:00:20",
-                              style: TextStyle(
-                                letterSpacing: 5,
-                                fontSize: 50.0,
-                                fontWeight: FontWeight.bold,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  "Log in: 10:00 AM - Log out: 6:00 PM",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17,
+                                  ),
+                                ),
                               ),
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              "Log in: 10:25 AM",
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
+                            const Padding(
+                              padding: EdgeInsets.only(top: 10, bottom: 10),
+                              child: Text(
+                                "08:08:35",
+                                style: TextStyle(
+                                  fontSize: 45.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  letterSpacing: 5,
+                                ),
                               ),
                             ),
-                            SizedBox(
-                              height: 10,
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                              decoration: const BoxDecoration(
+                                border: Border(
+                                  top: BorderSide(
+                                    width: 1,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Flexible(
+                                    flex: 1,
+                                    child: SizedBox(
+                                      width: 15,
+                                      child:
+                                          Image.asset("assets/zone-clock.png"),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  const Flexible(
+                                    flex: 20,
+                                    child: Text(
+                                      "Time zone in Indore, Madhya Pradesh, India (GMT+5:30)",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      commonTextField("PJP"),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      commonTextField("Working plan"),
+                      const SizedBox(
+                        height: 12,
                       ),
                     ],
                   ),
@@ -214,6 +270,44 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget commonTextField(headingText) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          headingText,
+          textAlign: TextAlign.left,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 17,
+          ),
+        ),
+        TextFormField(
+          readOnly: true,
+          maxLines: 3,
+          initialValue: LOREUMIPSUM,
+          keyboardType: TextInputType.text,
+          style: const TextStyle(
+            color: Color(0xff303030),
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+          decoration: const InputDecoration(
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xff555555)),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                width: 1,
+                color: Color(0xff555555),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
