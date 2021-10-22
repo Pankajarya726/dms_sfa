@@ -3,6 +3,7 @@ import 'package:sfa/main.dart';
 import 'package:sfa/provider/url.dart';
 import 'package:sfa/ui/absent/bloc/model/mark_absent_by_user.dart';
 import 'package:sfa/ui/add_pjp_screen/add_pjp_model/add_pjp_model.dart';
+import 'package:sfa/ui/attendence_clock_in_out/model/clock_in_response.dart';
 import 'package:sfa/ui/home_screen/home_screen_model/home_screen_model.dart';
 import 'package:sfa/ui/login_screen/login_model/login_response.dart';
 import 'package:sfa/ui/team_members_absent/model/get_absent_data_response.dart';
@@ -82,6 +83,45 @@ class ApiRepository {
           mobileNumber: "",
           image: "",
           designation: "");
+    }
+  }
+
+  Future<ClockInResponse> clockIn(
+    String id,
+    String inOutTime,
+    String inOutDate,
+    String workingPlan,
+    String selfieImage,
+    String latitude,
+    String longitude,
+  ) async {
+    Map<String, dynamic> data = {
+      "id": id,
+      "in_out_time": inOutTime,
+      "in_out_date": inOutDate,
+      "working_plan": workingPlan,
+      "salf_image": selfieImage,
+      "latitude": latitude,
+      "longitude": longitude,
+    };
+    try {
+      Response response = await dio.post(Url.clockIn, data: data);
+
+      if (response.statusCode == 200) {
+        ClockInResponse clockInResponse =
+            ClockInResponse.fromJson(response.toString());
+        return clockInResponse;
+      } else {
+        return ClockInResponse(
+          success: false,
+          message: "Something went wrong!",
+        );
+      }
+    } catch (exception) {
+      return ClockInResponse(
+        success: false,
+        message: "Something went wrong!",
+      );
     }
   }
 

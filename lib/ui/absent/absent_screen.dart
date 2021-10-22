@@ -1,10 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
-import 'package:ntp/ntp.dart';
 import 'package:sfa/ui/absent/bloc/absent_bloc.dart';
 import 'package:sfa/ui/absent/bloc/absent_events.dart';
 import 'package:sfa/ui/absent/bloc/absent_states.dart';
@@ -19,6 +15,7 @@ class AbsentScreen extends StatefulWidget {
 
 class _AbsentScreenState extends State<AbsentScreen> {
   final absentReason = TextEditingController();
+  AbsentBloc absentBloc = AbsentBloc();
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -62,8 +59,8 @@ class _AbsentScreenState extends State<AbsentScreen> {
             height: 80,
           ),
           BlocProvider(
-            create: (context) => AbsentBloc(),
-            child: BlocConsumer<AbsentBloc, AbsentStates>(
+            create: (context) => absentBloc,
+            child: BlocListener<AbsentBloc, AbsentStates>(
               listener: (context, state) {
                 if (state is AbsentSuccessState) {
                   Fluttertoast.showToast(
@@ -73,33 +70,31 @@ class _AbsentScreenState extends State<AbsentScreen> {
                   Fluttertoast.showToast(msg: state.failureMessage);
                 }
               },
-              builder: (context, state) {
-                return Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      BlocProvider.of<AbsentBloc>(context).add(
-                          AbsentSuccessEvent(absentReason: absentReason.text));
-                    },
-                    style: ButtonStyle(
-                      fixedSize: MaterialStateProperty.all(const Size(180, 50)),
-                      backgroundColor: MaterialStateProperty.all(colorPrimary),
-                      elevation: MaterialStateProperty.all(0),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                    ),
-                    child: const Text(
-                      "Submit",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
+              child: Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    absentBloc.add(
+                        AbsentSuccessEvent(absentReason: absentReason.text));
+                  },
+                  style: ButtonStyle(
+                    fixedSize: MaterialStateProperty.all(const Size(180, 50)),
+                    backgroundColor: MaterialStateProperty.all(colorPrimary),
+                    elevation: MaterialStateProperty.all(0),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
                       ),
                     ),
                   ),
-                );
-              },
+                  child: const Text(
+                    "Submit",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ],

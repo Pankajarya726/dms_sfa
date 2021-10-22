@@ -102,69 +102,74 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
       body: navigationScreens[currentBottomTabIndex],
       bottomNavigationBar: BottomNavigationBar(
         selectedFontSize: 15,
+        unselectedFontSize: 15,
         selectedItemColor: colorPrimary,
         showUnselectedLabels: true,
         unselectedItemColor: colorGrayDark,
         currentIndex: currentBottomTabIndex,
+        type: BottomNavigationBarType.fixed,
         onTap: ontemTaped,
         elevation: 20,
         items: [
           BottomNavigationBarItem(
-            icon: SizedBox(
-              width: 26,
+            icon: Container(
+              // width: 26,
+              // height: 30,
               child: currentBottomTabIndex == 0
                   ? Image.asset(
                       "assets/f1-a.png",
-                      fit: BoxFit.fill,
+                      fit: BoxFit.contain,
                     )
                   : Image.asset(
                       "assets/f1.png",
-                      fit: BoxFit.fill,
+                      fit: BoxFit.contain,
                     ),
             ),
             label: "Home",
           ),
           BottomNavigationBarItem(
-            icon: SizedBox(
-              width: 26,
+            icon: Container(
+              // width: 26,
               child: currentBottomTabIndex == 1
                   ? Image.asset(
                       "assets/f2-a.png",
-                      fit: BoxFit.fill,
+                      fit: BoxFit.contain,
                     )
                   : Image.asset(
                       "assets/f2.png",
-                      fit: BoxFit.fill,
+                      fit: BoxFit.contain,
                     ),
             ),
             label: "Absent",
           ),
           BottomNavigationBarItem(
-            icon: SizedBox(
-              width: 26,
+            icon: Container(
+              // width: 26,
+              // height: 30,
               child: currentBottomTabIndex == 2
                   ? Image.asset(
                       "assets/f3-a.png",
-                      fit: BoxFit.fill,
+                      fit: BoxFit.contain,
                     )
                   : Image.asset(
                       "assets/f3.png",
-                      fit: BoxFit.fill,
+                      fit: BoxFit.contain,
                     ),
             ),
             label: "Team",
           ),
           BottomNavigationBarItem(
-            icon: SizedBox(
-              width: 26,
+            icon: Container(
+              // width: 26,
+              // height: 30,
               child: currentBottomTabIndex == 3
                   ? Image.asset(
                       "assets/f4-a.png",
-                      fit: BoxFit.fill,
+                      fit: BoxFit.contain,
                     )
                   : Image.asset(
                       "assets/f4.png",
-                      fit: BoxFit.fill,
+                      fit: BoxFit.contain,
                     ),
             ),
             label: "PJP",

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
@@ -13,7 +14,6 @@ import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_events.dart';
 import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_states.dart';
 import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/constants.dart';
-import 'package:sfa/utility/shared_prefrence.dart';
 
 class AttendenceClockInOut extends StatefulWidget {
   const AttendenceClockInOut({Key? key}) : super(key: key);
@@ -36,27 +36,40 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   int counter = 0;
   LatLng? currenPosition;
   Location location = Location();
-  XFile? _image;
+  XFile? image;
   ClockInOutBloc clockInOutBloc = ClockInOutBloc();
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  double latitude = 0.0;
+  double longitude = 0.0;
+  final workingPlan = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(10.0),
-      child: BlocProvider(
-        create: (context) => clockInOutBloc,
-        child: BlocBuilder<ClockInOutBloc, ClockInOutStates>(
-          builder: (context, state) {
-            if (state is ClockInOutInitialState) {
-              clockInOutBloc.add(ClockInOutSuccessEvent());
-            }
-            if (state is ClockInOutSuccessState) {
-              return Column(
+    return BlocProvider(
+      create: (context) => clockInOutBloc,
+      child: BlocConsumer<ClockInOutBloc, ClockInOutStates>(
+        listener: (context, state) {
+          if (state is ClockInSuccessState) {
+            Fluttertoast.showToast(msg: state.successMessage);
+            clockInOutBloc.add(ClockInOutInitialEvent());
+          }
+          if (state is ClockInFailureState) {
+            Fluttertoast.showToast(msg: state.failureMessage);
+            clockInOutBloc.add(ClockInOutInitialEvent());
+          }
+        },
+        builder: (context, state) {
+          if (state is ClockInOutInitialState) {
+            clockInOutBloc.add(ClockInOutInitialEvent());
+          }
+          if (state is ClockInOutLoadingState) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (state is ClockInOutInitialSuccessState) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
@@ -188,7 +201,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                     onTap: () {
                       _imgFromCamera();
                     },
-                    child: _image == null
+                    child: image == null
                         ? Container(
                             width: 150,
                             height: 150,
@@ -227,7 +240,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                                 ),
                               ),
                               child: Image.file(
-                                File(_image!.path),
+                                File(image!.path),
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -284,11 +297,16 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                   ),
                   roundedButtonWithIcon(context),
                 ],
-              );
-            }
-            return Container();
-          },
-        ),
+              ),
+            );
+          }
+          if (state is ClockInOutFailureState) {
+            return Center(
+              child: Text(state.failureMessage),
+            );
+          }
+          return Container();
+        },
       ),
     );
   }
@@ -301,6 +319,14 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
             clockInOut = !clockInOut;
           });
           if (clockInOut) {
+            clockInOutBloc.add(
+              ClockInSuccessEvent(
+                  inOutTime: "03:44:12",
+                  workingPlan: "self work",
+                  selfieImage: "report.png",
+                  latitude: "22.45566",
+                  longitude: "75.23455"),
+            );
             timerStream = stopWatchStream();
             timerSubscription = timerStream!.listen((int newTick) {
               setState(() {
@@ -369,7 +395,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   Future getUserLocation() async {
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
-    LocationData _locationData;
 
     _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled) {
@@ -390,9 +415,11 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     LocationData position = await location.getLocation();
     setState(() {
       currenPosition = LatLng(position.latitude!, position.longitude!);
+      latitude = position.latitude!;
+      longitude = position.longitude!;
+      print("lat = $latitude");
+      print("lon = $longitude");
     });
-    debugPrint("Current Position" + currenPosition.toString());
-    _locationData = await location.getLocation();
   }
 
   Widget commonTextField(headingText, myFontSize, myMaxLines, enableDisable) {
@@ -480,6 +507,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
           ],
         ),
         TextFormField(
+          // controller: workingPlan,
           maxLines: 3,
           readOnly: true,
           initialValue: LOREUMIPSUM,
@@ -536,7 +564,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
         .getImage(source: ImageSource.camera, imageQuality: 50);
 
     setState(() {
-      _image = image;
+      image = image;
     });
   }
 
