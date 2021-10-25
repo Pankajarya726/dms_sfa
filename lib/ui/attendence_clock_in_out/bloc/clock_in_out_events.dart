@@ -32,3 +32,21 @@ class ClockInSuccessEvent extends ClockInOutEvents {
         longitude,
       ];
 }
+
+class ClockOutSuccessEvent extends ClockInOutEvents {
+  final String inOutTime;
+  final String workingPlan;
+  final String selfieImage;
+
+  ClockOutSuccessEvent({
+    required this.inOutTime,
+    required this.workingPlan,
+    required this.selfieImage,
+  });
+  @override
+  List<Object?> get props => [
+        inOutTime,
+        workingPlan,
+        selfieImage,
+      ];
+}

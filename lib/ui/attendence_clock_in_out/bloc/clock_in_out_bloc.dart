@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
@@ -5,6 +7,7 @@ import 'package:sfa/main.dart';
 import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_events.dart';
 import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_states.dart';
 import 'package:sfa/ui/attendence_clock_in_out/model/clock_in_response.dart';
+import 'package:sfa/ui/attendence_clock_in_out/model/clock_out_response.dart';
 import 'package:sfa/utility/network.dart';
 import 'package:sfa/utility/shared_prefrence.dart';
 
@@ -20,6 +23,10 @@ class ClockInOutBloc extends Bloc<ClockInOutEvents, ClockInOutStates> {
     if (event is ClockInSuccessEvent) {
       yield ClockInOutLoadingState();
       yield* clockInSuccess(event);
+    }
+    if (event is ClockOutSuccessEvent) {
+      yield ClockInOutLoadingState();
+      yield* clockOutSuccess(event);
     }
   }
 }
@@ -49,18 +56,44 @@ Stream<ClockInOutStates> clockInSuccess(ClockInSuccessEvent event) async* {
     _ntpTime = await NTP.now();
     var format = DateFormat("yyyy-MM-dd");
     String userId = await SharedPrefrence.getStringPreference("id");
+
     ClockInResponse response = await repository.clockIn(
         userId,
         event.inOutTime,
         format.format(_ntpTime).toString(),
         event.workingPlan,
-        event.selfieImage,
+        File(event.selfieImage),
         event.latitude,
         event.longitude);
     if (response.success) {
       ClockInSuccessState(successMessage: response.message);
     } else {
       yield ClockInFailureState(failureMessage: response.message);
+    }
+  } else {
+    yield ClockInOutFailureState(
+        failureMessage: "Please check your internet connection!");
+  }
+}
+
+Stream<ClockInOutStates> clockOutSuccess(ClockOutSuccessEvent event) async* {
+  if (await Network.isConnected()) {
+    DateTime _ntpTime;
+    _ntpTime = await NTP.now();
+    var format = DateFormat("yyyy-MM-dd");
+    String userId = await SharedPrefrence.getStringPreference("id");
+
+    ClockOutResponse response = await repository.clockOut(
+      userId,
+      event.inOutTime,
+      format.format(_ntpTime).toString(),
+      event.workingPlan,
+      File(event.selfieImage),
+    );
+    if (response.success) {
+      ClockOutSuccessState(successMessage: response.message);
+    } else {
+      yield ClockOutFailureState(failureMessage: response.message);
     }
   } else {
     yield ClockInOutFailureState(

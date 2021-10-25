@@ -1,13 +1,17 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:sfa/main.dart';
 import 'package:sfa/provider/url.dart';
 import 'package:sfa/ui/absent/bloc/model/mark_absent_by_user.dart';
 import 'package:sfa/ui/add_pjp_screen/add_pjp_model/add_pjp_model.dart';
 import 'package:sfa/ui/attendence_clock_in_out/model/clock_in_response.dart';
+import 'package:sfa/ui/attendence_clock_in_out/model/clock_out_response.dart';
 import 'package:sfa/ui/home_screen/home_screen_model/home_screen_model.dart';
 import 'package:sfa/ui/login_screen/login_model/login_response.dart';
 import 'package:sfa/ui/pjp_screen/pjp_model/pjp_model.dart';
 import 'package:sfa/ui/pjp_screen/update_pjp_model/update_pjp_model.dart';
+import 'package:sfa/ui/team_members_absent/model/absent_approve_reject_response.dart';
 import 'package:sfa/ui/team_members_absent/model/get_absent_data_response.dart';
 import 'package:sfa/ui/team_members_clockout/model/get_clock_in_data_response.dart';
 
@@ -84,7 +88,7 @@ class ApiRepository {
     String inOutTime,
     String inOutDate,
     String workingPlan,
-    String selfieImage,
+    File selfieImage,
     String latitude,
     String longitude,
   ) async {
@@ -93,12 +97,16 @@ class ApiRepository {
       "in_out_time": inOutTime,
       "in_out_date": inOutDate,
       "working_plan": workingPlan,
-      "salf_image": selfieImage,
+      "salf_image": await MultipartFile.fromFile(selfieImage.path,
+          filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg"),
       "latitude": latitude,
       "longitude": longitude,
     };
+
+    FormData formData = FormData.fromMap(data);
+
     try {
-      Response response = await dio.post(Url.clockIn, data: data);
+      Response response = await dio.post(Url.clockIn, data: formData);
 
       if (response.statusCode == 200) {
         ClockInResponse clockInResponse =
@@ -112,6 +120,45 @@ class ApiRepository {
       }
     } catch (exception) {
       return ClockInResponse(
+        success: false,
+        message: "Something went wrong!",
+      );
+    }
+  }
+
+  Future<ClockOutResponse> clockOut(
+    String id,
+    String inOutTime,
+    String inOutDate,
+    String workingPlan,
+    File selfieImage,
+  ) async {
+    Map<String, dynamic> data = {
+      "user_id": id,
+      "in_out_time": inOutTime,
+      "in_out_date": inOutDate,
+      "working_plan": workingPlan,
+      "salf_image": await MultipartFile.fromFile(selfieImage.path,
+          filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg"),
+    };
+
+    FormData formData = FormData.fromMap(data);
+
+    try {
+      Response response = await dio.post(Url.clockOut, data: formData);
+
+      if (response.statusCode == 200) {
+        ClockOutResponse clockOutResponse =
+            ClockOutResponse.fromJson(response.toString());
+        return clockOutResponse;
+      } else {
+        return ClockOutResponse(
+          success: false,
+          message: "Something went wrong!",
+        );
+      }
+    } catch (exception) {
+      return ClockOutResponse(
         success: false,
         message: "Something went wrong!",
       );
@@ -162,12 +209,10 @@ class ApiRepository {
             GetClockInDataResponse.fromJson(response.toString());
         return getClockInDataResponse;
       } else {
-        print("repo response = ${response.data}");
         return GetClockInDataResponse(
             success: false, message: "Something went wrong!", data: []);
       }
     } catch (exception) {
-      print("repo response excep");
       return GetClockInDataResponse(
         success: false,
         message: "Something went wrong!",
@@ -197,6 +242,36 @@ class ApiRepository {
       }
     } catch (exception) {
       return GetAbsentDataResponse(
+        success: false,
+        message: "Something went wrong",
+      );
+    }
+  }
+
+  Future<AbsentApproveRejectResponse> absentApproveReject(
+      absentApprovedBy, userId, absentStatus, userAttendenceId) async {
+    Map<String, dynamic> data = {
+      "absent_approved_by": absentApprovedBy,
+      "user_id": userId,
+      "absent_status": absentStatus,
+      "user_attendence_id": userAttendenceId,
+    };
+
+    try {
+      Response response = await dio.post(
+        Url.absentApproveReject,
+        data: data,
+      );
+      if (response.statusCode == 200) {
+        AbsentApproveRejectResponse absentApproveRejectResponse =
+            AbsentApproveRejectResponse.fromJson(response.toString());
+        return absentApproveRejectResponse;
+      } else {
+        return AbsentApproveRejectResponse(
+            success: false, message: "Something went wrong");
+      }
+    } catch (exception) {
+      return AbsentApproveRejectResponse(
         success: false,
         message: "Something went wrong",
       );

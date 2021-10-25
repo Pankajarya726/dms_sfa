@@ -24,7 +24,7 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
         builder: (context, state) {
           if (state is TeamMembersAbsentInitialState) {
             teamMembersAbsentBloc
-                .add(TeamMembersAbsentSuccessEvent(currentDate: "2021-10-18"));
+                .add(TeamMembersAbsentSuccessEvent(currentDate: "2021-10-25"));
             return const Center(
               child: CircularProgressIndicator(),
             );
@@ -90,7 +90,14 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
                             width: 40,
                             child: IconButton(
                               onPressed: () {
-                                showAbsentBottomSheet();
+                                showAbsentBottomSheet(
+                                  state.getAbsentDataResponse.data![index].name,
+                                  state.getAbsentDataResponse.data![index]
+                                      .absentReason,
+                                  state.getAbsentDataResponse.data![index]
+                                      .userId,
+                                  state.getAbsentDataResponse.data![index].id,
+                                );
                               },
                               icon: const Icon(
                                 Icons.more_vert,
@@ -121,7 +128,8 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
     );
   }
 
-  void showAbsentBottomSheet() async {
+  void showAbsentBottomSheet(
+      name, absentReason, userId, userAttendenceId) async {
     return showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -148,10 +156,10 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
                     children: [
                       SizedBox(
                         width: MediaQuery.of(context).size.width,
-                        child: const Text(
-                          "Oliver",
+                        child: Text(
+                          name,
                           textAlign: TextAlign.left,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: colorPrimary,
                             fontSize: 21,
                             fontWeight: FontWeight.bold,
@@ -172,9 +180,9 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
                       const SizedBox(
                         height: 7,
                       ),
-                      const Text(
-                        "Lorem Ipsum is simply dummy text of the text printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text. It is a long established fact that a reader will be distracted.It is a long established fact that a reader will be distractedIt is a long established fact that a reader will be distractedIt is a long established fact that a reader will be distracted",
-                        style: TextStyle(
+                      Text(
+                        absentReason,
+                        style: const TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 16,
                           color: Color(0xff303030),
@@ -186,13 +194,15 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
                       Row(
                         children: [
                           Expanded(
-                            child: roundedButton(colorGreen, "Approve"),
+                            child: roundedButton(colorGreen, "Approve", userId,
+                                userAttendenceId),
                           ),
                           const SizedBox(
                             width: 25,
                           ),
                           Expanded(
-                            child: roundedButton(colorPrimary, "Reject"),
+                            child: roundedButton(colorPrimary, "Reject", userId,
+                                userAttendenceId),
                           ),
                         ],
                       ),
@@ -207,26 +217,50 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
     );
   }
 
-  Widget roundedButton(buttonColor, buttonText) {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ButtonStyle(
-          fixedSize: MaterialStateProperty.all(
-              Size(MediaQuery.of(context).size.width, 50)),
-          backgroundColor: MaterialStateProperty.all(buttonColor),
-          elevation: MaterialStateProperty.all(0),
-          shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
+  Widget roundedButton(buttonColor, buttonText, userId, userAttendenceId) {
+    return BlocProvider(
+      create: (context) => teamMembersAbsentBloc,
+      child: BlocListener<TeamMembersAbsentBloc, TeamMembersAbsentStates>(
+        listener: (context, state) {},
+        child: Center(
+          child: ElevatedButton(
+            onPressed: () {
+              if (buttonText == "Approve") {
+                teamMembersAbsentBloc.add(
+                  AbsentApproveRejectEvent(
+                    userId: userId,
+                    absentStatus: "2",
+                    userAttendenceId: userAttendenceId,
+                  ),
+                );
+              } else {
+                teamMembersAbsentBloc.add(
+                  AbsentApproveRejectEvent(
+                    userId: userId,
+                    absentStatus: "3",
+                    userAttendenceId: userAttendenceId,
+                  ),
+                );
+              }
+            },
+            style: ButtonStyle(
+              fixedSize: MaterialStateProperty.all(
+                  Size(MediaQuery.of(context).size.width, 50)),
+              backgroundColor: MaterialStateProperty.all(buttonColor),
+              elevation: MaterialStateProperty.all(0),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
             ),
-          ),
-        ),
-        child: Text(
-          buttonText,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 20,
+            child: Text(
+              buttonText,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+              ),
+            ),
           ),
         ),
       ),

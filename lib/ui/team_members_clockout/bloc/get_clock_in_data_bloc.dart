@@ -22,12 +22,10 @@ class GetClockInDataBloc
       if (await Network.isConnected()) {
         String userId = await SharedPrefrence.getStringPreference("id");
         GetClockInDataResponse response =
-            await repository.getClockInData(14, event.dateAdded);
+            await repository.getClockInData(userId, event.dateAdded);
         if (response.success) {
-          print("response = ${response.message}");
           yield GetClockInDataSuccessState(getClockInDataResponse: response);
         } else {
-          print("response = ${response.message}");
           yield GetClockInDataFailureState(failureMessage: response.message);
         }
       } else {

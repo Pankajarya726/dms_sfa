@@ -56,6 +56,14 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
             Fluttertoast.showToast(msg: state.failureMessage);
             clockInOutBloc.add(ClockInOutInitialEvent());
           }
+          if (state is ClockOutSuccessState) {
+            Fluttertoast.showToast(msg: state.successMessage);
+            clockInOutBloc.add(ClockInOutInitialEvent());
+          }
+          if (state is ClockOutFailureState) {
+            Fluttertoast.showToast(msg: state.failureMessage);
+            clockInOutBloc.add(ClockInOutInitialEvent());
+          }
         },
         builder: (context, state) {
           if (state is ClockInOutInitialState) {
@@ -171,11 +179,13 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                   const SizedBox(
                     height: 20,
                   ),
-                  commonTextField("PJP", 17.0, 3, true),
+                  clockInOut == false
+                      ? commonTextField("PJP", 17.0, 3, true)
+                      : commonTextField("Comment", 17.0, 3, false),
                   const SizedBox(
                     height: 20,
                   ),
-                  workingPlanTextField(),
+                  clockInOut == false ? workingPlanTextField() : Container(),
                   const SizedBox(
                     height: 20,
                   ),
@@ -218,8 +228,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                             ),
                             child: Image.asset(
                               "assets/camera.png",
-                              width: 10,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.fill,
                             ),
                           )
                         : ClipRRect(
@@ -316,38 +325,50 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
       child: ElevatedButton(
         onPressed: () {
           setState(() {
-            clockInOut = !clockInOut;
+            if (image != null) {
+              clockInOut = !clockInOut;
+            } else {
+              Fluttertoast.showToast(msg: "Please select an image ");
+            }
           });
           if (clockInOut) {
             clockInOutBloc.add(
               ClockInSuccessEvent(
                   inOutTime: "03:44:12",
                   workingPlan: "self work",
-                  selfieImage: "report.png",
+                  selfieImage: image!.path,
                   latitude: "22.45566",
                   longitude: "75.23455"),
             );
-            timerStream = stopWatchStream();
-            timerSubscription = timerStream!.listen((int newTick) {
-              setState(() {
-                timerHours = ((newTick / (60 * 60)) % 60)
-                    .floor()
-                    .toString()
-                    .padLeft(2, '0');
-                timerMinutes =
-                    ((newTick / 60) % 60).floor().toString().padLeft(2, '0');
-                timerSeconds =
-                    (newTick % 60).floor().toString().padLeft(2, '0');
-              });
-            });
+
+            // timerStream = stopWatchStream();
+            // timerSubscription = timerStream!.listen((int newTick) {
+            //   setState(() {
+            //     timerHours = ((newTick / (60 * 60)) % 60)
+            //         .floor()
+            //         .toString()
+            //         .padLeft(2, '0');
+            //     timerMinutes =
+            //         ((newTick / 60) % 60).floor().toString().padLeft(2, '0');
+            //     timerSeconds =
+            //         (newTick % 60).floor().toString().padLeft(2, '0');
+            //   });
+            // });
           } else {
-            timerSubscription.cancel();
-            timerStream = null;
-            setState(() {
-              timerHours = '00';
-              timerMinutes = '00';
-              timerSeconds = '00';
-            });
+            clockInOutBloc.add(
+              ClockOutSuccessEvent(
+                inOutTime: "03:44:12",
+                workingPlan: "self work",
+                selfieImage: image!.path,
+              ),
+            );
+            // timerSubscription.cancel();
+            // timerStream = null;
+            // setState(() {
+            //   timerHours = '00';
+            //   timerMinutes = '00';
+            //   timerSeconds = '00';
+            // });
           }
         },
         style: ButtonStyle(
@@ -564,7 +585,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
         .getImage(source: ImageSource.camera, imageQuality: 50);
 
     setState(() {
-      image = image;
+      this.image = image;
     });
   }
 

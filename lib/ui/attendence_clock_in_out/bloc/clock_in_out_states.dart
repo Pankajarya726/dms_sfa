@@ -57,14 +57,16 @@ class ClockInFailureState extends ClockInOutStates {
   List<Object?> get props => [failureMessage];
 }
 
-class ClockInOutTimerState extends ClockInOutStates {
-  final String timerHours;
-  final String timerMinutes;
-  final String timerSeconds;
-  ClockInOutTimerState(
-      {required this.timerHours,
-      required this.timerMinutes,
-      required this.timerSeconds});
+class ClockOutSuccessState extends ClockInOutStates {
+  final String successMessage;
+  ClockOutSuccessState({required this.successMessage});
   @override
-  List<Object?> get props => [timerHours, timerMinutes, timerSeconds];
+  List<Object?> get props => [successMessage];
+}
+
+class ClockOutFailureState extends ClockInOutStates {
+  final String failureMessage;
+  ClockOutFailureState({required this.failureMessage});
+  @override
+  List<Object?> get props => [failureMessage];
 }

@@ -8,6 +8,8 @@ class TeamMembersAbsentStates extends Equatable {
 
 class TeamMembersAbsentInitialState extends TeamMembersAbsentStates {}
 
+class TeamMembersAbsentLoadingState extends TeamMembersAbsentStates {}
+
 class TeamMembersAbsentSuccessState extends TeamMembersAbsentStates {
   final GetAbsentDataResponse getAbsentDataResponse;
   TeamMembersAbsentSuccessState({required this.getAbsentDataResponse});
@@ -20,4 +22,11 @@ class TeamMembersAbsentFailureState extends TeamMembersAbsentStates {
   TeamMembersAbsentFailureState({required this.failureMessage});
   @override
   List<Object?> get props => [failureMessage];
+}
+
+class AbsentApproveSuccessState extends TeamMembersAbsentStates {
+  final String successMessage;
+  AbsentApproveSuccessState({required this.successMessage});
+  @override
+  List<Object?> get props => [successMessage];
 }
