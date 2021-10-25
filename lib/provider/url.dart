@@ -9,4 +9,5 @@ class Url {
   static const String addPjp = "pjpAddDatabyUser";
   static const String pjpGetCurrentMonthData = "pjpGetCurrentMonthData";
   static const String updatePjp = "pjpUpdateByUser";
+  static const String getClockInData = "getAllChildUserForApprovingClockIn";
 }

@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sfa/ui/team_members_clockout/bloc/get_clock_in_data_bloc.dart';
+import 'package:sfa/ui/team_members_clockout/bloc/get_clock_in_data_events.dart';
+import 'package:sfa/ui/team_members_clockout/bloc/get_clock_in_data_states.dart';
 import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/constants.dart';
 
@@ -11,34 +15,33 @@ class TeamMembersClockoutScreen extends StatefulWidget {
 }
 
 class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen> {
-  List<String> names = [
-    "Oliver",
-    "William",
-    "Noah",
-    "Peter",
-    "Benjamin",
-    "George",
-  ];
-  List<String> workingHours = [
-    "08 : 30 : 27",
-    "09 : 00 : 00",
-    "08 : 17 : 00",
-    "09 : 10 : 50",
-    "08 : 25 : 10",
-    "08 : 53 : 17",
-  ];
   bool clockInOut = false;
+  GetClockInDataBloc getClockInDataBloc = GetClockInDataBloc();
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Column(
-        children: [
-          Column(
-            children: List.generate(
-              workingHours.length,
-              (index) {
+    return BlocProvider(
+      create: (context) => getClockInDataBloc,
+      child: BlocBuilder<GetClockInDataBloc, GetClockInDataStates>(
+        builder: (context, state) {
+          if (state is GetClockInDataInitialState) {
+            getClockInDataBloc
+                .add(GetClockInDataSuccessEvent(dateAdded: "2021-10-21"));
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (state is GetClockInDataLoadingState) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (state is GetClockInDataSuccessState) {
+            return ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              itemCount: state.getClockInDataResponse.data!.length,
+              itemBuilder: (context, index) {
                 return Container(
                   margin: const EdgeInsets.only(bottom: 15),
                   padding: const EdgeInsets.fromLTRB(15, 12, 0, 12),
@@ -63,7 +66,7 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          names[index],
+                          state.getClockInDataResponse.data![index].name,
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -73,7 +76,7 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen> {
                           height: 5,
                         ),
                         Text(
-                          workingHours[index],
+                          state.getClockInDataResponse.data![index].inOutTime,
                           style: const TextStyle(
                             color: Color(0xff303030),
                             fontSize: 16,
@@ -109,9 +112,16 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen> {
                   ),
                 );
               },
-            ),
-          ),
-        ],
+            );
+          }
+
+          if (state is GetClockInDataFailureState) {
+            return Center(
+              child: Text(state.failureMessage),
+            );
+          }
+          return Container();
+        },
       ),
     );
   }
