@@ -7,15 +7,17 @@ class ClockInOutStates extends Equatable {
 
 class ClockInOutInitialState extends ClockInOutStates {}
 
-class ClockInOutSuccessState extends ClockInOutStates {
-  String date;
-  int currentHours;
-  int currentMinutes;
-  int currentSeconds;
-  String at;
-  String seperator;
+class ClockInOutLoadingState extends ClockInOutStates {}
 
-  ClockInOutSuccessState({
+class ClockInOutInitialSuccessState extends ClockInOutStates {
+  final String date;
+  final int currentHours;
+  final int currentMinutes;
+  final int currentSeconds;
+  final String at;
+  final String seperator;
+
+  ClockInOutInitialSuccessState({
     required this.date,
     required this.currentHours,
     required this.currentMinutes,
@@ -34,10 +36,31 @@ class ClockInOutSuccessState extends ClockInOutStates {
       ];
 }
 
+class ClockInOutFailureState extends ClockInOutStates {
+  final String failureMessage;
+  ClockInOutFailureState({required this.failureMessage});
+  @override
+  List<Object?> get props => [failureMessage];
+}
+
+class ClockInSuccessState extends ClockInOutStates {
+  final String successMessage;
+  ClockInSuccessState({required this.successMessage});
+  @override
+  List<Object?> get props => [successMessage];
+}
+
+class ClockInFailureState extends ClockInOutStates {
+  final String failureMessage;
+  ClockInFailureState({required this.failureMessage});
+  @override
+  List<Object?> get props => [failureMessage];
+}
+
 class ClockInOutTimerState extends ClockInOutStates {
-  String timerHours;
-  String timerMinutes;
-  String timerSeconds;
+  final String timerHours;
+  final String timerMinutes;
+  final String timerSeconds;
   ClockInOutTimerState(
       {required this.timerHours,
       required this.timerMinutes,

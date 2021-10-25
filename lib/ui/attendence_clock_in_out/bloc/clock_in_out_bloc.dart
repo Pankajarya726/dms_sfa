@@ -1,27 +1,69 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
+import 'package:sfa/main.dart';
 import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_events.dart';
 import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_states.dart';
+import 'package:sfa/ui/attendence_clock_in_out/model/clock_in_response.dart';
+import 'package:sfa/utility/network.dart';
+import 'package:sfa/utility/shared_prefrence.dart';
 
 class ClockInOutBloc extends Bloc<ClockInOutEvents, ClockInOutStates> {
   ClockInOutBloc() : super(ClockInOutInitialState());
 
   @override
   Stream<ClockInOutStates> mapEventToState(event) async* {
-    if (event is ClockInOutSuccessEvent) {
-      DateTime _ntpTime;
-      _ntpTime = await NTP.now();
-      var format = DateFormat("dd-MMM-yyyy");
-
-      yield ClockInOutSuccessState(
-        date: format.format(_ntpTime),
-        at: " at ",
-        seperator: ":",
-        currentHours: _ntpTime.hour,
-        currentMinutes: _ntpTime.minute,
-        currentSeconds: _ntpTime.second,
-      );
+    if (event is ClockInOutInitialEvent) {
+      yield ClockInOutLoadingState();
+      yield* getInitialData(event);
     }
+    if (event is ClockInSuccessEvent) {
+      yield ClockInOutLoadingState();
+      yield* clockInSuccess(event);
+    }
+  }
+}
+
+Stream<ClockInOutStates> getInitialData(ClockInOutInitialEvent event) async* {
+  if (await Network.isConnected()) {
+    DateTime _ntpTime;
+    _ntpTime = await NTP.now();
+    var format = DateFormat("dd-MMM-yyyy");
+    yield ClockInOutInitialSuccessState(
+      date: format.format(_ntpTime),
+      at: " at ",
+      seperator: ":",
+      currentHours: _ntpTime.hour,
+      currentMinutes: _ntpTime.minute,
+      currentSeconds: _ntpTime.second,
+    );
+  } else {
+    yield ClockInOutFailureState(
+        failureMessage: "Please check your internet connection!");
+  }
+}
+
+Stream<ClockInOutStates> clockInSuccess(ClockInSuccessEvent event) async* {
+  if (await Network.isConnected()) {
+    DateTime _ntpTime;
+    _ntpTime = await NTP.now();
+    var format = DateFormat("yyyy-MM-dd");
+    String userId = await SharedPrefrence.getStringPreference("id");
+    ClockInResponse response = await repository.clockIn(
+        userId,
+        event.inOutTime,
+        format.format(_ntpTime).toString(),
+        event.workingPlan,
+        event.selfieImage,
+        event.latitude,
+        event.longitude);
+    if (response.success) {
+      ClockInSuccessState(successMessage: response.message);
+    } else {
+      yield ClockInFailureState(failureMessage: response.message);
+    }
+  } else {
+    yield ClockInOutFailureState(
+        failureMessage: "Please check your internet connection!");
   }
 }
