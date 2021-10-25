@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:sfa/main.dart';
 import 'package:sfa/provider/url.dart';
@@ -42,7 +40,8 @@ class ApiRepository {
             message: "Invalid Login details",
             id: 0,
             accessToken: "",
-            tokenType: "");
+            tokenType: "",
+            isLeader: false);
       }
     } catch (exception) {
       return LoginResponse(
@@ -50,7 +49,8 @@ class ApiRepository {
           message: "Something went wrong!",
           id: 0,
           accessToken: "",
-          tokenType: "");
+          tokenType: "",
+          isLeader: false);
     }
   }
 
@@ -69,24 +69,12 @@ class ApiRepository {
       } else {
         return UserData(
             success: false,
-            message: "Data not found",
-            id: 0,
-            name: "",
-            email: "",
-            mobileNumber: "",
-            image: "",
-            designation: "");
+            message: response.statusMessage.toString(),
+            data: null);
       }
     } catch (exception) {
       return UserData(
-          success: false,
-          message: "Something went wrong!",
-          id: 0,
-          name: "",
-          email: "",
-          mobileNumber: "",
-          image: "",
-          designation: "");
+          success: false, message: "Something went wrong!", data: null);
     }
   }
 

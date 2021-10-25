@@ -65,9 +65,9 @@ class _HomeScreenState extends State<HomeScreen> {
             const CircularProgressIndicator();
           }
           if (state is HomeScreenSuccessState) {
-            imageUrl = state.userData.image;
-            employeeName = state.userData.name;
-            designation = state.userData.designation;
+            imageUrl = state.userData.data!.image;
+            employeeName = state.userData.data!.name;
+            designation = state.userData.data!.designation;
           }
           if (state is HomeScreenFailureState) {
             log(state.messages);
@@ -118,21 +118,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                             ),
-                      title: employeeName.isNotEmpty
-                          ? Text(
-                              employeeName,
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold),
-                            )
-                          : const Text(
-                              "Username",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold),
-                            ),
+                      title: Text(
+                        employeeName,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold),
+                      ),
                       subtitle: Row(
                         children: [
                           Padding(
