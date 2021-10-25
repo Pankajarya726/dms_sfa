@@ -11,6 +11,7 @@ import 'package:sfa/ui/login_screen/login_model/login_response.dart';
 import 'package:sfa/ui/pjp_screen/pjp_model/pjp_model.dart';
 import 'package:sfa/ui/pjp_screen/update_pjp_model/update_pjp_model.dart';
 import 'package:sfa/ui/team_members_absent/model/get_absent_data_response.dart';
+import 'package:sfa/ui/team_members_clockout/model/get_clock_in_data_response.dart';
 
 class ApiRepository {
   static final ApiRepository repository = ApiRepository.internal();
@@ -153,6 +154,36 @@ class ApiRepository {
       return MarkAbsentByUserResponse(
         success: false,
         message: "Something went wrong",
+      );
+    }
+  }
+
+  Future<GetClockInDataResponse> getClockInData(userId, dateAdded) async {
+    Map<String, dynamic> data = {
+      "user_id": userId,
+      "date_added": dateAdded,
+    };
+
+    try {
+      Response response = await dio.post(
+        Url.getClockInData,
+        data: data,
+      );
+      if (response.statusCode == 200) {
+        GetClockInDataResponse getClockInDataResponse =
+            GetClockInDataResponse.fromJson(response.toString());
+        return getClockInDataResponse;
+      } else {
+        print("repo response = ${response.data}");
+        return GetClockInDataResponse(
+            success: false, message: "Something went wrong!", data: []);
+      }
+    } catch (exception) {
+      print("repo response excep");
+      return GetClockInDataResponse(
+        success: false,
+        message: "Something went wrong!",
+        data: [],
       );
     }
   }
