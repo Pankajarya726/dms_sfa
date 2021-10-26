@@ -24,6 +24,7 @@ class _AddPjpScreenState extends State<AddPjpScreen> {
   String endDate = "";
   String date = "Mon 01 Nov";
   String pjpDate = "Mon 01 Nov";
+  DateTime dateTime = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -73,8 +74,8 @@ class _AddPjpScreenState extends State<AddPjpScreen> {
                     controller: pickerController,
                     backgroundColor: colorPrimary,
                     selectionMode: DateRangePickerSelectionMode.single,
-                    minDate: DateTime.parse("2021-11-01"),
-                    maxDate: DateTime.parse("2021-11-30"),
+                    minDate: DateTime(dateTime.year, dateTime.month + 1, 1),
+                    maxDate: DateTime(dateTime.year, dateTime.month + 2, -0),
                     selectionTextStyle: const TextStyle(color: colorPrimary),
                     selectionColor: Colors.white,
                     onSelectionChanged: onSelected,

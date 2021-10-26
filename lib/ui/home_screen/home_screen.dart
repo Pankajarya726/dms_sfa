@@ -68,6 +68,9 @@ class _HomeScreenState extends State<HomeScreen> {
             imageUrl = state.userData.data!.image;
             employeeName = state.userData.data!.name;
             designation = state.userData.data!.designation;
+
+            SharedPrefrence.setStringPreference(
+                SharedPrefrence.isEnable, state.userData.data!.pjpButton);
           }
           if (state is HomeScreenFailureState) {
             log(state.messages);
