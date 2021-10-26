@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:sfa/ui/absent/absent_screen.dart';
 import 'package:sfa/ui/add_pjp_screen/add_pjp_screen.dart';
@@ -5,6 +7,7 @@ import 'package:sfa/ui/attendence_clock_in_out/attendence_clock_in_out.dart';
 import 'package:sfa/ui/pjp_screen/pjp_screen.dart';
 import 'package:sfa/ui/team_members/team_members_screen.dart';
 import 'package:sfa/utility/colors.dart';
+import 'package:sfa/utility/shared_prefrence.dart';
 
 class AttendenceHomeScreen extends StatefulWidget {
   const AttendenceHomeScreen({Key? key}) : super(key: key);
@@ -88,11 +91,16 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
                         ),
                       ],
                     ),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const AddPjpScreen()));
+                    onPressed: () async {
+                      var status = await SharedPrefrence.getStringPreference(
+                          SharedPrefrence.isEnable);
+
+                      if (status == "show") {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const AddPjpScreen()));
+                      }
                     },
                   ),
                 )
