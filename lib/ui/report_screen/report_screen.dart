@@ -16,12 +16,9 @@ class ReportScreen extends StatefulWidget {
 }
 
 class _ReportScreenState extends State<ReportScreen> {
-  bool isPressed1 = false;
   bool accordionStatus = false;
   String startDate = "";
   String endDate = "";
-  List<String> items = ['CSV', ' PDF'];
-  int selectedIndex = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -367,7 +364,7 @@ class _ReportScreenState extends State<ReportScreen> {
       context: context,
       builder: (context) {
         return Container(
-          height: MediaQuery.of(context).size.height * 0.25,
+          height: MediaQuery.of(context).size.height * 0.23,
           width: MediaQuery.of(context).size.width,
           decoration: const BoxDecoration(
             color: reportBG,
@@ -376,31 +373,7 @@ class _ReportScreenState extends State<ReportScreen> {
               topRight: Radius.circular(20.0),
             ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.only(top: 14),
-            child: ListView.separated(
-              itemCount: 2,
-              separatorBuilder: (context, index) {
-                return const Divider(
-                  thickness: 1,
-                );
-              },
-              itemBuilder: (context, index) {
-                return RadioListTile(
-                  value: selectedIndex,
-                  groupValue: items[index],
-                  onChanged: (value) {},
-                  title: Text(
-                    items[index],
-                    style: const TextStyle(
-                        color: colorGray,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                );
-              },
-            ),
-          ),
+          child: const RadioListBuilder(),
         );
       },
     );
@@ -509,6 +482,84 @@ class _DateRangePickerViewState extends State<DateRangePickerView> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class RadioListBuilder extends StatefulWidget {
+  const RadioListBuilder({Key? key}) : super(key: key);
+
+  @override
+  RadioListBuilderState createState() {
+    return RadioListBuilderState();
+  }
+}
+
+class RadioListBuilderState extends State<RadioListBuilder> {
+  Object? value;
+  List<String> types = ["CSV", "PDF"];
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          height: 145,
+          child: ListView.separated(
+            primary: false,
+            padding: const EdgeInsetsDirectional.only(top: 10),
+            itemBuilder: (context, index) {
+              return RadioListTile(
+                value: index,
+                groupValue: value,
+                onChanged: (currentIndex) {
+                  setState(
+                    () {
+                      value = currentIndex;
+                    },
+                  );
+                },
+                title: Text(
+                  types[index],
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+              );
+            },
+            itemCount: 2,
+            separatorBuilder: (BuildContext context, int index) {
+              return const Divider(
+                color: Colors.grey,
+                thickness: 1,
+              );
+            },
+          ),
+        ),
+        Container(
+          height: 1,
+          color: Colors.grey,
+        ),
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 24, top: 12),
+              child: InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  "Cancel",
+                  style: TextStyle(
+                      color: colorPrimary,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        )
+      ],
     );
   }
 }

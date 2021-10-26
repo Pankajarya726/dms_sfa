@@ -162,7 +162,7 @@ class _MemberReportScreen extends State<MemberReportScreen> {
       context: context,
       builder: (context) {
         return Container(
-          height: MediaQuery.of(context).size.height * 0.25,
+          height: MediaQuery.of(context).size.height * 0.23,
           width: MediaQuery.of(context).size.width,
           decoration: const BoxDecoration(
             color: reportBG,
@@ -171,6 +171,7 @@ class _MemberReportScreen extends State<MemberReportScreen> {
               topRight: Radius.circular(20.0),
             ),
           ),
+          child: const RadioListBuilder(),
         );
       },
     );
@@ -296,6 +297,84 @@ class _DateRangePickerViewState extends State<DateRangePickerView> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class RadioListBuilder extends StatefulWidget {
+  const RadioListBuilder({Key? key}) : super(key: key);
+
+  @override
+  RadioListBuilderState createState() {
+    return RadioListBuilderState();
+  }
+}
+
+class RadioListBuilderState extends State<RadioListBuilder> {
+  Object? value;
+  List<String> types = ["CSV", "PDF"];
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          height: 145,
+          child: ListView.separated(
+            primary: false,
+            padding: const EdgeInsetsDirectional.only(top: 10),
+            itemBuilder: (context, index) {
+              return RadioListTile(
+                value: index,
+                groupValue: value,
+                onChanged: (currentIndex) {
+                  setState(
+                    () {
+                      value = currentIndex;
+                    },
+                  );
+                },
+                title: Text(
+                  types[index],
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+              );
+            },
+            itemCount: 2,
+            separatorBuilder: (BuildContext context, int index) {
+              return const Divider(
+                color: Colors.grey,
+                thickness: 1,
+              );
+            },
+          ),
+        ),
+        Container(
+          height: 1,
+          color: Colors.grey,
+        ),
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 24, top: 12),
+              child: InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  "Cancel",
+                  style: TextStyle(
+                      color: colorPrimary,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        )
+      ],
     );
   }
 }
