@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfa/ui/team_members_clockout/bloc/get_clock_in_data_bloc.dart';
 import 'package:sfa/ui/team_members_clockout/bloc/get_clock_in_data_events.dart';
 import 'package:sfa/ui/team_members_clockout/bloc/get_clock_in_data_states.dart';
 import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/constants.dart';
+import 'package:sfa/utility/shared_prefrence.dart';
 
 class TeamMembersClockoutScreen extends StatefulWidget {
   const TeamMembersClockoutScreen({Key? key}) : super(key: key);
@@ -17,20 +19,28 @@ class TeamMembersClockoutScreen extends StatefulWidget {
 class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen> {
   bool clockInOut = false;
   GetClockInDataBloc getClockInDataBloc = GetClockInDataBloc();
+  @override
+  void initState() {
+    super.initState();
+    addClockInData();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => getClockInDataBloc,
-      child: BlocBuilder<GetClockInDataBloc, GetClockInDataStates>(
-        builder: (context, state) {
-          if (state is GetClockInDataInitialState) {
-            getClockInDataBloc
-                .add(GetClockInDataSuccessEvent(dateAdded: "2021-10-21"));
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+      child: BlocConsumer<GetClockInDataBloc, GetClockInDataStates>(
+        listener: (context, state) {
+          if (state is ClockInApproveRejectSuccessState) {
+            Fluttertoast.showToast(msg: state.res.message);
+            addClockInData();
           }
+          if (state is ClockInApproveRejectFailureState) {
+            Fluttertoast.showToast(msg: state.message);
+            addClockInData();
+          }
+        },
+        builder: (context, state) {
           if (state is GetClockInDataLoadingState) {
             return const Center(
               child: CircularProgressIndicator(),
@@ -88,11 +98,17 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen> {
                     trailing: IntrinsicWidth(
                       child: Row(
                         children: [
-                          buttonsApproveReject(colorGreen, "Approve"),
+                          buttonsApprove(
+                              state.getClockInDataResponse.data![index].id,
+                              colorGreen,
+                              "Approve"),
                           const SizedBox(
                             width: 10,
                           ),
-                          buttonsApproveReject(colorRed, "Reject"),
+                          buttonsReject(
+                              state.getClockInDataResponse.data![index].id,
+                              colorRed,
+                              "Reject"),
                           SizedBox(
                             width: 40,
                             child: IconButton(
@@ -366,7 +382,7 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen> {
     );
   }
 
-  Widget buttonsApproveReject(color, text) {
+  Widget buttonsApprove(int id, color, text) {
     return ElevatedButton(
       style: ButtonStyle(
         fixedSize: MaterialStateProperty.all(
@@ -384,7 +400,12 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen> {
           const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
         ),
       ),
-      onPressed: () {},
+      onPressed: () async {
+        var approvedBy =
+            await SharedPrefrence.getStringPreference(SharedPrefrence.id);
+        getClockInDataBloc.add(ClockInApproveRejectEvent(
+            id: id.toString(), status: "2", approvedBy: approvedBy.toString()));
+      },
       child: Text(
         text,
         style: TextStyle(
@@ -392,5 +413,42 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen> {
         ),
       ),
     );
+  }
+
+  Widget buttonsReject(int id, color, text) {
+    return ElevatedButton(
+      style: ButtonStyle(
+        fixedSize: MaterialStateProperty.all(
+          const Size.fromWidth(65),
+        ),
+        backgroundColor: MaterialStateProperty.all(Colors.white),
+        elevation: MaterialStateProperty.all(0),
+        side: MaterialStateProperty.all(
+          BorderSide(color: color),
+        ),
+        minimumSize: MaterialStateProperty.all(
+          const Size.fromRadius(0),
+        ),
+        padding: MaterialStateProperty.all(
+          const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+        ),
+      ),
+      onPressed: () async {
+        var approvedBy =
+            await SharedPrefrence.getStringPreference(SharedPrefrence.id);
+        getClockInDataBloc.add(ClockInApproveRejectEvent(
+            id: id.toString(), status: "3", approvedBy: approvedBy.toString()));
+      },
+      child: Text(
+        text,
+        style: TextStyle(
+          color: color,
+        ),
+      ),
+    );
+  }
+
+  addClockInData() {
+    getClockInDataBloc.add(GetClockInDataSuccessEvent(dateAdded: "2021-10-21"));
   }
 }

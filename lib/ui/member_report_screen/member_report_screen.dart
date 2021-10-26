@@ -131,8 +131,8 @@ class _MemberReportScreen extends State<MemberReportScreen> {
                 children: [
                   Container(
                     margin: const EdgeInsets.only(bottom: 14, top: 30),
-                    height: 50,
-                    width: 50,
+                    height: 45,
+                    width: 45,
                     child: Image.asset(
                       "assets/download.png",
                       fit: BoxFit.cover,
@@ -143,7 +143,7 @@ class _MemberReportScreen extends State<MemberReportScreen> {
                     "My Report",
                     style: TextStyle(
                         color: Colors.white,
-                        fontSize: 24,
+                        fontSize: 22,
                         fontWeight: FontWeight.bold),
                   ),
                 ],

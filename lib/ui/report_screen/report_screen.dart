@@ -138,15 +138,15 @@ class _ReportScreenState extends State<ReportScreen> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(100),
             child: Container(
-              height: 160,
-              width: 160,
+              height: 150,
+              width: 150,
               color: colorPrimary,
               child: Column(
                 children: [
                   Container(
                     margin: const EdgeInsets.only(bottom: 14, top: 30),
-                    height: 50,
-                    width: 50,
+                    height: 45,
+                    width: 45,
                     child: Image.asset(
                       "assets/download.png",
                       fit: BoxFit.cover,
@@ -157,7 +157,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     "All Staff",
                     style: TextStyle(
                         color: Colors.white,
-                        fontSize: 24,
+                        fontSize: 22,
                         fontWeight: FontWeight.bold),
                   ),
                 ],

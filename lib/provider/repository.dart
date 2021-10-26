@@ -13,6 +13,7 @@ import 'package:sfa/ui/pjp_screen/pjp_model/pjp_model.dart';
 import 'package:sfa/ui/pjp_screen/update_pjp_model/update_pjp_model.dart';
 import 'package:sfa/ui/team_members_absent/model/absent_approve_reject_response.dart';
 import 'package:sfa/ui/team_members_absent/model/get_absent_data_response.dart';
+import 'package:sfa/ui/team_members_clockout/model/clockin_approve_reject_model.dart';
 import 'package:sfa/ui/team_members_clockout/model/get_clock_in_data_response.dart';
 
 class ApiRepository {
@@ -351,6 +352,35 @@ class ApiRepository {
       }
     } catch (exception) {
       return UpdateResponce(message: "Something went Wrong!", success: false);
+    }
+  }
+
+  Future<ClockInApproveRes> clockInApprovReject(
+      String id, String status, String approvedBy) async {
+    Map<String, dynamic> params = {
+      "id": id,
+      "clock_in_status": status,
+      "clock_in_approved_by": approvedBy
+    };
+
+    try {
+      Response response = await dio.post(
+        Url.clockInApproveReject,
+        data: params,
+      );
+
+      if (response.statusCode == 200) {
+        ClockInApproveRes result =
+            ClockInApproveRes.fromJson(response.toString());
+
+        return result;
+      } else {
+        return ClockInApproveRes(
+            message: response.statusMessage.toString(), success: false);
+      }
+    } catch (exception) {
+      return ClockInApproveRes(
+          message: "Something went Wrong!", success: false);
     }
   }
 }
