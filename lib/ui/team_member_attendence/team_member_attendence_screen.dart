@@ -8,6 +8,7 @@ import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_m
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_member_attendence_state.dart';
 import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/constants.dart';
+import 'package:sfa/utility/shared_prefrence.dart';
 
 class TeamMemberAttendenceScreen extends StatefulWidget {
   const TeamMemberAttendenceScreen({Key? key}) : super(key: key);
@@ -22,37 +23,29 @@ class _TeamMemberAttendenceScreenState
   TeamMemberAttendenceBloc teamMemberAttendenceBloc =
       TeamMemberAttendenceBloc();
   DateTime dateTime = DateTime.now();
+  @override
+  void initState() {
+    addEvent();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<String> names = [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
-    List<String> status = [
-      "Present..",
-      "Absent",
-      "Absent",
-      "Present",
-      "Pending",
-      "Mark attendence",
-    ];
     return BlocProvider<TeamMemberAttendenceBloc>(
       create: (context) => teamMemberAttendenceBloc,
       child: BlocListener<TeamMemberAttendenceBloc, TeamMemberAttendenceState>(
         listener: (context, state) {
           if (state is SelectDateState) {
             dateTime = state.date;
+            addEvent();
           }
           if (state is IncrementDateState) {
             dateTime = state.date;
+            addEvent();
           }
           if (state is DecrementDateState) {
             dateTime = state.date;
+            addEvent();
           }
         },
         child: Scaffold(
@@ -174,136 +167,178 @@ class _TeamMemberAttendenceScreenState
                           topRight: Radius.circular(20),
                         ),
                       ),
-                      child: SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 15),
-                          child: Column(
-                            children: List.generate(
-                              status.length,
-                              (index) {
-                                return Stack(
-                                  children: [
-                                    Container(
-                                      height: 85,
-                                      margin: const EdgeInsets.fromLTRB(
-                                          10, 15, 10, 0),
-                                      padding: const EdgeInsets.fromLTRB(
-                                          12, 12, 0, 12),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey.withOpacity(0.5),
-                                            spreadRadius: -8,
-                                            blurRadius: 7,
-                                            offset: const Offset(0, 3),
+                      child: BlocBuilder<TeamMemberAttendenceBloc,
+                          TeamMemberAttendenceState>(
+                        builder: (context, state) {
+                          if (state is TeamMemberAttendenceLoadingState) {
+                            return SizedBox(
+                              height: MediaQuery.of(context).size.height,
+                              child: const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          }
+                          if (state is TeamMemberAttendenceFailureState) {
+                            return SizedBox(
+                              height: MediaQuery.of(context).size.height,
+                              child: Center(
+                                child: Text(state.message),
+                              ),
+                            );
+                          }
+
+                          if (state is TeamMemberAttendenceSucessState) {
+                            return SingleChildScrollView(
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 15),
+                                child: Column(
+                                  children: List.generate(
+                                    state.response.clockInData!.length,
+                                    //state.response.absentData!.length,
+                                    (index) {
+                                      return Stack(
+                                        children: [
+                                          Container(
+                                            height: 85,
+                                            margin: const EdgeInsets.fromLTRB(
+                                                10, 15, 10, 0),
+                                            padding: const EdgeInsets.fromLTRB(
+                                                12, 12, 0, 12),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.grey
+                                                      .withOpacity(0.5),
+                                                  spreadRadius: -8,
+                                                  blurRadius: 7,
+                                                  offset: const Offset(0, 3),
+                                                ),
+                                              ],
+                                            ),
+                                            child: ListTile(
+                                              dense: true,
+                                              onTap: () {},
+                                              title: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 48),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      DateFormat("EEEE").format(
+                                                          state
+                                                              .response
+                                                              .clockInData![
+                                                                  index]
+                                                              .inOutDate!),
+                                                      style: const TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Text(
+                                                      state
+                                                          .response
+                                                          .clockInData![index]
+                                                          .status,
+                                                      style: const TextStyle(
+                                                          color:
+                                                              Color(0xff303030),
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          overflow: TextOverflow
+                                                              .ellipsis),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              trailing: IntrinsicWidth(
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 20,
+                                                      child: IconButton(
+                                                        onPressed: () {
+                                                          showTeamMemberStatusSheet();
+                                                        },
+                                                        icon: const Icon(
+                                                          Icons.more_vert,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Positioned(
+                                            left: 10,
+                                            top: 15,
+                                            child: Container(
+                                              height: 85,
+                                              width: 65,
+                                              decoration: const BoxDecoration(
+                                                color: colorCalenderDateBG,
+                                                borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(10),
+                                                  bottomLeft:
+                                                      Radius.circular(10),
+                                                ),
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    DateFormat("MMM").format(
+                                                        state
+                                                            .response
+                                                            .clockInData![index]
+                                                            .inOutDate!),
+                                                    style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Text(
+                                                    DateFormat("dd").format(
+                                                        state
+                                                            .response
+                                                            .clockInData![index]
+                                                            .inOutDate!),
+                                                    style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 24,
+                                                        fontWeight:
+                                                            FontWeight.w900),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                           ),
                                         ],
-                                      ),
-                                      child: ListTile(
-                                        dense: true,
-                                        onTap: () {},
-                                        title: Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 48),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                names[index],
-                                                style: const TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: 5,
-                                              ),
-                                              Text(
-                                                status[index],
-                                                style: const TextStyle(
-                                                    color: Color(0xff303030),
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w500,
-                                                    overflow:
-                                                        TextOverflow.ellipsis),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        trailing: IntrinsicWidth(
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              status[index] == "Present"
-                                                  ? statusAccepted()
-                                                  : status[index] == "Absent"
-                                                      ? statusRejected()
-                                                      : status[index] !=
-                                                              "pending"
-                                                          ? statusPending()
-                                                          : statusAccepted(),
-                                              SizedBox(
-                                                width: 20,
-                                                child: IconButton(
-                                                  onPressed: () {
-                                                    showTeamMemberStatusSheet();
-                                                  },
-                                                  icon: const Icon(
-                                                    Icons.more_vert,
-                                                    color: Colors.black,
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      left: 10,
-                                      top: 15,
-                                      child: Container(
-                                        height: 85,
-                                        width: 65,
-                                        decoration: const BoxDecoration(
-                                          color: colorCalenderDateBG,
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(10),
-                                            bottomLeft: Radius.circular(10),
-                                          ),
-                                        ),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: const [
-                                            Text(
-                                              "Sep",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              "20",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 24,
-                                                  fontWeight: FontWeight.w900),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                          ),
-                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                          return Container();
+                        },
                       ),
                     ),
                   ),
@@ -665,5 +700,11 @@ class _TeamMemberAttendenceScreenState
         ),
       ],
     );
+  }
+
+  void addEvent() async {
+    var userid = await SharedPrefrence.getStringPreference(SharedPrefrence.id);
+    teamMemberAttendenceBloc
+        .add(GetTeamMemberAttendenceEvent(id: "16", date: "2021-10-25"));
   }
 }
