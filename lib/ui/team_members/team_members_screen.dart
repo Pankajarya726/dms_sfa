@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:sfa/ui/report_screen/report_screen.dart';
 import 'package:sfa/ui/team%20members_status/team_members_status_screen.dart';
+import 'package:sfa/ui/team_members/bloc/team_member_events.dart';
+import 'package:sfa/ui/team_members/bloc/team_member_states.dart';
+import 'package:sfa/ui/team_members/bloc/team_members_bloc.dart';
 import 'package:sfa/ui/team_members_absent/team_members_absent_screen.dart';
 import 'package:sfa/ui/team_members_clockout/team_members_clockout_screen.dart';
 import 'package:sfa/utility/colors.dart';
@@ -43,6 +47,8 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
   DateTime? dateTime = DateTime.now();
   String date = "";
 
+  TeamMembersBloc teamMembersBloc = TeamMembersBloc();
+
   @override
   Widget build(BuildContext context) {
     date = format.format(dateTime!);
@@ -60,70 +66,217 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () async {
-                        dateTime = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(1950),
-                            lastDate: DateTime.now());
-                        date = format.format(dateTime!);
-                        setState(() {});
-                        debugPrint("dateTime ->$date");
-                      },
-                      child: Row(
-                        children: [
-                          const Image(
-                            fit: BoxFit.contain,
-                            width: 15,
-                            image: AssetImage("assets/calendar.png"),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            date,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                BlocProvider(
+                  create: (context) => teamMembersBloc,
+                  child: BlocBuilder<TeamMembersBloc, TeamMemberStates>(
+                    builder: (context, state) {
+                      if (state is TeamMembersInitialState) {
+                        teamMembersBloc.add(TeamMemberInitialSuccessEvent());
+                      }
+                      if (state is TeamMembersInitialSuccessState) {
+                        return Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () async {
+                                dateTime = await showDatePicker(
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime(1950),
+                                    lastDate: DateTime.now());
+                                date = format.format(dateTime!);
+                                setState(() {});
+                                debugPrint("dateTime ->");
+                              },
+                              child: Row(
+                                children: [
+                                  const Image(
+                                    fit: BoxFit.contain,
+                                    width: 15,
+                                    image: AssetImage("assets/calendar.png"),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    state.currentDate,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        dateTime = DateTime(
-                            dateTime!.year, dateTime!.month, dateTime!.day - 1);
-                        date = format.format(dateTime!);
-                        setState(() {});
-                      },
-                      child: Image.asset(
-                        "assets/icon_previous.png",
-                        width: 25,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        dateTime = DateTime(
-                            dateTime!.year, dateTime!.month, dateTime!.day + 1);
-                        date = format.format(dateTime!);
-                        setState(() {});
-                      },
-                      child: Image.asset(
-                        "assets/icon_next.png",
-                        width: 25,
-                      ),
-                    ),
-                  ],
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                dateTime = DateTime(dateTime!.year,
+                                    dateTime!.month, dateTime!.day - 1);
+                                date = format.format(dateTime!);
+                                setState(() {});
+                              },
+                              child: Image.asset(
+                                "assets/icon_previous.png",
+                                width: 25,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                dateTime = DateTime(dateTime!.year,
+                                    dateTime!.month, dateTime!.day + 1);
+                                date = format.format(dateTime!);
+                                setState(() {});
+                              },
+                              child: Image.asset(
+                                "assets/icon_next.png",
+                                width: 25,
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                      if (state is TeamMembersPreviousDateState) {
+                        return Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () async {
+                                dateTime = await showDatePicker(
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime(1950),
+                                    lastDate: DateTime.now());
+                                date = format.format(dateTime!);
+                                setState(() {});
+                                debugPrint("dateTime ->");
+                              },
+                              child: Row(
+                                children: [
+                                  const Image(
+                                    fit: BoxFit.contain,
+                                    width: 15,
+                                    image: AssetImage("assets/calendar.png"),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    date,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                dateTime = DateTime(dateTime!.year,
+                                    dateTime!.month, dateTime!.day - 1);
+                                date = format.format(dateTime!);
+                                setState(() {});
+                              },
+                              child: Image.asset(
+                                "assets/icon_previous.png",
+                                width: 25,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                dateTime = DateTime(dateTime!.year,
+                                    dateTime!.month, dateTime!.day + 1);
+                                date = format.format(dateTime!);
+                                setState(() {});
+                              },
+                              child: Image.asset(
+                                "assets/icon_next.png",
+                                width: 25,
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                      if (state is TeamMembersNextDateState) {
+                        return Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () async {
+                                dateTime = await showDatePicker(
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime(1950),
+                                    lastDate: DateTime.now());
+                                date = format.format(dateTime!);
+                                setState(() {});
+                                debugPrint("dateTime ->");
+                              },
+                              child: Row(
+                                children: [
+                                  const Image(
+                                    fit: BoxFit.contain,
+                                    width: 15,
+                                    image: AssetImage("assets/calendar.png"),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    date,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                dateTime = DateTime(dateTime!.year,
+                                    dateTime!.month, dateTime!.day - 1);
+                                date = format.format(dateTime!);
+                                setState(() {});
+                              },
+                              child: Image.asset(
+                                "assets/icon_previous.png",
+                                width: 25,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                dateTime = DateTime(dateTime!.year,
+                                    dateTime!.month, dateTime!.day + 1);
+                                date = format.format(dateTime!);
+                                setState(() {});
+                              },
+                              child: Image.asset(
+                                "assets/icon_next.png",
+                                width: 25,
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                      return Container();
+                    },
+                  ),
                 ),
                 MaterialButton(
                   height: 30,

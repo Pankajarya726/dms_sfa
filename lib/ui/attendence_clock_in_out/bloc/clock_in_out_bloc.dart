@@ -54,6 +54,7 @@ Stream<ClockInOutStates> clockInSuccess(ClockInSuccessEvent event) async* {
   if (await Network.isConnected()) {
     DateTime _ntpTime;
     _ntpTime = await NTP.now();
+
     var format = DateFormat("yyyy-MM-dd");
     String userId = await SharedPrefrence.getStringPreference("id");
 
