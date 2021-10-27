@@ -30,3 +30,10 @@ class AbsentApproveSuccessState extends TeamMembersAbsentStates {
   @override
   List<Object?> get props => [successMessage];
 }
+
+class AbsentApproveFailureState extends TeamMembersAbsentStates {
+  final String failureMessage;
+  AbsentApproveFailureState({required this.failureMessage});
+  @override
+  List<Object?> get props => [failureMessage];
+}

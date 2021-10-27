@@ -49,11 +49,11 @@ class TeamMembersAbsentBloc
       if (response.success) {
         yield AbsentApproveSuccessState(successMessage: response.message);
       } else {
-        yield AbsentApproveSuccessState(successMessage: response.message);
+        yield AbsentApproveFailureState(failureMessage: response.message);
       }
     } else {
-      yield AbsentApproveSuccessState(
-          successMessage: "Please check your internet connection!");
+      yield AbsentApproveFailureState(
+          failureMessage: "Please check your internet connection!");
     }
   }
 }
