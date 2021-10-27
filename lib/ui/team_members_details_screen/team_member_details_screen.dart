@@ -1,5 +1,10 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:sfa/ui/team_members_details_screen/team_members_details_bloc/team_members_details_bloc.dart';
+import 'package:sfa/ui/team_members_details_screen/team_members_details_bloc/team_members_details_event.dart';
+import 'package:sfa/ui/team_members_details_screen/team_members_details_bloc/team_members_details_state.dart';
 import 'package:sfa/utility/colors.dart';
 
 class TeamMemberDetailsScreen extends StatefulWidget {
@@ -11,540 +16,347 @@ class TeamMemberDetailsScreen extends StatefulWidget {
 }
 
 class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
-  var format = DateFormat("dd-MMM-yyyy");
-  DateTime? dateTime = DateTime.now();
-  String date = "";
+  TeamMembersDetailsBloc teamMembersDetailsBloc = TeamMembersDetailsBloc();
+  DateTime dateTime = DateTime.now();
   @override
   Widget build(BuildContext context) {
-    date = format.format(dateTime!);
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: IntrinsicHeight(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          decoration: const BoxDecoration(
-            color: colorPrimary,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-          ),
-          child: Column(
-            children: [
-              Container(
-                height: 45,
-                width: MediaQuery.of(context).size.width,
-                decoration: const BoxDecoration(
-                  color: colorPrimary,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      InkWell(
-                        onTap: () async {
-                          dateTime = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(1950),
-                              lastDate: DateTime.now());
-                          date = format.format(dateTime!);
-                          setState(() {});
-                        },
-                        child: SizedBox(
-                          height: 30,
-                          width: MediaQuery.of(context).size.width * 0.30,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Image.asset(
-                                "assets/calendar.png",
-                                color: Colors.white,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Text(
-                                date,
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 30,
-                        width: MediaQuery.of(context).size.width * 0.18,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                dateTime = DateTime(dateTime!.year,
-                                    dateTime!.month, dateTime!.day - 1);
-                                date = format.format(dateTime!);
-                                setState(() {});
-                              },
-                              child: Image.asset(
-                                "assets/icon_previous.png",
-                                width: 25,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            InkWell(
-                              onTap: () {
-                                dateTime = DateTime(dateTime!.year,
-                                    dateTime!.month, dateTime!.day + 1);
-                                date = format.format(dateTime!);
-                                setState(() {});
-                              },
-                              child: Image.asset(
-                                "assets/icon_next.png",
-                                width: 25,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+    return BlocProvider<TeamMembersDetailsBloc>(
+      create: (context) => teamMembersDetailsBloc,
+      child: BlocListener<TeamMembersDetailsBloc, TeamMembersDetailsState>(
+        listener: (context, state) {
+          if (state is SelectDateState) {
+            dateTime = state.date;
+          }
+          if (state is IncrementDateState) {
+            dateTime = state.date;
+          }
+          if (state is DecrementDateState) {
+            dateTime = state.date;
+          }
+        },
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: IntrinsicHeight(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              decoration: const BoxDecoration(
+                color: colorPrimary,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
                 ),
               ),
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-                  child: Container(
+              child: Column(
+                children: [
+                  Container(
+                    height: 45,
                     width: MediaQuery.of(context).size.width,
                     decoration: const BoxDecoration(
-                      color: reportBG,
+                      color: colorPrimary,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20),
                       ),
                     ),
-                    child: SingleChildScrollView(
-                      child: Column(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.fromLTRB(16, 12, 0, 4),
-                            child: const Text(
-                              "Attendence Details",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            margin: const EdgeInsets.all(10),
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
+                          InkWell(
+                            onTap: () {
+                              datePicker();
+                            },
+                            child: SizedBox(
+                              height: 30,
+                              width: MediaQuery.of(context).size.width * 0.30,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Image.asset(
+                                    "assets/calendar.png",
+                                    color: Colors.white,
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  BlocBuilder<TeamMembersDetailsBloc,
+                                      TeamMembersDetailsState>(
+                                    builder: (context, state) {
+                                      return Text(
+                                        DateFormat("dd-MMM-yyyy")
+                                            .format(dateTime),
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14),
+                                      );
+                                    },
+                                  )
+                                ],
                               ),
                             ),
-                            child: Column(
+                          ),
+                          SizedBox(
+                            height: 30,
+                            width: MediaQuery.of(context).size.width * 0.18,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Container(
-                                  height: 50,
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      topRight: Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: const <Widget>[
-                                      Text(
-                                        "Monthly Days",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      Text(
-                                        "30",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
+                                InkWell(
+                                  onTap: () {
+                                    dateTime = DateTime(dateTime.year,
+                                        dateTime.month, dateTime.day - 1);
+                                    teamMembersDetailsBloc.add(
+                                        DateIncrementEvent(date: dateTime));
+                                  },
+                                  child: Image.asset(
+                                    "assets/icon_previous.png",
+                                    width: 25,
                                   ),
                                 ),
-                                Container(
-                                  height: 50,
-                                  color: Colors.white,
-                                  margin: const EdgeInsets.only(top: 2),
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: const <Widget>[
-                                      Text(
-                                        "Full Days",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      Text(
-                                        "25",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
+                                const SizedBox(
+                                  width: 10,
                                 ),
-                                Container(
-                                  height: 50,
-                                  color: Colors.white,
-                                  margin: const EdgeInsets.only(top: 2),
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: const <Widget>[
-                                      Text(
-                                        "Half Days",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      Text(
-                                        "2",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  height: 50,
-                                  color: Colors.white,
-                                  margin: const EdgeInsets.only(top: 2),
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: const <Widget>[
-                                      Text(
-                                        "Absent",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      Text(
-                                        "1",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  height: 50,
-                                  margin: const EdgeInsets.only(top: 2),
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                                  decoration: const BoxDecoration(
-                                    color: colorGrayLite,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(10),
-                                      bottomRight: Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: const <Widget>[
-                                      Text(
-                                        "Monthly Days",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      Text(
-                                        "30",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
+                                InkWell(
+                                  onTap: () {
+                                    dateTime = DateTime(dateTime.year,
+                                        dateTime.month, dateTime.day + 1);
+                                    teamMembersDetailsBloc.add(
+                                        DateIncrementEvent(date: dateTime));
+                                  },
+                                  child: Image.asset(
+                                    "assets/icon_next.png",
+                                    width: 25,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.fromLTRB(16, 4, 0, 4),
-                            child: const Text(
-                              "Salary Details",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            margin: const EdgeInsets.all(10),
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                              ),
-                            ),
-                            child: Column(
-                              children: [
-                                Container(
-                                  height: 50,
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      topRight: Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: const <Widget>[
-                                      Text(
-                                        "Monthly Salary",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      Text(
-                                        "15000",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  height: 50,
-                                  color: Colors.white,
-                                  margin: const EdgeInsets.only(top: 2),
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: const <Widget>[
-                                      Text(
-                                        "Total Working Days",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      Text(
-                                        "26",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  height: 50,
-                                  margin: const EdgeInsets.only(top: 2),
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                                  decoration: const BoxDecoration(
-                                    color: colorGrayLite,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(10),
-                                      bottomRight: Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: const <Widget>[
-                                      Text(
-                                        "Total Salary",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      Text(
-                                        "13000",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.fromLTRB(16, 6, 0, 0),
-                            child: const Text(
-                              "Working Plan",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.fromLTRB(16, 4, 0, 4),
-                            child: const Text(
-                              "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.fromLTRB(16, 14, 0, 4),
-                            child: const Text(
-                              "Clock-in Salfie",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Row(children: [
-                            Container(
-                              alignment: Alignment.centerLeft,
-                              height: 150,
-                              width: 150,
-                              margin: const EdgeInsets.fromLTRB(16, 4, 0, 10),
-                              decoration: BoxDecoration(
-                                color: colorGray,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                          ]),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.fromLTRB(16, 6, 0, 4),
-                            child: const Text(
-                              "Comment",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.fromLTRB(16, 0, 0, 4),
-                            child: const Text(
-                              "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.fromLTRB(16, 14, 0, 4),
-                            child: const Text(
-                              "Clock-out Salfie",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Row(children: [
-                            Container(
-                              alignment: Alignment.centerLeft,
-                              height: 150,
-                              width: 150,
-                              margin: const EdgeInsets.fromLTRB(16, 4, 0, 10),
-                              decoration: BoxDecoration(
-                                color: colorGray,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                          ]),
                         ],
                       ),
                     ),
                   ),
-                ),
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        decoration: const BoxDecoration(
+                          color: reportBG,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                          ),
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(12, 4, 12, 8),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    SizedBox(
+                                      height: 40,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.45,
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: const [
+                                          Text(
+                                            "Clock In : ",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 15),
+                                          ),
+                                          Text(
+                                            "00:00:00 AM",
+                                            style: TextStyle(
+                                                color: colorGreen,
+                                                fontSize: 15),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 40,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.45,
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: const [
+                                          Text(
+                                            "Clock Out : ",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 15),
+                                          ),
+                                          Text(
+                                            "00:00:00 AM",
+                                            style: TextStyle(
+                                                color: colorRed, fontSize: 15),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                padding: const EdgeInsets.fromLTRB(16, 6, 0, 0),
+                                child: const Text(
+                                  "PJP",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                padding: const EdgeInsets.fromLTRB(16, 4, 0, 8),
+                                child: const Text(
+                                  "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                padding: const EdgeInsets.fromLTRB(16, 8, 0, 0),
+                                child: const Text(
+                                  "Working Plan",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                padding: const EdgeInsets.fromLTRB(16, 4, 0, 4),
+                                child: const Text(
+                                  "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 14, 0, 4),
+                                child: const Text(
+                                  "Clock-in Salfie",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Row(children: [
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  height: 150,
+                                  width: 150,
+                                  margin:
+                                      const EdgeInsets.fromLTRB(16, 4, 0, 10),
+                                  decoration: BoxDecoration(
+                                    color: colorGray,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ]),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                padding: const EdgeInsets.fromLTRB(16, 6, 0, 4),
+                                child: const Text(
+                                  "Comment",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                padding: const EdgeInsets.fromLTRB(16, 0, 0, 4),
+                                child: const Text(
+                                  "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 14, 0, 4),
+                                child: const Text(
+                                  "Clock-out Salfie",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Row(children: [
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  height: 150,
+                                  width: 150,
+                                  margin:
+                                      const EdgeInsets.fromLTRB(16, 4, 0, 10),
+                                  decoration: BoxDecoration(
+                                    color: colorGray,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ]),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  void datePicker() async {
+    DateTime? date = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+    );
+    teamMembersDetailsBloc.add(SelectDateEvent(date: date!));
   }
 }

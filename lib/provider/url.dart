@@ -12,4 +12,5 @@ class Url {
   static const String pjpGetCurrentMonthData = "pjpGetCurrentMonthData";
   static const String updatePjp = "pjpUpdateByUser";
   static const String getClockInData = "getAllChildUserForApprovingClockIn";
+  static const String clockInApproveReject = "markClockInStatusByUser";
 }

@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sfa/main.dart';
 import 'package:sfa/ui/team_members_clockout/bloc/get_clock_in_data_events.dart';
 import 'package:sfa/ui/team_members_clockout/bloc/get_clock_in_data_states.dart';
+import 'package:sfa/ui/team_members_clockout/model/clockin_approve_reject_model.dart';
 import 'package:sfa/ui/team_members_clockout/model/get_clock_in_data_response.dart';
 import 'package:sfa/utility/network.dart';
 import 'package:sfa/utility/shared_prefrence.dart';
@@ -13,7 +16,12 @@ class GetClockInDataBloc
   @override
   Stream<GetClockInDataStates> mapEventToState(
       GetClockInDataEvents event) async* {
+    yield GetClockInDataLoadingState();
     yield* getClockInData(event);
+
+    if (event is ClockInApproveRejectEvent) {
+      yield* clockInActions(event);
+    }
   }
 
   Stream<GetClockInDataStates> getClockInData(
@@ -34,6 +42,18 @@ class GetClockInDataBloc
       }
     } else {
       yield GetClockInDataFailureState(failureMessage: "Something went wrong!");
+    }
+  }
+
+  Stream<GetClockInDataStates> clockInActions(
+      ClockInApproveRejectEvent event) async* {
+    ClockInApproveRes response = await repository.clockInApprovReject(
+        event.id, event.status, event.approvedBy);
+    log(response.message);
+    if (response.success) {
+      yield ClockInApproveRejectSuccessState(res: response);
+    } else {
+      yield ClockInApproveRejectFailureState(message: response.message);
     }
   }
 }
