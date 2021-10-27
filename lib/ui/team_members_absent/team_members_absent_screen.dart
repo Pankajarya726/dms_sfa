@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfa/ui/team_members_absent/bloc/team_members_absent_bloc.dart';
 import 'package:sfa/ui/team_members_absent/bloc/team_members_absent_events.dart';
 import 'package:sfa/ui/team_members_absent/bloc/team_members_absent_states.dart';
@@ -81,11 +82,25 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
                     trailing: IntrinsicWidth(
                       child: Row(
                         children: [
-                          buttonsApproveReject(colorGreen, "Approve"),
+                          buttonsApproveReject(
+                            colorGreen,
+                            "Approve",
+                            state.getAbsentDataResponse.data![index].userId
+                                .toString(),
+                            state.getAbsentDataResponse.data![index].id
+                                .toString(),
+                          ),
                           const SizedBox(
                             width: 10,
                           ),
-                          buttonsApproveReject(colorRed, "Reject"),
+                          buttonsApproveReject(
+                            colorRed,
+                            "Reject",
+                            state.getAbsentDataResponse.data![index].userId
+                                .toString(),
+                            state.getAbsentDataResponse.data![index].id
+                                .toString(),
+                          ),
                           SizedBox(
                             width: 40,
                             child: IconButton(
@@ -94,9 +109,11 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
                                   state.getAbsentDataResponse.data![index].name,
                                   state.getAbsentDataResponse.data![index]
                                       .absentReason,
-                                  state.getAbsentDataResponse.data![index]
-                                      .userId,
-                                  state.getAbsentDataResponse.data![index].id,
+                                  state
+                                      .getAbsentDataResponse.data![index].userId
+                                      .toString(),
+                                  state.getAbsentDataResponse.data![index].id
+                                      .toString(),
                                 );
                               },
                               icon: const Icon(
@@ -115,9 +132,9 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
             );
           }
           if (state is TeamMembersAbsentFailureState) {
-            if (state.failureMessage == "Data not found") {
-              return Image.asset("assets/no-data.gif");
-            }
+            // if (state.failureMessage == "Data not found") {
+            //   return Image.asset("assets/no-data.gif");
+            // }
             return Center(
               child: Text(state.failureMessage),
             );
@@ -221,7 +238,17 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
     return BlocProvider(
       create: (context) => teamMembersAbsentBloc,
       child: BlocListener<TeamMembersAbsentBloc, TeamMembersAbsentStates>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is AbsentApproveSuccessState) {
+            Fluttertoast.showToast(msg: state.successMessage);
+            teamMembersAbsentBloc
+                .add(TeamMembersAbsentSuccessEvent(currentDate: "2021-10-25"));
+            Navigator.pop(context);
+          }
+          if (state is AbsentApproveFailureState) {
+            Fluttertoast.showToast(msg: state.failureMessage);
+          }
+        },
         child: Center(
           child: ElevatedButton(
             onPressed: () {
@@ -254,12 +281,24 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
                 ),
               ),
             ),
-            child: Text(
-              buttonText,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-              ),
+            child: BlocBuilder<TeamMembersAbsentBloc, TeamMembersAbsentStates>(
+              builder: (context, state) {
+                if (state is TeamMembersAbsentLoadingState) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (state is TeamMembersAbsentSuccessState) {
+                  return Text(
+                    buttonText,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  );
+                }
+                return Container();
+              },
             ),
           ),
         ),
@@ -267,29 +306,59 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
     );
   }
 
-  Widget buttonsApproveReject(color, text) {
-    return ElevatedButton(
-      style: ButtonStyle(
-        fixedSize: MaterialStateProperty.all(
-          const Size.fromWidth(65),
+  Widget buttonsApproveReject(color, buttonText, userId, userAttendenceId) {
+    return BlocListener<TeamMembersAbsentBloc, TeamMembersAbsentStates>(
+      listener: (context, state) {
+        if (state is AbsentApproveSuccessState) {
+          Fluttertoast.showToast(msg: state.successMessage);
+          teamMembersAbsentBloc
+              .add(TeamMembersAbsentSuccessEvent(currentDate: "2021-10-25"));
+        }
+        if (state is AbsentApproveFailureState) {
+          Fluttertoast.showToast(msg: state.failureMessage);
+        }
+      },
+      child: ElevatedButton(
+        style: ButtonStyle(
+          fixedSize: MaterialStateProperty.all(
+            const Size.fromWidth(65),
+          ),
+          backgroundColor: MaterialStateProperty.all(Colors.white),
+          elevation: MaterialStateProperty.all(0),
+          side: MaterialStateProperty.all(
+            BorderSide(color: color),
+          ),
+          minimumSize: MaterialStateProperty.all(
+            const Size.fromRadius(0),
+          ),
+          padding: MaterialStateProperty.all(
+            const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+          ),
         ),
-        backgroundColor: MaterialStateProperty.all(Colors.white),
-        elevation: MaterialStateProperty.all(0),
-        side: MaterialStateProperty.all(
-          BorderSide(color: color),
-        ),
-        minimumSize: MaterialStateProperty.all(
-          const Size.fromRadius(0),
-        ),
-        padding: MaterialStateProperty.all(
-          const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-        ),
-      ),
-      onPressed: () {},
-      child: Text(
-        text,
-        style: TextStyle(
-          color: color,
+        onPressed: () {
+          if (buttonText == "Approve") {
+            teamMembersAbsentBloc.add(
+              AbsentApproveRejectEvent(
+                userId: userId,
+                absentStatus: "2",
+                userAttendenceId: userAttendenceId,
+              ),
+            );
+          } else {
+            teamMembersAbsentBloc.add(
+              AbsentApproveRejectEvent(
+                userId: userId,
+                absentStatus: "3",
+                userAttendenceId: userAttendenceId,
+              ),
+            );
+          }
+        },
+        child: Text(
+          buttonText,
+          style: TextStyle(
+            color: color,
+          ),
         ),
       ),
     );

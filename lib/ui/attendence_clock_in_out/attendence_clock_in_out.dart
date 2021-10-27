@@ -40,7 +40,14 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   ClockInOutBloc clockInOutBloc = ClockInOutBloc();
   double latitude = 0.0;
   double longitude = 0.0;
-  final workingPlan = TextEditingController();
+
+  var workingPlanController = TextEditingController(text: LOREUMIPSUM);
+  final pjpController = TextEditingController(text: LOREUMIPSUM);
+  final commentController = TextEditingController(text: LOREUMIPSUM);
+  String workingPlan = "";
+  bool emptyTextField = false;
+  final formKey = GlobalKey<FormState>();
+  final formKey2 = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -179,9 +186,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                   const SizedBox(
                     height: 20,
                   ),
-                  clockInOut == false
-                      ? commonTextField("PJP", 17.0, 3, true)
-                      : commonTextField("Comment", 17.0, 3, false),
+                  clockInOut == false ? pjpTextField() : commentTextField(),
                   const SizedBox(
                     height: 20,
                   ),
@@ -226,27 +231,30 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                                 width: 2,
                               ),
                             ),
-                            child: Image.asset(
-                              "assets/camera.png",
-                              fit: BoxFit.fill,
+                            child: Align(
+                              child: Image.asset(
+                                "assets/camera.png",
+                                width: 50,
+                                fit: BoxFit.contain,
+                              ),
                             ),
                           )
-                        : ClipRRect(
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(15),
+                        : Container(
+                            width: 150,
+                            height: 150,
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                              border: Border.all(
+                                color: Colors.grey,
+                                style: BorderStyle.solid,
+                                width: 2,
+                              ),
                             ),
-                            child: Container(
-                              width: 150,
-                              height: 150,
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(15),
-                                ),
-                                border: Border.all(
-                                  color: Colors.grey,
-                                  style: BorderStyle.solid,
-                                  width: 2,
-                                ),
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(8),
                               ),
                               child: Image.file(
                                 File(image!.path),
@@ -325,51 +333,61 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
       child: ElevatedButton(
         onPressed: () {
           setState(() {
-            if (image != null) {
-              clockInOut = !clockInOut;
+            if (workingPlanController.text.isNotEmpty) {
+              if (image != null) {
+                if (latitude != 0.0 && longitude != 0.0) {
+                  clockInOut = !clockInOut;
+                  if (clockInOut) {
+                    clockInOutBloc.add(
+                      ClockInSuccessEvent(
+                          inOutTime: "03:44:12",
+                          workingPlan: "self work",
+                          selfieImage: image!.path,
+                          latitude: "22.45566",
+                          longitude: "75.23455"),
+                    );
+                    image = null;
+                    // timerStream = stopWatchStream();
+                    // timerSubscription = timerStream!.listen((int newTick) {
+                    //   setState(() {
+                    //     timerHours = ((newTick / (60 * 60)) % 60)
+                    //         .floor()
+                    //         .toString()
+                    //         .padLeft(2, '0');
+                    //     timerMinutes =
+                    //         ((newTick / 60) % 60).floor().toString().padLeft(2, '0');
+                    //     timerSeconds =
+                    //         (newTick % 60).floor().toString().padLeft(2, '0');
+                    //   });
+                    // });
+                  } else {
+                    clockInOutBloc.add(
+                      ClockOutSuccessEvent(
+                        inOutTime: "03:44:12",
+                        workingPlan: "self work",
+                        selfieImage: image!.path,
+                      ),
+                    );
+                    image = null;
+                    // timerSubscription.cancel();
+                    // timerStream = null;
+                    // setState(() {
+                    //   timerHours = '00';
+                    //   timerMinutes = '00';
+                    //   timerSeconds = '00';
+                    // });
+                  }
+                } else {
+                  Fluttertoast.showToast(msg: "Please turn on GPS location");
+                  getUserLocation();
+                }
+              } else {
+                Fluttertoast.showToast(msg: "Please select image");
+              }
             } else {
-              Fluttertoast.showToast(msg: "Please select an image ");
+              Fluttertoast.showToast(msg: "Please enter working plan");
             }
           });
-          if (clockInOut) {
-            clockInOutBloc.add(
-              ClockInSuccessEvent(
-                  inOutTime: "03:44:12",
-                  workingPlan: "self work",
-                  selfieImage: image!.path,
-                  latitude: "22.45566",
-                  longitude: "75.23455"),
-            );
-
-            // timerStream = stopWatchStream();
-            // timerSubscription = timerStream!.listen((int newTick) {
-            //   setState(() {
-            //     timerHours = ((newTick / (60 * 60)) % 60)
-            //         .floor()
-            //         .toString()
-            //         .padLeft(2, '0');
-            //     timerMinutes =
-            //         ((newTick / 60) % 60).floor().toString().padLeft(2, '0');
-            //     timerSeconds =
-            //         (newTick % 60).floor().toString().padLeft(2, '0');
-            //   });
-            // });
-          } else {
-            clockInOutBloc.add(
-              ClockOutSuccessEvent(
-                inOutTime: "03:44:12",
-                workingPlan: "self work",
-                selfieImage: image!.path,
-              ),
-            );
-            // timerSubscription.cancel();
-            // timerStream = null;
-            // setState(() {
-            //   timerHours = '00';
-            //   timerMinutes = '00';
-            //   timerSeconds = '00';
-            // });
-          }
         },
         style: ButtonStyle(
           fixedSize: MaterialStateProperty.all(const Size(180, 50)),
@@ -426,9 +444,10 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     }
 
     _permissionGranted = await location.hasPermission();
+
     if (_permissionGranted == PermissionStatus.denied) {
       _permissionGranted = await location.requestPermission();
-      print("permission denied");
+
       if (_permissionGranted != PermissionStatus.granted) {
         return;
       }
@@ -443,22 +462,72 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     });
   }
 
-  Widget commonTextField(headingText, myFontSize, myMaxLines, enableDisable) {
+  Widget editWorkingPlanTextField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          headingText,
+        const Text(
+          "Working Plan",
           textAlign: TextAlign.left,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: myFontSize,
+            fontSize: 20,
+          ),
+        ),
+        Form(
+          key: formKey,
+          child: TextFormField(
+            maxLines: 5,
+            controller: workingPlanController,
+            keyboardType: TextInputType.text,
+            onChanged: (value) {
+              workingPlan = value;
+            },
+            style: const TextStyle(
+              color: Color(0xff303030),
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+            validator: (text) {
+              if (text == null || text.isEmpty) {
+                return "Cannot be empty";
+              } else {
+                return null;
+              }
+            },
+            decoration: const InputDecoration(
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Color(0xff555555)),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  width: 1,
+                  color: Color(0xff555555),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget pjpTextField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "PJP",
+          textAlign: TextAlign.left,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 17,
           ),
         ),
         TextFormField(
-          readOnly: enableDisable,
-          maxLines: myMaxLines,
-          initialValue: LOREUMIPSUM,
+          controller: pjpController,
+          readOnly: true,
+          maxLines: 3,
           keyboardType: TextInputType.text,
           style: const TextStyle(
             color: Color(0xff303030),
@@ -473,6 +542,53 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
               borderSide: BorderSide(
                 width: 1,
                 color: Color(0xff555555),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget commentTextField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Comment",
+          textAlign: TextAlign.left,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 17,
+          ),
+        ),
+        Form(
+          key: formKey2,
+          child: TextFormField(
+            controller: commentController,
+            maxLines: 3,
+            keyboardType: TextInputType.text,
+            style: const TextStyle(
+              color: Color(0xff303030),
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+            validator: (text) {
+              if (text == null || text.isEmpty) {
+                return "Cannot be empty";
+              } else {
+                return null;
+              }
+            },
+            decoration: const InputDecoration(
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Color(0xff555555)),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  width: 1,
+                  color: Color(0xff555555),
+                ),
               ),
             ),
           ),
@@ -501,7 +617,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
             SizedBox(
               height: 30,
               child: IconButton(
-                // constraints: const BoxConstraints(),
                 padding: const EdgeInsets.symmetric(horizontal: 7),
                 onPressed: () {},
                 icon: Image.asset(
@@ -528,16 +643,22 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
           ],
         ),
         TextFormField(
-          // controller: workingPlan,
           maxLines: 3,
           readOnly: true,
-          initialValue: LOREUMIPSUM,
+          controller: workingPlanController,
           keyboardType: TextInputType.text,
           style: const TextStyle(
             color: Color(0xff303030),
             fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
+          validator: (text) {
+            if (text == null || text.isEmpty) {
+              return "Cannot be empty";
+            } else {
+              return null;
+            }
+          },
           decoration: const InputDecoration(
             focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Color(0xff555555)),
@@ -617,7 +738,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                       const SizedBox(
                         height: 20,
                       ),
-                      commonTextField("Working Plan", 20.0, 5, false),
+                      editWorkingPlanTextField(),
                       const SizedBox(
                         height: 20,
                       ),
@@ -636,10 +757,14 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   Widget roundedButton() {
     return Center(
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          if (formKey.currentState!.validate()) {
+            Navigator.pop(context);
+          }
+        },
         style: ButtonStyle(
           padding: MaterialStateProperty.all(
-            EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+            const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           ),
           backgroundColor: MaterialStateProperty.all(colorPrimary),
           elevation: MaterialStateProperty.all(0),
