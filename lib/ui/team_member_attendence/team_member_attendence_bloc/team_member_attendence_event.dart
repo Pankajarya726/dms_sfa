@@ -25,3 +25,11 @@ class DecrementDateEvent extends TeamMemberAttendenceEvents {
   @override
   List<Object?> get props => [date];
 }
+
+class GetTeamMemberAttendenceEvent extends TeamMemberAttendenceEvents {
+  final String id;
+  final String date;
+  GetTeamMemberAttendenceEvent({required this.id, required this.date});
+  @override
+  List<Object?> get props => [id, date];
+}

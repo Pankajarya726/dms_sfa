@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/model/attendance_model.dart';
 
 class TeamMemberAttendenceState extends Equatable {
   @override
@@ -26,4 +27,20 @@ class DecrementDateState extends TeamMemberAttendenceState {
   DecrementDateState({required this.date});
   @override
   List<Object?> get props => [date];
+}
+
+class TeamMemberAttendenceLoadingState extends TeamMemberAttendenceState {}
+
+class TeamMemberAttendenceSucessState extends TeamMemberAttendenceState {
+  final AttendanceResponse response;
+  TeamMemberAttendenceSucessState({required this.response});
+  @override
+  List<Object?> get props => [response];
+}
+
+class TeamMemberAttendenceFailureState extends TeamMemberAttendenceState {
+  final String message;
+  TeamMemberAttendenceFailureState({required this.message});
+  @override
+  List<Object?> get props => [message];
 }

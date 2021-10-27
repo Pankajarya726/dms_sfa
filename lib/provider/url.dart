@@ -13,4 +13,6 @@ class Url {
   static const String updatePjp = "pjpUpdateByUser";
   static const String getClockInData = "getAllChildUserForApprovingClockIn";
   static const String clockInApproveReject = "markClockInStatusByUser";
+  static const String teamMembersDetails = "getAllChildStatusDetails";
+  static const String teamMembersAttendence = "getChildUserAttendence";
 }

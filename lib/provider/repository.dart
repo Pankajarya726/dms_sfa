@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -12,10 +13,12 @@ import 'package:sfa/ui/login_screen/login_model/login_response.dart';
 import 'package:sfa/ui/pjp_screen/pjp_model/pjp_model.dart';
 import 'package:sfa/ui/pjp_screen/update_pjp_model/update_pjp_model.dart';
 import 'package:sfa/ui/team%20members_status/model/get_all_users_status.dart';
+import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/model/attendance_model.dart';
 import 'package:sfa/ui/team_members_absent/model/absent_approve_reject_response.dart';
 import 'package:sfa/ui/team_members_absent/model/get_absent_data_response.dart';
 import 'package:sfa/ui/team_members_clockout/model/clockin_approve_reject_model.dart';
 import 'package:sfa/ui/team_members_clockout/model/get_clock_in_data_response.dart';
+import 'package:sfa/ui/team_members_details_screen/model/team_members_details_model.dart';
 
 class ApiRepository {
   static final ApiRepository repository = ApiRepository.internal();
@@ -412,6 +415,68 @@ class ApiRepository {
     } catch (exception) {
       return ClockInApproveRes(
           message: "Something went Wrong!", success: false);
+    }
+  }
+
+  Future<DetailsStatusResponse> getTeamMembersDetails(
+      String id, String date) async {
+    Map<String, dynamic> params = {
+      "user_id": id,
+      "status_date": date,
+    };
+
+    try {
+      Response response = await dio.post(
+        Url.teamMembersDetails,
+        data: params,
+      );
+
+      if (response.statusCode == 200) {
+        DetailsStatusResponse result =
+            DetailsStatusResponse.fromJson(response.toString());
+        return result;
+      } else {
+        return DetailsStatusResponse(
+            message: response.statusMessage.toString(),
+            success: false,
+            data: null);
+      }
+    } catch (exception) {
+      return DetailsStatusResponse(
+          message: "Something went Wrong!", success: false, data: null);
+    }
+  }
+
+  Future<AttendanceResponse> getTeamMembersAttendence(
+      String id, String date) async {
+    Map<String, dynamic> params = {
+      "user_id": id,
+      "att_date": date,
+    };
+    log(params.toString());
+    try {
+      Response response = await dio.post(
+        Url.teamMembersAttendence,
+        data: params,
+      );
+
+      if (response.statusCode == 200) {
+        AttendanceResponse result =
+            AttendanceResponse.fromJson(response.toString());
+        return result;
+      } else {
+        return AttendanceResponse(
+            message: response.statusMessage.toString(),
+            success: false,
+            absentData: [],
+            clockInData: []);
+      }
+    } catch (exception) {
+      return AttendanceResponse(
+          message: "Something went Wrong!",
+          success: false,
+          absentData: [],
+          clockInData: []);
     }
   }
 }

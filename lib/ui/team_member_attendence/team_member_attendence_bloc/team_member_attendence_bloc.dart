@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sfa/main.dart';
+import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/model/attendance_model.dart';
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_member_attendence_event.dart';
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_member_attendence_state.dart';
 
@@ -16,6 +18,21 @@ class TeamMemberAttendenceBloc
     }
     if (event is DecrementDateEvent) {
       yield DecrementDateState(date: event.date);
+    }
+    if (event is GetTeamMemberAttendenceEvent) {
+      yield TeamMemberAttendenceLoadingState();
+      yield* getAttendence(event);
+    }
+  }
+
+  Stream<TeamMemberAttendenceState> getAttendence(
+      GetTeamMemberAttendenceEvent event) async* {
+    AttendanceResponse response =
+        await repository.getTeamMembersAttendence(event.id, event.date);
+    if (response.success) {
+      yield TeamMemberAttendenceSucessState(response: response);
+    } else {
+      yield TeamMemberAttendenceFailureState(message: response.message);
     }
   }
 }
