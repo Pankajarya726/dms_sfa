@@ -7,6 +7,7 @@ import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_m
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_member_attendence_event.dart';
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_member_attendence_state.dart';
 import 'package:sfa/utility/colors.dart';
+import 'package:sfa/utility/constants.dart';
 
 class TeamMemberAttendenceScreen extends StatefulWidget {
   const TeamMemberAttendenceScreen({Key? key}) : super(key: key);
@@ -37,7 +38,7 @@ class _TeamMemberAttendenceScreenState
       "Absent",
       "Absent",
       "Present",
-      "Present",
+      "Pending",
       "Mark attendence",
     ];
     return BlocProvider<TeamMemberAttendenceBloc>(
@@ -223,33 +224,37 @@ class _TeamMemberAttendenceScreenState
                                               Text(
                                                 status[index],
                                                 style: const TextStyle(
-                                                  color: Color(0xff303030),
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
+                                                    color: Color(0xff303030),
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    overflow:
+                                                        TextOverflow.ellipsis),
                                               ),
                                             ],
                                           ),
                                         ),
                                         trailing: IntrinsicWidth(
                                           child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: [
                                               status[index] == "Present"
                                                   ? statusAccepted()
                                                   : status[index] == "Absent"
                                                       ? statusRejected()
-                                                      : status[index] ==
-                                                              "Present.."
-                                                          ? statusIncompleteHoursButAccepted()
-                                                          : statusMarkAttendence(),
+                                                      : status[index] !=
+                                                              "pending"
+                                                          ? statusPending()
+                                                          : statusAccepted(),
                                               SizedBox(
-                                                width: 40,
+                                                width: 20,
                                                 child: IconButton(
-                                                  onPressed: () {},
+                                                  onPressed: () {
+                                                    showTeamMemberStatusSheet();
+                                                  },
                                                   icon: const Icon(
                                                     Icons.more_vert,
                                                     color: Colors.black,
-                                                    size: 27,
                                                   ),
                                                 ),
                                               )
@@ -331,75 +336,71 @@ class _TeamMemberAttendenceScreenState
     );
   }
 
-  Widget statusIncompleteHoursButAccepted() {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(50),
-        color: colorYellow,
+  Widget statusPending() {
+    return Row(
+      children: [
+        buttonsApprove(0, colorGreen, "Approve"),
+        const SizedBox(
+          width: 10,
+        ),
+        buttonsReject(0, colorRed, "Reject")
+      ],
+    );
+  }
+
+  Widget buttonsApprove(int id, color, text) {
+    return ElevatedButton(
+      style: ButtonStyle(
+        fixedSize: MaterialStateProperty.all(
+          const Size.fromWidth(65),
+        ),
+        backgroundColor: MaterialStateProperty.all(Colors.white),
+        elevation: MaterialStateProperty.all(0),
+        side: MaterialStateProperty.all(
+          BorderSide(color: color),
+        ),
+        minimumSize: MaterialStateProperty.all(
+          const Size.fromRadius(0),
+        ),
+        padding: MaterialStateProperty.all(
+          const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+        ),
       ),
-      child: const Padding(
-        padding: EdgeInsets.fromLTRB(7, 3, 7, 3),
-        child: Text(
-          "Present",
-          style: TextStyle(
-            color: Colors.white,
-          ),
+      onPressed: () {},
+      child: Text(
+        text,
+        style: TextStyle(
+          color: color,
         ),
       ),
     );
   }
 
-  Widget statusMarkAttendence() {
-    return Row(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            borderRadius: BorderRadius.circular(5),
-          ),
-          width: 35,
-          height: 35,
-          child: TextButton(
-            style: const ButtonStyle(
-              splashFactory: NoSplash.splashFactory,
-            ),
-            onPressed: () {},
-            child: const Text(
-              "P",
-              style: TextStyle(
-                height: 1.1,
-                color: colorGreen,
-                fontSize: 20,
-              ),
-            ),
-          ),
+  Widget buttonsReject(int id, color, text) {
+    return ElevatedButton(
+      style: ButtonStyle(
+        fixedSize: MaterialStateProperty.all(
+          const Size.fromWidth(65),
         ),
-        const SizedBox(
-          width: 10,
+        backgroundColor: MaterialStateProperty.all(Colors.white),
+        elevation: MaterialStateProperty.all(0),
+        side: MaterialStateProperty.all(
+          BorderSide(color: color),
         ),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            borderRadius: BorderRadius.circular(5),
-          ),
-          width: 35,
-          height: 35,
-          child: TextButton(
-            style: const ButtonStyle(
-              splashFactory: NoSplash.splashFactory,
-            ),
-            onPressed: () {},
-            child: const Text(
-              "A",
-              style: TextStyle(
-                height: 1.1,
-                color: colorRed,
-                fontSize: 20,
-              ),
-            ),
-          ),
-        )
-      ],
+        minimumSize: MaterialStateProperty.all(
+          const Size.fromRadius(0),
+        ),
+        padding: MaterialStateProperty.all(
+          const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+        ),
+      ),
+      onPressed: () {},
+      child: Text(
+        text,
+        style: TextStyle(
+          color: color,
+        ),
+      ),
     );
   }
 
@@ -413,5 +414,256 @@ class _TeamMemberAttendenceScreenState
     ).then((date) {
       teamMemberAttendenceBloc.add(SelectDateEvent(date: date!));
     });
+  }
+
+  void showTeamMemberStatusSheet() async {
+    return showModalBottomSheet(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      context: context,
+      builder: (context) {
+        return SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: IntrinsicHeight(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                decoration: const BoxDecoration(
+                  color: reportBG,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20.0),
+                    topRight: Radius.circular(20.0),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: const Text(
+                          "Oliver",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            color: colorPrimary,
+                            fontSize: 21,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        decoration: const BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey,
+                              blurRadius: 10.0, // soften the shadow
+                              spreadRadius: -1.5, //extend the shadow
+                              offset: Offset(
+                                0, // Move to right 10  horizontally
+                                0, // Move to bottom 10 Vertically
+                              ),
+                            )
+                          ],
+                          gradient: LinearGradient(
+                            begin: Alignment.bottomLeft,
+                            end: Alignment.topRight,
+                            colors: [colorGreen, colorLightGreen],
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  "Log in: 10:00 AM - Log out: 6:00 PM",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.only(top: 10, bottom: 10),
+                              child: Text(
+                                "08:08:35",
+                                style: TextStyle(
+                                  fontSize: 45.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  letterSpacing: 5,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                              decoration: const BoxDecoration(
+                                border: Border(
+                                  top: BorderSide(
+                                    width: 1,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Flexible(
+                                    flex: 1,
+                                    child: SizedBox(
+                                      width: 15,
+                                      child:
+                                          Image.asset("assets/zone-clock.png"),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  const Flexible(
+                                    flex: 20,
+                                    child: Text(
+                                      "Time zone in Indore, Madhya Pradesh, India (GMT+5:30)",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      commonTextField("PJP"),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      commonTextField("Working plan"),
+                      const SizedBox(
+                        height: 12,
+                      ),
+                      1 == 1
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 5),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  InkWell(
+                                    onTap: () {},
+                                    child: Container(
+                                      width: 170,
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                          color: colorGreen,
+                                          borderRadius:
+                                              BorderRadius.circular(25)),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(25),
+                                        child: const Center(
+                                          child: Text(
+                                            "Approve",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () {},
+                                    child: Container(
+                                      width: 170,
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                          color: colorPrimary,
+                                          borderRadius:
+                                              BorderRadius.circular(25)),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(25),
+                                        child: const Center(
+                                          child: Text(
+                                            "Reject",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
+                          : Container(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget commonTextField(headingText) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          headingText,
+          textAlign: TextAlign.left,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 17,
+          ),
+        ),
+        TextFormField(
+          readOnly: true,
+          maxLines: 3,
+          initialValue: LOREUMIPSUM,
+          keyboardType: TextInputType.text,
+          style: const TextStyle(
+            color: Color(0xff303030),
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+          decoration: const InputDecoration(
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xff555555)),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                width: 1,
+                color: Color(0xff555555),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

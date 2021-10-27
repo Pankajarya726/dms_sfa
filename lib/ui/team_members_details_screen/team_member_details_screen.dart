@@ -161,57 +161,50 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
                             children: [
                               Padding(
                                 padding:
-                                    const EdgeInsets.fromLTRB(12, 4, 12, 8),
+                                    const EdgeInsets.fromLTRB(12, 18, 12, 8),
                                 child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    SizedBox(
-                                      height: 40,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.45,
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: const [
-                                          Text(
-                                            "Clock In : ",
+                                    RichText(
+                                      text: const TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: 'Clock in : ',
                                             style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 15),
+                                              color: Colors.black,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           ),
-                                          Text(
-                                            "00:00:00 AM",
+                                          TextSpan(
+                                            text: '8:00:50 AM',
                                             style: TextStyle(
-                                                color: colorGreen,
-                                                fontSize: 15),
-                                          ),
+                                              color: colorGreen,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          )
                                         ],
                                       ),
                                     ),
-                                    SizedBox(
-                                      height: 40,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.45,
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: const [
-                                          Text(
-                                            "Clock Out : ",
-                                            style: TextStyle(
+                                    RichText(
+                                      text: const TextSpan(
+                                        children: [
+                                          TextSpan(
+                                              text: 'Clock out : ',
+                                              style: TextStyle(
                                                 color: Colors.black,
-                                                fontSize: 15),
-                                          ),
-                                          Text(
-                                            "00:00:00 AM",
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                              )),
+                                          TextSpan(
+                                            text: '4:00:50 PM',
                                             style: TextStyle(
-                                                color: colorRed, fontSize: 15),
+                                              color: colorPrimary,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           ),
                                         ],
                                       ),
