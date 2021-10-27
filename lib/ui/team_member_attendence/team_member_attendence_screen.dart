@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
+import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/model/attendance_model.dart';
 
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_member_attendence_bloc.dart';
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_member_attendence_event.dart';
@@ -23,6 +24,7 @@ class _TeamMemberAttendenceScreenState
   TeamMemberAttendenceBloc teamMemberAttendenceBloc =
       TeamMemberAttendenceBloc();
   DateTime dateTime = DateTime.now();
+  List<AttendenceModel> attendence = [];
   @override
   void initState() {
     addEvent();
@@ -188,12 +190,16 @@ class _TeamMemberAttendenceScreenState
                           }
 
                           if (state is TeamMemberAttendenceSucessState) {
+                            attendence = state.attendenceList;
+                          }
+
+                          if (attendence.isNotEmpty) {
                             return SingleChildScrollView(
                               child: Padding(
                                 padding: const EdgeInsets.only(bottom: 15),
                                 child: Column(
                                   children: List.generate(
-                                    state.response.clockInData!.length,
+                                    attendence.length,
                                     //state.response.absentData!.length,
                                     (index) {
                                       return Stack(
@@ -230,11 +236,9 @@ class _TeamMemberAttendenceScreenState
                                                   children: [
                                                     Text(
                                                       DateFormat("EEEE").format(
-                                                          state
-                                                              .response
-                                                              .clockInData![
-                                                                  index]
-                                                              .inOutDate!),
+                                                          DateTime.parse(
+                                                              attendence[index]
+                                                                  .date!)),
                                                       style: const TextStyle(
                                                         fontSize: 20,
                                                         fontWeight:
@@ -245,10 +249,7 @@ class _TeamMemberAttendenceScreenState
                                                       height: 5,
                                                     ),
                                                     Text(
-                                                      state
-                                                          .response
-                                                          .clockInData![index]
-                                                          .status,
+                                                      attendence[index].status,
                                                       style: const TextStyle(
                                                           color:
                                                               Color(0xff303030),
@@ -303,10 +304,9 @@ class _TeamMemberAttendenceScreenState
                                                 children: [
                                                   Text(
                                                     DateFormat("MMM").format(
-                                                        state
-                                                            .response
-                                                            .clockInData![index]
-                                                            .inOutDate!),
+                                                        DateTime.parse(
+                                                            attendence[index]
+                                                                .date!)),
                                                     style: const TextStyle(
                                                         color: Colors.black,
                                                         fontSize: 18,
@@ -315,10 +315,9 @@ class _TeamMemberAttendenceScreenState
                                                   ),
                                                   Text(
                                                     DateFormat("dd").format(
-                                                        state
-                                                            .response
-                                                            .clockInData![index]
-                                                            .inOutDate!),
+                                                        DateTime.parse(
+                                                            attendence[index]
+                                                                .date!)),
                                                     style: const TextStyle(
                                                         color: Colors.black,
                                                         fontSize: 24,
@@ -337,6 +336,7 @@ class _TeamMemberAttendenceScreenState
                               ),
                             );
                           }
+
                           return Container();
                         },
                       ),

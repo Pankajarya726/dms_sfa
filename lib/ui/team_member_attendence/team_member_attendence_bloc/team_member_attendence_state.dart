@@ -32,10 +32,11 @@ class DecrementDateState extends TeamMemberAttendenceState {
 class TeamMemberAttendenceLoadingState extends TeamMemberAttendenceState {}
 
 class TeamMemberAttendenceSucessState extends TeamMemberAttendenceState {
-  final AttendanceResponse response;
-  TeamMemberAttendenceSucessState({required this.response});
+  final List<AttendenceModel> attendenceList;
+
+  TeamMemberAttendenceSucessState({required this.attendenceList});
   @override
-  List<Object?> get props => [response];
+  List<Object?> get props => [attendenceList];
 }
 
 class TeamMemberAttendenceFailureState extends TeamMemberAttendenceState {
