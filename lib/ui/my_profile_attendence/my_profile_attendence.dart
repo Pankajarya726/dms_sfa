@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:month_picker_dialog/month_picker_dialog.dart';
+import 'package:sfa/ui/my_profile_attendence/my_profile_attendence_bloc/my_profile_attendence_bloc.dart';
+import 'package:sfa/ui/my_profile_attendence/my_profile_attendence_bloc/my_profile_attendence_event.dart';
+import 'package:sfa/ui/my_profile_attendence/my_profile_attendence_bloc/my_profile_attendence_state.dart';
 import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/constants.dart';
 
@@ -11,9 +16,8 @@ class MyProfileAttendence extends StatefulWidget {
 }
 
 class _MyProfileAttendenceState extends State<MyProfileAttendence> {
-  var format = DateFormat("dd-MMM-yyyy");
+  MyProfileAttendenceBloc myProfileAttendenceBloc = MyProfileAttendenceBloc();
   DateTime? dateTime = DateTime.now();
-  String date = "";
 
   List<String> names = [
     "Monday",
@@ -34,270 +38,294 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Container(
-        margin: const EdgeInsets.only(top: 8),
-        decoration: const BoxDecoration(
-          color: colorPrimary,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        child: Column(
-          children: [
-            Container(
-              height: 45,
-              width: MediaQuery.of(context).size.width,
-              decoration: const BoxDecoration(
-                color: colorPrimary,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      onTap: () async {
-                        dateTime = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(1950),
-                            lastDate: DateTime.now());
-                        date = format.format(dateTime!);
-                        setState(() {});
-                      },
-                      child: SizedBox(
-                        height: 30,
-                        width: MediaQuery.of(context).size.width * 0.30,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Image.asset(
-                              "assets/calendar.png",
-                              color: Colors.white,
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              date,
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 30,
-                      width: MediaQuery.of(context).size.width * 0.18,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              dateTime = DateTime(dateTime!.year,
-                                  dateTime!.month, dateTime!.day - 1);
-                              date = format.format(dateTime!);
-                              setState(() {});
-                            },
-                            child: Image.asset(
-                              "assets/icon_previous.png",
-                              width: 25,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              dateTime = DateTime(dateTime!.year,
-                                  dateTime!.month, dateTime!.day + 1);
-                              date = format.format(dateTime!);
-                              setState(() {});
-                            },
-                            child: Image.asset(
-                              "assets/icon_next.png",
-                              width: 25,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+    return BlocProvider(
+      create: (context) => myProfileAttendenceBloc,
+      child: BlocListener<MyProfileAttendenceBloc, MyProfileAttendenceState>(
+        listener: (context, state) {
+          if (state is MyProfileAttendenceSelectDateState) {
+            dateTime = state.dateTime;
+          }
+          if (state is MyProfileAttendenceIncrementDateState) {
+            dateTime = state.dateTime;
+          }
+          if (state is MyProfileAttendenceDecrementDateState) {
+            dateTime = state.dateTime;
+          }
+        },
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          body: Container(
+            margin: const EdgeInsets.only(top: 8),
+            decoration: const BoxDecoration(
+              color: colorPrimary,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
               ),
             ),
-            Expanded(
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-                child: Container(
+            child: Column(
+              children: [
+                Container(
+                  height: 45,
                   width: MediaQuery.of(context).size.width,
                   decoration: const BoxDecoration(
-                    color: reportBG,
+                    color: colorPrimary,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20),
                     ),
                   ),
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 15),
-                      child: Column(
-                        children: List.generate(
-                          status.length,
-                          (index) {
-                            return Stack(
-                              children: [
-                                Container(
-                                  height: 85,
-                                  margin:
-                                      const EdgeInsets.fromLTRB(10, 15, 10, 0),
-                                  padding:
-                                      const EdgeInsets.fromLTRB(5, 12, 0, 12),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.5),
-                                        spreadRadius: -8,
-                                        blurRadius: 7,
-                                        offset: const Offset(0, 3),
-                                      ),
-                                    ],
-                                  ),
-                                  child: ListTile(
-                                    contentPadding:
-                                        const EdgeInsets.fromLTRB(20, 0, 10, 0),
-                                    dense: true,
-                                    horizontalTitleGap: 0,
-                                    title: Padding(
-                                      padding: const EdgeInsets.only(left: 48),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            names[index],
-                                            style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            status[index],
-                                            style: const TextStyle(
-                                              overflow: TextOverflow.ellipsis,
-                                              color: Color(0xff303030),
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    trailing: IntrinsicWidth(
-                                      child: Row(
-                                        children: [
-                                          status[index] == "Present"
-                                              ? statusAccepted()
-                                              : status[index] == "Absent"
-                                                  ? statusRejected()
-                                                  : Row(
-                                                      children: [
-                                                        buttonsApproveReject(
-                                                            colorGreen,
-                                                            "Approve"),
-                                                        const SizedBox(
-                                                          width: 8,
-                                                        ),
-                                                        buttonsApproveReject(
-                                                            colorRed, "Reject"),
-                                                      ],
-                                                    ),
-                                          SizedBox(
-                                            width: 20,
-                                            child: IconButton(
-                                              padding: const EdgeInsets.all(0),
-                                              onPressed: () {
-                                                showClockOutBottomSheet();
-                                              },
-                                              icon: const Icon(
-                                                Icons.more_vert,
-                                                color: Colors.black,
-                                                size: 27,
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  left: 10,
-                                  top: 15,
-                                  child: Container(
-                                    height: 85,
-                                    width: 60,
-                                    decoration: const BoxDecoration(
-                                      color: colorCalenderDateBG,
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        bottomLeft: Radius.circular(10),
-                                      ),
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: const [
-                                        Text(
-                                          "Sep",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Text(
-                                          "20",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.w900),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        InkWell(
+                          onTap: () async {
+                            showPicker();
                           },
+                          child: SizedBox(
+                            height: 30,
+                            width: MediaQuery.of(context).size.width * 0.30,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Image.asset(
+                                  "assets/calendar.png",
+                                  color: Colors.white,
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                BlocBuilder<MyProfileAttendenceBloc,
+                                    MyProfileAttendenceState>(
+                                  builder: (context, state) {
+                                    return Text(
+                                      DateFormat("MMM-yyyy").format(dateTime!),
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14),
+                                    );
+                                  },
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 30,
+                          width: MediaQuery.of(context).size.width * 0.18,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  dateTime = DateTime(dateTime!.year,
+                                      dateTime!.month - 1, dateTime!.day);
+
+                                  myProfileAttendenceBloc.add(
+                                      MyProfileAttendenceDecrementDateEvent(
+                                          dateTime: dateTime!));
+                                },
+                                child: Image.asset(
+                                  "assets/icon_previous.png",
+                                  width: 25,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  dateTime = DateTime(dateTime!.year,
+                                      dateTime!.month + 1, dateTime!.day);
+
+                                  myProfileAttendenceBloc.add(
+                                      MyProfileAttendenceIncrementDateEvent(
+                                          dateTime: dateTime!));
+                                },
+                                child: Image.asset(
+                                  "assets/icon_next.png",
+                                  width: 25,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      decoration: const BoxDecoration(
+                        color: reportBG,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        ),
+                      ),
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: Column(
+                            children: List.generate(
+                              status.length,
+                              (index) {
+                                return Stack(
+                                  children: [
+                                    Container(
+                                      height: 85,
+                                      margin: const EdgeInsets.fromLTRB(
+                                          10, 15, 10, 0),
+                                      padding: const EdgeInsets.fromLTRB(
+                                          5, 12, 0, 12),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(10),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.5),
+                                            spreadRadius: -8,
+                                            blurRadius: 7,
+                                            offset: const Offset(0, 3),
+                                          ),
+                                        ],
+                                      ),
+                                      child: ListTile(
+                                        contentPadding:
+                                            const EdgeInsets.fromLTRB(
+                                                20, 0, 10, 0),
+                                        dense: true,
+                                        horizontalTitleGap: 0,
+                                        title: Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 48),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                names[index],
+                                                style: const TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 5,
+                                              ),
+                                              Text(
+                                                status[index],
+                                                style: const TextStyle(
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  color: Color(0xff303030),
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        trailing: IntrinsicWidth(
+                                          child: Row(
+                                            children: [
+                                              status[index] == "Present"
+                                                  ? statusAccepted()
+                                                  : status[index] == "Absent"
+                                                      ? statusRejected()
+                                                      : Row(
+                                                          children: [
+                                                            buttonsApproveReject(
+                                                                colorGreen,
+                                                                "Approve"),
+                                                            const SizedBox(
+                                                              width: 8,
+                                                            ),
+                                                            buttonsApproveReject(
+                                                                colorRed,
+                                                                "Reject"),
+                                                          ],
+                                                        ),
+                                              SizedBox(
+                                                width: 20,
+                                                child: IconButton(
+                                                  padding:
+                                                      const EdgeInsets.all(0),
+                                                  onPressed: () {
+                                                    showClockOutBottomSheet();
+                                                  },
+                                                  icon: const Icon(
+                                                    Icons.more_vert,
+                                                    color: Colors.black,
+                                                    size: 27,
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      left: 10,
+                                      top: 15,
+                                      child: Container(
+                                        height: 85,
+                                        width: 60,
+                                        decoration: const BoxDecoration(
+                                          color: colorCalenderDateBG,
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(10),
+                                            bottomLeft: Radius.circular(10),
+                                          ),
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: const [
+                                            Text(
+                                              "Sep",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Text(
+                                              "20",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 24,
+                                                  fontWeight: FontWeight.w900),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -583,5 +611,18 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
         ),
       ),
     );
+  }
+
+  void showPicker() async {
+    showMonthPicker(
+      context: context,
+      firstDate: DateTime(DateTime.now().year - 0),
+      lastDate: DateTime(DateTime.now().year + 0, 12),
+      initialDate: dateTime!,
+      locale: const Locale("en"),
+    ).then((date) {
+      myProfileAttendenceBloc
+          .add(MyProfileAttendenceSelectDateEvent(dateTime: date!));
+    });
   }
 }
