@@ -37,7 +37,7 @@ class _SettingScreenState extends State<SettingsScreen> {
       home: Scaffold(
         backgroundColor: Colors.white,
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(242),
+          preferredSize: const Size.fromHeight(245),
           child: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -49,8 +49,8 @@ class _SettingScreenState extends State<SettingsScreen> {
             child: Column(
               children: [
                 Container(
+                  height: 50,
                   margin: const EdgeInsets.only(top: 30),
-                  padding: const EdgeInsets.symmetric(horizontal: 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -75,7 +75,7 @@ class _SettingScreenState extends State<SettingsScreen> {
                   children: [
                     Container(
                       width: MediaQuery.of(context).size.width,
-                      height: 137.8,
+                      height: 128.9,
                       margin: const EdgeInsets.only(top: 60),
                       padding: const EdgeInsets.only(top: 60),
                       decoration: const BoxDecoration(
@@ -144,69 +144,74 @@ class _SettingScreenState extends State<SettingsScreen> {
             ),
           ),
         ),
-        body: ListView(
-          children: List.generate(textList.length, (index) {
-            return GestureDetector(
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
-                  decoration: const BoxDecoration(
-                    border: Border(
-                        bottom: BorderSide(width: 1, color: Color(0xffbdbdbd))),
+        body: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          child: ListView(
+            primary: false,
+            children: List.generate(textList.length, (index) {
+              return GestureDetector(
+                  child: Container(
+                    padding: const EdgeInsets.all(15),
+                    decoration: const BoxDecoration(
+                      border: Border(
+                          bottom:
+                              BorderSide(width: 1, color: Color(0xffbdbdbd))),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Image.asset("assets/s${index + 1}.png", width: 24),
+                        const SizedBox(width: 17),
+                        Expanded(
+                            child: index < 5
+                                ? Text(textList[index],
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600))
+                                : Text(textList[index],
+                                    style: const TextStyle(
+                                        color: Color(0xfff24b55),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600))),
+                        const Icon(Icons.arrow_forward_ios,
+                            color: Colors.black, size: 15),
+                      ],
+                    ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Image.asset("assets/s${index + 1}.png", width: 24),
-                      const SizedBox(width: 17),
-                      Expanded(
-                          child: index < 5
-                              ? Text(textList[index],
-                                  style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600))
-                              : Text(textList[index],
-                                  style: const TextStyle(
-                                      color: Color(0xfff24b55),
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600))),
-                      const Icon(Icons.arrow_forward_ios,
-                          color: Colors.black, size: 15),
-                    ],
-                  ),
-                ),
-                onTap: () {
-                  if (index == 0) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            EditProfileScreen(image: widget.image),
-                      ),
-                    );
-                  }
-                  if (index == 1) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ChangePasswordScreen(),
-                      ),
-                    );
-                  }
-                  if (index == 2) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AboutUsScreen(),
-                      ),
-                    );
-                  }
+                  onTap: () {
+                    if (index == 0) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              EditProfileScreen(image: widget.image),
+                        ),
+                      );
+                    }
+                    if (index == 1) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ChangePasswordScreen(),
+                        ),
+                      );
+                    }
+                    if (index == 2) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AboutUsScreen(),
+                        ),
+                      );
+                    }
 
-                  if (index == 5) {
-                    logoutDialog(context);
-                  }
-                });
-          }),
+                    if (index == 5) {
+                      logoutDialog(context);
+                    }
+                  });
+            }),
+          ),
         ),
       ),
     );

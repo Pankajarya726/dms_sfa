@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/model/attendance_model.dart';
+import 'package:sfa/ui/team_members_absent/model/absent_approve_reject_response.dart';
 import 'package:sfa/ui/team_members_clockout/model/clockin_approve_reject_model.dart';
 
 class TeamMemberAttendenceState extends Equatable {
@@ -59,6 +60,22 @@ class TeamMemberAttendenceApproveFailureState
     extends TeamMemberAttendenceState {
   final String message;
   TeamMemberAttendenceApproveFailureState({required this.message});
+  @override
+  List<Object?> get props => [message];
+}
+
+class TeamMemberAttendenceAbsentApproveSuccessState
+    extends TeamMemberAttendenceState {
+  final AbsentApproveRejectResponse response;
+  TeamMemberAttendenceAbsentApproveSuccessState({required this.response});
+  @override
+  List<Object?> get props => [response];
+}
+
+class TeamMemberAttendenceAbsentApproveFailureState
+    extends TeamMemberAttendenceState {
+  final String message;
+  TeamMemberAttendenceAbsentApproveFailureState({required this.message});
   @override
   List<Object?> get props => [message];
 }

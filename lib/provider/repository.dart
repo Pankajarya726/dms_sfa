@@ -9,11 +9,13 @@ import 'package:sfa/ui/add_pjp_screen/add_pjp_model/add_pjp_model.dart';
 import 'package:sfa/ui/attendence_clock_in_out/model/clock_in_response.dart';
 import 'package:sfa/ui/attendence_clock_in_out/model/clock_out_response.dart';
 import 'package:sfa/ui/home_screen/home_screen_model/home_screen_model.dart';
+import 'package:sfa/ui/home_screen/home_screen_model/menu_model.dart';
 import 'package:sfa/ui/login_screen/login_model/login_response.dart';
 import 'package:sfa/ui/pjp_screen/pjp_model/pjp_model.dart';
 import 'package:sfa/ui/pjp_screen/update_pjp_model/update_pjp_model.dart';
 import 'package:sfa/ui/team%20members_status/model/get_all_users_status.dart';
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/model/attendance_model.dart';
+import 'package:sfa/ui/team_member_track_screen/model/track_model.dart';
 import 'package:sfa/ui/team_members_absent/model/absent_approve_reject_response.dart';
 import 'package:sfa/ui/team_members_absent/model/get_absent_data_response.dart';
 import 'package:sfa/ui/team_members_clockout/model/clockin_approve_reject_model.dart';
@@ -396,7 +398,7 @@ class ApiRepository {
       "clock_in_status": status,
       "clock_in_approved_by": approvedBy
     };
-
+    log(params.toString());
     try {
       Response response = await dio.post(
         Url.clockInApproveReject,
@@ -453,7 +455,7 @@ class ApiRepository {
       "user_id": id,
       "att_date": date,
     };
-    log(params.toString());
+
     try {
       Response response = await dio.post(
         Url.teamMembersAttendence,
@@ -477,6 +479,63 @@ class ApiRepository {
           success: false,
           absentData: [],
           clockInData: []);
+    }
+  }
+
+  Future<TrackResponse> getTrackData(String id, String date) async {
+    Map<String, dynamic> params = {
+      "user_id": id,
+      "in_out_date": date,
+    };
+
+    try {
+      Response response = await dio.post(
+        Url.trackByUser,
+        data: params,
+      );
+
+      if (response.statusCode == 200) {
+        TrackResponse result = TrackResponse.fromJson(response.toString());
+        return result;
+      } else {
+        return TrackResponse(
+          message: response.statusMessage.toString(),
+          success: false,
+          data: [],
+        );
+      }
+    } catch (exception) {
+      return TrackResponse(
+        message: "Something went Wrong!",
+        success: false,
+        data: [],
+      );
+    }
+  }
+
+  Future<HomeMenuResponse> getMenuData() async {
+    try {
+      Response response = await dio.get(
+        Url.getMenu,
+      );
+
+      if (response.statusCode == 200) {
+        HomeMenuResponse result =
+            HomeMenuResponse.fromJson(response.toString());
+        return result;
+      } else {
+        return HomeMenuResponse(
+          message: response.statusMessage.toString(),
+          success: false,
+          data: [],
+        );
+      }
+    } catch (exception) {
+      return HomeMenuResponse(
+        message: "Something went Wrong!",
+        success: false,
+        data: [],
+      );
     }
   }
 }

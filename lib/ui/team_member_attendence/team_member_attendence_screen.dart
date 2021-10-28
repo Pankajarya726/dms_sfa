@@ -279,15 +279,26 @@ class _TeamMemberAttendenceScreenState
                                                   children: [
                                                     attendence[index]
                                                                 .approvedStatus ==
-                                                            1
-                                                        ? statusPending(
-                                                            attendence[index]
-                                                                .userId)
+                                                            2
+                                                        ? statusAccepted()
                                                         : attendence[index]
                                                                     .approvedStatus ==
-                                                                2
-                                                            ? statusAccepted()
-                                                            : statusRejected(),
+                                                                3
+                                                            ? statusRejected()
+                                                            : attendence[index]
+                                                                            .approvedStatus ==
+                                                                        1 &&
+                                                                    attendence[index]
+                                                                            .status ==
+                                                                        "Present Panding"
+                                                                ? presentStatusPending(
+                                                                    attendence[
+                                                                            index]
+                                                                        .userId)
+                                                                : absentStatusPending(
+                                                                    attendence[
+                                                                            index]
+                                                                        .userId),
                                                     SizedBox(
                                                       width: 20,
                                                       child: IconButton(
@@ -392,7 +403,7 @@ class _TeamMemberAttendenceScreenState
     );
   }
 
-  Widget statusPending(int id) {
+  Widget presentStatusPending(int id) {
     return Row(
       children: [
         buttonsApprove(id, colorGreen, "Approve"),
@@ -401,6 +412,84 @@ class _TeamMemberAttendenceScreenState
         ),
         buttonsReject(id, colorRed, "Reject")
       ],
+    );
+  }
+
+  Widget absentStatusPending(int id) {
+    return Row(
+      children: [
+        buttonsAbsentApprove(id, colorGreen, "Approve"),
+        const SizedBox(
+          width: 10,
+        ),
+        buttonsAbsentReject(id, colorRed, "Reject")
+      ],
+    );
+  }
+
+  Widget buttonsAbsentApprove(int id, color, text) {
+    return ElevatedButton(
+      style: ButtonStyle(
+        fixedSize: MaterialStateProperty.all(
+          const Size.fromWidth(65),
+        ),
+        backgroundColor: MaterialStateProperty.all(Colors.white),
+        elevation: MaterialStateProperty.all(0),
+        side: MaterialStateProperty.all(
+          BorderSide(color: color),
+        ),
+        minimumSize: MaterialStateProperty.all(
+          const Size.fromRadius(0),
+        ),
+        padding: MaterialStateProperty.all(
+          const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+        ),
+      ),
+      onPressed: () async {
+        var userId =
+            await SharedPrefrence.getStringPreference(SharedPrefrence.id);
+        teamMemberAttendenceBloc.add(TeamMemberAttendenceApproveEvent(
+            approvedBy: userId, id: id.toString(), status: "2"));
+      },
+      child: Text(
+        text,
+        style: TextStyle(
+          color: color,
+        ),
+      ),
+    );
+  }
+
+  Widget buttonsAbsentReject(int id, color, text) {
+    return ElevatedButton(
+      style: ButtonStyle(
+        fixedSize: MaterialStateProperty.all(
+          const Size.fromWidth(65),
+        ),
+        backgroundColor: MaterialStateProperty.all(Colors.white),
+        elevation: MaterialStateProperty.all(0),
+        side: MaterialStateProperty.all(
+          BorderSide(color: color),
+        ),
+        minimumSize: MaterialStateProperty.all(
+          const Size.fromRadius(0),
+        ),
+        padding: MaterialStateProperty.all(
+          const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+        ),
+      ),
+      onPressed: () async {
+        var userId =
+            await SharedPrefrence.getStringPreference(SharedPrefrence.id);
+        teamMemberAttendenceBloc.add(TeamMemberAttendenceApproveEvent(
+            approvedBy: userId, id: id.toString(), status: "3"));
+      },
+      child: Text(
+        text,
+        style: TextStyle(
+          color: color,
+        ),
+      ),
     );
   }
 
