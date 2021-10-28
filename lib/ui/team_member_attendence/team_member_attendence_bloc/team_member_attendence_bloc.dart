@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sfa/main.dart';
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/model/attendance_model.dart';
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_member_attendence_event.dart';
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_member_attendence_state.dart';
+import 'package:sfa/ui/team_members_clockout/model/clockin_approve_reject_model.dart';
 
 class TeamMemberAttendenceBloc
     extends Bloc<TeamMemberAttendenceEvents, TeamMemberAttendenceState> {
@@ -23,6 +26,9 @@ class TeamMemberAttendenceBloc
       yield TeamMemberAttendenceLoadingState();
       yield* getAttendence(event);
     }
+    if (event is TeamMemberAttendenceApproveEvent) {
+      yield* attendenceAction(event);
+    }
   }
 
   Stream<TeamMemberAttendenceState> getAttendence(
@@ -30,9 +36,28 @@ class TeamMemberAttendenceBloc
     AttendanceResponse response =
         await repository.getTeamMembersAttendence(event.id, event.date);
     if (response.success) {
-      yield TeamMemberAttendenceSucessState(response: response);
+      List<AttendenceModel> attendenceList = [];
+
+      attendenceList.addAll(response.clockInData!);
+      attendenceList.addAll(response.absentData!);
+
+      attendenceList.sort((a, b) => a.date!.compareTo(b.date!));
+
+      yield TeamMemberAttendenceSucessState(attendenceList: attendenceList);
     } else {
       yield TeamMemberAttendenceFailureState(message: response.message);
+    }
+  }
+
+  Stream<TeamMemberAttendenceState> attendenceAction(
+      TeamMemberAttendenceApproveEvent event) async* {
+    ClockInApproveRes response = await repository.clockInApprovReject(
+        event.id, event.status, event.approvedBy);
+    log(response.message);
+    if (response.success) {
+      yield TeamMemberAttendenceApproveSuccessState(response: response);
+    } else {
+      yield TeamMemberAttendenceApproveFailureState(message: response.message);
     }
   }
 }

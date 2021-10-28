@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
+import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/model/attendance_model.dart';
 
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_member_attendence_bloc.dart';
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_member_attendence_event.dart';
@@ -23,6 +26,7 @@ class _TeamMemberAttendenceScreenState
   TeamMemberAttendenceBloc teamMemberAttendenceBloc =
       TeamMemberAttendenceBloc();
   DateTime dateTime = DateTime.now();
+  List<AttendenceModel> attendence = [];
   @override
   void initState() {
     addEvent();
@@ -45,6 +49,14 @@ class _TeamMemberAttendenceScreenState
           }
           if (state is DecrementDateState) {
             dateTime = state.date;
+            addEvent();
+          }
+          if (state is TeamMemberAttendenceApproveSuccessState) {
+            log(state.response.message);
+            addEvent();
+          }
+          if (state is TeamMemberAttendenceApproveFailureState) {
+            log(state.message);
             addEvent();
           }
         },
@@ -188,13 +200,16 @@ class _TeamMemberAttendenceScreenState
                           }
 
                           if (state is TeamMemberAttendenceSucessState) {
+                            attendence = state.attendenceList;
+                          }
+
+                          if (attendence.isNotEmpty) {
                             return SingleChildScrollView(
                               child: Padding(
                                 padding: const EdgeInsets.only(bottom: 15),
                                 child: Column(
                                   children: List.generate(
-                                    state.response.clockInData!.length,
-                                    //state.response.absentData!.length,
+                                    attendence.length,
                                     (index) {
                                       return Stack(
                                         children: [
@@ -230,25 +245,21 @@ class _TeamMemberAttendenceScreenState
                                                   children: [
                                                     Text(
                                                       DateFormat("EEEE").format(
-                                                          state
-                                                              .response
-                                                              .clockInData![
-                                                                  index]
-                                                              .inOutDate!),
+                                                          DateTime.parse(
+                                                              attendence[index]
+                                                                  .date!)),
                                                       style: const TextStyle(
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          overflow: TextOverflow
+                                                              .ellipsis),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     Text(
-                                                      state
-                                                          .response
-                                                          .clockInData![index]
-                                                          .status,
+                                                      attendence[index].status,
                                                       style: const TextStyle(
                                                           color:
                                                               Color(0xff303030),
@@ -263,9 +274,20 @@ class _TeamMemberAttendenceScreenState
                                               ),
                                               trailing: IntrinsicWidth(
                                                 child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
                                                   children: [
+                                                    attendence[index]
+                                                                .approvedStatus ==
+                                                            1
+                                                        ? statusPending(
+                                                            attendence[index]
+                                                                .userId)
+                                                        : attendence[index]
+                                                                    .approvedStatus ==
+                                                                2
+                                                            ? statusAccepted()
+                                                            : statusRejected(),
                                                     SizedBox(
                                                       width: 20,
                                                       child: IconButton(
@@ -303,10 +325,9 @@ class _TeamMemberAttendenceScreenState
                                                 children: [
                                                   Text(
                                                     DateFormat("MMM").format(
-                                                        state
-                                                            .response
-                                                            .clockInData![index]
-                                                            .inOutDate!),
+                                                        DateTime.parse(
+                                                            attendence[index]
+                                                                .date!)),
                                                     style: const TextStyle(
                                                         color: Colors.black,
                                                         fontSize: 18,
@@ -315,10 +336,9 @@ class _TeamMemberAttendenceScreenState
                                                   ),
                                                   Text(
                                                     DateFormat("dd").format(
-                                                        state
-                                                            .response
-                                                            .clockInData![index]
-                                                            .inOutDate!),
+                                                        DateTime.parse(
+                                                            attendence[index]
+                                                                .date!)),
                                                     style: const TextStyle(
                                                         color: Colors.black,
                                                         fontSize: 24,
@@ -337,6 +357,7 @@ class _TeamMemberAttendenceScreenState
                               ),
                             );
                           }
+
                           return Container();
                         },
                       ),
@@ -371,14 +392,14 @@ class _TeamMemberAttendenceScreenState
     );
   }
 
-  Widget statusPending() {
+  Widget statusPending(int id) {
     return Row(
       children: [
-        buttonsApprove(0, colorGreen, "Approve"),
+        buttonsApprove(id, colorGreen, "Approve"),
         const SizedBox(
           width: 10,
         ),
-        buttonsReject(0, colorRed, "Reject")
+        buttonsReject(id, colorRed, "Reject")
       ],
     );
   }
@@ -401,7 +422,12 @@ class _TeamMemberAttendenceScreenState
           const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
         ),
       ),
-      onPressed: () {},
+      onPressed: () async {
+        var userId =
+            await SharedPrefrence.getStringPreference(SharedPrefrence.id);
+        teamMemberAttendenceBloc.add(TeamMemberAttendenceApproveEvent(
+            approvedBy: userId, id: id.toString(), status: "2"));
+      },
       child: Text(
         text,
         style: TextStyle(
@@ -429,7 +455,12 @@ class _TeamMemberAttendenceScreenState
           const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
         ),
       ),
-      onPressed: () {},
+      onPressed: () async {
+        var userId =
+            await SharedPrefrence.getStringPreference(SharedPrefrence.id);
+        teamMemberAttendenceBloc.add(TeamMemberAttendenceApproveEvent(
+            approvedBy: userId, id: id.toString(), status: "3"));
+      },
       child: Text(
         text,
         style: TextStyle(
