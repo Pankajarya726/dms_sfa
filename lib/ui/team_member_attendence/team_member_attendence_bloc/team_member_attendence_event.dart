@@ -33,3 +33,13 @@ class GetTeamMemberAttendenceEvent extends TeamMemberAttendenceEvents {
   @override
   List<Object?> get props => [id, date];
 }
+
+class TeamMemberAttendenceApproveEvent extends TeamMemberAttendenceEvents {
+  final String id;
+  final String status;
+  final String approvedBy;
+  TeamMemberAttendenceApproveEvent(
+      {required this.id, required this.status, required this.approvedBy});
+  @override
+  List<Object?> get props => [id, status, approvedBy];
+}

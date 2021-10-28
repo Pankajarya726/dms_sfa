@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -47,6 +49,14 @@ class _TeamMemberAttendenceScreenState
           }
           if (state is DecrementDateState) {
             dateTime = state.date;
+            addEvent();
+          }
+          if (state is TeamMemberAttendenceApproveSuccessState) {
+            log(state.response.message);
+            addEvent();
+          }
+          if (state is TeamMemberAttendenceApproveFailureState) {
+            log(state.message);
             addEvent();
           }
         },
@@ -200,7 +210,6 @@ class _TeamMemberAttendenceScreenState
                                 child: Column(
                                   children: List.generate(
                                     attendence.length,
-                                    //state.response.absentData!.length,
                                     (index) {
                                       return Stack(
                                         children: [
@@ -240,10 +249,11 @@ class _TeamMemberAttendenceScreenState
                                                               attendence[index]
                                                                   .date!)),
                                                       style: const TextStyle(
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          overflow: TextOverflow
+                                                              .ellipsis),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
@@ -264,9 +274,20 @@ class _TeamMemberAttendenceScreenState
                                               ),
                                               trailing: IntrinsicWidth(
                                                 child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
                                                   children: [
+                                                    attendence[index]
+                                                                .approvedStatus ==
+                                                            1
+                                                        ? statusPending(
+                                                            attendence[index]
+                                                                .userId)
+                                                        : attendence[index]
+                                                                    .approvedStatus ==
+                                                                2
+                                                            ? statusAccepted()
+                                                            : statusRejected(),
                                                     SizedBox(
                                                       width: 20,
                                                       child: IconButton(
@@ -371,14 +392,14 @@ class _TeamMemberAttendenceScreenState
     );
   }
 
-  Widget statusPending() {
+  Widget statusPending(int id) {
     return Row(
       children: [
-        buttonsApprove(0, colorGreen, "Approve"),
+        buttonsApprove(id, colorGreen, "Approve"),
         const SizedBox(
           width: 10,
         ),
-        buttonsReject(0, colorRed, "Reject")
+        buttonsReject(id, colorRed, "Reject")
       ],
     );
   }
@@ -401,7 +422,12 @@ class _TeamMemberAttendenceScreenState
           const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
         ),
       ),
-      onPressed: () {},
+      onPressed: () async {
+        var userId =
+            await SharedPrefrence.getStringPreference(SharedPrefrence.id);
+        teamMemberAttendenceBloc.add(TeamMemberAttendenceApproveEvent(
+            approvedBy: userId, id: id.toString(), status: "2"));
+      },
       child: Text(
         text,
         style: TextStyle(
@@ -429,7 +455,12 @@ class _TeamMemberAttendenceScreenState
           const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
         ),
       ),
-      onPressed: () {},
+      onPressed: () async {
+        var userId =
+            await SharedPrefrence.getStringPreference(SharedPrefrence.id);
+        teamMemberAttendenceBloc.add(TeamMemberAttendenceApproveEvent(
+            approvedBy: userId, id: id.toString(), status: "3"));
+      },
       child: Text(
         text,
         style: TextStyle(
