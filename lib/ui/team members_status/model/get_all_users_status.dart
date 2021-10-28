@@ -42,10 +42,10 @@ class Data {
     required this.absentApproved,
   });
 
-  List<AbsentApproved> clockInAppr;
-  List<AbsentApproved> clockInReject;
-  List<AbsentApproved> absentReject;
-  List<AbsentApproved> absentApproved;
+  List<ClockInApprove>? clockInAppr;
+  List<ClockInReject>? clockInReject;
+  List<AbsentReject>? absentReject;
+  List<AbsentApproved>? absentApproved;
 
   factory Data.fromJson(String str) => Data.fromMap(json.decode(str));
 
@@ -54,16 +54,16 @@ class Data {
   factory Data.fromMap(Map<String, dynamic> json) => Data(
         clockInAppr: json["clock_in_appr"] == null
             ? []
-            : List<AbsentApproved>.from(
-                json["clock_in_appr"].map((x) => AbsentApproved.fromMap(x))),
+            : List<ClockInApprove>.from(
+                json["clock_in_appr"].map((x) => ClockInApprove.fromMap(x))),
         clockInReject: json["clock_in_reject"] == null
             ? []
-            : List<AbsentApproved>.from(
-                json["clock_in_reject"].map((x) => AbsentApproved.fromMap(x))),
+            : List<ClockInReject>.from(
+                json["clock_in_reject"].map((x) => ClockInReject.fromMap(x))),
         absentReject: json["absent_reject"] == null
             ? []
-            : List<AbsentApproved>.from(
-                json["absent_reject"].map((x) => AbsentApproved.fromMap(x))),
+            : List<AbsentReject>.from(
+                json["absent_reject"].map((x) => AbsentReject.fromMap(x))),
         absentApproved: json["absent_approved"] == null
             ? []
             : List<AbsentApproved>.from(
@@ -72,17 +72,17 @@ class Data {
 
   Map<String, dynamic> toMap() => {
         "clock_in_appr": clockInAppr == null
-            ? null
-            : List<dynamic>.from(clockInAppr.map((x) => x.toMap())),
+            ? []
+            : List<dynamic>.from(clockInAppr!.map((x) => x.toMap())),
         "clock_in_reject": clockInReject == null
-            ? null
-            : List<dynamic>.from(clockInReject.map((x) => x.toMap())),
+            ? []
+            : List<dynamic>.from(clockInReject!.map((x) => x.toMap())),
         "absent_reject": absentReject == null
-            ? null
-            : List<dynamic>.from(absentReject.map((x) => x.toMap())),
+            ? []
+            : List<dynamic>.from(absentReject!.map((x) => x.toMap())),
         "absent_approved": absentApproved == null
-            ? null
-            : List<dynamic>.from(absentApproved.map((x) => x.toMap())),
+            ? []
+            : List<dynamic>.from(absentApproved!.map((x) => x.toMap())),
       };
 }
 
@@ -101,6 +101,81 @@ class AbsentApproved {
   String toJson() => json.encode(toMap());
 
   factory AbsentApproved.fromMap(Map<String, dynamic> json) => AbsentApproved(
+        userId: json["user_id"] == null ? null : json["user_id"],
+        name: json["name"] == null ? null : json["name"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "user_id": userId == null ? null : userId,
+        "name": name == null ? null : name,
+      };
+}
+
+class AbsentReject {
+  AbsentReject({
+    required this.userId,
+    required this.name,
+  });
+
+  int userId;
+  String name;
+
+  factory AbsentReject.fromJson(String str) =>
+      AbsentReject.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory AbsentReject.fromMap(Map<String, dynamic> json) => AbsentReject(
+        userId: json["user_id"] == null ? null : json["user_id"],
+        name: json["name"] == null ? null : json["name"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "user_id": userId == null ? null : userId,
+        "name": name == null ? null : name,
+      };
+}
+
+class ClockInReject {
+  ClockInReject({
+    required this.userId,
+    required this.name,
+  });
+
+  int userId;
+  String name;
+
+  factory ClockInReject.fromJson(String str) =>
+      ClockInReject.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory ClockInReject.fromMap(Map<String, dynamic> json) => ClockInReject(
+        userId: json["user_id"] == null ? null : json["user_id"],
+        name: json["name"] == null ? null : json["name"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "user_id": userId == null ? null : userId,
+        "name": name == null ? null : name,
+      };
+}
+
+class ClockInApprove {
+  ClockInApprove({
+    required this.userId,
+    required this.name,
+  });
+
+  int userId;
+  String name;
+
+  factory ClockInApprove.fromJson(String str) =>
+      ClockInApprove.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory ClockInApprove.fromMap(Map<String, dynamic> json) => ClockInApprove(
         userId: json["user_id"] == null ? null : json["user_id"],
         name: json["name"] == null ? null : json["name"],
       );

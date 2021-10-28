@@ -25,6 +25,8 @@ class GetAllUserStatusBloc
       GetAllUsersStatusResponse response =
           await repository.getAllUsersStatus(userId, event.statusDate);
       if (response.success) {
+        List<ClockInApprove> showAllStatusList = [];
+
         yield GetAllUserStatusInitialSuccessState(
             getAllUsersStatusResponse: response);
       } else {
