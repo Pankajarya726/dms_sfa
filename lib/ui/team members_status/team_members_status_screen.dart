@@ -2,22 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:sfa/ui/team%20members_status/bloc/get_all_users_status_bloc.dart';
 import 'package:sfa/ui/team%20members_status/bloc/get_all_users_status_events.dart';
 import 'package:sfa/ui/team%20members_status/bloc/get_all_users_status_states.dart';
 import 'package:sfa/ui/team_member_details/team_members_details.dart';
+import 'package:sfa/ui/team_members/team_members_screen.dart';
 import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/constants.dart';
 
+import 'model/get_all_users_status.dart';
+
 class TeamMembersStatusScreen extends StatefulWidget {
-  const TeamMembersStatusScreen({Key? key}) : super(key: key);
+  final Function(DateChangeListener dateChangeListener) onListenerInitialize;
+  const TeamMembersStatusScreen({required this.onListenerInitialize, Key? key})
+      : super(key: key);
 
   @override
   _TeamMembersStatusScreenState createState() =>
       _TeamMembersStatusScreenState();
 }
 
-class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
+class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
+    implements DateChangeListener {
   List<String> names = [
     "Oliver",
     "William",
@@ -35,6 +42,15 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
     "Absent",
   ];
   GetAllUserStatusBloc getAllUserStatusBloc = GetAllUserStatusBloc();
+  List<AttendanceStatusModel> statusList = [];
+  var format = DateFormat("yyyy-MM-dd");
+  DateTime? dateTime = DateTime.now();
+
+  @override
+  void initState() {
+    widget.onListenerInitialize(this);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +58,11 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
       create: (context) => getAllUserStatusBloc,
       child: BlocBuilder<GetAllUserStatusBloc, GetAllUserStatusStates>(
         builder: (context, state) {
+          debugPrint("state-->$state");
           if (state is GetAllUserStatusInitialState) {
+            String date = format.format(dateTime!);
             getAllUserStatusBloc
-                .add(GetAllUserStatusInitialEvent(statusDate: "2021-10-25"));
+                .add(GetAllUserStatusInitialEvent(statusDate: date));
             return const Center(
               child: CircularProgressIndicator(),
             );
@@ -55,9 +73,17 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
             );
           }
           if (state is GetAllUserStatusInitialSuccessState) {
+            statusList = state.statusList;
+          }
+          if (state is GetAllUserStatusFailureState) {
+            return Center(
+              child: Text(state.failureMessage),
+            );
+          }
+          if (statusList.isNotEmpty) {
             return ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              itemCount: status.length,
+              itemCount: statusList.length,
               itemBuilder: (context, index) {
                 return Container(
                   margin: const EdgeInsets.only(bottom: 15),
@@ -90,7 +116,7 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          names[index],
+                          statusList[index].userName,
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -100,7 +126,7 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                           height: 5,
                         ),
                         Text(
-                          status[index],
+                          statusList[index].status,
                           style: const TextStyle(
                             color: Color(0xff303030),
                             fontSize: 16,
@@ -112,7 +138,7 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                     trailing: IntrinsicWidth(
                       child: Row(
                         children: [
-                          status[index] == "Present"
+                          statusList[index].approveStatus == 1
                               ? statusAccepted()
                               : statusRejected(),
                           SizedBox(
@@ -134,11 +160,6 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
                   ),
                 );
               },
-            );
-          }
-          if (state is GetAllUserStatusFailureState) {
-            return Center(
-              child: Text(state.failureMessage),
             );
           }
           return Container();
@@ -358,5 +379,10 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen> {
         fit: BoxFit.contain,
       ),
     );
+  }
+
+  @override
+  void onDateChange(String date) {
+    getAllUserStatusBloc.add(GetAllUserStatusInitialEvent(statusDate: date));
   }
 }

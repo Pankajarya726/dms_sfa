@@ -9,13 +9,25 @@ class TeamMembersInitialState extends TeamMemberStates {}
 
 class TeamMembersInitialSuccessState extends TeamMemberStates {
   final String currentDate;
-  TeamMembersInitialSuccessState({required this.currentDate});
+  late final DateTime dateTime;
+  TeamMembersInitialSuccessState(
+      {required this.currentDate, required this.dateTime});
   @override
-  List<Object?> get props => [currentDate];
+  List<Object?> get props => [currentDate, dateTime];
 }
 
-class TeamMembersPreviousDateState extends TeamMemberStates {}
+class TeamMembersPreviousDateState extends TeamMemberStates {
+  final String previousDate;
+  TeamMembersPreviousDateState({required this.previousDate});
+  @override
+  List<Object?> get props => [previousDate];
+}
 
-class TeamMembersNextDateState extends TeamMemberStates {}
+class TeamMembersNextDateState extends TeamMemberStates {
+  final String nextDate;
+  TeamMembersNextDateState({required this.nextDate});
+  @override
+  List<Object?> get props => [nextDate];
+}
 
 class TeamMembersCalenderDateState extends TeamMemberStates {}

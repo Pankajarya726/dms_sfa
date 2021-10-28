@@ -17,6 +17,7 @@ class TeamMembersAbsentBloc
   Stream<TeamMembersAbsentStates> mapEventToState(
       TeamMembersAbsentEvents event) async* {
     if (event is TeamMembersAbsentSuccessEvent) {
+      yield TeamMembersAbsentLoadingState();
       yield* getAbsentData(event);
     }
     if (event is AbsentApproveRejectEvent) {

@@ -12,11 +12,10 @@ class TeamMemberInitialSuccessEvent extends TeamMemberEvents {
 
 class TeamMembersPreviousDateEvent extends TeamMemberEvents {
   final String previousDate;
-  final context;
-  TeamMembersPreviousDateEvent(
-      {required this.previousDate, required this.context});
+
+  TeamMembersPreviousDateEvent({required this.previousDate});
   @override
-  List<Object?> get props => [previousDate, context];
+  List<Object?> get props => [previousDate];
 }
 
 class TeamMembersNextDateEvent extends TeamMemberEvents {

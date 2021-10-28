@@ -11,11 +11,10 @@ class GetAllUserStatusInitialState extends GetAllUserStatusStates {}
 class GetAllUserStatusLoadingState extends GetAllUserStatusStates {}
 
 class GetAllUserStatusInitialSuccessState extends GetAllUserStatusStates {
-  final GetAllUsersStatusResponse getAllUsersStatusResponse;
-  GetAllUserStatusInitialSuccessState(
-      {required this.getAllUsersStatusResponse});
+  final List<AttendanceStatusModel> statusList;
+  GetAllUserStatusInitialSuccessState({required this.statusList});
   @override
-  List<Object?> get props => [getAllUsersStatusResponse];
+  List<Object?> get props => [statusList];
 }
 
 class GetAllUserStatusFailureState extends GetAllUserStatusStates {
