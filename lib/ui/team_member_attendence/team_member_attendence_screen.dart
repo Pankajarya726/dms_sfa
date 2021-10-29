@@ -281,7 +281,8 @@ class _TeamMemberAttendenceScreenState
                                                                 .approvedStatus ==
                                                             2
                                                         ? statusAccepted()
-                                                        : attendence[index]
+                                                        : attendence[
+                                                                        index]
                                                                     .approvedStatus ==
                                                                 3
                                                             ? statusRejected()
@@ -296,6 +297,9 @@ class _TeamMemberAttendenceScreenState
                                                                             index]
                                                                         .userId)
                                                                 : absentStatusPending(
+                                                                    attendence[
+                                                                            index]
+                                                                        .id,
                                                                     attendence[
                                                                             index]
                                                                         .userId),
@@ -403,31 +407,31 @@ class _TeamMemberAttendenceScreenState
     );
   }
 
-  Widget presentStatusPending(int id) {
+  Widget presentStatusPending(int userId) {
     return Row(
       children: [
-        buttonsApprove(id, colorGreen, "Approve"),
+        buttonsApprove(userId, colorGreen, "Approve"),
         const SizedBox(
           width: 10,
         ),
-        buttonsReject(id, colorRed, "Reject")
+        buttonsReject(userId, colorRed, "Reject")
       ],
     );
   }
 
-  Widget absentStatusPending(int id) {
+  Widget absentStatusPending(int id, int userId) {
     return Row(
       children: [
-        buttonsAbsentApprove(id, colorGreen, "Approve"),
+        buttonsAbsentApprove(id, userId, colorGreen, "Approve"),
         const SizedBox(
           width: 10,
         ),
-        buttonsAbsentReject(id, colorRed, "Reject")
+        buttonsAbsentReject(id, userId, colorRed, "Reject")
       ],
     );
   }
 
-  Widget buttonsAbsentApprove(int id, color, text) {
+  Widget buttonsAbsentApprove(int id, int userId, color, text) {
     return ElevatedButton(
       style: ButtonStyle(
         fixedSize: MaterialStateProperty.all(
@@ -446,10 +450,10 @@ class _TeamMemberAttendenceScreenState
         ),
       ),
       onPressed: () async {
-        var userId =
+        var approvedBy =
             await SharedPrefrence.getStringPreference(SharedPrefrence.id);
         teamMemberAttendenceBloc.add(TeamMemberAttendenceApproveEvent(
-            approvedBy: userId, id: id.toString(), status: "2"));
+            approvedBy: approvedBy, id: userId.toString(), status: "2"));
       },
       child: Text(
         text,
@@ -460,7 +464,7 @@ class _TeamMemberAttendenceScreenState
     );
   }
 
-  Widget buttonsAbsentReject(int id, color, text) {
+  Widget buttonsAbsentReject(int id, int userId, color, text) {
     return ElevatedButton(
       style: ButtonStyle(
         fixedSize: MaterialStateProperty.all(
@@ -479,10 +483,10 @@ class _TeamMemberAttendenceScreenState
         ),
       ),
       onPressed: () async {
-        var userId =
+        var approvedBy =
             await SharedPrefrence.getStringPreference(SharedPrefrence.id);
         teamMemberAttendenceBloc.add(TeamMemberAttendenceApproveEvent(
-            approvedBy: userId, id: id.toString(), status: "3"));
+            approvedBy: approvedBy, id: userId.toString(), status: "3"));
       },
       child: Text(
         text,
@@ -493,7 +497,7 @@ class _TeamMemberAttendenceScreenState
     );
   }
 
-  Widget buttonsApprove(int id, color, text) {
+  Widget buttonsApprove(int userId, color, text) {
     return ElevatedButton(
       style: ButtonStyle(
         fixedSize: MaterialStateProperty.all(
@@ -512,10 +516,9 @@ class _TeamMemberAttendenceScreenState
         ),
       ),
       onPressed: () async {
-        var userId =
-            await SharedPrefrence.getStringPreference(SharedPrefrence.id);
+        var id = await SharedPrefrence.getStringPreference(SharedPrefrence.id);
         teamMemberAttendenceBloc.add(TeamMemberAttendenceApproveEvent(
-            approvedBy: userId, id: id.toString(), status: "2"));
+            approvedBy: id, id: userId.toString(), status: "2"));
       },
       child: Text(
         text,
@@ -526,7 +529,7 @@ class _TeamMemberAttendenceScreenState
     );
   }
 
-  Widget buttonsReject(int id, color, text) {
+  Widget buttonsReject(int userId, color, text) {
     return ElevatedButton(
       style: ButtonStyle(
         fixedSize: MaterialStateProperty.all(
@@ -545,10 +548,9 @@ class _TeamMemberAttendenceScreenState
         ),
       ),
       onPressed: () async {
-        var userId =
-            await SharedPrefrence.getStringPreference(SharedPrefrence.id);
+        var id = await SharedPrefrence.getStringPreference(SharedPrefrence.id);
         teamMemberAttendenceBloc.add(TeamMemberAttendenceApproveEvent(
-            approvedBy: userId, id: id.toString(), status: "3"));
+            approvedBy: id, id: userId.toString(), status: "3"));
       },
       child: Text(
         text,
