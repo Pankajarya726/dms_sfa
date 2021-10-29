@@ -33,7 +33,6 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
 
   @override
   Widget build(BuildContext context) {
-    print("current date $date");
     return BlocProvider(
       create: (context) => teamMembersAbsentBloc,
       child: BlocBuilder<TeamMembersAbsentBloc, TeamMembersAbsentStates>(
