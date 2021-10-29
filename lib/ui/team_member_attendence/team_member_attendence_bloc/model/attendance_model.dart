@@ -48,7 +48,7 @@ class AttendenceModel {
   int approvedStatus;
   String? date;
   String status;
-  String id;
+  int? id;
 
   factory AttendenceModel.fromJson(String str) =>
       AttendenceModel.fromMap(json.decode(str));
@@ -59,6 +59,6 @@ class AttendenceModel {
             json["approved_status"] == null ? null : json["approved_status"],
         date: json["date"] == null ? null : json["date"],
         status: json["status"] == null ? null : json["status"],
-        id: json["id"] == null ? null : json["id"],
+        id: json["id"] == null ? 0 : json["id"],
       );
 }

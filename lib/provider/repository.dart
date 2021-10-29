@@ -293,7 +293,7 @@ class ApiRepository {
       "absent_status": absentStatus,
       "user_attendence_id": userAttendenceId,
     };
-
+    log(data.toString());
     try {
       Response response = await dio.post(
         Url.absentApproveReject,
@@ -398,7 +398,6 @@ class ApiRepository {
       "clock_in_status": status,
       "clock_in_approved_by": approvedBy
     };
-    log(params.toString());
     try {
       Response response = await dio.post(
         Url.clockInApproveReject,

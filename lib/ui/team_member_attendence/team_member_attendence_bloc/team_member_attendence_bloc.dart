@@ -68,7 +68,7 @@ class TeamMemberAttendenceBloc
   Stream<TeamMemberAttendenceState> absentApprove(
       TeamMemberAttendenceAbsentApproveEvent event) async* {
     AbsentApproveRejectResponse response = await repository.absentApproveReject(
-        event.approvedBy, event.id, event.status, "");
+        event.approvedBy, event.userId, event.status, event.id);
     log(response.message);
     if (response.success) {
       yield TeamMemberAttendenceAbsentApproveSuccessState(response: response);

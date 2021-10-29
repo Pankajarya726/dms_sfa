@@ -277,7 +277,8 @@ class _TeamMemberAttendenceScreenState
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.center,
                                                   children: [
-                                                    attendence[index]
+                                                    attendence[
+                                                                    index]
                                                                 .approvedStatus ==
                                                             2
                                                         ? statusAccepted()
@@ -299,7 +300,7 @@ class _TeamMemberAttendenceScreenState
                                                                 : absentStatusPending(
                                                                     attendence[
                                                                             index]
-                                                                        .id,
+                                                                        .id!,
                                                                     attendence[
                                                                             index]
                                                                         .userId),
@@ -422,11 +423,11 @@ class _TeamMemberAttendenceScreenState
   Widget absentStatusPending(int id, int userId) {
     return Row(
       children: [
-        buttonsAbsentApprove(id, userId, colorGreen, "Approve"),
+        buttonsAbsentApprove(id, userId, colorGray, "Approve"),
         const SizedBox(
           width: 10,
         ),
-        buttonsAbsentReject(id, userId, colorRed, "Reject")
+        buttonsAbsentReject(id, userId, colorGrayDark, "Reject")
       ],
     );
   }
@@ -452,8 +453,13 @@ class _TeamMemberAttendenceScreenState
       onPressed: () async {
         var approvedBy =
             await SharedPrefrence.getStringPreference(SharedPrefrence.id);
-        teamMemberAttendenceBloc.add(TeamMemberAttendenceApproveEvent(
-            approvedBy: approvedBy, id: userId.toString(), status: "2"));
+        teamMemberAttendenceBloc.add(
+          TeamMemberAttendenceAbsentApproveEvent(
+              id: id.toString(),
+              approvedBy: approvedBy,
+              userId: userId.toString(),
+              status: "2"),
+        );
       },
       child: Text(
         text,
@@ -485,8 +491,13 @@ class _TeamMemberAttendenceScreenState
       onPressed: () async {
         var approvedBy =
             await SharedPrefrence.getStringPreference(SharedPrefrence.id);
-        teamMemberAttendenceBloc.add(TeamMemberAttendenceApproveEvent(
-            approvedBy: approvedBy, id: userId.toString(), status: "3"));
+        teamMemberAttendenceBloc.add(
+          TeamMemberAttendenceAbsentApproveEvent(
+              id: id.toString(),
+              approvedBy: approvedBy,
+              userId: userId.toString(),
+              status: "3"),
+        );
       },
       child: Text(
         text,
