@@ -110,6 +110,7 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
                         children: [
                           buttonsApprove(
                               state.getClockInDataResponse.data![index].id,
+                              state.getClockInDataResponse.data![index].userId,
                               colorGreen,
                               "Approve"),
                           const SizedBox(
@@ -117,6 +118,7 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
                           ),
                           buttonsReject(
                               state.getClockInDataResponse.data![index].id,
+                              state.getClockInDataResponse.data![index].userId,
                               colorRed,
                               "Reject"),
                           SizedBox(
@@ -392,7 +394,7 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
     );
   }
 
-  Widget buttonsApprove(int id, color, text) {
+  Widget buttonsApprove(int id, int userId, color, text) {
     return ElevatedButton(
       style: ButtonStyle(
         fixedSize: MaterialStateProperty.all(
@@ -414,7 +416,10 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
         var approvedBy =
             await SharedPrefrence.getStringPreference(SharedPrefrence.id);
         getClockInDataBloc.add(ClockInApproveRejectEvent(
-            id: id.toString(), status: "2", approvedBy: approvedBy.toString()));
+            id: id.toString(),
+            userId: userId.toString(),
+            status: "2",
+            approvedBy: approvedBy.toString()));
       },
       child: Text(
         text,
@@ -425,7 +430,7 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
     );
   }
 
-  Widget buttonsReject(int id, color, text) {
+  Widget buttonsReject(int id, int userId, color, text) {
     return ElevatedButton(
       style: ButtonStyle(
         fixedSize: MaterialStateProperty.all(
@@ -447,7 +452,10 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
         var approvedBy =
             await SharedPrefrence.getStringPreference(SharedPrefrence.id);
         getClockInDataBloc.add(ClockInApproveRejectEvent(
-            id: id.toString(), status: "3", approvedBy: approvedBy.toString()));
+            id: id.toString(),
+            userId: userId.toString(),
+            status: "3",
+            approvedBy: approvedBy.toString()));
       },
       child: Text(
         text,

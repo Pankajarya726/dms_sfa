@@ -291,9 +291,9 @@ class ApiRepository {
       "absent_approved_by": absentApprovedBy,
       "user_id": userId,
       "absent_status": absentStatus,
-      "user_attendence_id": userAttendenceId,
+      "id": userAttendenceId,
     };
-    log(data.toString());
+
     try {
       Response response = await dio.post(
         Url.absentApproveReject,
@@ -392,9 +392,10 @@ class ApiRepository {
   }
 
   Future<ClockInApproveRes> clockInApprovReject(
-      String id, String status, String approvedBy) async {
+      String id, String userId, String status, String approvedBy) async {
     Map<String, dynamic> params = {
       "id": id,
+      "user_id": userId,
       "clock_in_status": status,
       "clock_in_approved_by": approvedBy
     };

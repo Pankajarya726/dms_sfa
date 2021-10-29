@@ -48,7 +48,7 @@ class AttendenceModel {
   int approvedStatus;
   String? date;
   String status;
-  int? id;
+  int id;
 
   factory AttendenceModel.fromJson(String str) =>
       AttendenceModel.fromMap(json.decode(str));
