@@ -8,6 +8,7 @@ import 'package:sfa/ui/absent/bloc/model/mark_absent_by_user.dart';
 import 'package:sfa/ui/add_pjp_screen/add_pjp_model/add_pjp_model.dart';
 import 'package:sfa/ui/attendence_clock_in_out/model/clock_in_response.dart';
 import 'package:sfa/ui/attendence_clock_in_out/model/clock_out_response.dart';
+import 'package:sfa/ui/change_password/model/model.dart';
 import 'package:sfa/ui/home_screen/home_screen_model/home_screen_model.dart';
 import 'package:sfa/ui/home_screen/home_screen_model/menu_model.dart';
 import 'package:sfa/ui/login_screen/login_model/login_response.dart';
@@ -535,6 +536,39 @@ class ApiRepository {
         message: "Something went Wrong!",
         success: false,
         data: [],
+      );
+    }
+  }
+
+  Future<ChangePassResponse> changePassword(String id, String currPassword,
+      String newPassword, String confPassword) async {
+    Map<String, dynamic> params = {
+      "current_password": currPassword,
+      "new_password": newPassword,
+      "password_confirmation": confPassword,
+      "id": id
+    };
+
+    try {
+      Response response = await dio.post(
+        Url.changePassword,
+        data: params,
+      );
+
+      if (response.statusCode == 200) {
+        ChangePassResponse result =
+            ChangePassResponse.fromJson(response.toString());
+        return result;
+      } else {
+        return ChangePassResponse(
+          message: response.statusMessage.toString(),
+          success: false,
+        );
+      }
+    } catch (exception) {
+      return ChangePassResponse(
+        message: "Something went Wrong!",
+        success: false,
       );
     }
   }
