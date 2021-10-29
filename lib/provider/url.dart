@@ -1,6 +1,7 @@
 class Url {
   static const String baseUrl = "http://dmsapp.tekzee.in/api/";
   static const String login = "login";
+  static const String getMenu = "getApiMenus";
   static const String getUserDetailsByUserId = "getUserDetailsByUserId";
   static const String clockIn = "clockInByUser";
   static const String clockOut = "clockOutByUser";
@@ -15,4 +16,5 @@ class Url {
   static const String clockInApproveReject = "markClockInStatusByUser";
   static const String teamMembersDetails = "getAllChildStatusDetails";
   static const String teamMembersAttendence = "getChildUserAttendence";
+  static const String trackByUser = "childUserTrackByUser";
 }

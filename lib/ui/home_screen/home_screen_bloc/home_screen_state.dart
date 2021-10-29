@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:sfa/ui/home_screen/home_screen_model/home_screen_model.dart';
+import 'package:sfa/ui/home_screen/home_screen_model/menu_model.dart';
 
 class HomeScreenState extends Equatable {
   @override
@@ -20,4 +21,18 @@ class HomeScreenSuccessState extends HomeScreenState {
 class HomeScreenFailureState extends HomeScreenState {
   final String messages;
   HomeScreenFailureState({required this.messages});
+}
+
+class HomeScreenMenuLoadingState extends HomeScreenState {}
+
+class HomeScreenMenuSuccessState extends HomeScreenState {
+  final HomeMenuResponse response;
+  HomeScreenMenuSuccessState({required this.response});
+  @override
+  List<Object?> get props => [response];
+}
+
+class HomeScreenMenuFailureState extends HomeScreenState {
+  final String messages;
+  HomeScreenMenuFailureState({required this.messages});
 }

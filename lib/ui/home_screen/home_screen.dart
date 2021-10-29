@@ -21,30 +21,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   HomeScreenBloc homeScreenBloc = HomeScreenBloc();
-  List<String> icons = [
-    "assets/home-ic1.png",
-    "assets/home-ic2.png",
-    "assets/home-ic3.png",
-    "assets/home-ic4.png",
-    "assets/home-ic5.png",
-    "assets/home-ic6.png"
-  ];
-  List<String> title = [
-    "Attendence",
-    "Mapping",
-    "Enrollment",
-    "Task",
-    "Orders",
-    "Add Visit"
-  ];
-  List<String> subTitle = [
-    "Lorem ipsum dolor sit amet",
-    "Lorem ipsum dolor sit amet",
-    "Lorem ipsum dolor sit amet",
-    "Lorem ipsum dolor sit amet",
-    "Lorem ipsum dolor sit amet",
-    "Lorem ipsum dolor sit amet",
-  ];
+
   String imageUrl = "";
   String employeeName = "";
   String designation = "";
@@ -68,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
             imageUrl = state.userData.data!.image;
             employeeName = state.userData.data!.name;
             designation = state.userData.data!.designation;
-
+            homeScreenBloc.add(HomeScreenMenuEvent());
             SharedPrefrence.setStringPreference(
                 SharedPrefrence.isEnable, state.userData.data!.pjpButton);
           }
@@ -179,70 +156,91 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   color: colorGrayLite,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.only(top: 16),
-                    shrinkWrap: false,
-                    itemCount: 6,
-                    itemBuilder: (context, int index) {
-                      return Card(
-                        margin: const EdgeInsets.fromLTRB(14, 0, 14, 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: ListTile(
-                          onTap: () {
-                            if (index == 0) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const AttendenceHomeScreen()));
-                            }
-                          },
-                          horizontalTitleGap: 20,
-                          leading: Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-                            child: Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
+                  child: BlocBuilder<HomeScreenBloc, HomeScreenState>(
+                    builder: (context, state) {
+                      if (state is HomeScreenMenuLoadingState) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      if (state is HomeScreenMenuFailureState) {
+                        return Center(
+                          child: Text(state.messages),
+                        );
+                      }
+                      if (state is HomeScreenMenuSuccessState) {
+                        return ListView.builder(
+                          padding: const EdgeInsets.only(top: 16),
+                          shrinkWrap: false,
+                          itemCount: 6,
+                          itemBuilder: (context, int index) {
+                            return Card(
+                              margin: const EdgeInsets.fromLTRB(14, 0, 14, 16),
+                              shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                image: DecorationImage(
-                                    image: AssetImage(icons[index]),
-                                    fit: BoxFit.cover),
                               ),
-                            ),
-                          ),
-                          title: Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
-                            child: Text(
-                              title[index],
-                              style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 21,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          subtitle: Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 2, 0, 16),
-                            child: Text(
-                              subTitle[index],
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
+                              child: ListTile(
+                                onTap: () {
+                                  if (index == 0) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const AttendenceHomeScreen()));
+                                  }
+                                },
+                                horizontalTitleGap: 20,
+                                leading: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                                  child: Container(
+                                    height: 50,
+                                    width: 50,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      image: DecorationImage(
+                                          image: NetworkImage(state
+                                              .response.data![index].menuImage),
+                                          fit: BoxFit.cover),
+                                    ),
+                                  ),
+                                ),
+                                title: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 16, 0, 0),
+                                  child: Text(
+                                    state.response.data![index].menuName,
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 21,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                subtitle: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 2, 0, 16),
+                                  child: Text(
+                                    state.response.data![index].menuDescription,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                                trailing: const Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
+                                  child: Icon(
+                                    Icons.keyboard_arrow_right,
+                                    size: 28,
+                                    color: colorGrayDark,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                          trailing: const Padding(
-                            padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
-                            child: Icon(
-                              Icons.keyboard_arrow_right,
-                              size: 28,
-                              color: colorGrayDark,
-                            ),
-                          ),
-                        ),
-                      );
+                            );
+                          },
+                        );
+                      }
+                      return Container();
                     },
                   ),
                 ),

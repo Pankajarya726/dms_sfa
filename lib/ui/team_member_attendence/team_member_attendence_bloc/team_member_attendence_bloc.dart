@@ -5,6 +5,7 @@ import 'package:sfa/main.dart';
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/model/attendance_model.dart';
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_member_attendence_event.dart';
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_member_attendence_state.dart';
+import 'package:sfa/ui/team_members_absent/model/absent_approve_reject_response.dart';
 import 'package:sfa/ui/team_members_clockout/model/clockin_approve_reject_model.dart';
 
 class TeamMemberAttendenceBloc
@@ -27,7 +28,10 @@ class TeamMemberAttendenceBloc
       yield* getAttendence(event);
     }
     if (event is TeamMemberAttendenceApproveEvent) {
-      yield* attendenceAction(event);
+      yield* presentApprove(event);
+    }
+    if (event is TeamMemberAttendenceAbsentApproveEvent) {
+      yield* absentApprove(event);
     }
   }
 
@@ -49,7 +53,7 @@ class TeamMemberAttendenceBloc
     }
   }
 
-  Stream<TeamMemberAttendenceState> attendenceAction(
+  Stream<TeamMemberAttendenceState> presentApprove(
       TeamMemberAttendenceApproveEvent event) async* {
     ClockInApproveRes response = await repository.clockInApprovReject(
         event.id, event.status, event.approvedBy);
@@ -58,6 +62,19 @@ class TeamMemberAttendenceBloc
       yield TeamMemberAttendenceApproveSuccessState(response: response);
     } else {
       yield TeamMemberAttendenceApproveFailureState(message: response.message);
+    }
+  }
+
+  Stream<TeamMemberAttendenceState> absentApprove(
+      TeamMemberAttendenceAbsentApproveEvent event) async* {
+    AbsentApproveRejectResponse response = await repository.absentApproveReject(
+        event.approvedBy, event.id, event.status, "");
+    log(response.message);
+    if (response.success) {
+      yield TeamMemberAttendenceAbsentApproveSuccessState(response: response);
+    } else {
+      yield TeamMemberAttendenceAbsentApproveFailureState(
+          message: response.message);
     }
   }
 }
