@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
+import 'package:sfa/ui/team_members/team_members_screen.dart';
 import 'package:sfa/ui/team_members_clockout/bloc/get_clock_in_data_bloc.dart';
 import 'package:sfa/ui/team_members_clockout/bloc/get_clock_in_data_events.dart';
 import 'package:sfa/ui/team_members_clockout/bloc/get_clock_in_data_states.dart';
@@ -9,18 +11,26 @@ import 'package:sfa/utility/constants.dart';
 import 'package:sfa/utility/shared_prefrence.dart';
 
 class TeamMembersClockoutScreen extends StatefulWidget {
-  const TeamMembersClockoutScreen({Key? key}) : super(key: key);
+  final Function(DateChangeListener dateChangeListener) onListenerInitialize;
+  const TeamMembersClockoutScreen(
+      {required this.onListenerInitialize, Key? key})
+      : super(key: key);
 
   @override
   _TeamMembersClockoutScreenState createState() =>
       _TeamMembersClockoutScreenState();
 }
 
-class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen> {
+class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
+    implements DateChangeListener {
   bool clockInOut = false;
   GetClockInDataBloc getClockInDataBloc = GetClockInDataBloc();
+  var format = DateFormat("yyyy-MM-dd");
+  DateTime? dateTime = DateTime.now();
+
   @override
   void initState() {
+    widget.onListenerInitialize(this);
     super.initState();
     addClockInData();
   }
@@ -449,6 +459,12 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen> {
   }
 
   addClockInData() {
-    getClockInDataBloc.add(GetClockInDataSuccessEvent(dateAdded: "2021-10-21"));
+    String date = format.format(dateTime!);
+    getClockInDataBloc.add(GetClockInDataSuccessEvent(dateAdded: date));
+  }
+
+  @override
+  void onDateChange(String date) {
+    getClockInDataBloc.add(GetClockInDataSuccessEvent(dateAdded: date));
   }
 }

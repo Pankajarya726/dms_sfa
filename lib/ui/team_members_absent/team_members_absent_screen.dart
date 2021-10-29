@@ -1,21 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
+import 'package:sfa/ui/team_members/team_members_screen.dart';
 import 'package:sfa/ui/team_members_absent/bloc/team_members_absent_bloc.dart';
 import 'package:sfa/ui/team_members_absent/bloc/team_members_absent_events.dart';
 import 'package:sfa/ui/team_members_absent/bloc/team_members_absent_states.dart';
 import 'package:sfa/utility/colors.dart';
 
 class TeamMembersAbsentScreen extends StatefulWidget {
-  const TeamMembersAbsentScreen({Key? key}) : super(key: key);
-
+  final Function(DateChangeListener dateChangeListener) onListenerInitialize;
+  const TeamMembersAbsentScreen({required this.onListenerInitialize, Key? key})
+      : super(key: key);
   @override
   _TeamMembersAbsentScreenState createState() =>
       _TeamMembersAbsentScreenState();
 }
 
-class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
+class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
+    implements DateChangeListener {
   TeamMembersAbsentBloc teamMembersAbsentBloc = TeamMembersAbsentBloc();
+
+  var format = DateFormat("yyyy-MM-dd");
+  DateTime? dateTime = DateTime.now();
+  String date = "";
+
+  @override
+  void initState() {
+    widget.onListenerInitialize(this);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +38,14 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
       child: BlocBuilder<TeamMembersAbsentBloc, TeamMembersAbsentStates>(
         builder: (context, state) {
           if (state is TeamMembersAbsentInitialState) {
+            String date = format.format(dateTime!);
             teamMembersAbsentBloc
-                .add(TeamMembersAbsentSuccessEvent(currentDate: "2021-10-25"));
+                .add(TeamMembersAbsentSuccessEvent(currentDate: date));
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (state is TeamMembersAbsentLoadingState) {
             return const Center(
               child: CircularProgressIndicator(),
             );
@@ -82,9 +102,7 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
                     trailing: IntrinsicWidth(
                       child: Row(
                         children: [
-                          buttonsApproveReject(
-                            colorGreen,
-                            "Approve",
+                          buttonApprove(
                             state.getAbsentDataResponse.data![index].userId
                                 .toString(),
                             state.getAbsentDataResponse.data![index].id
@@ -93,9 +111,7 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
                           const SizedBox(
                             width: 10,
                           ),
-                          buttonsApproveReject(
-                            colorRed,
-                            "Reject",
+                          buttonReject(
                             state.getAbsentDataResponse.data![index].userId
                                 .toString(),
                             state.getAbsentDataResponse.data![index].id
@@ -211,15 +227,15 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
                       Row(
                         children: [
                           Expanded(
-                            child: roundedButton(colorGreen, "Approve", userId,
-                                userAttendenceId),
+                            child:
+                                roundedApproveButton(userId, userAttendenceId),
                           ),
                           const SizedBox(
                             width: 25,
                           ),
                           Expanded(
-                            child: roundedButton(colorPrimary, "Reject", userId,
-                                userAttendenceId),
+                            child:
+                                roundedRejectButton(userId, userAttendenceId),
                           ),
                         ],
                       ),
@@ -234,7 +250,7 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
     );
   }
 
-  Widget roundedButton(buttonColor, buttonText, userId, userAttendenceId) {
+  Widget roundedApproveButton(userId, userAttendenceId) {
     return BlocProvider(
       create: (context) => teamMembersAbsentBloc,
       child: BlocListener<TeamMembersAbsentBloc, TeamMembersAbsentStates>(
@@ -252,28 +268,18 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
         child: Center(
           child: ElevatedButton(
             onPressed: () {
-              if (buttonText == "Approve") {
-                teamMembersAbsentBloc.add(
-                  AbsentApproveRejectEvent(
-                    userId: userId,
-                    absentStatus: "2",
-                    userAttendenceId: userAttendenceId,
-                  ),
-                );
-              } else {
-                teamMembersAbsentBloc.add(
-                  AbsentApproveRejectEvent(
-                    userId: userId,
-                    absentStatus: "3",
-                    userAttendenceId: userAttendenceId,
-                  ),
-                );
-              }
+              teamMembersAbsentBloc.add(
+                AbsentApproveRejectEvent(
+                  userId: userId,
+                  absentStatus: "2",
+                  userAttendenceId: userAttendenceId,
+                ),
+              );
             },
             style: ButtonStyle(
               fixedSize: MaterialStateProperty.all(
                   Size(MediaQuery.of(context).size.width, 50)),
-              backgroundColor: MaterialStateProperty.all(buttonColor),
+              backgroundColor: MaterialStateProperty.all(colorGreen),
               elevation: MaterialStateProperty.all(0),
               shape: MaterialStateProperty.all(
                 RoundedRectangleBorder(
@@ -289,9 +295,9 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
                   );
                 }
                 if (state is TeamMembersAbsentSuccessState) {
-                  return Text(
-                    buttonText,
-                    style: const TextStyle(
+                  return const Text(
+                    "Approve",
+                    style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
                     ),
@@ -306,7 +312,69 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
     );
   }
 
-  Widget buttonsApproveReject(color, buttonText, userId, userAttendenceId) {
+  Widget roundedRejectButton(userId, userAttendenceId) {
+    return BlocProvider(
+      create: (context) => teamMembersAbsentBloc,
+      child: BlocListener<TeamMembersAbsentBloc, TeamMembersAbsentStates>(
+        listener: (context, state) {
+          if (state is AbsentApproveSuccessState) {
+            Fluttertoast.showToast(msg: state.successMessage);
+            teamMembersAbsentBloc
+                .add(TeamMembersAbsentSuccessEvent(currentDate: "2021-10-25"));
+            Navigator.pop(context);
+          }
+          if (state is AbsentApproveFailureState) {
+            Fluttertoast.showToast(msg: state.failureMessage);
+          }
+        },
+        child: Center(
+          child: ElevatedButton(
+            onPressed: () {
+              teamMembersAbsentBloc.add(
+                AbsentApproveRejectEvent(
+                  userId: userId,
+                  absentStatus: "3",
+                  userAttendenceId: userAttendenceId,
+                ),
+              );
+            },
+            style: ButtonStyle(
+              fixedSize: MaterialStateProperty.all(
+                  Size(MediaQuery.of(context).size.width, 50)),
+              backgroundColor: MaterialStateProperty.all(colorRed),
+              elevation: MaterialStateProperty.all(0),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+            ),
+            child: BlocBuilder<TeamMembersAbsentBloc, TeamMembersAbsentStates>(
+              builder: (context, state) {
+                if (state is TeamMembersAbsentLoadingState) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (state is TeamMembersAbsentSuccessState) {
+                  return const Text(
+                    "Reject",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  );
+                }
+                return Container();
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buttonApprove(userId, userAttendenceId) {
     return BlocListener<TeamMembersAbsentBloc, TeamMembersAbsentStates>(
       listener: (context, state) {
         if (state is AbsentApproveSuccessState) {
@@ -326,7 +394,7 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
           backgroundColor: MaterialStateProperty.all(Colors.white),
           elevation: MaterialStateProperty.all(0),
           side: MaterialStateProperty.all(
-            BorderSide(color: color),
+            const BorderSide(color: colorGreen),
           ),
           minimumSize: MaterialStateProperty.all(
             const Size.fromRadius(0),
@@ -336,31 +404,75 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen> {
           ),
         ),
         onPressed: () {
-          if (buttonText == "Approve") {
-            teamMembersAbsentBloc.add(
-              AbsentApproveRejectEvent(
-                userId: userId,
-                absentStatus: "2",
-                userAttendenceId: userAttendenceId,
-              ),
-            );
-          } else {
-            teamMembersAbsentBloc.add(
-              AbsentApproveRejectEvent(
-                userId: userId,
-                absentStatus: "3",
-                userAttendenceId: userAttendenceId,
-              ),
-            );
-          }
+          teamMembersAbsentBloc.add(
+            AbsentApproveRejectEvent(
+              userId: userId,
+              absentStatus: "2",
+              userAttendenceId: userAttendenceId,
+            ),
+          );
         },
-        child: Text(
-          buttonText,
+        child: const Text(
+          "Approve",
           style: TextStyle(
-            color: color,
+            color: colorGreen,
           ),
         ),
       ),
     );
+  }
+
+  Widget buttonReject(userId, userAttendenceId) {
+    return BlocListener<TeamMembersAbsentBloc, TeamMembersAbsentStates>(
+      listener: (context, state) {
+        if (state is AbsentApproveSuccessState) {
+          Fluttertoast.showToast(msg: state.successMessage);
+          teamMembersAbsentBloc
+              .add(TeamMembersAbsentSuccessEvent(currentDate: "2021-10-25"));
+        }
+        if (state is AbsentApproveFailureState) {
+          Fluttertoast.showToast(msg: state.failureMessage);
+        }
+      },
+      child: ElevatedButton(
+        style: ButtonStyle(
+          fixedSize: MaterialStateProperty.all(
+            const Size.fromWidth(65),
+          ),
+          backgroundColor: MaterialStateProperty.all(Colors.white),
+          elevation: MaterialStateProperty.all(0),
+          side: MaterialStateProperty.all(
+            const BorderSide(color: colorRed),
+          ),
+          minimumSize: MaterialStateProperty.all(
+            const Size.fromRadius(0),
+          ),
+          padding: MaterialStateProperty.all(
+            const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+          ),
+        ),
+        onPressed: () {
+          teamMembersAbsentBloc.add(
+            AbsentApproveRejectEvent(
+              userId: userId,
+              absentStatus: "3",
+              userAttendenceId: userAttendenceId,
+            ),
+          );
+        },
+        child: const Text(
+          "Reject",
+          style: TextStyle(
+            color: colorRed,
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  void onDateChange(String date) {
+    this.date = date;
+    teamMembersAbsentBloc.add(TeamMembersAbsentSuccessEvent(currentDate: date));
   }
 }

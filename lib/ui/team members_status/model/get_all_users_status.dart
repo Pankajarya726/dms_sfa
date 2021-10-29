@@ -72,16 +72,16 @@ class Data {
 
   Map<String, dynamic> toMap() => {
         "clock_in_appr": clockInAppr == null
-            ? null
+            ? []
             : List<dynamic>.from(clockInAppr.map((x) => x.toMap())),
         "clock_in_reject": clockInReject == null
-            ? null
+            ? []
             : List<dynamic>.from(clockInReject.map((x) => x.toMap())),
         "absent_reject": absentReject == null
-            ? null
+            ? []
             : List<dynamic>.from(absentReject.map((x) => x.toMap())),
         "absent_approved": absentApproved == null
-            ? null
+            ? []
             : List<dynamic>.from(absentApproved.map((x) => x.toMap())),
       };
 }
@@ -109,4 +109,16 @@ class AbsentApproved {
         "user_id": userId == null ? null : userId,
         "name": name == null ? null : name,
       };
+}
+
+class AttendanceStatusModel {
+  String status;
+  int userId;
+  String userName;
+  int approveStatus;
+  AttendanceStatusModel(
+      {required this.approveStatus,
+      required this.status,
+      required this.userId,
+      required this.userName});
 }
