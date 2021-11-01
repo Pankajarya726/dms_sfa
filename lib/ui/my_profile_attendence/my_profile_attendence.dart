@@ -5,6 +5,7 @@ import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:sfa/ui/my_profile_attendence/my_profile_attendence_bloc/my_profile_attendence_bloc.dart';
 import 'package:sfa/ui/my_profile_attendence/my_profile_attendence_bloc/my_profile_attendence_event.dart';
 import 'package:sfa/ui/my_profile_attendence/my_profile_attendence_bloc/my_profile_attendence_state.dart';
+import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/model/attendance_model.dart';
 import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/constants.dart';
 
@@ -35,296 +36,476 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
     "Absent",
     "05:20:01",
   ];
+  List<AttendenceModel> attendence = [];
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => myProfileAttendenceBloc,
-      child: BlocListener<MyProfileAttendenceBloc, MyProfileAttendenceState>(
-        listener: (context, state) {
-          if (state is MyProfileAttendenceSelectDateState) {
-            dateTime = state.dateTime;
-          }
-          if (state is MyProfileAttendenceIncrementDateState) {
-            dateTime = state.dateTime;
-          }
-          if (state is MyProfileAttendenceDecrementDateState) {
-            dateTime = state.dateTime;
-          }
-        },
-        child: Scaffold(
-          backgroundColor: Colors.white,
-          body: Container(
-            margin: const EdgeInsets.only(top: 8),
-            decoration: const BoxDecoration(
-              color: colorPrimary,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Container(
+          margin: const EdgeInsets.only(top: 8),
+          decoration: const BoxDecoration(
+            color: colorPrimary,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
             ),
-            child: Column(
-              children: [
-                Container(
-                  height: 45,
-                  width: MediaQuery.of(context).size.width,
-                  decoration: const BoxDecoration(
-                    color: colorPrimary,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
+          ),
+          child: Column(
+            children: [
+              Container(
+                height: 45,
+                width: MediaQuery.of(context).size.width,
+                decoration: const BoxDecoration(
+                  color: colorPrimary,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        InkWell(
-                          onTap: () async {
-                            showPicker();
-                          },
-                          child: SizedBox(
-                            height: 30,
-                            width: MediaQuery.of(context).size.width * 0.30,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Image.asset(
-                                  "assets/calendar.png",
-                                  color: Colors.white,
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                BlocBuilder<MyProfileAttendenceBloc,
-                                    MyProfileAttendenceState>(
-                                  builder: (context, state) {
-                                    return Text(
-                                      DateFormat("MMM-yyyy").format(dateTime!),
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14),
-                                    );
-                                  },
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
+                        onTap: () async {
+                          showPicker();
+                        },
+                        child: SizedBox(
                           height: 30,
-                          width: MediaQuery.of(context).size.width * 0.18,
+                          width: MediaQuery.of(context).size.width * 0.30,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              InkWell(
-                                onTap: () {
-                                  dateTime = DateTime(dateTime!.year,
-                                      dateTime!.month - 1, dateTime!.day);
-
-                                  myProfileAttendenceBloc.add(
-                                      MyProfileAttendenceDecrementDateEvent(
-                                          dateTime: dateTime!));
-                                },
-                                child: Image.asset(
-                                  "assets/icon_previous.png",
-                                  width: 25,
-                                ),
+                              Image.asset(
+                                "assets/calendar.png",
+                                color: Colors.white,
                               ),
                               const SizedBox(
                                 width: 10,
                               ),
-                              InkWell(
-                                onTap: () {
-                                  dateTime = DateTime(dateTime!.year,
-                                      dateTime!.month + 1, dateTime!.day);
-
-                                  myProfileAttendenceBloc.add(
-                                      MyProfileAttendenceIncrementDateEvent(
-                                          dateTime: dateTime!));
+                              BlocBuilder<MyProfileAttendenceBloc,
+                                  MyProfileAttendenceState>(
+                                builder: (context, state) {
+                                  return Text(
+                                    DateFormat("MMM-yyyy").format(dateTime!),
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14),
+                                  );
                                 },
-                                child: Image.asset(
-                                  "assets/icon_next.png",
-                                  width: 25,
-                                ),
-                              ),
+                              )
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      decoration: const BoxDecoration(
-                        color: reportBG,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
-                        ),
                       ),
-                      child: SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 15),
-                          child: Column(
-                            children: List.generate(
-                              status.length,
-                              (index) {
-                                return Stack(
-                                  children: [
-                                    Container(
-                                      height: 85,
-                                      margin: const EdgeInsets.fromLTRB(
-                                          10, 15, 10, 0),
-                                      padding: const EdgeInsets.fromLTRB(
-                                          5, 12, 0, 12),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey.withOpacity(0.5),
-                                            spreadRadius: -8,
-                                            blurRadius: 7,
-                                            offset: const Offset(0, 3),
-                                          ),
-                                        ],
-                                      ),
-                                      child: ListTile(
-                                        contentPadding:
-                                            const EdgeInsets.fromLTRB(
-                                                20, 0, 10, 0),
-                                        dense: true,
-                                        horizontalTitleGap: 0,
-                                        title: Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 48),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                names[index],
-                                                style: const TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: 5,
-                                              ),
-                                              Text(
-                                                status[index],
-                                                style: const TextStyle(
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  color: Color(0xff303030),
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        trailing: IntrinsicWidth(
-                                          child: Row(
-                                            children: [
-                                              status[index] == "Present"
-                                                  ? statusAccepted()
-                                                  : status[index] == "Absent"
-                                                      ? statusRejected()
-                                                      : Row(
-                                                          children: [
-                                                            buttonsApproveReject(
-                                                                colorGreen,
-                                                                "Approve"),
-                                                            const SizedBox(
-                                                              width: 8,
-                                                            ),
-                                                            buttonsApproveReject(
-                                                                colorRed,
-                                                                "Reject"),
-                                                          ],
-                                                        ),
-                                              SizedBox(
-                                                width: 20,
-                                                child: IconButton(
-                                                  padding:
-                                                      const EdgeInsets.all(0),
-                                                  onPressed: () {
-                                                    showClockOutBottomSheet();
-                                                  },
-                                                  icon: const Icon(
-                                                    Icons.more_vert,
-                                                    color: Colors.black,
-                                                    size: 27,
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      left: 10,
-                                      top: 15,
-                                      child: Container(
-                                        height: 85,
-                                        width: 60,
-                                        decoration: const BoxDecoration(
-                                          color: colorCalenderDateBG,
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(10),
-                                            bottomLeft: Radius.circular(10),
-                                          ),
-                                        ),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: const [
-                                            Text(
-                                              "Sep",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              "20",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 24,
-                                                  fontWeight: FontWeight.w900),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                );
+                      SizedBox(
+                        height: 30,
+                        width: MediaQuery.of(context).size.width * 0.18,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                dateTime = DateTime(dateTime!.year,
+                                    dateTime!.month - 1, dateTime!.day);
+
+                                myProfileAttendenceBloc.add(
+                                    MyProfileAttendenceDecrementDateEvent(
+                                        dateTime: dateTime!));
                               },
+                              child: Image.asset(
+                                "assets/icon_previous.png",
+                                width: 25,
+                              ),
                             ),
-                          ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                dateTime = DateTime(dateTime!.year,
+                                    dateTime!.month + 1, dateTime!.day);
+
+                                myProfileAttendenceBloc.add(
+                                    MyProfileAttendenceIncrementDateEvent(
+                                        dateTime: dateTime!));
+                              },
+                              child: Image.asset(
+                                "assets/icon_next.png",
+                                width: 25,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: const BoxDecoration(
+                      color: reportBG,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                    ),
+                    child: BlocConsumer<MyProfileAttendenceBloc,
+                        MyProfileAttendenceState>(
+                      listener: (context, state) {
+                        if (state is MyProfileAttendenceSelectDateState) {
+                          dateTime = state.dateTime;
+                          var format = DateFormat("yyyy-MM-dd");
+                          myProfileAttendenceBloc.add(
+                              MyProfileAttendenceInitialEvent(
+                                  currentDate: format.format(dateTime!)));
+                        }
+                        if (state is MyProfileAttendenceIncrementDateState) {
+                          dateTime = state.dateTime;
+                          var format = DateFormat("yyyy-MM-dd");
+                          myProfileAttendenceBloc.add(
+                              MyProfileAttendenceInitialEvent(
+                                  currentDate: format.format(dateTime!)));
+                        }
+                        if (state is MyProfileAttendenceDecrementDateState) {
+                          dateTime = state.dateTime;
+                          var format = DateFormat("yyyy-MM-dd");
+                          myProfileAttendenceBloc.add(
+                              MyProfileAttendenceInitialEvent(
+                                  currentDate: format.format(dateTime!)));
+                        }
+                      },
+                      builder: (context, state) {
+                        if (state is MyProfileAttendenceInitialState) {
+                          var format = DateFormat("yyyy-MM-dd");
+                          myProfileAttendenceBloc.add(
+                              MyProfileAttendenceInitialEvent(
+                                  currentDate: format.format(dateTime!)));
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (state is MyProfileAttendenceLoadingState) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (state is MyProfileAttendenceInitialSuccessState) {
+                          attendence = state.attendanceResponse;
+                          // return ListView.builder(
+                          //   itemCount: status.length,
+                          //   padding: const EdgeInsets.only(bottom: 15),
+                          //   itemBuilder: (context, index) {
+                          //     return Stack(
+                          //       children: [
+                          //         Container(
+                          //           height: 85,
+                          //           margin: const EdgeInsets.fromLTRB(
+                          //               10, 15, 10, 0),
+                          //           padding:
+                          //               const EdgeInsets.fromLTRB(5, 12, 0, 12),
+                          //           decoration: BoxDecoration(
+                          //             color: Colors.white,
+                          //             borderRadius: BorderRadius.circular(10),
+                          //             boxShadow: [
+                          //               BoxShadow(
+                          //                 color: Colors.grey.withOpacity(0.5),
+                          //                 spreadRadius: -8,
+                          //                 blurRadius: 7,
+                          //                 offset: const Offset(0, 3),
+                          //               ),
+                          //             ],
+                          //           ),
+                          //           child: ListTile(
+                          //             contentPadding: const EdgeInsets.fromLTRB(
+                          //                 20, 0, 10, 0),
+                          //             dense: true,
+                          //             horizontalTitleGap: 0,
+                          //             title: Padding(
+                          //               padding:
+                          //                   const EdgeInsets.only(left: 48),
+                          //               child: Column(
+                          //                 crossAxisAlignment:
+                          //                     CrossAxisAlignment.start,
+                          //                 children: [
+                          //                   Text(
+                          //                     DateFormat("EEEE").format(
+                          //                                 DateTime.parse(
+                          //                                     [index]
+                          //                                         .date!))
+                          //                     style: const TextStyle(
+                          //                       fontSize: 20,
+                          //                       fontWeight: FontWeight.bold,
+                          //                     ),
+                          //                   ),
+                          //                   const SizedBox(
+                          //                     height: 5,
+                          //                   ),
+                          //                   Text(
+                          //                     status[index],
+                          //                     style: const TextStyle(
+                          //                       overflow: TextOverflow.ellipsis,
+                          //                       color: Color(0xff303030),
+                          //                       fontSize: 16,
+                          //                       fontWeight: FontWeight.w500,
+                          //                     ),
+                          //                   ),
+                          //                 ],
+                          //               ),
+                          //             ),
+                          //             trailing: IntrinsicWidth(
+                          //               child: Row(
+                          //                 children: [
+                          //                   status[index] == "Present"
+                          //                       ? statusAccepted()
+                          //                       : status[index] == "Absent"
+                          //                           ? statusRejected()
+                          //                           : buttonPending(),
+                          //                   SizedBox(
+                          //                     width: 20,
+                          //                     child: IconButton(
+                          //                       padding:
+                          //                           const EdgeInsets.all(0),
+                          //                       onPressed: () {
+                          //                         showClockOutBottomSheet();
+                          //                       },
+                          //                       icon: const Icon(
+                          //                         Icons.more_vert,
+                          //                         color: Colors.black,
+                          //                         size: 27,
+                          //                       ),
+                          //                     ),
+                          //                   )
+                          //                 ],
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //         Positioned(
+                          //           left: 10,
+                          //           top: 15,
+                          //           child: Container(
+                          //             height: 85,
+                          //             width: 60,
+                          //             decoration: const BoxDecoration(
+                          //               color: colorCalenderDateBG,
+                          //               borderRadius: BorderRadius.only(
+                          //                 topLeft: Radius.circular(10),
+                          //                 bottomLeft: Radius.circular(10),
+                          //               ),
+                          //             ),
+                          //             child: Column(
+                          //               mainAxisAlignment:
+                          //                   MainAxisAlignment.center,
+                          //               children: const [
+                          //                 Text(
+                          //                   "Sep",
+                          //                   style: TextStyle(
+                          //                       color: Colors.black,
+                          //                       fontSize: 18,
+                          //                       fontWeight: FontWeight.bold),
+                          //                 ),
+                          //                 Text(
+                          //                   "20",
+                          //                   style: TextStyle(
+                          //                       color: Colors.black,
+                          //                       fontSize: 24,
+                          //                       fontWeight: FontWeight.w900),
+                          //                 ),
+                          //               ],
+                          //             ),
+                          //           ),
+                          //         ),
+                          //       ],
+                          //     );
+                          //   },
+                          // );
+                        }
+                        if (state is MyProfileAttendenceFailureState) {
+                          return Center(
+                            child: Text(state.failureMessage),
+                          );
+                        }
+                        if (attendence.isNotEmpty) {
+                          return SingleChildScrollView(
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 15),
+                              child: Column(
+                                children: List.generate(
+                                  attendence.length,
+                                  (index) {
+                                    return Stack(
+                                      children: [
+                                        Container(
+                                          height: 85,
+                                          margin: const EdgeInsets.fromLTRB(
+                                              10, 15, 10, 0),
+                                          padding: const EdgeInsets.fromLTRB(
+                                              12, 12, 0, 12),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.grey
+                                                    .withOpacity(0.5),
+                                                spreadRadius: -8,
+                                                blurRadius: 7,
+                                                offset: const Offset(0, 3),
+                                              ),
+                                            ],
+                                          ),
+                                          child: ListTile(
+                                            dense: true,
+                                            onTap: () {},
+                                            title: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 48),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    DateFormat("EEEE").format(
+                                                        DateTime.parse(
+                                                            attendence[index]
+                                                                .date!)),
+                                                    style: const TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        overflow: TextOverflow
+                                                            .ellipsis),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Text(
+                                                    attendence[index].status,
+                                                    style: const TextStyle(
+                                                        color:
+                                                            Color(0xff303030),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        overflow: TextOverflow
+                                                            .ellipsis),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            trailing: IntrinsicWidth(
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  attendence[index]
+                                                              .approvedStatus ==
+                                                          2
+                                                      ? statusAccepted()
+                                                      : attendence[index]
+                                                                  .approvedStatus ==
+                                                              3
+                                                          ? statusRejected()
+                                                          : attendence[index]
+                                                                          .approvedStatus ==
+                                                                      1 &&
+                                                                  attendence[index]
+                                                                          .status ==
+                                                                      "Present Panding"
+                                                              ? presentStatusPending()
+                                                              : absentStatusPending(),
+                                                  SizedBox(
+                                                    width: 20,
+                                                    child: IconButton(
+                                                      onPressed: () {
+                                                        showClockOutBottomSheet();
+                                                      },
+                                                      icon: const Icon(
+                                                        Icons.more_vert,
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          left: 10,
+                                          top: 15,
+                                          child: Container(
+                                            height: 85,
+                                            width: 65,
+                                            decoration: const BoxDecoration(
+                                              color: colorCalenderDateBG,
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(10),
+                                                bottomLeft: Radius.circular(10),
+                                              ),
+                                            ),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  DateFormat("MMM").format(
+                                                      DateTime.parse(
+                                                          attendence[index]
+                                                              .date!)),
+                                                  style: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                Text(
+                                                  DateFormat("dd").format(
+                                                      DateTime.parse(
+                                                          attendence[index]
+                                                              .date!)),
+                                                  style: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 24,
+                                                      fontWeight:
+                                                          FontWeight.w900),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                        return Container();
+                      },
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -475,21 +656,6 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                       const SizedBox(
                         height: 20,
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 3,
-                            child: roundedButton(colorGreen, "Approve"),
-                          ),
-                          const SizedBox(
-                            width: 25,
-                          ),
-                          Expanded(
-                            flex: 3,
-                            child: roundedButton(colorPrimary, "Reject"),
-                          ),
-                        ],
-                      ),
                     ],
                   ),
                 ),
@@ -539,32 +705,6 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
     );
   }
 
-  Widget roundedButton(buttonColor, buttonText) {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ButtonStyle(
-          fixedSize: MaterialStateProperty.all(
-              Size(MediaQuery.of(context).size.width, 50)),
-          backgroundColor: MaterialStateProperty.all(buttonColor),
-          elevation: MaterialStateProperty.all(0),
-          shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-          ),
-        ),
-        child: Text(
-          buttonText,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget statusAccepted() {
     return SizedBox(
       width: 20,
@@ -585,29 +725,34 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
     );
   }
 
-  Widget buttonsApproveReject(color, text) {
+  Widget presentStatusPending() {
+    return buttonPending();
+  }
+
+  Widget absentStatusPending() {
+    return buttonPending();
+  }
+
+  Widget buttonPending() {
     return ElevatedButton(
       style: ButtonStyle(
-        fixedSize: MaterialStateProperty.all(
-          const Size.fromWidth(65),
-        ),
-        backgroundColor: MaterialStateProperty.all(Colors.white),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
+        backgroundColor: MaterialStateProperty.all(colorYellow),
         elevation: MaterialStateProperty.all(0),
-        side: MaterialStateProperty.all(
-          BorderSide(color: color),
-        ),
         minimumSize: MaterialStateProperty.all(
           const Size.fromRadius(0),
         ),
         padding: MaterialStateProperty.all(
-          const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+          const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
         ),
       ),
       onPressed: () {},
-      child: Text(
-        text,
+      child: const Text(
+        "Pending",
         style: TextStyle(
-          color: color,
+          color: Colors.black,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );

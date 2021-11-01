@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ntp/ntp.dart';
 import 'package:sfa/main.dart';
 import 'package:sfa/ui/my_profile_details/my_profile_details_bloc/my_profile_details_event.dart';
 import 'package:sfa/ui/my_profile_details/my_profile_details_bloc/my_profile_details_state.dart';
@@ -13,15 +14,19 @@ class MyProfileDetailsBloc
   Stream<MyProfileDetailsState> mapEventToState(
       MyProfileDetailsEvents event) async* {
     if (event is MyProfileDetailsInitialEvent) {
+      yield MyProfileDetailsLoadingState();
       yield* getMyProfileData(event);
     }
     if (event is MyProfileDetailsSelectDateEvent) {
+      yield MyProfileDetailsLoadingState();
       yield MyProfileDetailsSelectDateState(dateTime: event.dateTime);
     }
     if (event is MyProfileDetailsIncrementDateEvent) {
+      yield MyProfileDetailsLoadingState();
       yield MyProfileDetailsIncrementDateState(dateTime: event.dateTime);
     }
     if (event is MyProfileDetailsDecrementDateEvent) {
+      yield MyProfileDetailsLoadingState();
       yield MyProfileDetailsDecrementDateState(dateTime: event.dateTime);
     }
   }

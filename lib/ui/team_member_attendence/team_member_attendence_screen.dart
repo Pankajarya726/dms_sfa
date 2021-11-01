@@ -290,7 +290,8 @@ class _TeamMemberAttendenceScreenState
                                                                 .approvedStatus ==
                                                             2
                                                         ? statusAccepted()
-                                                        : attendence[index]
+                                                        : attendence[
+                                                                        index]
                                                                     .approvedStatus ==
                                                                 3
                                                             ? statusRejected()
@@ -308,9 +309,9 @@ class _TeamMemberAttendenceScreenState
                                                                             index]
                                                                         .userId)
                                                                 : absentStatusPending(
-                                                                    int.parse(
-                                                                        attendence[index]
-                                                                            .id),
+                                                                    attendence[
+                                                                            index]
+                                                                        .id,
                                                                     attendence[
                                                                             index]
                                                                         .userId),
