@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:sfa/ui/home_screen/home_screen_model/home_screen_model.dart';
+import 'package:sfa/ui/pjp_screen/pjp_model/pjp_model.dart';
 
 class ClockInOutStates extends Equatable {
   @override
@@ -10,6 +12,7 @@ class ClockInOutInitialState extends ClockInOutStates {}
 class ClockInOutLoadingState extends ClockInOutStates {}
 
 class ClockInOutInitialSuccessState extends ClockInOutStates {
+  final UserData userData;
   final String date;
   final int currentHours;
   final int currentMinutes;
@@ -18,6 +21,7 @@ class ClockInOutInitialSuccessState extends ClockInOutStates {
   final String seperator;
 
   ClockInOutInitialSuccessState({
+    required this.userData,
     required this.date,
     required this.currentHours,
     required this.currentMinutes,
@@ -67,6 +71,20 @@ class ClockOutSuccessState extends ClockInOutStates {
 class ClockOutFailureState extends ClockInOutStates {
   final String failureMessage;
   ClockOutFailureState({required this.failureMessage});
+  @override
+  List<Object?> get props => [failureMessage];
+}
+
+class ClockInOutGetPjpSuccessState extends ClockInOutStates {
+  final PjpResponse pjpResponse;
+  ClockInOutGetPjpSuccessState({required this.pjpResponse});
+  @override
+  List<Object?> get props => [pjpResponse];
+}
+
+class ClockInOutGetPjpFailureState extends ClockInOutStates {
+  final String failureMessage;
+  ClockInOutGetPjpFailureState({required this.failureMessage});
   @override
   List<Object?> get props => [failureMessage];
 }

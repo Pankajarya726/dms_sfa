@@ -8,6 +8,8 @@ import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_events.dart';
 import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_states.dart';
 import 'package:sfa/ui/attendence_clock_in_out/model/clock_in_response.dart';
 import 'package:sfa/ui/attendence_clock_in_out/model/clock_out_response.dart';
+import 'package:sfa/ui/home_screen/home_screen_model/home_screen_model.dart';
+import 'package:sfa/ui/pjp_screen/pjp_model/pjp_model.dart';
 import 'package:sfa/utility/network.dart';
 import 'package:sfa/utility/shared_prefrence.dart';
 
@@ -28,6 +30,9 @@ class ClockInOutBloc extends Bloc<ClockInOutEvents, ClockInOutStates> {
       yield ClockInOutLoadingState();
       yield* clockOutSuccess(event);
     }
+    // if (event is ClockInOutGetPjpSuccessEvent) {
+    //   yield* getPjpDataEvent(event);
+    // }
   }
 }
 
@@ -36,14 +41,22 @@ Stream<ClockInOutStates> getInitialData(ClockInOutInitialEvent event) async* {
     DateTime _ntpTime;
     _ntpTime = await NTP.now();
     var format = DateFormat("dd-MMM-yyyy");
-    yield ClockInOutInitialSuccessState(
-      date: format.format(_ntpTime),
-      at: " at ",
-      seperator: ":",
-      currentHours: _ntpTime.hour,
-      currentMinutes: _ntpTime.minute,
-      currentSeconds: _ntpTime.second,
-    );
+    String userId = await SharedPrefrence.getStringPreference("id");
+    UserData response = await repository.getUserDetailsByUserId(userId);
+
+    if (response.success) {
+      yield ClockInOutInitialSuccessState(
+        userData: response,
+        date: format.format(_ntpTime),
+        at: " at ",
+        seperator: ":",
+        currentHours: _ntpTime.hour,
+        currentMinutes: _ntpTime.minute,
+        currentSeconds: _ntpTime.second,
+      );
+    } else {
+      yield ClockInOutFailureState(failureMessage: response.message);
+    }
   } else {
     yield ClockInOutFailureState(
         failureMessage: "Please check your internet connection!");
@@ -54,7 +67,6 @@ Stream<ClockInOutStates> clockInSuccess(ClockInSuccessEvent event) async* {
   if (await Network.isConnected()) {
     DateTime _ntpTime;
     _ntpTime = await NTP.now();
-
     var format = DateFormat("yyyy-MM-dd");
     String userId = await SharedPrefrence.getStringPreference("id");
 
@@ -76,6 +88,27 @@ Stream<ClockInOutStates> clockInSuccess(ClockInSuccessEvent event) async* {
         failureMessage: "Please check your internet connection!");
   }
 }
+
+// Stream<ClockInOutStates> getPjpDataEvent(
+//     ClockInOutGetPjpSuccessEvent event) async* {
+//   if (await Network.isConnected()) {
+//     DateTime _ntpTime = await NTP.now();
+//     var month = DateFormat("MM").format(_ntpTime);
+//     String userId =
+//         await SharedPrefrence.getStringPreference(SharedPrefrence.id);
+//     PjpResponse response =
+//         await repository.getPjpData(userId, month.toString());
+
+//     if (response.success) {
+//       yield ClockInOutGetPjpSuccessState(pjpResponse: response);
+//     } else {
+//       yield ClockInOutGetPjpFailureState(failureMessage: response.message);
+//     }
+//   } else {
+//     yield ClockInOutFailureState(
+//         failureMessage: "Please check your internet connection!");
+//   }
+// }
 
 Stream<ClockInOutStates> clockOutSuccess(ClockOutSuccessEvent event) async* {
   if (await Network.isConnected()) {
