@@ -9,10 +9,12 @@ class SettingsScreen extends StatefulWidget {
   final String name;
   final String designation;
   final String image;
+  final String email;
   const SettingsScreen(
       {required this.name,
       required this.designation,
       required this.image,
+      required this.email,
       Key? key})
       : super(key: key);
 
@@ -184,8 +186,10 @@ class _SettingScreenState extends State<SettingsScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              EditProfileScreen(image: widget.image),
+                          builder: (context) => EditProfileScreen(
+                              image: widget.image,
+                              name: widget.name,
+                              email: widget.email),
                         ),
                       );
                     }

@@ -25,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String imageUrl = "";
   String employeeName = "";
   String designation = "";
+  String email = "";
 
   @override
   void initState() {
@@ -45,6 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
             imageUrl = state.userData.data!.image;
             employeeName = state.userData.data!.name;
             designation = state.userData.data!.designation;
+            email = state.userData.data!.email;
             homeScreenBloc.add(HomeScreenMenuEvent());
             SharedPrefrence.setStringPreference(
                 SharedPrefrence.isEnable, state.userData.data!.pjpButton);
@@ -141,6 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         name: employeeName,
                                         designation: designation,
                                         image: imageUrl,
+                                        email: email,
                                       )));
                         },
                         child: const CircleAvatar(

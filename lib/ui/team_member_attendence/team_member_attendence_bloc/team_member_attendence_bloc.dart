@@ -2,7 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sfa/main.dart';
-import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/model/attendance_model.dart';
+import 'package:sfa/ui/team_member_attendence/model/attendance_model.dart';
+
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_member_attendence_event.dart';
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_member_attendence_state.dart';
 import 'package:sfa/ui/team_members_absent/model/absent_approve_reject_response.dart';

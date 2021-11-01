@@ -18,4 +18,5 @@ class Url {
   static const String teamMembersAttendence = "getChildUserAttendence";
   static const String trackByUser = "childUserTrackByUser";
   static const String changePassword = "resetPassword";
+  static const String editProfile = "profileEdit";
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sfa/main.dart';
 import 'package:sfa/provider/url.dart';
 import 'package:sfa/ui/absent/bloc/model/mark_absent_by_user.dart';
@@ -7,13 +8,14 @@ import 'package:sfa/ui/add_pjp_screen/add_pjp_model/add_pjp_model.dart';
 import 'package:sfa/ui/attendence_clock_in_out/model/clock_in_response.dart';
 import 'package:sfa/ui/attendence_clock_in_out/model/clock_out_response.dart';
 import 'package:sfa/ui/change_password/model/model.dart';
+import 'package:sfa/ui/edit_profile/model/edit_profile_model.dart';
 import 'package:sfa/ui/home_screen/home_screen_model/home_screen_model.dart';
 import 'package:sfa/ui/home_screen/home_screen_model/menu_model.dart';
 import 'package:sfa/ui/login_screen/login_model/login_response.dart';
 import 'package:sfa/ui/pjp_screen/pjp_model/pjp_model.dart';
 import 'package:sfa/ui/pjp_screen/update_pjp_model/update_pjp_model.dart';
 import 'package:sfa/ui/team%20members_status/model/get_all_users_status.dart';
-import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/model/attendance_model.dart';
+import 'package:sfa/ui/team_member_attendence/model/attendance_model.dart';
 import 'package:sfa/ui/team_member_track_screen/model/track_model.dart';
 import 'package:sfa/ui/team_members_absent/model/absent_approve_reject_response.dart';
 import 'package:sfa/ui/team_members_absent/model/get_absent_data_response.dart';
@@ -565,6 +567,39 @@ class ApiRepository {
       }
     } catch (exception) {
       return ChangePassResponse(
+        message: "Something went Wrong!",
+        success: false,
+      );
+    }
+  }
+
+  Future<EditProfileResponse> editProfile(
+      String name, String email, File imgFile) async {
+    Map<String, dynamic> params = {
+      "name": name,
+      "email": email,
+      "profile_picture": await MultipartFile.fromFile(imgFile.path,
+          filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg"),
+    };
+
+    try {
+      Response response = await dio.post(
+        Url.editProfile,
+        data: params,
+      );
+
+      if (response.statusCode == 200) {
+        EditProfileResponse result =
+            EditProfileResponse.fromJson(response.toString());
+        return result;
+      } else {
+        return EditProfileResponse(
+          message: response.statusMessage.toString(),
+          success: false,
+        );
+      }
+    } catch (exception) {
+      return EditProfileResponse(
         message: "Something went Wrong!",
         success: false,
       );
