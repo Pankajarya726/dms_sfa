@@ -50,3 +50,8 @@ class ClockOutSuccessEvent extends ClockInOutEvents {
         selfieImage,
       ];
 }
+
+class ClockInOutGetPjpSuccessEvent extends ClockInOutEvents {
+  @override
+  List<Object?> get props => [];
+}

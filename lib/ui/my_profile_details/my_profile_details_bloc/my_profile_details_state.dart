@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:sfa/ui/team_members_details_screen/model/team_members_details_model.dart';
 
 class MyProfileDetailsState extends Equatable {
   @override
@@ -6,6 +7,15 @@ class MyProfileDetailsState extends Equatable {
 }
 
 class MyProfileDetailsInitialState extends MyProfileDetailsState {}
+
+class MyProfileDetailsLoadingState extends MyProfileDetailsState {}
+
+class MyProfileDetailsInitialSuccessState extends MyProfileDetailsState {
+  final DetailsStatusResponse detailsStatusResponse;
+  MyProfileDetailsInitialSuccessState({required this.detailsStatusResponse});
+  @override
+  List<Object?> get props => [detailsStatusResponse];
+}
 
 class MyProfileDetailsSelectDateState extends MyProfileDetailsState {
   final DateTime dateTime;
@@ -26,4 +36,11 @@ class MyProfileDetailsDecrementDateState extends MyProfileDetailsState {
   MyProfileDetailsDecrementDateState({required this.dateTime});
   @override
   List<Object?> get props => [dateTime];
+}
+
+class MyProfileDetailsFailureState extends MyProfileDetailsState {
+  final String failureMessage;
+  MyProfileDetailsFailureState({required this.failureMessage});
+  @override
+  List<Object?> get props => [failureMessage];
 }
