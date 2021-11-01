@@ -59,6 +59,15 @@ class _TeamMemberAttendenceScreenState
             log(state.message);
             addEvent();
           }
+
+          if (state is TeamMemberAttendenceAbsentApproveSuccessState) {
+            log(state.response.message);
+            addEvent();
+          }
+          if (state is TeamMemberAttendenceAbsentApproveFailureState) {
+            log(state.message);
+            addEvent();
+          }
         },
         child: Scaffold(
           backgroundColor: Colors.transparent,
@@ -294,6 +303,9 @@ class _TeamMemberAttendenceScreenState
                                                                 ? presentStatusPending(
                                                                     attendence[
                                                                             index]
+                                                                        .id,
+                                                                    attendence[
+                                                                            index]
                                                                         .userId)
                                                                 : absentStatusPending(
                                                                     int.parse(
@@ -406,14 +418,14 @@ class _TeamMemberAttendenceScreenState
     );
   }
 
-  Widget presentStatusPending(int userId) {
+  Widget presentStatusPending(int id, int userId) {
     return Row(
       children: [
-        buttonsApprove(userId, colorGreen, "Approve"),
+        buttonsApprove(id, userId, colorGreen, "Approve"),
         const SizedBox(
           width: 10,
         ),
-        buttonsReject(userId, colorRed, "Reject")
+        buttonsReject(id, userId, colorRed, "Reject")
       ],
     );
   }
@@ -451,8 +463,13 @@ class _TeamMemberAttendenceScreenState
       onPressed: () async {
         var approvedBy =
             await SharedPrefrence.getStringPreference(SharedPrefrence.id);
-        teamMemberAttendenceBloc.add(TeamMemberAttendenceApproveEvent(
-            approvedBy: approvedBy, id: userId.toString(), status: "2"));
+        teamMemberAttendenceBloc.add(
+          TeamMemberAttendenceAbsentApproveEvent(
+              id: id.toString(),
+              approvedBy: approvedBy,
+              userId: userId.toString(),
+              status: "2"),
+        );
       },
       child: Text(
         text,
@@ -484,8 +501,13 @@ class _TeamMemberAttendenceScreenState
       onPressed: () async {
         var approvedBy =
             await SharedPrefrence.getStringPreference(SharedPrefrence.id);
-        teamMemberAttendenceBloc.add(TeamMemberAttendenceApproveEvent(
-            approvedBy: approvedBy, id: userId.toString(), status: "3"));
+        teamMemberAttendenceBloc.add(
+          TeamMemberAttendenceAbsentApproveEvent(
+              id: id.toString(),
+              approvedBy: approvedBy,
+              userId: userId.toString(),
+              status: "3"),
+        );
       },
       child: Text(
         text,
@@ -496,7 +518,7 @@ class _TeamMemberAttendenceScreenState
     );
   }
 
-  Widget buttonsApprove(int userId, color, text) {
+  Widget buttonsApprove(int id, int userId, color, text) {
     return ElevatedButton(
       style: ButtonStyle(
         fixedSize: MaterialStateProperty.all(
@@ -515,9 +537,13 @@ class _TeamMemberAttendenceScreenState
         ),
       ),
       onPressed: () async {
-        var id = await SharedPrefrence.getStringPreference(SharedPrefrence.id);
+        var approvedBy =
+            await SharedPrefrence.getStringPreference(SharedPrefrence.id);
         teamMemberAttendenceBloc.add(TeamMemberAttendenceApproveEvent(
-            approvedBy: id, id: userId.toString(), status: "2"));
+            userId: userId.toString(),
+            approvedBy: approvedBy,
+            id: id.toString(),
+            status: "2"));
       },
       child: Text(
         text,
@@ -528,7 +554,7 @@ class _TeamMemberAttendenceScreenState
     );
   }
 
-  Widget buttonsReject(int userId, color, text) {
+  Widget buttonsReject(int id, int userId, color, text) {
     return ElevatedButton(
       style: ButtonStyle(
         fixedSize: MaterialStateProperty.all(
@@ -547,9 +573,13 @@ class _TeamMemberAttendenceScreenState
         ),
       ),
       onPressed: () async {
-        var id = await SharedPrefrence.getStringPreference(SharedPrefrence.id);
+        var approvedBy =
+            await SharedPrefrence.getStringPreference(SharedPrefrence.id);
         teamMemberAttendenceBloc.add(TeamMemberAttendenceApproveEvent(
-            approvedBy: id, id: userId.toString(), status: "3"));
+            userId: userId.toString(),
+            approvedBy: approvedBy,
+            id: id.toString(),
+            status: "3"));
       },
       child: Text(
         text,
@@ -717,60 +747,65 @@ class _TeamMemberAttendenceScreenState
                         height: 12,
                       ),
                       1 == 1
-                          ? Padding(
-                              padding: const EdgeInsets.only(top: 5),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  InkWell(
-                                    onTap: () {},
-                                    child: Container(
-                                      width: 170,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                          color: colorGreen,
+                          ? SizedBox(
+                              height: 50,
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 5),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {},
+                                      child: Container(
+                                        width: 160,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                            color: colorGreen,
+                                            borderRadius:
+                                                BorderRadius.circular(25)),
+                                        child: ClipRRect(
                                           borderRadius:
-                                              BorderRadius.circular(25)),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(25),
-                                        child: const Center(
-                                          child: Text(
-                                            "Approve",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold),
+                                              BorderRadius.circular(25),
+                                          child: const Center(
+                                            child: Text(
+                                              "Approve",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {},
-                                    child: Container(
-                                      width: 170,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                          color: colorPrimary,
+                                    InkWell(
+                                      onTap: () {},
+                                      child: Container(
+                                        width: 160,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                            color: colorPrimary,
+                                            borderRadius:
+                                                BorderRadius.circular(25)),
+                                        child: ClipRRect(
                                           borderRadius:
-                                              BorderRadius.circular(25)),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(25),
-                                        child: const Center(
-                                          child: Text(
-                                            "Reject",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold),
+                                              BorderRadius.circular(25),
+                                          child: const Center(
+                                            child: Text(
+                                              "Reject",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  )
-                                ],
+                                    )
+                                  ],
+                                ),
                               ),
                             )
                           : Container(),
@@ -825,7 +860,7 @@ class _TeamMemberAttendenceScreenState
 
   void addEvent() async {
     var userid = await SharedPrefrence.getStringPreference(SharedPrefrence.id);
-    teamMemberAttendenceBloc
-        .add(GetTeamMemberAttendenceEvent(id: "16", date: "2021-10-25"));
+    teamMemberAttendenceBloc.add(GetTeamMemberAttendenceEvent(
+        id: "16", date: DateFormat("yyyy-MM").format(dateTime)));
   }
 }
