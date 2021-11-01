@@ -1,6 +1,4 @@
-import 'dart:developer';
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:sfa/main.dart';
 import 'package:sfa/provider/url.dart';
