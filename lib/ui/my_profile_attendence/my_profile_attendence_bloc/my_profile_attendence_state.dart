@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/model/attendance_model.dart';
+import 'package:sfa/ui/team_member_attendence/model/attendance_model.dart';
 
 class MyProfileAttendenceState extends Equatable {
   @override

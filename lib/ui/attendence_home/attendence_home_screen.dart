@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfa/ui/absent/absent_screen.dart';
 import 'package:sfa/ui/add_pjp_screen/add_pjp_screen.dart';
 import 'package:sfa/ui/attendence_clock_in_out/attendence_clock_in_out.dart';
@@ -100,6 +101,8 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const AddPjpScreen()));
+                      } else {
+                        Fluttertoast.showToast(msg: "Add PJP is not available");
                       }
                     },
                   ),
