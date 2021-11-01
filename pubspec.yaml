@@ -48,6 +48,7 @@ dependencies:
   shared_preferences:
   connectivity:
   month_picker_dialog:
+  cached_network_image: 
   
 
 dev_dependencies:

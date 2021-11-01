@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sfa/ui/attendence_home/attendence_home_screen.dart';
@@ -62,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 alignment: Alignment.center,
                 color: colorPrimary,
                 padding: const EdgeInsets.only(top: 35),
-                height: 130,
+                height: 120,
                 width: MediaQuery.of(context).size.width,
                 child: BlocBuilder<HomeScreenBloc, HomeScreenState>(
                   builder: (context, state) {
@@ -74,16 +75,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                 builder: (context) => const MyProfileHome()));
                       },
                       leading: imageUrl.isNotEmpty
-                          ? Container(
-                              width: 58.0,
-                              height: 58.0,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: NetworkImage(imageUrl),
-                                  fit: BoxFit.cover,
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(50),
+                              child: CachedNetworkImage(
+                                width: 58,
+                                height: 58,
+                                fit: BoxFit.cover,
+                                imageUrl: imageUrl,
+                                placeholder: (context, url) =>
+                                    const CircularProgressIndicator(
+                                  color: colorPrimary,
                                 ),
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(50.0)),
                               ),
                             )
                           : Container(

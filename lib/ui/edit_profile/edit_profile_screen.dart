@@ -1,6 +1,4 @@
-import 'dart:developer';
-import 'dart:io';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -35,9 +33,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    name.text = widget.name;
-    emailId.text = widget.email;
-
     return BlocProvider<EditProfileBloc>(
       create: (context) => editProfileBloc,
       child: BlocListener<EditProfileBloc, EditProfileState>(
@@ -71,8 +66,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           ? SizedBox(
                               width: 120,
                               height: 120,
-                              child: Image.network(widget.image,
-                                  width: 90, height: 90, fit: BoxFit.cover),
+                              child: CachedNetworkImage(
+                                width: 90,
+                                height: 90,
+                                fit: BoxFit.cover,
+                                imageUrl: widget.image,
+                                placeholder: (context, url) =>
+                                    const CircularProgressIndicator(
+                                  color: colorPrimary,
+                                ),
+                              ),
                             )
                           : SizedBox(
                               width: 120,
@@ -161,12 +164,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          editProfileBloc.add(
-                            EditProfileEvent(
-                                name: name.text,
-                                emailId: emailId.text,
-                                imgFile: image!.path),
-                          );
+                          if (name.text.isNotEmpty && emailId.text.isNotEmpty) {
+                            editProfileBloc.add(
+                              EditProfileEvent(
+                                  name: name.text,
+                                  emailId: emailId.text,
+                                  imgFile: image!.path),
+                            );
+                          } else {
+                            Fluttertoast.showToast(
+                                msg: "Fields cant't be empty");
+                          }
                         },
                         style: ButtonStyle(
                           fixedSize:

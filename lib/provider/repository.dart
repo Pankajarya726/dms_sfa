@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:sfa/main.dart';
 import 'package:sfa/provider/url.dart';
 import 'package:sfa/ui/absent/bloc/model/mark_absent_by_user.dart';
@@ -581,11 +580,11 @@ class ApiRepository {
       "profile_picture": await MultipartFile.fromFile(imgFile.path,
           filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg"),
     };
-
+    FormData data = FormData.fromMap(params);
     try {
       Response response = await dio.post(
         Url.editProfile,
-        data: params,
+        data: data,
       );
 
       if (response.statusCode == 200) {
