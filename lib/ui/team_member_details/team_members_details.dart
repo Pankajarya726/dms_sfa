@@ -6,7 +6,8 @@ import 'package:sfa/ui/team_members_details_screen/team_member_details_screen.da
 import 'package:sfa/utility/colors.dart';
 
 class TeamMembersDetails extends StatefulWidget {
-  const TeamMembersDetails({Key? key}) : super(key: key);
+  String userId;
+  TeamMembersDetails({required this.userId, Key? key}) : super(key: key);
 
   @override
   _TeamMembersDetailsState createState() => _TeamMembersDetailsState();
@@ -123,11 +124,17 @@ class _TeamMembersDetailsState extends State<TeamMembersDetails> {
                 topRight: Radius.circular(20),
               ),
             ),
-            child: const TabBarView(
+            child: TabBarView(
               children: [
-                TeamMemberDetailsScreen(),
-                TeamMemberAttendenceScreen(),
-                TeamMemberTrackScreen(),
+                TeamMemberDetailsScreen(
+                  userId: widget.userId,
+                ),
+                TeamMemberAttendenceScreen(
+                  userId: widget.userId,
+                ),
+                TeamMemberTrackScreen(
+                  userId: widget.userId,
+                ),
               ],
             ),
           ),

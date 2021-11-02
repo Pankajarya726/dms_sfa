@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:sfa/main.dart';
@@ -397,13 +398,13 @@ class ApiRepository {
   }
 
   Future<ClockInApproveRes> clockInApprovReject(
-      String id, String userId, String status, String approvedBy) async {
+      String id, String status, String approvedBy) async {
     Map<String, dynamic> params = {
       "id": id,
-      "user_id": userId,
-      "clock_in_status": status,
-      "clock_in_approved_by": approvedBy
+      "approved_status": status,
+      "approved_by": approvedBy
     };
+
     try {
       Response response = await dio.post(
         Url.clockInApproveReject,

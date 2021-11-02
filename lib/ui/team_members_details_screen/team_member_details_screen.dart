@@ -8,7 +8,8 @@ import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/shared_prefrence.dart';
 
 class TeamMemberDetailsScreen extends StatefulWidget {
-  const TeamMemberDetailsScreen({Key? key}) : super(key: key);
+  String userId;
+  TeamMemberDetailsScreen({required this.userId, Key? key}) : super(key: key);
 
   @override
   _TeamMemberDetailsScreenState createState() =>
@@ -207,8 +208,8 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
                                                   ),
                                                 ),
                                                 TextSpan(
-                                                  text: state
-                                                      .response.data!.inTime,
+                                                  text: state.response.data!
+                                                      .clockInTime,
                                                   style: const TextStyle(
                                                     color: colorGreen,
                                                     fontSize: 16,
@@ -230,8 +231,8 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
                                                           FontWeight.w500,
                                                     )),
                                                 TextSpan(
-                                                  text: state
-                                                      .response.data!.outTime,
+                                                  text: state.response.data!
+                                                      .clockOutTime,
                                                   style: const TextStyle(
                                                     color: colorPrimary,
                                                     fontSize: 16,
@@ -406,6 +407,6 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
   void addEvent() async {
     var userid = await SharedPrefrence.getStringPreference(SharedPrefrence.id);
     teamMembersDetailsBloc.add(GetTeamMembersDetailsEvents(
-        id: userid, date: DateFormat("yyyy-MM-dd").format(dateTime)));
+        id: widget.userId, date: DateFormat("yyyy-MM-dd").format(dateTime)));
   }
 }

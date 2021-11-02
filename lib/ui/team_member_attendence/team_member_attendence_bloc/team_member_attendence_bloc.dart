@@ -57,7 +57,7 @@ class TeamMemberAttendenceBloc
   Stream<TeamMemberAttendenceState> presentApprove(
       TeamMemberAttendenceApproveEvent event) async* {
     ClockInApproveRes response = await repository.clockInApprovReject(
-        event.id, event.userId, event.status, event.approvedBy);
+        event.id, event.status, event.approvedBy);
     log(response.message);
     if (response.success) {
       yield TeamMemberAttendenceApproveSuccessState(response: response);
