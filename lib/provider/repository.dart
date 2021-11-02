@@ -90,6 +90,7 @@ class ApiRepository {
     }
   }
 
+//clock in repository
   Future<ClockInResponse> clockIn(
     String id,
     String inOutTime,
@@ -100,11 +101,11 @@ class ApiRepository {
     String longitude,
   ) async {
     Map<String, dynamic> data = {
-      "id": id,
-      "in_out_time": inOutTime,
+      "user_id": id,
+      "clock_in_time": inOutTime,
       "in_out_date": inOutDate,
       "working_plan": workingPlan,
-      "salf_image": await MultipartFile.fromFile(selfieImage.path,
+      "clock_in_image": await MultipartFile.fromFile(selfieImage.path,
           filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg"),
       "latitude": latitude,
       "longitude": longitude,
