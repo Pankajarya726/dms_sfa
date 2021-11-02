@@ -577,21 +577,21 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                   );
                   clockInOut = !clockInOut;
                   image = null;
-                  timerStream = stopWatchStream();
-                  timerSubscription = timerStream!.listen((int newTick) {
-                    setState(() {
-                      timerHours = ((newTick / (60 * 60)) % 60)
-                          .floor()
-                          .toString()
-                          .padLeft(2, '0');
-                      timerMinutes = ((newTick / 60) % 60)
-                          .floor()
-                          .toString()
-                          .padLeft(2, '0');
-                      timerSeconds =
-                          (newTick % 60).floor().toString().padLeft(2, '0');
-                    });
-                  });
+                  // timerStream = stopWatchStream();
+                  // timerSubscription = timerStream!.listen((int newTick) {
+                  //   setState(() {
+                  //     timerHours = ((newTick / (60 * 60)) % 60)
+                  //         .floor()
+                  //         .toString()
+                  //         .padLeft(2, '0');
+                  //     timerMinutes = ((newTick / 60) % 60)
+                  //         .floor()
+                  //         .toString()
+                  //         .padLeft(2, '0');
+                  //     timerSeconds =
+                  //         (newTick % 60).floor().toString().padLeft(2, '0');
+                  //   });
+                  // });
                 } else {
                   Fluttertoast.showToast(msg: "Please turn on GPS location");
                   getUserLocation();
