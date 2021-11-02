@@ -10,7 +10,6 @@ import 'package:sfa/ui/team_member_details/team_members_details.dart';
 import 'package:sfa/ui/team_members/team_members_screen.dart';
 import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/constants.dart';
-
 import 'model/get_all_users_status.dart';
 
 class TeamMembersStatusScreen extends StatefulWidget {

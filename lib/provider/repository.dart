@@ -134,6 +134,7 @@ class ApiRepository {
     }
   }
 
+//clock out repository
   Future<ClockOutResponse> clockOut(
     String id,
     String inOutTime,
@@ -143,10 +144,10 @@ class ApiRepository {
   ) async {
     Map<String, dynamic> data = {
       "user_id": id,
-      "in_out_time": inOutTime,
+      "clock_out_time": inOutTime,
       "in_out_date": inOutDate,
-      "working_plan": workingPlan,
-      "salf_image": await MultipartFile.fromFile(selfieImage.path,
+      "comment": workingPlan,
+      "clock_out_image": await MultipartFile.fromFile(selfieImage.path,
           filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg"),
     };
 
@@ -259,29 +260,32 @@ class ApiRepository {
     }
   }
 
+// get all absent data repository
   Future<GetAbsentDataResponse> getAbsentData(userId, absentDate) async {
     Map<String, dynamic> data = {
       "user_id": userId,
       "date_added": absentDate,
     };
 
+    print("absent data = $data");
     try {
       Response response = await dio.post(
         Url.getAbsentData,
-        data: data,
+        data: FormData.fromMap(data),
       );
+
       if (response.statusCode == 200) {
         GetAbsentDataResponse getAbsentDataResponse =
             GetAbsentDataResponse.fromJson(response.toString());
         return getAbsentDataResponse;
       } else {
         return GetAbsentDataResponse(
-            success: false, message: "Something went wrong");
+            success: false, message: "Something went wrong!");
       }
     } catch (exception) {
       return GetAbsentDataResponse(
         success: false,
-        message: "Something went wrong",
+        message: "Something went wrong!",
       );
     }
   }

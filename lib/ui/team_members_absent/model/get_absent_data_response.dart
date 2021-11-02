@@ -43,15 +43,15 @@ class Datum {
     required this.id,
     required this.userId,
     required this.createdAt,
-    required this.absentStatus,
+    required this.inOutStatus,
     required this.name,
     required this.absentReason,
   });
 
   int id;
   int userId;
-  String createdAt;
-  int absentStatus;
+  DateTime createdAt;
+  int inOutStatus;
   String name;
   String absentReason;
 
@@ -62,9 +62,11 @@ class Datum {
   factory Datum.fromMap(Map<String, dynamic> json) => Datum(
         id: json["id"] == null ? null : json["id"],
         userId: json["user_id"] == null ? null : json["user_id"],
-        createdAt: json["created_at"] == null ? "" : json["created_at"],
-        absentStatus:
-            json["absent_status"] == null ? null : json["absent_status"],
+        createdAt: json["created_at"] == null
+            ? DateTime.now()
+            : DateTime.parse(json["created_at"]),
+        inOutStatus:
+            json["in_out_status"] == null ? null : json["in_out_status"],
         name: json["name"] == null ? null : json["name"],
         absentReason:
             json["absent_reason"] == null ? null : json["absent_reason"],
@@ -73,8 +75,8 @@ class Datum {
   Map<String, dynamic> toMap() => {
         "id": id == null ? null : id,
         "user_id": userId == null ? null : userId,
-        "created_at": createdAt == null ? null : createdAt,
-        "absent_status": absentStatus == null ? null : absentStatus,
+        "created_at": createdAt == null ? null : createdAt.toIso8601String(),
+        "in_out_status": inOutStatus == null ? null : inOutStatus,
         "name": name == null ? null : name,
         "absent_reason": absentReason == null ? null : absentReason,
       };

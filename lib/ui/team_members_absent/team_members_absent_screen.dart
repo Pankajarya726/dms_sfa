@@ -38,7 +38,7 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
       child: BlocBuilder<TeamMembersAbsentBloc, TeamMembersAbsentStates>(
         builder: (context, state) {
           if (state is TeamMembersAbsentInitialState) {
-            String date = format.format(dateTime!);
+            date = format.format(dateTime!);
             teamMembersAbsentBloc
                 .add(TeamMembersAbsentSuccessEvent(currentDate: date));
             return const Center(
@@ -148,9 +148,6 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
             );
           }
           if (state is TeamMembersAbsentFailureState) {
-            // if (state.failureMessage == "Data not found") {
-            //   return Image.asset("assets/no-data.gif");
-            // }
             return Center(
               child: Text(state.failureMessage),
             );
