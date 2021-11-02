@@ -5,6 +5,13 @@ class MyProfileAttendenceEvents extends Equatable {
   List<Object?> get props => throw UnimplementedError();
 }
 
+class MyProfileAttendenceInitialEvent extends MyProfileAttendenceEvents {
+  final String currentDate;
+  MyProfileAttendenceInitialEvent({required this.currentDate});
+  @override
+  List<Object?> get props => [currentDate];
+}
+
 class MyProfileAttendenceSelectDateEvent extends MyProfileAttendenceEvents {
   final DateTime dateTime;
   MyProfileAttendenceSelectDateEvent({required this.dateTime});
