@@ -41,14 +41,7 @@ class TeamMemberAttendenceBloc
     AttendanceResponse response =
         await repository.getTeamMembersAttendence(event.id, event.date);
     if (response.success) {
-      List<AttendenceModel> attendenceList = [];
-
-      attendenceList.addAll(response.clockInData!);
-      attendenceList.addAll(response.absentData!);
-
-      attendenceList.sort((a, b) => a.date!.compareTo(b.date!));
-
-      yield TeamMemberAttendenceSucessState(attendenceList: attendenceList);
+      yield TeamMemberAttendenceSucessState(response: response);
     } else {
       yield TeamMemberAttendenceFailureState(message: response.message);
     }

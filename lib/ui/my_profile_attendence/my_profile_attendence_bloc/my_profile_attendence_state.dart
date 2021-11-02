@@ -18,10 +18,10 @@ class MyProfileAttendenceFailureState extends MyProfileAttendenceState {
 class MyProfileAttendenceLoadingState extends MyProfileAttendenceState {}
 
 class MyProfileAttendenceInitialSuccessState extends MyProfileAttendenceState {
-  final List<AttendenceModel> attendanceResponse;
-  MyProfileAttendenceInitialSuccessState({required this.attendanceResponse});
+  final AttendanceResponse response;
+  MyProfileAttendenceInitialSuccessState({required this.response});
   @override
-  List<Object?> get props => [attendanceResponse];
+  List<Object?> get props => [response];
 }
 
 class MyProfileAttendenceSelectDateState extends MyProfileAttendenceState {

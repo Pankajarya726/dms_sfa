@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final attendanceResponse = attendanceResponseFromMap(jsonString);
-
 import 'dart:convert';
 
 class AttendanceResponse {
@@ -9,16 +5,16 @@ class AttendanceResponse {
     required this.success,
     required this.message,
     required this.clockInData,
-    required this.absentData,
   });
 
   bool success;
   String message;
-  List<AttendenceModel>? clockInData;
-  List<AttendenceModel>? absentData;
+  List<ClockInData>? clockInData;
 
   factory AttendanceResponse.fromJson(String str) =>
       AttendanceResponse.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
 
   factory AttendanceResponse.fromMap(Map<String, dynamic> json) =>
       AttendanceResponse(
@@ -26,39 +22,55 @@ class AttendanceResponse {
         message: json["message"] == null ? null : json["message"],
         clockInData: json["clock_in_data"] == null
             ? null
-            : List<AttendenceModel>.from(
-                json["clock_in_data"].map((x) => AttendenceModel.fromMap(x))),
-        absentData: json["absent_data"] == null
-            ? null
-            : List<AttendenceModel>.from(
-                json["absent_data"].map((x) => AttendenceModel.fromMap(x))),
+            : List<ClockInData>.from(
+                json["clock_in_data"].map((x) => ClockInData.fromMap(x))),
       );
+
+  Map<String, dynamic> toMap() => {
+        "success": success == null ? null : success,
+        "message": message == null ? null : message,
+        "clock_in_data": clockInData == null
+            ? null
+            : List<dynamic>.from(clockInData!.map((x) => x.toMap())),
+      };
 }
 
-class AttendenceModel {
-  AttendenceModel({
+class ClockInData {
+  ClockInData({
+    required this.id,
     required this.userId,
+    required this.status,
     required this.approvedStatus,
     required this.date,
-    required this.status,
-    required this.id,
   });
 
-  int userId;
-  int approvedStatus;
-  String? date;
-  String status;
   int id;
+  int userId;
+  String status;
+  int approvedStatus;
+  DateTime? date;
 
-  factory AttendenceModel.fromJson(String str) =>
-      AttendenceModel.fromMap(json.decode(str));
+  factory ClockInData.fromJson(String str) =>
+      ClockInData.fromMap(json.decode(str));
 
-  factory AttendenceModel.fromMap(Map<String, dynamic> json) => AttendenceModel(
+  String toJson() => json.encode(toMap());
+
+  factory ClockInData.fromMap(Map<String, dynamic> json) => ClockInData(
+        id: json["id"] == null ? null : json["id"],
         userId: json["user_id"] == null ? null : json["user_id"],
+        status: json["status"] == null ? null : json["status"],
         approvedStatus:
             json["approved_status"] == null ? null : json["approved_status"],
-        date: json["date"] == null ? null : json["date"],
-        status: json["status"] == null ? null : json["status"],
-        id: json["id"] == null ? 0 : json["id"],
+        date: json["date"] == null ? null : DateTime.parse(json["date"]),
       );
+
+  Map<String, dynamic> toMap() => {
+        "id": id == null ? null : id,
+        "user_id": userId == null ? null : userId,
+        "status": status == null ? null : status,
+        "approved_status": approvedStatus == null ? null : approvedStatus,
+        "date": date == null
+            ? null
+            : "${date!.year.toString().padLeft(4, '0')}-${date!.month.toString().padLeft(2, '0')}-${date!.day.toString().padLeft(2, '0')}",
+      };
 }

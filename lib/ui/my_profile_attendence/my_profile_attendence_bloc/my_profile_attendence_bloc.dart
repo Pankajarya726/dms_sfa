@@ -37,14 +37,7 @@ class MyProfileAttendenceBloc
       AttendanceResponse response =
           await repository.getTeamMembersAttendence(userId, event.currentDate);
       if (response.success) {
-        List<AttendenceModel> attendenceList = [];
-
-        attendenceList.addAll(response.clockInData!);
-        attendenceList.addAll(response.absentData!);
-        attendenceList.sort((a, b) => a.date!.compareTo(b.date!));
-
-        yield MyProfileAttendenceInitialSuccessState(
-            attendanceResponse: attendenceList);
+        yield MyProfileAttendenceInitialSuccessState(response: response);
       } else {
         yield MyProfileAttendenceFailureState(failureMessage: response.message);
       }

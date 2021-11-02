@@ -476,15 +476,11 @@ class ApiRepository {
         return AttendanceResponse(
             message: response.statusMessage.toString(),
             success: false,
-            absentData: [],
             clockInData: []);
       }
     } catch (exception) {
       return AttendanceResponse(
-          message: "Something went Wrong!",
-          success: false,
-          absentData: [],
-          clockInData: []);
+          message: "Something went Wrong!", success: false, clockInData: []);
     }
   }
 
