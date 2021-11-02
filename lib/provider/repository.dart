@@ -66,7 +66,7 @@ class ApiRepository {
     }
   }
 
-  Future<UserData> getUserDetailsByUserId(String id) async {
+  Future<UserDetails> getUserDetailsByUserId(String id) async {
     Map<String, dynamic> userId = {"id": id};
 
     try {
@@ -76,16 +76,16 @@ class ApiRepository {
       );
 
       if (response.statusCode == 200) {
-        UserData userData = UserData.fromJson(response.toString());
+        UserDetails userData = UserDetails.fromJson(response.toString());
         return userData;
       } else {
-        return UserData(
+        return UserDetails(
             success: false,
             message: response.statusMessage.toString(),
             data: null);
       }
     } catch (exception) {
-      return UserData(
+      return UserDetails(
           success: false, message: "Something went wrong!", data: null);
     }
   }

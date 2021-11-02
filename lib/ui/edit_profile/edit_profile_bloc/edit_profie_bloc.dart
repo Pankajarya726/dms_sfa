@@ -37,7 +37,8 @@ class EditProfileBloc extends Bloc<EditProfileEvents, EditProfileState> {
 
   Stream<EditProfileState> getUserDetails(GetUserDetailsEvent event) async* {
     if (await Network.isConnected()) {
-      UserData response = await repository.getUserDetailsByUserId(event.userId);
+      UserDetails response =
+          await repository.getUserDetailsByUserId(event.userId);
       if (response.success) {
         yield GetUserDetailsSucessState(response: response);
       } else {

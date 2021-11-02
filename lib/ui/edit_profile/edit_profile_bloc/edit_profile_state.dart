@@ -33,7 +33,7 @@ class EditProfileNetworkState extends EditProfileState {
 }
 
 class GetUserDetailsSucessState extends EditProfileState {
-  final UserData response;
+  final UserDetails response;
   GetUserDetailsSucessState({required this.response});
   @override
   List<Object?> get props => [response];
