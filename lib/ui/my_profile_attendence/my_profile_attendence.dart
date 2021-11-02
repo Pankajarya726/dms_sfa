@@ -20,24 +20,6 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
   MyProfileAttendenceBloc myProfileAttendenceBloc = MyProfileAttendenceBloc();
   DateTime? dateTime = DateTime.now();
 
-  List<String> names = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
-  List<String> status = [
-    "Absent",
-    "Present",
-    "08:54:00",
-    "Present",
-    "Absent",
-    "05:20:01",
-  ];
-  List<AttendenceModel> attendence = [];
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -205,149 +187,19 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                             child: CircularProgressIndicator(),
                           );
                         }
-                        if (state is MyProfileAttendenceInitialSuccessState) {
-                          attendence = state.attendanceResponse;
-                          // return ListView.builder(
-                          //   itemCount: status.length,
-                          //   padding: const EdgeInsets.only(bottom: 15),
-                          //   itemBuilder: (context, index) {
-                          //     return Stack(
-                          //       children: [
-                          //         Container(
-                          //           height: 85,
-                          //           margin: const EdgeInsets.fromLTRB(
-                          //               10, 15, 10, 0),
-                          //           padding:
-                          //               const EdgeInsets.fromLTRB(5, 12, 0, 12),
-                          //           decoration: BoxDecoration(
-                          //             color: Colors.white,
-                          //             borderRadius: BorderRadius.circular(10),
-                          //             boxShadow: [
-                          //               BoxShadow(
-                          //                 color: Colors.grey.withOpacity(0.5),
-                          //                 spreadRadius: -8,
-                          //                 blurRadius: 7,
-                          //                 offset: const Offset(0, 3),
-                          //               ),
-                          //             ],
-                          //           ),
-                          //           child: ListTile(
-                          //             contentPadding: const EdgeInsets.fromLTRB(
-                          //                 20, 0, 10, 0),
-                          //             dense: true,
-                          //             horizontalTitleGap: 0,
-                          //             title: Padding(
-                          //               padding:
-                          //                   const EdgeInsets.only(left: 48),
-                          //               child: Column(
-                          //                 crossAxisAlignment:
-                          //                     CrossAxisAlignment.start,
-                          //                 children: [
-                          //                   Text(
-                          //                     DateFormat("EEEE").format(
-                          //                                 DateTime.parse(
-                          //                                     [index]
-                          //                                         .date!))
-                          //                     style: const TextStyle(
-                          //                       fontSize: 20,
-                          //                       fontWeight: FontWeight.bold,
-                          //                     ),
-                          //                   ),
-                          //                   const SizedBox(
-                          //                     height: 5,
-                          //                   ),
-                          //                   Text(
-                          //                     status[index],
-                          //                     style: const TextStyle(
-                          //                       overflow: TextOverflow.ellipsis,
-                          //                       color: Color(0xff303030),
-                          //                       fontSize: 16,
-                          //                       fontWeight: FontWeight.w500,
-                          //                     ),
-                          //                   ),
-                          //                 ],
-                          //               ),
-                          //             ),
-                          //             trailing: IntrinsicWidth(
-                          //               child: Row(
-                          //                 children: [
-                          //                   status[index] == "Present"
-                          //                       ? statusAccepted()
-                          //                       : status[index] == "Absent"
-                          //                           ? statusRejected()
-                          //                           : buttonPending(),
-                          //                   SizedBox(
-                          //                     width: 20,
-                          //                     child: IconButton(
-                          //                       padding:
-                          //                           const EdgeInsets.all(0),
-                          //                       onPressed: () {
-                          //                         showClockOutBottomSheet();
-                          //                       },
-                          //                       icon: const Icon(
-                          //                         Icons.more_vert,
-                          //                         color: Colors.black,
-                          //                         size: 27,
-                          //                       ),
-                          //                     ),
-                          //                   )
-                          //                 ],
-                          //               ),
-                          //             ),
-                          //           ),
-                          //         ),
-                          //         Positioned(
-                          //           left: 10,
-                          //           top: 15,
-                          //           child: Container(
-                          //             height: 85,
-                          //             width: 60,
-                          //             decoration: const BoxDecoration(
-                          //               color: colorCalenderDateBG,
-                          //               borderRadius: BorderRadius.only(
-                          //                 topLeft: Radius.circular(10),
-                          //                 bottomLeft: Radius.circular(10),
-                          //               ),
-                          //             ),
-                          //             child: Column(
-                          //               mainAxisAlignment:
-                          //                   MainAxisAlignment.center,
-                          //               children: const [
-                          //                 Text(
-                          //                   "Sep",
-                          //                   style: TextStyle(
-                          //                       color: Colors.black,
-                          //                       fontSize: 18,
-                          //                       fontWeight: FontWeight.bold),
-                          //                 ),
-                          //                 Text(
-                          //                   "20",
-                          //                   style: TextStyle(
-                          //                       color: Colors.black,
-                          //                       fontSize: 24,
-                          //                       fontWeight: FontWeight.w900),
-                          //                 ),
-                          //               ],
-                          //             ),
-                          //           ),
-                          //         ),
-                          //       ],
-                          //     );
-                          //   },
-                          // );
-                        }
+
                         if (state is MyProfileAttendenceFailureState) {
                           return Center(
                             child: Text(state.failureMessage),
                           );
                         }
-                        if (attendence.isNotEmpty) {
+                        if (state is MyProfileAttendenceInitialSuccessState) {
                           return SingleChildScrollView(
                             child: Padding(
                               padding: const EdgeInsets.only(bottom: 15),
                               child: Column(
                                 children: List.generate(
-                                  attendence.length,
+                                  state.response.clockInData!.length,
                                   (index) {
                                     return Stack(
                                       children: [
@@ -383,9 +235,11 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                                                 children: [
                                                   Text(
                                                     DateFormat("EEEE").format(
-                                                        DateTime.parse(
-                                                            attendence[index]
-                                                                .date!)),
+                                                        DateTime.parse(state
+                                                            .response
+                                                            .clockInData![index]
+                                                            .date
+                                                            .toString())),
                                                     style: const TextStyle(
                                                         fontSize: 20,
                                                         fontWeight:
@@ -397,7 +251,10 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                                                     height: 5,
                                                   ),
                                                   Text(
-                                                    attendence[index].status,
+                                                    state
+                                                        .response
+                                                        .clockInData![index]
+                                                        .status,
                                                     style: const TextStyle(
                                                         color:
                                                             Color(0xff303030),
@@ -415,22 +272,43 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.center,
                                                 children: [
-                                                  attendence[index]
-                                                              .approvedStatus ==
-                                                          2
-                                                      ? statusAccepted()
-                                                      : attendence[index]
+                                                  state
+                                                                  .response
+                                                                  .clockInData![
+                                                                      index]
                                                                   .approvedStatus ==
-                                                              3
+                                                              2 &&
+                                                          state
+                                                                  .response
+                                                                  .clockInData![
+                                                                      index]
+                                                                  .status ==
+                                                              "Present Approved"
+                                                      ? statusAccepted()
+                                                      : state.response.clockInData![index].approvedStatus ==
+                                                                  3 &&
+                                                              state
+                                                                      .response
+                                                                      .clockInData![
+                                                                          index]
+                                                                      .status ==
+                                                                  "Present Rejected"
                                                           ? statusRejected()
-                                                          : attendence[index]
-                                                                          .approvedStatus ==
-                                                                      1 &&
-                                                                  attendence[index]
-                                                                          .status ==
-                                                                      "Present Panding"
-                                                              ? presentStatusPending()
-                                                              : absentStatusPending(),
+                                                          : state.response.clockInData![index].approvedStatus ==
+                                                                      2 &&
+                                                                  state.response.clockInData![index].status ==
+                                                                      "Absent Approved"
+                                                              ? statusAccepted()
+                                                              : state.response.clockInData![index].approvedStatus ==
+                                                                          2 &&
+                                                                      state.response.clockInData![index].status ==
+                                                                          "Absent Rejected"
+                                                                  ? statusAccepted()
+                                                                  : state.response.clockInData![index].approvedStatus == 1 && state.response.clockInData![index].status == "Present Panding"
+                                                                      ? buttonPending()
+                                                                      : state.response.clockInData![index].approvedStatus == 1 && state.response.clockInData![index].status == "Absent Panding"
+                                                                          ? buttonPending()
+                                                                          : statusNull(),
                                                   SizedBox(
                                                     width: 20,
                                                     child: IconButton(
@@ -467,9 +345,11 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                                               children: [
                                                 Text(
                                                   DateFormat("MMM").format(
-                                                      DateTime.parse(
-                                                          attendence[index]
-                                                              .date!)),
+                                                      DateTime.parse(state
+                                                          .response
+                                                          .clockInData![index]
+                                                          .date
+                                                          .toString())),
                                                   style: const TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 18,
@@ -478,9 +358,11 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                                                 ),
                                                 Text(
                                                   DateFormat("dd").format(
-                                                      DateTime.parse(
-                                                          attendence[index]
-                                                              .date!)),
+                                                      DateTime.parse(state
+                                                          .response
+                                                          .clockInData![index]
+                                                          .date
+                                                          .toString())),
                                                   style: const TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 24,
@@ -725,14 +607,6 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
     );
   }
 
-  Widget presentStatusPending() {
-    return buttonPending();
-  }
-
-  Widget absentStatusPending() {
-    return buttonPending();
-  }
-
   Widget buttonPending() {
     return ElevatedButton(
       style: ButtonStyle(
@@ -769,5 +643,9 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
       myProfileAttendenceBloc
           .add(MyProfileAttendenceSelectDateEvent(dateTime: date!));
     });
+  }
+
+  Widget statusNull() {
+    return Container();
   }
 }

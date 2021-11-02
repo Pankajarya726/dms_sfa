@@ -14,6 +14,7 @@ import 'package:sfa/ui/home_screen/home_screen_model/menu_model.dart';
 import 'package:sfa/ui/login_screen/login_model/login_response.dart';
 import 'package:sfa/ui/pjp_screen/pjp_model/pjp_model.dart';
 import 'package:sfa/ui/pjp_screen/update_pjp_model/update_pjp_model.dart';
+import 'package:sfa/ui/splash_screen/model/splash_model.dart';
 import 'package:sfa/ui/team%20members_status/model/get_all_users_status.dart';
 import 'package:sfa/ui/team_member_attendence/model/attendance_model.dart';
 import 'package:sfa/ui/team_member_track_screen/model/track_model.dart';
@@ -477,15 +478,11 @@ class ApiRepository {
         return AttendanceResponse(
             message: response.statusMessage.toString(),
             success: false,
-            absentData: [],
             clockInData: []);
       }
     } catch (exception) {
       return AttendanceResponse(
-          message: "Something went Wrong!",
-          success: false,
-          absentData: [],
-          clockInData: []);
+          message: "Something went Wrong!", success: false, clockInData: []);
     }
   }
 
@@ -608,6 +605,38 @@ class ApiRepository {
       return EditProfileResponse(
         message: "Something went Wrong!",
         success: false,
+      );
+    }
+  }
+
+  Future<SplashResponse> validateAppVersion(
+      String version, String deviceType) async {
+    Map<String, dynamic> params = {
+      "app_version": version,
+      "device_type": deviceType,
+    };
+
+    try {
+      Response response = await dio.post(
+        Url.validateAppVer,
+        data: params,
+      );
+
+      if (response.statusCode == 200) {
+        SplashResponse result = SplashResponse.fromJson(response.toString());
+        return result;
+      } else {
+        return SplashResponse(
+          message: response.statusMessage.toString(),
+          success: false,
+          data: null,
+        );
+      }
+    } catch (exception) {
+      return SplashResponse(
+        message: "Something went Wrong!",
+        success: false,
+        data: null,
       );
     }
   }

@@ -26,7 +26,7 @@ class _TeamMemberAttendenceScreenState
   TeamMemberAttendenceBloc teamMemberAttendenceBloc =
       TeamMemberAttendenceBloc();
   DateTime dateTime = DateTime.now();
-  List<AttendenceModel> attendence = [];
+
   @override
   void initState() {
     addEvent();
@@ -209,16 +209,13 @@ class _TeamMemberAttendenceScreenState
                           }
 
                           if (state is TeamMemberAttendenceSucessState) {
-                            attendence = state.attendenceList;
-                          }
-
-                          if (attendence.isNotEmpty) {
+                            log(state.response.clockInData!.length.toString());
                             return SingleChildScrollView(
                               child: Padding(
                                 padding: const EdgeInsets.only(bottom: 15),
                                 child: Column(
                                   children: List.generate(
-                                    attendence.length,
+                                    state.response.clockInData!.length,
                                     (index) {
                                       return Stack(
                                         children: [
@@ -254,9 +251,12 @@ class _TeamMemberAttendenceScreenState
                                                   children: [
                                                     Text(
                                                       DateFormat("EEEE").format(
-                                                          DateTime.parse(
-                                                              attendence[index]
-                                                                  .date!)),
+                                                          DateTime.parse(state
+                                                              .response
+                                                              .clockInData![
+                                                                  index]
+                                                              .date
+                                                              .toString())),
                                                       style: const TextStyle(
                                                           fontSize: 20,
                                                           fontWeight:
@@ -268,7 +268,10 @@ class _TeamMemberAttendenceScreenState
                                                       height: 5,
                                                     ),
                                                     Text(
-                                                      attendence[index].status,
+                                                      state
+                                                          .response
+                                                          .clockInData![index]
+                                                          .status,
                                                       style: const TextStyle(
                                                           color:
                                                               Color(0xff303030),
@@ -286,35 +289,42 @@ class _TeamMemberAttendenceScreenState
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.center,
                                                   children: [
-                                                    attendence[index]
-                                                                .approvedStatus ==
-                                                            2
-                                                        ? statusAccepted()
-                                                        : attendence[
+                                                    state
+                                                                    .response
+                                                                    .clockInData![
                                                                         index]
                                                                     .approvedStatus ==
-                                                                3
+                                                                2 &&
+                                                            state
+                                                                    .response
+                                                                    .clockInData![
+                                                                        index]
+                                                                    .status ==
+                                                                "Present Approved"
+                                                        ? statusAccepted()
+                                                        : state.response.clockInData![index].approvedStatus == 3 &&
+                                                                state
+                                                                        .response
+                                                                        .clockInData![
+                                                                            index]
+                                                                        .status ==
+                                                                    "Present Rejected"
                                                             ? statusRejected()
-                                                            : attendence[index]
-                                                                            .approvedStatus ==
-                                                                        1 &&
-                                                                    attendence[index]
-                                                                            .status ==
-                                                                        "Present Panding"
-                                                                ? presentStatusPending(
-                                                                    attendence[
-                                                                            index]
-                                                                        .id,
-                                                                    attendence[
-                                                                            index]
-                                                                        .userId)
-                                                                : absentStatusPending(
-                                                                    attendence[
-                                                                            index]
-                                                                        .id,
-                                                                    attendence[
-                                                                            index]
-                                                                        .userId),
+                                                            : state.response.clockInData![index].approvedStatus ==
+                                                                        2 &&
+                                                                    state.response.clockInData![index].status ==
+                                                                        "Absent Approved"
+                                                                ? statusAccepted()
+                                                                : state.response.clockInData![index].approvedStatus ==
+                                                                            2 &&
+                                                                        state.response.clockInData![index].status ==
+                                                                            "Absent Rejected"
+                                                                    ? statusAccepted()
+                                                                    : state.response.clockInData![index].approvedStatus == 1 && state.response.clockInData![index].status == "Present Panding"
+                                                                        ? presentStatusPending(state.response.clockInData![index].id.toString())
+                                                                        : state.response.clockInData![index].approvedStatus == 1 && state.response.clockInData![index].status == "Absent Panding"
+                                                                            ? absentStatusPending(state.response.clockInData![index].id, state.response.clockInData![index].userId)
+                                                                            : statusNull(),
                                                     SizedBox(
                                                       width: 20,
                                                       child: IconButton(
@@ -352,9 +362,11 @@ class _TeamMemberAttendenceScreenState
                                                 children: [
                                                   Text(
                                                     DateFormat("MMM").format(
-                                                        DateTime.parse(
-                                                            attendence[index]
-                                                                .date!)),
+                                                        DateTime.parse(state
+                                                            .response
+                                                            .clockInData![index]
+                                                            .date
+                                                            .toString())),
                                                     style: const TextStyle(
                                                         color: Colors.black,
                                                         fontSize: 18,
@@ -363,9 +375,11 @@ class _TeamMemberAttendenceScreenState
                                                   ),
                                                   Text(
                                                     DateFormat("dd").format(
-                                                        DateTime.parse(
-                                                            attendence[index]
-                                                                .date!)),
+                                                        DateTime.parse(state
+                                                            .response
+                                                            .clockInData![index]
+                                                            .date
+                                                            .toString())),
                                                     style: const TextStyle(
                                                         color: Colors.black,
                                                         fontSize: 24,
@@ -416,18 +430,6 @@ class _TeamMemberAttendenceScreenState
         "assets/reject.png",
         fit: BoxFit.contain,
       ),
-    );
-  }
-
-  Widget presentStatusPending(int id, int userId) {
-    return Row(
-      children: [
-        buttonsApprove(id, userId, colorGreen, "Approve"),
-        const SizedBox(
-          width: 10,
-        ),
-        buttonsReject(id, userId, colorRed, "Reject")
-      ],
     );
   }
 
@@ -519,7 +521,19 @@ class _TeamMemberAttendenceScreenState
     );
   }
 
-  Widget buttonsApprove(int id, int userId, color, text) {
+  Widget presentStatusPending(String id) {
+    return Row(
+      children: [
+        buttonsApprove(id, colorGreen, "Approve"),
+        const SizedBox(
+          width: 10,
+        ),
+        buttonsReject(id, colorRed, "Reject")
+      ],
+    );
+  }
+
+  Widget buttonsApprove(String id, color, text) {
     return ElevatedButton(
       style: ButtonStyle(
         fixedSize: MaterialStateProperty.all(
@@ -541,10 +555,7 @@ class _TeamMemberAttendenceScreenState
         var approvedBy =
             await SharedPrefrence.getStringPreference(SharedPrefrence.id);
         teamMemberAttendenceBloc.add(TeamMemberAttendenceApproveEvent(
-            userId: userId.toString(),
-            approvedBy: approvedBy,
-            id: id.toString(),
-            status: "2"));
+            approvedBy: approvedBy, id: id, status: "2"));
       },
       child: Text(
         text,
@@ -555,7 +566,7 @@ class _TeamMemberAttendenceScreenState
     );
   }
 
-  Widget buttonsReject(int id, int userId, color, text) {
+  Widget buttonsReject(String id, color, text) {
     return ElevatedButton(
       style: ButtonStyle(
         fixedSize: MaterialStateProperty.all(
@@ -577,10 +588,7 @@ class _TeamMemberAttendenceScreenState
         var approvedBy =
             await SharedPrefrence.getStringPreference(SharedPrefrence.id);
         teamMemberAttendenceBloc.add(TeamMemberAttendenceApproveEvent(
-            userId: userId.toString(),
-            approvedBy: approvedBy,
-            id: id.toString(),
-            status: "3"));
+            approvedBy: approvedBy, id: id.toString(), status: "3"));
       },
       child: Text(
         text,
@@ -862,5 +870,9 @@ class _TeamMemberAttendenceScreenState
   void addEvent() {
     teamMemberAttendenceBloc.add(GetTeamMemberAttendenceEvent(
         id: widget.userId, date: DateFormat("yyyy-MM").format(dateTime)));
+  }
+
+  Widget statusNull() {
+    return Container();
   }
 }
