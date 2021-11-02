@@ -28,6 +28,7 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
   List<AttendanceStatusModel> statusList = [];
   var format = DateFormat("yyyy-MM-dd");
   DateTime? dateTime = DateTime.now();
+  String date = "";
 
   @override
   void initState() {
@@ -43,7 +44,7 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
         builder: (context, state) {
           debugPrint("state-->$state");
           if (state is GetAllUserStatusInitialState) {
-            String date = format.format(dateTime!);
+            date = format.format(dateTime!);
             getAllUserStatusBloc
                 .add(GetAllUserStatusInitialEvent(statusDate: date));
             return const Center(
@@ -145,6 +146,11 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
                   ),
                 );
               },
+            );
+          }
+          if (statusList.isEmpty) {
+            return const Center(
+              child: Text("Data not found"),
             );
           }
           return Container();
