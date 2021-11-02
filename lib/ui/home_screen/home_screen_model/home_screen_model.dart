@@ -1,11 +1,7 @@
-// To parse this JSON data, do
-//
-//     final userData = userDataFromMap(jsonString);
-
 import 'dart:convert';
 
-class UserData {
-  UserData({
+class UserDetails {
+  UserDetails({
     required this.success,
     required this.message,
     required this.data,
@@ -15,11 +11,12 @@ class UserData {
   String message;
   Data? data;
 
-  factory UserData.fromJson(String str) => UserData.fromMap(json.decode(str));
+  factory UserDetails.fromJson(String str) =>
+      UserDetails.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory UserData.fromMap(Map<String, dynamic> json) => UserData(
+  factory UserDetails.fromMap(Map<String, dynamic> json) => UserDetails(
         success: json["success"] == null ? null : json["success"],
         message: json["message"] == null ? null : json["message"],
         data: json["data"] == null ? null : Data.fromMap(json["data"]),
@@ -28,7 +25,7 @@ class UserData {
   Map<String, dynamic> toMap() => {
         "success": success == null ? null : success,
         "message": message == null ? null : message,
-        "data": data! == null ? null : data!.toMap(),
+        "data": data == null ? null : data!.toMap(),
       };
 }
 
@@ -40,8 +37,7 @@ class Data {
     required this.mobileNumber,
     required this.image,
     required this.designation,
-    required this.clockIn,
-    required this.clockOut,
+    required this.clockInOutData,
     required this.pjpButton,
   });
 
@@ -51,8 +47,7 @@ class Data {
   String mobileNumber;
   String image;
   String designation;
-  List<ClockIn> clockIn;
-  List<ClockOut> clockOut;
+  List<ClockInOutData> clockInOutData;
   String pjpButton;
 
   factory Data.fromJson(String str) => Data.fromMap(json.decode(str));
@@ -67,14 +62,10 @@ class Data {
             json["mobile_number"] == null ? null : json["mobile_number"],
         image: json["image"] == null ? null : json["image"],
         designation: json["designation"] == null ? null : json["designation"],
-        clockIn: json["clockIn"] == null
+        clockInOutData: json["clockInOutData"] == null
             ? []
-            : List<ClockIn>.from(
-                json["clockIn"].map((x) => ClockIn.fromMap(x))),
-        clockOut: json["clockOut"] == null
-            ? []
-            : List<ClockOut>.from(
-                json["clockOut"].map((x) => ClockOut.fromMap(x))),
+            : List<ClockInOutData>.from(
+                json["clockInOutData"].map((x) => ClockInOutData.fromMap(x))),
         pjpButton: json["pjp_button"] == null ? null : json["pjp_button"],
       );
 
@@ -85,66 +76,44 @@ class Data {
         "mobile_number": mobileNumber == null ? null : mobileNumber,
         "image": image == null ? null : image,
         "designation": designation == null ? null : designation,
-        "clockIn": clockIn == null
+        "clockInOutData": clockInOutData == null
             ? null
-            : List<dynamic>.from(clockIn.map((x) => x.toMap())),
-        "clockOut": clockOut == null
-            ? null
-            : List<dynamic>.from(clockOut.map((x) => x.toMap())),
+            : List<dynamic>.from(clockInOutData.map((x) => x.toMap())),
         "pjp_button": pjpButton == null ? null : pjpButton,
       };
 }
 
-class ClockIn {
-  ClockIn({
+class ClockInOutData {
+  ClockInOutData({
     required this.inOutStatus,
-    required this.inOutTime,
+    required this.clockInTime,
+    required this.clockOutTime,
     required this.userId,
   });
 
   int inOutStatus;
-  String inOutTime;
+  String clockInTime;
+  dynamic clockOutTime;
   int userId;
 
-  factory ClockIn.fromJson(String str) => ClockIn.fromMap(json.decode(str));
+  factory ClockInOutData.fromJson(String str) =>
+      ClockInOutData.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory ClockIn.fromMap(Map<String, dynamic> json) => ClockIn(
+  factory ClockInOutData.fromMap(Map<String, dynamic> json) => ClockInOutData(
         inOutStatus:
             json["in_out_status"] == null ? null : json["in_out_status"],
-        inOutTime: json["in_out_time"] == null ? null : json["in_out_time"],
+        clockInTime:
+            json["clock_in_time"] == null ? null : json["clock_in_time"],
+        clockOutTime: json["clock_out_time"],
         userId: json["user_id"] == null ? null : json["user_id"],
       );
 
   Map<String, dynamic> toMap() => {
         "in_out_status": inOutStatus == null ? null : inOutStatus,
-        "in_out_time": inOutTime == null ? null : inOutTime,
+        "clock_in_time": clockInTime == null ? null : clockInTime,
+        "clock_out_time": clockOutTime,
         "user_id": userId == null ? null : userId,
-      };
-}
-
-class ClockOut {
-  ClockOut({
-    required this.inOutStatus,
-    required this.inOutTime,
-  });
-
-  int inOutStatus;
-  String inOutTime;
-
-  factory ClockOut.fromJson(String str) => ClockOut.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory ClockOut.fromMap(Map<String, dynamic> json) => ClockOut(
-        inOutStatus:
-            json["in_out_status"] == null ? null : json["in_out_status"],
-        inOutTime: json["in_out_time"] == null ? null : json["in_out_time"],
-      );
-
-  Map<String, dynamic> toMap() => {
-        "in_out_status": inOutStatus == null ? null : inOutStatus,
-        "in_out_time": inOutTime == null ? null : inOutTime,
       };
 }

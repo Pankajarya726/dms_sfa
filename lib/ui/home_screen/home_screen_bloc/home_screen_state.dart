@@ -12,7 +12,7 @@ class HomeScreenInitialState extends HomeScreenState {}
 class HomeScreenLoadingState extends HomeScreenState {}
 
 class HomeScreenSuccessState extends HomeScreenState {
-  final UserData userData;
+  final UserDetails userData;
   HomeScreenSuccessState({required this.userData});
   @override
   List<Object?> get props => [userData];

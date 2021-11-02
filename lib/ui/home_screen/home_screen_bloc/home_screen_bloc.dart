@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sfa/main.dart';
 import 'package:sfa/ui/home_screen/home_screen_bloc/home_screen_event.dart';
@@ -23,7 +21,7 @@ class HomeScreenBloc extends Bloc<HomeScreenEvents, HomeScreenState> {
   }
 
   Stream<HomeScreenState> getUserDetails(HomeScreenEvent event) async* {
-    UserData response = await repository.getUserDetailsByUserId(event.id);
+    UserDetails response = await repository.getUserDetailsByUserId(event.id);
     if (response.success) {
       yield HomeScreenSuccessState(userData: response);
     } else {

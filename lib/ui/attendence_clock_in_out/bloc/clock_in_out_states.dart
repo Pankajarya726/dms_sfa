@@ -12,7 +12,7 @@ class ClockInOutInitialState extends ClockInOutStates {}
 class ClockInOutLoadingState extends ClockInOutStates {}
 
 class ClockInOutInitialSuccessState extends ClockInOutStates {
-  final UserData userData;
+  final UserDetails userData;
   final String date;
   final int currentHours;
   final int currentMinutes;
