@@ -291,12 +291,13 @@ class ApiRepository {
     }
   }
 
+// absent approve/reject repository
   Future<AbsentApproveRejectResponse> absentApproveReject(
       absentApprovedBy, userId, absentStatus, userAttendenceId) async {
     Map<String, dynamic> data = {
       "absent_approved_by": absentApprovedBy,
       "user_id": userId,
-      "absent_status": absentStatus,
+      "approved_status": absentStatus,
       "id": userAttendenceId,
     };
 

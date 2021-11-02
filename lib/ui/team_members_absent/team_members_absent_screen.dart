@@ -38,9 +38,15 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
       child: BlocBuilder<TeamMembersAbsentBloc, TeamMembersAbsentStates>(
         builder: (context, state) {
           if (state is TeamMembersAbsentInitialState) {
-            date = format.format(dateTime!);
-            teamMembersAbsentBloc
-                .add(TeamMembersAbsentSuccessEvent(currentDate: date));
+            if (date.isNotEmpty) {
+              teamMembersAbsentBloc
+                  .add(TeamMembersAbsentSuccessEvent(currentDate: date));
+            } else {
+              date = format.format(dateTime!);
+              teamMembersAbsentBloc
+                  .add(TeamMembersAbsentSuccessEvent(currentDate: date));
+            }
+
             return const Center(
               child: CircularProgressIndicator(),
             );
@@ -254,9 +260,14 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
         listener: (context, state) {
           if (state is AbsentApproveSuccessState) {
             Fluttertoast.showToast(msg: state.successMessage);
-            teamMembersAbsentBloc
-                .add(TeamMembersAbsentSuccessEvent(currentDate: "2021-10-25"));
-            Navigator.pop(context);
+            if (date.isNotEmpty) {
+              teamMembersAbsentBloc
+                  .add(TeamMembersAbsentSuccessEvent(currentDate: date));
+            } else {
+              date = format.format(dateTime!);
+              teamMembersAbsentBloc
+                  .add(TeamMembersAbsentSuccessEvent(currentDate: date));
+            }
           }
           if (state is AbsentApproveFailureState) {
             Fluttertoast.showToast(msg: state.failureMessage);
@@ -316,9 +327,14 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
         listener: (context, state) {
           if (state is AbsentApproveSuccessState) {
             Fluttertoast.showToast(msg: state.successMessage);
-            teamMembersAbsentBloc
-                .add(TeamMembersAbsentSuccessEvent(currentDate: "2021-10-25"));
-            Navigator.pop(context);
+            if (date.isNotEmpty) {
+              teamMembersAbsentBloc
+                  .add(TeamMembersAbsentSuccessEvent(currentDate: date));
+            } else {
+              date = format.format(dateTime!);
+              teamMembersAbsentBloc
+                  .add(TeamMembersAbsentSuccessEvent(currentDate: date));
+            }
           }
           if (state is AbsentApproveFailureState) {
             Fluttertoast.showToast(msg: state.failureMessage);
@@ -376,8 +392,14 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
       listener: (context, state) {
         if (state is AbsentApproveSuccessState) {
           Fluttertoast.showToast(msg: state.successMessage);
-          teamMembersAbsentBloc
-              .add(TeamMembersAbsentSuccessEvent(currentDate: "2021-10-25"));
+          if (date.isNotEmpty) {
+            teamMembersAbsentBloc
+                .add(TeamMembersAbsentSuccessEvent(currentDate: date));
+          } else {
+            date = format.format(dateTime!);
+            teamMembersAbsentBloc
+                .add(TeamMembersAbsentSuccessEvent(currentDate: date));
+          }
         }
         if (state is AbsentApproveFailureState) {
           Fluttertoast.showToast(msg: state.failureMessage);
@@ -423,9 +445,16 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
     return BlocListener<TeamMembersAbsentBloc, TeamMembersAbsentStates>(
       listener: (context, state) {
         if (state is AbsentApproveSuccessState) {
+          var format = DateFormat("yyyy-MM-dd");
           Fluttertoast.showToast(msg: state.successMessage);
-          teamMembersAbsentBloc
-              .add(TeamMembersAbsentSuccessEvent(currentDate: "2021-10-25"));
+          if (date.isNotEmpty) {
+            teamMembersAbsentBloc
+                .add(TeamMembersAbsentSuccessEvent(currentDate: date));
+          } else {
+            date = format.format(dateTime!);
+            teamMembersAbsentBloc
+                .add(TeamMembersAbsentSuccessEvent(currentDate: date));
+          }
         }
         if (state is AbsentApproveFailureState) {
           Fluttertoast.showToast(msg: state.failureMessage);
