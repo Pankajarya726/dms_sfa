@@ -302,8 +302,7 @@ class _TeamMemberAttendenceScreenState
                                                                     .status ==
                                                                 "Present Approved"
                                                         ? statusAccepted()
-                                                        : state.response.clockInData![index].approvedStatus ==
-                                                                    3 &&
+                                                        : state.response.clockInData![index].approvedStatus == 3 &&
                                                                 state
                                                                         .response
                                                                         .clockInData![
@@ -323,7 +322,9 @@ class _TeamMemberAttendenceScreenState
                                                                     ? statusAccepted()
                                                                     : state.response.clockInData![index].approvedStatus == 1 && state.response.clockInData![index].status == "Present Panding"
                                                                         ? presentStatusPending(state.response.clockInData![index].id.toString())
-                                                                        : absentStatusPending(state.response.clockInData![index].id, state.response.clockInData![index].userId),
+                                                                        : state.response.clockInData![index].approvedStatus == 1 && state.response.clockInData![index].status == "Absent Panding"
+                                                                            ? absentStatusPending(state.response.clockInData![index].id, state.response.clockInData![index].userId)
+                                                                            : statusNull(),
                                                     SizedBox(
                                                       width: 20,
                                                       child: IconButton(
@@ -869,5 +870,9 @@ class _TeamMemberAttendenceScreenState
   void addEvent() {
     teamMemberAttendenceBloc.add(GetTeamMemberAttendenceEvent(
         id: widget.userId, date: DateFormat("yyyy-MM").format(dateTime)));
+  }
+
+  Widget statusNull() {
+    return Container();
   }
 }

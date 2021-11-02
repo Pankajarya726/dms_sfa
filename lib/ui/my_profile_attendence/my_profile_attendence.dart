@@ -238,7 +238,7 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                                                         DateTime.parse(state
                                                             .response
                                                             .clockInData![index]
-                                                            .date!
+                                                            .date
                                                             .toString())),
                                                     style: const TextStyle(
                                                         fontSize: 20,
@@ -272,6 +272,43 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.center,
                                                 children: [
+                                                  state
+                                                                  .response
+                                                                  .clockInData![
+                                                                      index]
+                                                                  .approvedStatus ==
+                                                              2 &&
+                                                          state
+                                                                  .response
+                                                                  .clockInData![
+                                                                      index]
+                                                                  .status ==
+                                                              "Present Approved"
+                                                      ? statusAccepted()
+                                                      : state.response.clockInData![index].approvedStatus ==
+                                                                  3 &&
+                                                              state
+                                                                      .response
+                                                                      .clockInData![
+                                                                          index]
+                                                                      .status ==
+                                                                  "Present Rejected"
+                                                          ? statusRejected()
+                                                          : state.response.clockInData![index].approvedStatus ==
+                                                                      2 &&
+                                                                  state.response.clockInData![index].status ==
+                                                                      "Absent Approved"
+                                                              ? statusAccepted()
+                                                              : state.response.clockInData![index].approvedStatus ==
+                                                                          2 &&
+                                                                      state.response.clockInData![index].status ==
+                                                                          "Absent Rejected"
+                                                                  ? statusAccepted()
+                                                                  : state.response.clockInData![index].approvedStatus == 1 && state.response.clockInData![index].status == "Present Panding"
+                                                                      ? buttonPending()
+                                                                      : state.response.clockInData![index].approvedStatus == 1 && state.response.clockInData![index].status == "Absent Panding"
+                                                                          ? buttonPending()
+                                                                          : statusNull(),
                                                   SizedBox(
                                                     width: 20,
                                                     child: IconButton(
@@ -311,7 +348,7 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                                                       DateTime.parse(state
                                                           .response
                                                           .clockInData![index]
-                                                          .date!
+                                                          .date
                                                           .toString())),
                                                   style: const TextStyle(
                                                       color: Colors.black,
@@ -324,7 +361,7 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                                                       DateTime.parse(state
                                                           .response
                                                           .clockInData![index]
-                                                          .date!
+                                                          .date
                                                           .toString())),
                                                   style: const TextStyle(
                                                       color: Colors.black,
@@ -570,14 +607,6 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
     );
   }
 
-  Widget presentStatusPending() {
-    return buttonPending();
-  }
-
-  Widget absentStatusPending() {
-    return buttonPending();
-  }
-
   Widget buttonPending() {
     return ElevatedButton(
       style: ButtonStyle(
@@ -614,5 +643,9 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
       myProfileAttendenceBloc
           .add(MyProfileAttendenceSelectDateEvent(dateTime: date!));
     });
+  }
+
+  Widget statusNull() {
+    return Container();
   }
 }
