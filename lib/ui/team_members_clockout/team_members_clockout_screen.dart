@@ -96,7 +96,7 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
                           height: 5,
                         ),
                         Text(
-                          state.getClockInDataResponse.data![index].inOutTime,
+                          state.getClockInDataResponse.data![index].clockInTime,
                           style: const TextStyle(
                             color: Color(0xff303030),
                             fontSize: 16,
@@ -416,10 +416,7 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
         var approvedBy =
             await SharedPrefrence.getStringPreference(SharedPrefrence.id);
         getClockInDataBloc.add(ClockInApproveRejectEvent(
-            id: id.toString(),
-            userId: userId.toString(),
-            status: "2",
-            approvedBy: approvedBy.toString()));
+            id: id.toString(), status: "2", approvedBy: approvedBy.toString()));
       },
       child: Text(
         text,
@@ -452,10 +449,7 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
         var approvedBy =
             await SharedPrefrence.getStringPreference(SharedPrefrence.id);
         getClockInDataBloc.add(ClockInApproveRejectEvent(
-            id: id.toString(),
-            userId: userId.toString(),
-            status: "3",
-            approvedBy: approvedBy.toString()));
+            id: id.toString(), status: "3", approvedBy: approvedBy.toString()));
       },
       child: Text(
         text,

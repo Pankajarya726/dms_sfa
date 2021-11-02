@@ -1,11 +1,9 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:sfa/ui/team_member_attendence/model/attendance_model.dart';
-
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_member_attendence_bloc.dart';
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_member_attendence_event.dart';
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_member_attendence_state.dart';
@@ -14,7 +12,9 @@ import 'package:sfa/utility/constants.dart';
 import 'package:sfa/utility/shared_prefrence.dart';
 
 class TeamMemberAttendenceScreen extends StatefulWidget {
-  const TeamMemberAttendenceScreen({Key? key}) : super(key: key);
+  String userId;
+  TeamMemberAttendenceScreen({required this.userId, Key? key})
+      : super(key: key);
 
   @override
   _TeamMemberAttendenceScreenState createState() =>
@@ -859,9 +859,8 @@ class _TeamMemberAttendenceScreenState
     );
   }
 
-  void addEvent() async {
-    var userid = await SharedPrefrence.getStringPreference(SharedPrefrence.id);
+  void addEvent() {
     teamMemberAttendenceBloc.add(GetTeamMemberAttendenceEvent(
-        id: "16", date: DateFormat("yyyy-MM").format(dateTime)));
+        id: widget.userId, date: DateFormat("yyyy-MM").format(dateTime)));
   }
 }

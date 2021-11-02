@@ -25,22 +25,6 @@ class TeamMembersStatusScreen extends StatefulWidget {
 
 class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
     implements DateChangeListener {
-  List<String> names = [
-    "Oliver",
-    "William",
-    "Noah",
-    "Peter",
-    "Benjamin",
-    "George",
-  ];
-  List<String> status = [
-    "Present",
-    "Absent",
-    "Absent",
-    "Present",
-    "Present",
-    "Absent",
-  ];
   GetAllUserStatusBloc getAllUserStatusBloc = GetAllUserStatusBloc();
   List<AttendanceStatusModel> statusList = [];
   var format = DateFormat("yyyy-MM-dd");
@@ -108,7 +92,9 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const TeamMembersDetails(),
+                          builder: (context) => TeamMembersDetails(
+                            userId: statusList[index].userId.toString(),
+                          ),
                         ),
                       );
                     },

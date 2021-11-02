@@ -11,7 +11,8 @@ import 'package:sfa/ui/team_member_track_screen/track_bloc/track_state.dart';
 import 'package:sfa/utility/colors.dart';
 
 class TeamMemberTrackScreen extends StatefulWidget {
-  const TeamMemberTrackScreen({Key? key}) : super(key: key);
+  String userId;
+  TeamMemberTrackScreen({required this.userId, Key? key}) : super(key: key);
 
   @override
   _TeamMemberTrackScreenState createState() => _TeamMemberTrackScreenState();
@@ -25,8 +26,7 @@ class _TeamMemberTrackScreenState extends State<TeamMemberTrackScreen> {
   Location location = Location();
   @override
   void initState() {
-    trackBloc.add(TrackEvent(
-        id: "16", date: DateFormat("yyyy-MM-dd").format(DateTime.now())));
+    getData();
     super.initState();
   }
 
@@ -114,5 +114,11 @@ class _TeamMemberTrackScreenState extends State<TeamMemberTrackScreen> {
         ),
       ),
     );
+  }
+
+  void getData() {
+    trackBloc.add(TrackEvent(
+        id: widget.userId,
+        date: DateFormat("yyyy-MM-dd").format(DateTime.now())));
   }
 }

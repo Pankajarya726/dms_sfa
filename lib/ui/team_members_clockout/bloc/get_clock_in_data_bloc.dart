@@ -48,7 +48,7 @@ class GetClockInDataBloc
   Stream<GetClockInDataStates> clockInActions(
       ClockInApproveRejectEvent event) async* {
     ClockInApproveRes response = await repository.clockInApprovReject(
-        event.id, event.userId, event.status, event.approvedBy);
+        event.id, event.status, event.approvedBy);
     log(response.message);
     if (response.success) {
       yield ClockInApproveRejectSuccessState(res: response);
