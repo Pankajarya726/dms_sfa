@@ -19,4 +19,5 @@ class Url {
   static const String trackByUser = "childUserTrackByUser";
   static const String changePassword = "resetPassword";
   static const String editProfile = "profileEdit";
+  static const String validateAppVer = "validateAppVersion";
 }
