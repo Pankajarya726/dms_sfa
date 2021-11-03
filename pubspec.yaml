@@ -49,6 +49,8 @@ dependencies:
   connectivity:
   month_picker_dialog:
   cached_network_image: 
+  flutter_device_type:
+  package_info: 
   
 
 dev_dependencies:
