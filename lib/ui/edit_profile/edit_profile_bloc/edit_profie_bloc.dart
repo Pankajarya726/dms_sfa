@@ -12,7 +12,6 @@ class EditProfileBloc extends Bloc<EditProfileEvents, EditProfileState> {
   @override
   Stream<EditProfileState> mapEventToState(EditProfileEvents event) async* {
     if (event is EditProfileEvent) {
-      yield EditProfileLoadingState();
       yield* editProfile(event);
     }
     if (event is GetUserDetailsEvent) {

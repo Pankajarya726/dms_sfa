@@ -405,7 +405,6 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
   }
 
   void addEvent() async {
-    var userid = await SharedPrefrence.getStringPreference(SharedPrefrence.id);
     teamMembersDetailsBloc.add(GetTeamMembersDetailsEvents(
         id: widget.userId, date: DateFormat("yyyy-MM-dd").format(dateTime)));
   }

@@ -60,19 +60,24 @@ class Data {
   String toJson() => json.encode(toMap());
 
   factory Data.fromMap(Map<String, dynamic> json) => Data(
-        clockInTime:
-            json["clock_in_time"] == null ? null : json["clock_in_time"],
-        clockOutTime:
-            json["clock_out_time"] == null ? null : json["clock_out_time"],
-        inDate:
-            json["in_date"] == null ? null : DateTime.parse(json["in_date"]),
-        inWorkingPlan:
-            json["in_working_plan"] == null ? null : json["in_working_plan"],
-        pjpDescription:
-            json["pjp_description"] == null ? null : json["pjp_description"],
-        inImage: json["in_image"] == null ? null : json["in_image"],
-        comments: json["comments"] == null ? null : json["comments"],
-        outImage: json["out_image"] == null ? null : json["out_image"],
+        clockInTime: json["clock_in_time"] == null
+            ? ""
+            : json["clock_in_time"].toString(),
+        clockOutTime: json["clock_out_time"] == null
+            ? ""
+            : json["clock_out_time"].toString(),
+        inDate: json["in_date"] == null
+            ? DateTime.parse("")
+            : DateTime.parse(json["in_date"]),
+        inWorkingPlan: json["in_working_plan"] == null
+            ? ""
+            : json["in_working_plan"].toString(),
+        pjpDescription: json["pjp_description"] == null
+            ? ""
+            : json["pjp_description"].toString(),
+        inImage: json["in_image"] == null ? "" : json["in_image"].toString(),
+        comments: json["comments"] == null ? "" : json["comments"].toString(),
+        outImage: json["out_image"] == null ? "" : json["out_image"].toString(),
       );
 
   Map<String, dynamic> toMap() => {

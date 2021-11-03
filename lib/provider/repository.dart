@@ -435,26 +435,27 @@ class ApiRepository {
       "status_date": date,
     };
 
-    try {
-      Response response = await dio.post(
-        Url.teamMembersDetails,
-        data: params,
-      );
+    // try {
+    Response response = await dio.post(
+      Url.teamMembersDetails,
+      data: params,
+    );
 
-      if (response.statusCode == 200) {
-        DetailsStatusResponse result =
-            DetailsStatusResponse.fromJson(response.toString());
-        return result;
-      } else {
-        return DetailsStatusResponse(
-            message: response.statusMessage.toString(),
-            success: false,
-            data: null);
-      }
-    } catch (exception) {
+    if (response.statusCode == 200) {
+      DetailsStatusResponse result =
+          DetailsStatusResponse.fromJson(response.toString());
+
+      return result;
+    } else {
       return DetailsStatusResponse(
-          message: "Something went Wrong!", success: false, data: null);
+          message: response.statusMessage.toString(),
+          success: false,
+          data: null);
     }
+    // } catch (exception) {
+    //   return DetailsStatusResponse(
+    //       message: "Something went Wrong!", success: false, data: null);
+    // }
   }
 
   Future<AttendanceResponse> getTeamMembersAttendence(
