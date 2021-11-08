@@ -174,10 +174,28 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       if (mobileNo.text.isNotEmpty &&
                           password.text.isNotEmpty &&
                           confPass.text.isNotEmpty) {
-                        forgotPasswordBloc.add(ForgotPasswordEvent(
-                            mobileNo: mobileNo.text,
-                            password: password.text,
-                            confPass: confPass.text));
+                        if (mobileNo.text.length <= 10 &&
+                            mobileNo.text.length >= 10) {
+                          if (password.text.length >= 6 &&
+                              confPass.text.length >= 6) {
+                            if (password.text == confPass.text) {
+                              forgotPasswordBloc.add(ForgotPasswordEvent(
+                                  mobileNo: mobileNo.text,
+                                  password: password.text,
+                                  confPass: confPass.text));
+                            } else {
+                              Fluttertoast.showToast(
+                                  msg: "Password can't match");
+                            }
+                          } else {
+                            Fluttertoast.showToast(
+                                msg:
+                                    "Password must be contain atleast 6 charecters");
+                          }
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: "Phone number should be 10 digit");
+                        }
                       } else {
                         Fluttertoast.showToast(msg: "Fields can't be empty");
                       }

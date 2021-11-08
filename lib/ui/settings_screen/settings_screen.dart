@@ -10,20 +10,9 @@ import 'package:sfa/ui/settings_screen/settings_bloc/settings_event.dart';
 import 'package:sfa/ui/settings_screen/settings_bloc/settings_state.dart';
 import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/shared_prefrence.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsScreen extends StatefulWidget {
-  final String name;
-  final String designation;
-  final String image;
-  final String email;
-  const SettingsScreen(
-      {required this.name,
-      required this.designation,
-      required this.image,
-      required this.email,
-      Key? key})
-      : super(key: key);
+  const SettingsScreen({Key? key}) : super(key: key);
 
   @override
   _SettingScreenState createState() => _SettingScreenState();
@@ -78,7 +67,7 @@ class _SettingScreenState extends State<SettingsScreen> {
                               icon: const Icon(Icons.arrow_back),
                               color: Colors.white,
                               onPressed: () {
-                                Navigator.pop(context);
+                                Navigator.pop(context, true);
                               },
                             ),
                             const Text("Settings",
@@ -109,8 +98,8 @@ class _SettingScreenState extends State<SettingsScreen> {
                                 BlocBuilder<SettingsBloc, SettingsState>(
                                     builder: (context, state) {
                                   if (state is DetailsSucessState) {
-                                    return widget.name.isNotEmpty
-                                        ? Text(widget.name,
+                                    return state.response.data!.name.isNotEmpty
+                                        ? Text(state.response.data!.name,
                                             style: const TextStyle(
                                                 color: Color(0xfff24b55),
                                                 fontSize: 20,
@@ -131,8 +120,9 @@ class _SettingScreenState extends State<SettingsScreen> {
                                 BlocBuilder<SettingsBloc, SettingsState>(
                                     builder: (context, state) {
                                   if (state is DetailsSucessState) {
-                                    return widget.designation.isNotEmpty
-                                        ? Text(widget.designation,
+                                    return state.response.data!.designation
+                                            .isNotEmpty
+                                        ? Text(state.response.data!.designation,
                                             style: const TextStyle(
                                                 color: Color(0xff303030),
                                                 fontSize: 14,
@@ -169,12 +159,17 @@ class _SettingScreenState extends State<SettingsScreen> {
                                 child: BlocBuilder<SettingsBloc, SettingsState>(
                                     builder: (context, state) {
                                   if (state is DetailsSucessState) {
-                                    return widget.image.isNotEmpty
+                                    return state.response.data!.image.isNotEmpty
                                         ? CachedNetworkImage(
                                             width: 90,
                                             height: 90,
                                             fit: BoxFit.cover,
-                                            imageUrl: widget.image,
+                                            imageUrl:
+                                                state.response.data!.image,
+                                            errorWidget: (context, url,
+                                                    error) =>
+                                                Image.asset(
+                                                    "assets/placeholder.png"),
                                             placeholder: (context, url) =>
                                                 const CircularProgressIndicator(
                                               color: colorPrimary,
@@ -234,12 +229,11 @@ class _SettingScreenState extends State<SettingsScreen> {
                           onTap: () {
                             if (index == 0) {
                               Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const EditProfileScreen(),
-                                ),
-                              );
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const EditProfileScreen()))
+                                  .then((value) => value ? addEvent() : null);
                             }
                             if (index == 1) {
                               Navigator.push(

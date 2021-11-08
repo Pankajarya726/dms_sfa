@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +50,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             title: const Text("Edit Profile"),
             centerTitle: true,
             backgroundColor: colorPrimary,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.pop(context, true),
+            ),
           ),
           body: BlocBuilder<EditProfileBloc, EditProfileState>(
             builder: (context, state) {
@@ -64,6 +68,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               if (state is GetUserDetailsSucessState) {
                 name.text = state.response.data!.name;
                 emailId.text = state.response.data!.email;
+
                 return Column(
                   children: [
                     Container(
@@ -84,6 +89,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       height: 90,
                                       fit: BoxFit.cover,
                                       imageUrl: state.response.data!.image,
+                                      errorWidget: (context, url, error) =>
+                                          Image.asset("assets/placeholder.png"),
                                       placeholder: (context, url) =>
                                           const CircularProgressIndicator(
                                         color: colorPrimary,
@@ -100,7 +107,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   ),
                           ),
                           Positioned(
-                            top: 10,
+                            top: 14,
                             right: 0,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(100),
@@ -151,6 +158,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   focusedBorder: UnderlineInputBorder(),
                                   enabledBorder: UnderlineInputBorder(),
                                 ),
+                                onSaved: (value) {
+                                  name.text = value!;
+                                },
                               ),
                             ),
                             Padding(
@@ -177,6 +187,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   focusedBorder: UnderlineInputBorder(),
                                   enabledBorder: UnderlineInputBorder(),
                                 ),
+                                onSaved: (value) {
+                                  emailId.text = value!;
+                                },
                               ),
                             ),
                             ElevatedButton(
@@ -248,7 +261,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 14),
                   child: InkWell(
                     onTap: () {
                       imageFromCamera();
@@ -271,8 +284,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 10,
+                Container(
+                  height: 1,
+                  color: Colors.grey,
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
@@ -311,7 +325,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         .getImage(source: ImageSource.camera, imageQuality: 50);
 
     setState(() {
-      this.image = image;
+      this.image = image!;
     });
   }
 
@@ -320,7 +334,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         .getImage(source: ImageSource.gallery, imageQuality: 50);
 
     setState(() {
-      this.image = image;
+      this.image = image!;
     });
   }
 

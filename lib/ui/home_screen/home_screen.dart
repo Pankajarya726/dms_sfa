@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'dart:ui';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,9 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
       create: (context) => homeScreenBloc,
       child: BlocListener<HomeScreenBloc, HomeScreenState>(
         listener: (context, state) {
-          if (state is HomeScreenLoadingState) {
-            const CircularProgressIndicator();
-          }
           if (state is HomeScreenSuccessState) {
             imageUrl = state.userData.data!.image;
             employeeName = state.userData.data!.name;
@@ -82,6 +78,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 height: 58,
                                 fit: BoxFit.cover,
                                 imageUrl: imageUrl,
+                                errorWidget: (context, url, error) =>
+                                    Image.asset("assets/placeholder.png"),
                                 placeholder: (context, url) =>
                                     const CircularProgressIndicator(
                                   color: colorPrimary,
@@ -139,14 +137,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       trailing: InkWell(
                         onTap: () {
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SettingsScreen(
-                                        name: employeeName,
-                                        designation: designation,
-                                        image: imageUrl,
-                                        email: email,
-                                      )));
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SettingsScreen()))
+                              .then((value) => value ? getUserId() : null);
                         },
                         child: const CircleAvatar(
                           radius: 12,
