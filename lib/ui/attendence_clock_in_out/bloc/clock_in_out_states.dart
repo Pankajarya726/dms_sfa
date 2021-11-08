@@ -14,27 +14,27 @@ class ClockInOutLoadingState extends ClockInOutStates {}
 class ClockInOutInitialSuccessState extends ClockInOutStates {
   final UserDetails userData;
   final String date;
-  final int currentHours;
-  final int currentMinutes;
-  final int currentSeconds;
+  final DateTime ntpTime;
+  // final int currentMinutes;
+  // final int currentSeconds;
   final String at;
   final String seperator;
 
   ClockInOutInitialSuccessState({
     required this.userData,
     required this.date,
-    required this.currentHours,
-    required this.currentMinutes,
-    required this.currentSeconds,
+    required this.ntpTime,
+    // required this.currentMinutes,
+    // required this.currentSeconds,
     required this.at,
     required this.seperator,
   });
   @override
   List<Object?> get props => [
         date,
-        currentHours,
-        currentMinutes,
-        currentSeconds,
+        ntpTime,
+        // currentMinutes,
+        // currentSeconds,
         at,
         seperator,
       ];

@@ -124,63 +124,67 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
         items: [
           BottomNavigationBarItem(
             icon: Container(
-              // width: 26,
-              // height: 30,
+              padding: const EdgeInsets.symmetric(vertical: 4),
               child: currentBottomTabIndex == 0
                   ? Image.asset(
                       "assets/f1-a.png",
                       fit: BoxFit.contain,
+                      width: 22,
                     )
                   : Image.asset(
                       "assets/f1.png",
                       fit: BoxFit.contain,
+                      width: 22,
                     ),
             ),
             label: "Home",
           ),
           BottomNavigationBarItem(
             icon: Container(
-              // width: 26,
+              padding: const EdgeInsets.symmetric(vertical: 4),
               child: currentBottomTabIndex == 1
                   ? Image.asset(
                       "assets/f2-a.png",
                       fit: BoxFit.contain,
+                      width: 22,
                     )
                   : Image.asset(
                       "assets/f2.png",
                       fit: BoxFit.contain,
+                      width: 22,
                     ),
             ),
             label: "Absent",
           ),
           BottomNavigationBarItem(
             icon: Container(
-              // width: 26,
-              // height: 30,
               child: currentBottomTabIndex == 2
                   ? Image.asset(
                       "assets/f3-a.png",
                       fit: BoxFit.contain,
+                      width: 27,
                     )
                   : Image.asset(
                       "assets/f3.png",
                       fit: BoxFit.contain,
+                      width: 27,
                     ),
             ),
             label: "Team",
           ),
           BottomNavigationBarItem(
             icon: Container(
-              // width: 26,
-              // height: 30,
+              padding: const EdgeInsets.symmetric(vertical: 4),
               child: currentBottomTabIndex == 3
                   ? Image.asset(
                       "assets/f4-a.png",
                       fit: BoxFit.contain,
+                      width: 22,
                     )
                   : Image.asset(
                       "assets/f4.png",
                       fit: BoxFit.contain,
+                      width: 22,
                     ),
             ),
             label: "PJP",

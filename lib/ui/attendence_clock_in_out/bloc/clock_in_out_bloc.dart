@@ -38,7 +38,7 @@ Stream<ClockInOutStates> getInitialData(ClockInOutInitialEvent event) async* {
     _ntpTime = await NTP.now();
     var format = DateFormat("dd-MMM-yyyy");
     String userId = await SharedPrefrence.getStringPreference("id");
-    UserDetails response = await repository.getUserDetailsByUserId(userId);
+    UserDetails response = await repository.getUserDetailsByUserId("14");
 
     if (response.success) {
       yield ClockInOutInitialSuccessState(
@@ -46,9 +46,9 @@ Stream<ClockInOutStates> getInitialData(ClockInOutInitialEvent event) async* {
         date: format.format(_ntpTime),
         at: " at ",
         seperator: ":",
-        currentHours: _ntpTime.hour,
-        currentMinutes: _ntpTime.minute,
-        currentSeconds: _ntpTime.second,
+        ntpTime: _ntpTime,
+        // currentMinutes: _ntpTime.minute,
+        // currentSeconds: _ntpTime.second,
       );
     } else {
       yield ClockInOutFailureState(failureMessage: response.message);

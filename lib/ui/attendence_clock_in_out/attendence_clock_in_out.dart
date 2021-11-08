@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -12,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:ntp/ntp.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_bloc.dart';
 import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_events.dart';
 import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_states.dart';
@@ -43,7 +43,9 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   ClockInOutBloc clockInOutBloc = ClockInOutBloc();
   double latitude = 0.0;
   double longitude = 0.0;
-  var workingPlanController = TextEditingController(text: LOREUMIPSUM);
+  int time = 0;
+  Duration duration = Duration(seconds: 0, hours: 0, minutes: 0);
+  var workingPlanController = TextEditingController(text: "Today i am working");
   final pjpController = TextEditingController(text: LOREUMIPSUM);
   final commentController = TextEditingController();
   String workingPlan = "";
@@ -51,6 +53,33 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   final formKey2 = GlobalKey<FormState>();
   late DateTime _ntpTime;
   String webtime = "";
+  int clockInStatus = 0;
+  DateTime? clockInTime;
+  DateTime? clockOutTime;
+  String timeDifference = "00:00:00";
+
+  StreamController<String> timerController = StreamController();
+  final stopWatch = PublishSubject<int>();
+
+  @override
+  void initState() {
+    super.initState();
+    getTime();
+  }
+
+  @override
+  void dispose() {
+    timerController.close();
+    stopWatch.sink.close();
+    stopWatch.close();
+    super.dispose();
+  }
+
+  getTime() async {
+    _ntpTime = await NTP.now();
+    var format = DateFormat("hh:mm:ss");
+    print("current date = ${_ntpTime}");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,20 +88,38 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
       child: BlocConsumer<ClockInOutBloc, ClockInOutStates>(
         listener: (context, state) {
           if (state is ClockInSuccessState) {
-            Fluttertoast.showToast(msg: state.successMessage);
             clockInOutBloc.add(ClockInOutInitialEvent());
+            Fluttertoast.showToast(msg: state.successMessage);
           }
           if (state is ClockInFailureState) {
-            Fluttertoast.showToast(msg: state.failureMessage);
             clockInOutBloc.add(ClockInOutInitialEvent());
+            Fluttertoast.showToast(msg: state.failureMessage);
           }
           if (state is ClockOutSuccessState) {
-            Fluttertoast.showToast(msg: state.successMessage);
             clockInOutBloc.add(ClockInOutInitialEvent());
+            Fluttertoast.showToast(msg: state.successMessage);
           }
           if (state is ClockOutFailureState) {
-            Fluttertoast.showToast(msg: state.failureMessage);
             clockInOutBloc.add(ClockInOutInitialEvent());
+            Fluttertoast.showToast(msg: state.failureMessage);
+          }
+          if (state is ClockInOutInitialSuccessState) {
+            if (state.userData.data!.clockInOutData.isNotEmpty) {
+              clockInStatus =
+                  state.userData.data!.clockInOutData.first.inOutStatus;
+            }
+
+            if (clockInStatus == 1) {
+              clockInTime = DateFormat("HH:mm:ss")
+                  .parse(state.userData.data!.clockInOutData.first.clockInTime);
+
+              startAttendenceTimer(clockInTime!);
+            } else if (clockInStatus == 2) {
+              clockInTime = DateFormat("HH:mm:ss")
+                  .parse(state.userData.data!.clockInOutData.first.clockInTime);
+              clockOutTime = DateFormat("HH:mm:ss").parse(
+                  state.userData.data!.clockInOutData.first.clockOutTime);
+            }
           }
         },
         builder: (context, state) {
@@ -84,9 +131,36 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
               child: CircularProgressIndicator(),
             );
           }
+
           if (state is ClockInOutInitialSuccessState) {
-            return clockInOut ? clockInLayout(state) : clockOutLayout(state);
+            if (clockInStatus == 1) {
+              return clockInLayout();
+            } else {
+              if (state.userData.data!.clockInOutData.isNotEmpty) {
+                for (int i = 0;
+                    i < state.userData.data!.clockInOutData.length;
+                    i++) {
+                  if (state.userData.data!.clockInOutData[i].clockInTime
+                          .isNotEmpty &&
+                      state.userData.data!.clockInOutData[i].clockOutTime
+                          .isNotEmpty) {
+                    clockInTime = DateFormat("HH:mm:ss").parse(
+                        state.userData.data!.clockInOutData.first.clockInTime);
+                    clockOutTime = DateFormat("HH:mm:ss").parse(
+                        state.userData.data!.clockInOutData.first.clockOutTime);
+                    timeDifference =
+                        (clockOutTime!.difference(clockInTime!)).toString();
+                    return clockOutLayout(timeDifference);
+                  } else {
+                    return clockOutLayout(timeDifference);
+                  }
+                }
+              } else {
+                return clockOutLayout(timeDifference);
+              }
+            }
           }
+
           if (state is ClockInOutFailureState) {
             return Center(
               child: Text(state.failureMessage),
@@ -98,8 +172,34 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     );
   }
 
+  Stream<int> stopWatchStream() {
+    void stopTimer() {
+      timer?.cancel();
+      counter = 0;
+      streamController.close();
+    }
+
+    void tick(_) {
+      counter++;
+      streamController.add(counter);
+    }
+
+    void startTimer() {
+      timer = Timer.periodic(timerInterval, tick);
+    }
+
+    streamController = StreamController<int>(
+      onListen: startTimer,
+      onCancel: stopTimer,
+      onResume: startTimer,
+      onPause: stopTimer,
+    );
+
+    return streamController.stream;
+  }
+
 // initially we have to view clockOutLayout
-  Widget clockOutLayout(ClockInOutInitialSuccessState state) {
+  Widget clockOutLayout(timeDifference) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(10.0),
       child: Column(
@@ -136,7 +236,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                   child: Align(
                     alignment: Alignment.topLeft,
                     child: Text(
-                      "${state.date}${state.at}${state.currentHours}${state.seperator}${state.currentMinutes}",
+                      "${DateFormat("dd MMM yyyy").format(_ntpTime)} at ${DateFormat().add_jm().format(_ntpTime)}",
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -145,16 +245,15 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 10),
-                  child: Text(
-                    "$timerHours:$timerMinutes:$timerSeconds",
-                    style: const TextStyle(
-                      fontSize: 45.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+                    padding: const EdgeInsets.only(top: 10, bottom: 10),
+                    child: Text(
+                      timeDifference,
+                      style: const TextStyle(
+                        fontSize: 45.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    )),
                 Container(
                   width: MediaQuery.of(context).size.width,
                   padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
@@ -319,7 +418,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     );
   }
 
-  Widget clockInLayout(ClockInOutInitialSuccessState state) {
+  Widget clockInLayout() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(10.0),
       child: Column(
@@ -356,7 +455,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                   child: Align(
                     alignment: Alignment.topLeft,
                     child: Text(
-                      "${state.date}${state.at}${state.currentHours}${state.seperator}${state.currentMinutes}",
+                      "${DateFormat("dd MMM yyyy").format(_ntpTime)} at ${DateFormat().add_jm().format(_ntpTime)}",
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -365,16 +464,31 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 10),
-                  child: Text(
-                    "$timerHours:$timerMinutes:$timerSeconds",
-                    style: const TextStyle(
-                      fontSize: 45.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+                    padding: const EdgeInsets.only(top: 10, bottom: 10),
+                    child: StreamBuilder<String>(
+                      stream: timerController.stream,
+                      builder: (context, snap) {
+                        if (snap.hasData && snap.data!.isNotEmpty) {
+                          return Text(
+                            snap.data!,
+                            style: const TextStyle(
+                              fontSize: 45.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          );
+                        }
+
+                        return Text(
+                          "$timerHours:$timerMinutes:$timerSeconds",
+                          style: const TextStyle(
+                            fontSize: 45.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        );
+                      },
+                    )),
                 Container(
                   width: MediaQuery.of(context).size.width,
                   padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
@@ -493,36 +607,41 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   }
 
   Widget clockOutButtonWithIcon(context) {
-    getCurrentTime();
     return Center(
       child: ElevatedButton(
         onPressed: () {
-          setState(() {
-            if (commentController.text.isNotEmpty) {
-              if (image != null) {
-                clockInOutBloc.add(
-                  ClockOutSuccessEvent(
-                    inOutTime: "03:44:12",
-                    workingPlan: commentController.text,
-                    selfieImage: image!.path,
-                  ),
-                );
-                clockInOut = !clockInOut;
-                image = null;
-                timerSubscription.cancel();
-                timerStream = null;
-                setState(() {
-                  timerHours = '00';
-                  timerMinutes = '00';
-                  timerSeconds = '00';
-                });
-              } else {
-                Fluttertoast.showToast(msg: "Please select image");
-              }
-            } else {
-              Fluttertoast.showToast(msg: "Please add comment");
-            }
-          });
+          getCurrentTime();
+          debugPrint("inOutTime${webtime}");
+          debugPrint("inOutTime${_ntpTime}");
+          // Duration d = Duration(
+          //     hours: _ntpTime.hour - clockInTime!.hour,
+          //     minutes: _ntpTime.minute - clockInTime!.minute,
+          //     seconds: _ntpTime.second - clockInTime!.second);
+          // //  _ntpTime.difference(clockInTime!).;
+
+          webtime = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
+          print("curr time = $webtime");
+
+          // setState(() {
+          //   if (commentController.text.isNotEmpty) {
+          //     if (image != null) {
+          //       clockInOutBloc.add(
+          //         ClockOutSuccessEvent(
+          //           inOutTime: webtime,
+          //           workingPlan: commentController.text,
+          //           selfieImage: image!.path,
+          //         ),
+          //       );
+          //       clockInOut = !clockInOut;
+          //       image = null;
+          //       stopAttendenceTimer();
+          //     } else {
+          //       Fluttertoast.showToast(msg: "Please select image");
+          //     }
+          //   } else {
+          //     Fluttertoast.showToast(msg: "Please add comment");
+          //   }
+          // });
         },
         style: ButtonStyle(
           fixedSize: MaterialStateProperty.all(const Size(180, 50)),
@@ -577,21 +696,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                   );
                   clockInOut = !clockInOut;
                   image = null;
-                  // timerStream = stopWatchStream();
-                  // timerSubscription = timerStream!.listen((int newTick) {
-                  //   setState(() {
-                  //     timerHours = ((newTick / (60 * 60)) % 60)
-                  //         .floor()
-                  //         .toString()
-                  //         .padLeft(2, '0');
-                  //     timerMinutes = ((newTick / 60) % 60)
-                  //         .floor()
-                  //         .toString()
-                  //         .padLeft(2, '0');
-                  //     timerSeconds =
-                  //         (newTick % 60).floor().toString().padLeft(2, '0');
-                  //   });
-                  // });
+                  // startAttendenceTimer();
                 } else {
                   Fluttertoast.showToast(msg: "Please turn on GPS location");
                   getUserLocation();
@@ -880,32 +985,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     );
   }
 
-  Stream<int> stopWatchStream() {
-    void stopTimer() {
-      timer?.cancel();
-      counter = 0;
-      streamController.close();
-    }
-
-    void tick(_) {
-      counter++;
-      streamController.add(counter);
-    }
-
-    void startTimer() {
-      timer = Timer.periodic(timerInterval, tick);
-    }
-
-    streamController = StreamController<int>(
-      onListen: startTimer,
-      onCancel: stopTimer,
-      onResume: startTimer,
-      onPause: stopTimer,
-    );
-
-    return streamController.stream;
-  }
-
   _imgFromCamera() async {
     XFile? image = await ImagePicker.platform
         .getImage(source: ImageSource.camera, imageQuality: 50);
@@ -992,6 +1071,53 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
 
   getCurrentTime() async {
     _ntpTime = await NTP.now();
-    webtime = DateFormat("hh:mm:ss").format(_ntpTime);
+    // webtime = DateFormat().add_Hms().format(_ntpTime);
+    clockOutTime = DateFormat().add_Hms().parse(webtime);
+  }
+
+  startAttendenceTimer(DateTime dateTime) {
+    String time1 = DateTime.now().hour.toString() +
+        ":" +
+        DateTime.now().minute.toString() +
+        ":" +
+        DateTime.now().second.toString() +
+        ".000";
+
+    debugPrint("${DateFormat().add_Hms().parse(time1)}");
+
+    duration = DateFormat().add_Hms().parse(time1).difference(dateTime);
+    time = duration.inSeconds;
+
+    debugPrint(
+        "duration-->${Duration(seconds: time).inHours}:${Duration(seconds: time).inMinutes % 60}:${Duration(seconds: time).inSeconds % 60}");
+    print("timer started");
+
+    // timerStream = stopWatchStream();
+
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      debugPrint("timer--->${timer.tick}");
+      stopWatch.sink.add(timer.tick);
+    });
+
+    timerSubscription = stopWatch.listen((int newTick) {
+      debugPrint("newTick-->${newTick}");
+      time = time + 1;
+      // clockOutTime = DateTime.parse(
+      //     "${duration.inHours}:${duration.inMinutes % 60}:${duration.inSeconds % 60}");
+      debugPrint(
+          "timer-->${Duration(seconds: time).inHours}:${Duration(seconds: time).inMinutes % 60}:${Duration(seconds: time).inSeconds % 60}");
+      timerController.add(
+          "${Duration(seconds: time).inHours}:${Duration(seconds: time).inMinutes % 60}:${Duration(seconds: time).inSeconds % 60}");
+    });
+  }
+
+  stopAttendenceTimer() {
+    timerSubscription.cancel();
+    timerStream = null;
+    setState(() {
+      timerHours = '00';
+      timerMinutes = '00';
+      timerSeconds = '00';
+    });
   }
 }

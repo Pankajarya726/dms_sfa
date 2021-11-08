@@ -49,6 +49,7 @@ dependencies:
   connectivity:
   month_picker_dialog:
   cached_network_image: 
+  rxdart:
   
 
 dev_dependencies:
