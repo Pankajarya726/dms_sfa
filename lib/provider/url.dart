@@ -20,4 +20,5 @@ class Url {
   static const String changePassword = "resetPassword";
   static const String editProfile = "profileEdit";
   static const String validateAppVer = "validateAppVersion";
+  static const String forgotPassword = "forgotPassword";
 }
