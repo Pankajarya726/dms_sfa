@@ -1,10 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfa/ui/absent/absent_screen.dart';
 import 'package:sfa/ui/add_pjp_screen/add_pjp_screen.dart';
 import 'package:sfa/ui/attendence_clock_in_out/attendence_clock_in_out.dart';
+import 'package:sfa/ui/my_profile/my_profile_home.dart';
 import 'package:sfa/ui/pjp_screen/pjp_screen.dart';
 import 'package:sfa/ui/team_members/team_members_screen.dart';
 import 'package:sfa/utility/colors.dart';
@@ -19,12 +18,19 @@ class AttendenceHomeScreen extends StatefulWidget {
 
 class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
   int currentBottomTabIndex = 0;
+  bool isLeader = false;
   List<Widget> navigationScreens = [
     const AttendenceClockInOut(),
     const AbsentScreen(),
     const TeamMembersScreen(),
     const PJPScreen(),
   ];
+  @override
+  void initState() {
+    getUserDetails();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -153,22 +159,39 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
             ),
             label: "Absent",
           ),
-          BottomNavigationBarItem(
-            icon: Container(
-              // width: 26,
-              // height: 30,
-              child: currentBottomTabIndex == 2
-                  ? Image.asset(
-                      "assets/f3-a.png",
-                      fit: BoxFit.contain,
-                    )
-                  : Image.asset(
-                      "assets/f3.png",
-                      fit: BoxFit.contain,
-                    ),
-            ),
-            label: "Team",
-          ),
+          isLeader == true
+              ? BottomNavigationBarItem(
+                  icon: Container(
+                    // width: 26,
+                    // height: 30,
+                    child: currentBottomTabIndex == 2
+                        ? Image.asset(
+                            "assets/f3-a.png",
+                            fit: BoxFit.contain,
+                          )
+                        : Image.asset(
+                            "assets/f3.png",
+                            fit: BoxFit.contain,
+                          ),
+                  ),
+                  label: "Team",
+                )
+              : BottomNavigationBarItem(
+                  icon: Container(
+                    // width: 26,
+                    // height: 30,
+                    child: currentBottomTabIndex == 2
+                        ? Image.asset(
+                            "assets/f3-a.png",
+                            fit: BoxFit.contain,
+                          )
+                        : Image.asset(
+                            "assets/f3.png",
+                            fit: BoxFit.contain,
+                          ),
+                  ),
+                  label: "Profile",
+                ),
           BottomNavigationBarItem(
             icon: Container(
               // width: 26,
@@ -364,6 +387,44 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
   void ontemTaped(int index) {
     setState(() {
       currentBottomTabIndex = index;
+    });
+    // if (index == 0) {
+    //   Navigator.push(
+    //       context,
+    //       MaterialPageRoute(
+    //         builder: (context) => const AttendenceClockInOut(),
+    //       ));
+    // }
+
+    // if (index == 1) {
+    //   Navigator.push(
+    //       context,
+    //       MaterialPageRoute(
+    //         builder: (context) => const AbsentScreen(),
+    //       ));
+    // }
+
+    // if (index == 2) {
+    //   Navigator.push(
+    //       context,
+    //       MaterialPageRoute(
+    //         builder: (context) => const TeamMembersScreen(),
+    //       ));
+    // }
+    // if (index == 3) {
+    //   Navigator.push(
+    //       context,
+    //       MaterialPageRoute(
+    //         builder: (context) => const PJPScreen(),
+    //       ));
+    // }
+  }
+
+  getUserDetails() async {
+    var leader =
+        await SharedPrefrence.getBooleanPreference(SharedPrefrence.isLeader);
+    setState(() {
+      isLeader = leader;
     });
   }
 }

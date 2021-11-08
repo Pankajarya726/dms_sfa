@@ -36,6 +36,9 @@ class _LoginScreenState extends State<LoginScreen> {
             SharedPrefrence.setBooleanPreference(
                 "login", state.loginResponse.success);
 
+            SharedPrefrence.setBooleanPreference(
+                "is_Leader", state.loginResponse.isLeader);
+
             Navigator.of(context).pushReplacement(MaterialPageRoute(
                 builder: (BuildContext context) => const HomeScreen()));
 
