@@ -87,7 +87,9 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Image.asset(
-                                    "assets/calendar.png",
+                                    "assets/2x/calendar.png",
+                                    width: 22,
+                                    height: 22,
                                     color: Colors.white,
                                   ),
                                   const SizedBox(
@@ -125,7 +127,7 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
                                         DateIncrementEvent(date: dateTime));
                                   },
                                   child: Image.asset(
-                                    "assets/icon_previous.png",
+                                    "assets/2x/icon_previous.png",
                                     width: 25,
                                   ),
                                 ),
@@ -140,7 +142,7 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
                                         DateIncrementEvent(date: dateTime));
                                   },
                                   child: Image.asset(
-                                    "assets/icon_next.png",
+                                    "assets/2x/icon_next.png",
                                     width: 25,
                                   ),
                                 ),

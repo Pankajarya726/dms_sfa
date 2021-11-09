@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 
 class EditProfileEvents extends Equatable {
@@ -8,9 +10,8 @@ class EditProfileEvents extends Equatable {
 class EditProfileEvent extends EditProfileEvents {
   final String name;
   final String emailId;
-  final String imgFile;
-  EditProfileEvent(
-      {required this.name, required this.emailId, required this.imgFile});
+  final File? imgFile;
+  EditProfileEvent({required this.name, required this.emailId, this.imgFile});
   @override
   List<Object?> get props => [name, emailId, imgFile];
 }

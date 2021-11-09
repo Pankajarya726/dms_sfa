@@ -89,7 +89,7 @@ class _SettingScreenState extends State<SettingsScreen> {
                             padding: const EdgeInsets.only(top: 60),
                             decoration: const BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage("assets/rounded-bg.png"),
+                                image: AssetImage("assets/3x/rounded-bg.png"),
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -169,13 +169,14 @@ class _SettingScreenState extends State<SettingsScreen> {
                                             errorWidget: (context, url,
                                                     error) =>
                                                 Image.asset(
-                                                    "assets/placeholder.png"),
+                                                    "assets/3x/placeholder.png"),
                                             placeholder: (context, url) =>
                                                 const CircularProgressIndicator(
                                               color: colorPrimary,
                                             ),
                                           )
-                                        : Image.asset("assets/placeholder.png",
+                                        : Image.asset(
+                                            "assets/3x/placeholder.png",
                                             width: 90,
                                             height: 90,
                                             fit: BoxFit.cover);
