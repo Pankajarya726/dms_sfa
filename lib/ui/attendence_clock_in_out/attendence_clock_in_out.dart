@@ -79,7 +79,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   getTime() async {
     _ntpTime = await NTP.now();
     var format = DateFormat("hh:mm:ss");
-    print("current date = ${_ntpTime}");
   }
 
   @override
@@ -461,6 +460,16 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                       stream: timerController.stream,
                       builder: (context, snap) {
                         if (snap.hasData && snap.data!.isNotEmpty) {
+                          String timerHrss = snap.data!;
+                          var arr = timerHrss.split(":");
+                          String hrs = arr[0];
+                          String min = arr[1];
+                          String sec = arr[2];
+                          // NumberFormat formatter = new NumberFormat("00");
+                          // debugPrint("0 should be ${formatter.format(hrs)}");
+                          // debugPrint("0 should be ${formatter.format(min)}");
+                          // debugPrint("0 should be ${formatter.format(sec)}");
+
                           return Text(
                             snap.data!,
                             style: const TextStyle(
