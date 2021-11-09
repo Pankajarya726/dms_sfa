@@ -29,6 +29,9 @@ class ClockInOutBloc extends Bloc<ClockInOutEvents, ClockInOutStates> {
       yield ClockInOutLoadingState();
       yield* clockOutSuccess(event);
     }
+    if (event is ClockInOutGetPjpSuccessEvent) {
+      yield* getPjpData(event);
+    }
   }
 }
 
@@ -38,7 +41,7 @@ Stream<ClockInOutStates> getInitialData(ClockInOutInitialEvent event) async* {
     _ntpTime = await NTP.now();
     var format = DateFormat("dd-MMM-yyyy");
     String userId = await SharedPrefrence.getStringPreference("id");
-    UserDetails response = await repository.getUserDetailsByUserId("14");
+    UserDetails response = await repository.getUserDetailsByUserId(userId);
 
     if (response.success) {
       yield ClockInOutInitialSuccessState(
@@ -47,8 +50,6 @@ Stream<ClockInOutStates> getInitialData(ClockInOutInitialEvent event) async* {
         at: " at ",
         seperator: ":",
         ntpTime: _ntpTime,
-        // currentMinutes: _ntpTime.minute,
-        // currentSeconds: _ntpTime.second,
       );
     } else {
       yield ClockInOutFailureState(failureMessage: response.message);
@@ -75,7 +76,7 @@ Stream<ClockInOutStates> clockInSuccess(ClockInSuccessEvent event) async* {
         event.latitude,
         event.longitude);
     if (response.success) {
-      ClockInSuccessState(successMessage: response.message);
+      yield ClockInSuccessState(successMessage: response.message);
     } else {
       yield ClockInFailureState(failureMessage: response.message);
     }
@@ -100,12 +101,34 @@ Stream<ClockInOutStates> clockOutSuccess(ClockOutSuccessEvent event) async* {
       File(event.selfieImage),
     );
     if (response.success) {
-      ClockOutSuccessState(successMessage: response.message);
+      yield ClockOutSuccessState(successMessage: response.message);
     } else {
       yield ClockOutFailureState(failureMessage: response.message);
     }
   } else {
     yield ClockInOutFailureState(
         failureMessage: "Please check your internet connection!");
+  }
+}
+
+Stream<ClockInOutStates> getPjpData(ClockInOutGetPjpSuccessEvent event) async* {
+  if (await Network.isConnected()) {
+    DateTime _ntpTime;
+    _ntpTime = await NTP.now();
+    var format = DateFormat("yyyy-MM-dd");
+    String userId = await SharedPrefrence.getStringPreference("id");
+
+    // ClockOutResponse response = await repository.clockOut(
+    //   userId,
+    //   format.format(_ntpTime),
+    // );
+    //   if (response.success) {
+    //     yield ClockInOutGetPjpSuccessState(pjpResponse: response);
+    //   } else {
+    //     yield ClockOutFailureState(failureMessage: "");
+    //   }
+    // } else {
+    //   yield ClockInOutFailureState(failureMessage: "");
+    // }
   }
 }
