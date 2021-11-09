@@ -50,7 +50,9 @@ dependencies:
   month_picker_dialog:
   cached_network_image: 
   rxdart:
-  
+  flutter_device_type:
+  package_info:
+
 
 dev_dependencies:
   flutter_test:

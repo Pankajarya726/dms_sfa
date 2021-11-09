@@ -9,6 +9,7 @@ import 'package:sfa/ui/attendence_clock_in_out/model/clock_in_response.dart';
 import 'package:sfa/ui/attendence_clock_in_out/model/clock_out_response.dart';
 import 'package:sfa/ui/change_password/model/model.dart';
 import 'package:sfa/ui/edit_profile/model/edit_profile_model.dart';
+import 'package:sfa/ui/forgot_password/model/forgot_password_model.dart';
 import 'package:sfa/ui/home_screen/home_screen_model/home_screen_model.dart';
 import 'package:sfa/ui/home_screen/home_screen_model/menu_model.dart';
 import 'package:sfa/ui/login_screen/login_model/login_response.dart';
@@ -444,6 +445,7 @@ class ApiRepository {
       if (response.statusCode == 200) {
         DetailsStatusResponse result =
             DetailsStatusResponse.fromJson(response.toString());
+
         return result;
       } else {
         return DetailsStatusResponse(
@@ -637,6 +639,38 @@ class ApiRepository {
         message: "Something went Wrong!",
         success: false,
         data: null,
+      );
+    }
+  }
+
+  Future<ForgotPasswordResponse> forgotPassword(
+      String mobileNo, String password, String confPassword) async {
+    Map<String, dynamic> params = {
+      "mobile_number": mobileNo,
+      "password": password,
+      "password_confirmation": confPassword,
+    };
+
+    try {
+      Response response = await dio.post(
+        Url.forgotPassword,
+        data: params,
+      );
+
+      if (response.statusCode == 200) {
+        ForgotPasswordResponse result =
+            ForgotPasswordResponse.fromJson(response.toString());
+        return result;
+      } else {
+        return ForgotPasswordResponse(
+          message: response.statusMessage.toString(),
+          success: false,
+        );
+      }
+    } catch (exception) {
+      return ForgotPasswordResponse(
+        message: "Something went Wrong!",
+        success: false,
       );
     }
   }

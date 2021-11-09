@@ -19,12 +19,19 @@ class AttendenceHomeScreen extends StatefulWidget {
 
 class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
   int currentBottomTabIndex = 0;
-  List<Widget> navigationScreens = [
-    const AttendenceClockInOut(),
-    const AbsentScreen(),
-    const TeamMembersScreen(),
-    const PJPScreen(),
-  ];
+  bool isLeader = false;
+  // List<Widget> navigationScreens = [
+  //   const AttendenceClockInOut(),
+  //   const AbsentScreen(),
+  //   const TeamMembersScreen(),
+  //   const PJPScreen(),
+  // ];
+  @override
+  void initState() {
+    getUserDetails();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,7 +117,17 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
               : Container(),
         ],
       ),
-      body: navigationScreens[currentBottomTabIndex],
+      body: currentBottomTabIndex == 0
+          ? const AttendenceClockInOut()
+          : currentBottomTabIndex == 1
+              ? const AbsentScreen()
+              : currentBottomTabIndex == 3
+                  ? const PJPScreen()
+                  : currentBottomTabIndex == 2
+                      ? (isLeader == true
+                          ? const TeamMembersScreen()
+                          : const MyProfileHome())
+                      : Container(),
       bottomNavigationBar: BottomNavigationBar(
         selectedFontSize: 15,
         unselectedFontSize: 15,
@@ -172,6 +189,39 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
             ),
             label: "Team",
           ),
+          isLeader == true
+              ? BottomNavigationBarItem(
+                  icon: Container(
+                    // width: 26,
+                    // height: 30,
+                    child: currentBottomTabIndex == 2
+                        ? Image.asset(
+                            "assets/f3-a.png",
+                            fit: BoxFit.contain,
+                          )
+                        : Image.asset(
+                            "assets/f3.png",
+                            fit: BoxFit.contain,
+                          ),
+                  ),
+                  label: "Team",
+                )
+              : BottomNavigationBarItem(
+                  icon: Container(
+                    // width: 26,
+                    // height: 30,
+                    child: currentBottomTabIndex == 2
+                        ? Image.asset(
+                            "assets/f3-a.png",
+                            fit: BoxFit.contain,
+                          )
+                        : Image.asset(
+                            "assets/f3.png",
+                            fit: BoxFit.contain,
+                          ),
+                  ),
+                  label: "Profile",
+                ),
           BottomNavigationBarItem(
             icon: Container(
               padding: const EdgeInsets.symmetric(vertical: 4),
@@ -368,6 +418,14 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
   void ontemTaped(int index) {
     setState(() {
       currentBottomTabIndex = index;
+    });
+  }
+
+  getUserDetails() async {
+    var leader =
+        await SharedPrefrence.getBooleanPreference(SharedPrefrence.isLeader);
+    setState(() {
+      isLeader = leader;
     });
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,12 +12,7 @@ import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/shared_prefrence.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  final String image;
-  final String email;
-  final String name;
-  const EditProfileScreen(
-      {required this.image, required this.email, required this.name, Key? key})
-      : super(key: key);
+  const EditProfileScreen({Key? key}) : super(key: key);
 
   @override
   _EditProfileScreenState createState() => _EditProfileScreenState();
@@ -30,6 +27,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
+    loadUserDetails();
   }
 
   @override
@@ -45,21 +43,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           if (state is EditProfileFailureState) {
             Fluttertoast.showToast(msg: state.message);
           }
-          if (state is EditProfileLoadingState) {
-            const CircularProgressIndicator();
-          }
         },
-        child: BlocBuilder<EditProfileBloc, EditProfileState>(
-          builder: (context, state) {
-            if (state is EditProfileSuccessState) {
-              return Scaffold(
-                backgroundColor: Colors.white,
-                appBar: AppBar(
-                  title: const Text("Edit Profile"),
-                  centerTitle: true,
-                  backgroundColor: colorPrimary,
-                ),
-                body: Column(
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            title: const Text("Edit Profile"),
+            centerTitle: true,
+            backgroundColor: colorPrimary,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.pop(context, true),
+            ),
+          ),
+          body: BlocBuilder<EditProfileBloc, EditProfileState>(
+            builder: (context, state) {
+              if (state is GetUserDetailsFailureState) {
+                return Center(
+                  child: Text(state.message),
+                );
+              }
+              if (state is EditProfileLoadingState) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (state is GetUserDetailsSucessState) {
+                name.text = state.response.data!.name;
+                emailId.text = state.response.data!.email;
+
+                return Column(
                   children: [
                     Container(
                       alignment: Alignment.center,
@@ -70,7 +80,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(100),
-                            child: widget.image.isNotEmpty
+                            child: state.response.data!.image.isNotEmpty
                                 ? SizedBox(
                                     width: 120,
                                     height: 120,
@@ -78,7 +88,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       width: 90,
                                       height: 90,
                                       fit: BoxFit.cover,
-                                      imageUrl: widget.image,
+                                      imageUrl: state.response.data!.image,
+                                      errorWidget: (context, url, error) =>
+                                          Image.asset("assets/placeholder.png"),
                                       placeholder: (context, url) =>
                                           const CircularProgressIndicator(
                                         color: colorPrimary,
@@ -95,7 +107,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   ),
                           ),
                           Positioned(
-                            top: 10,
+                            top: 14,
                             right: 0,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(100),
@@ -146,6 +158,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   focusedBorder: UnderlineInputBorder(),
                                   enabledBorder: UnderlineInputBorder(),
                                 ),
+                                onSaved: (value) {
+                                  name.text = value!;
+                                },
                               ),
                             ),
                             Padding(
@@ -172,6 +187,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   focusedBorder: UnderlineInputBorder(),
                                   enabledBorder: UnderlineInputBorder(),
                                 ),
+                                onSaved: (value) {
+                                  emailId.text = value!;
+                                },
                               ),
                             ),
                             ElevatedButton(
@@ -214,19 +232,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                     )
                   ],
-                ),
-              );
-            }
-            if (state is EditProfileFailureState) {
-              return Center(
-                child: Text(state.message),
-              );
-            }
-            if (state is EditProfileLoadingState) {
-              const CircularProgressIndicator();
-            }
-            return Container();
-          },
+                );
+              }
+              return Container();
+            },
+          ),
         ),
       ),
     );
@@ -251,7 +261,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 14),
                   child: InkWell(
                     onTap: () {
                       imageFromCamera();
@@ -274,8 +284,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 10,
+                Container(
+                  height: 1,
+                  color: Colors.grey,
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
@@ -314,7 +325,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         .getImage(source: ImageSource.camera, imageQuality: 50);
 
     setState(() {
-      this.image = image;
+      this.image = image!;
     });
   }
 
@@ -323,7 +334,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         .getImage(source: ImageSource.gallery, imageQuality: 50);
 
     setState(() {
-      this.image = image;
+      this.image = image!;
     });
   }
 
