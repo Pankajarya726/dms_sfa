@@ -66,6 +66,8 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                             children: [
                               Image.asset(
                                 "assets/calendar.png",
+                                width: 22,
+                                height: 22,
                                 color: Colors.white,
                               ),
                               const SizedBox(
@@ -104,7 +106,7 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                                         dateTime: dateTime!));
                               },
                               child: Image.asset(
-                                "assets/icon_previous.png",
+                                "assets/2x/icon_previous.png",
                                 width: 25,
                               ),
                             ),
@@ -121,7 +123,7 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                                         dateTime: dateTime!));
                               },
                               child: Image.asset(
-                                "assets/icon_next.png",
+                                "assets/2x/icon_next.png",
                                 width: 25,
                               ),
                             ),

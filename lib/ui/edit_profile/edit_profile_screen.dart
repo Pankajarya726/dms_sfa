@@ -90,7 +90,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       fit: BoxFit.cover,
                                       imageUrl: state.response.data!.image,
                                       errorWidget: (context, url, error) =>
-                                          Image.asset("assets/placeholder.png"),
+                                          Image.asset(
+                                              "assets/3x/placeholder.png"),
                                       placeholder: (context, url) =>
                                           const CircularProgressIndicator(
                                         color: colorPrimary,
@@ -100,7 +101,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 : SizedBox(
                                     width: 120,
                                     height: 120,
-                                    child: Image.asset("assets/placeholder.png",
+                                    child: Image.asset(
+                                        "assets/3x/placeholder.png",
                                         width: 90,
                                         height: 90,
                                         fit: BoxFit.cover),

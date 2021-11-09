@@ -79,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 fit: BoxFit.cover,
                                 imageUrl: imageUrl,
                                 errorWidget: (context, url, error) =>
-                                    Image.asset("assets/placeholder.png"),
+                                    Image.asset("assets/3x/placeholder.png"),
                                 placeholder: (context, url) =>
                                     const CircularProgressIndicator(
                                   color: colorPrimary,
@@ -94,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     BorderRadius.all(Radius.circular(50.0)),
                                 image: DecorationImage(
                                   image: AssetImage(
-                                    "assets/placeholder.png",
+                                    "assets/3x/placeholder.png",
                                   ),
                                   fit: BoxFit.cover,
                                 ),
