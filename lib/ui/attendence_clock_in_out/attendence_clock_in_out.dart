@@ -1101,23 +1101,23 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
 
     debugPrint(
         "duration-->${Duration(seconds: time).inHours}:${Duration(seconds: time).inMinutes % 60}:${Duration(seconds: time).inSeconds % 60}");
-    print("timer started");
 
     // timerStream = stopWatchStream();
 
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       debugPrint("timer--->${timer.tick}");
       stopWatch.sink.add(timer.tick);
     });
 
     timerSubscription = stopWatch.listen((int newTick) {
-      debugPrint("newTick-->${newTick}");
+      debugPrint("newTick-->$newTick");
       time = time + 1;
       // clockOutTime = DateTime.parse(
       //     "${duration.inHours}:${duration.inMinutes % 60}:${duration.inSeconds % 60}");
 
       //check the timer box color green/red
       checkSuccessHours = int.parse("${Duration(seconds: time).inHours}");
+
       debugPrint(
           "timer-->${Duration(seconds: time).inHours}:${Duration(seconds: time).inMinutes % 60}:${Duration(seconds: time).inSeconds % 60}");
       timerController.add(
