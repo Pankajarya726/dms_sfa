@@ -15,8 +15,7 @@ class ClockInOutInitialSuccessState extends ClockInOutStates {
   final UserDetails userData;
   final String date;
   final DateTime ntpTime;
-  // final int currentMinutes;
-  // final int currentSeconds;
+
   final String at;
   final String seperator;
 
@@ -24,8 +23,6 @@ class ClockInOutInitialSuccessState extends ClockInOutStates {
     required this.userData,
     required this.date,
     required this.ntpTime,
-    // required this.currentMinutes,
-    // required this.currentSeconds,
     required this.at,
     required this.seperator,
   });
@@ -33,8 +30,6 @@ class ClockInOutInitialSuccessState extends ClockInOutStates {
   List<Object?> get props => [
         date,
         ntpTime,
-        // currentMinutes,
-        // currentSeconds,
         at,
         seperator,
       ];

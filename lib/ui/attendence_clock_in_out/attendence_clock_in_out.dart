@@ -31,7 +31,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   String timerHours = "00";
   String timerMinutes = "00";
   String timerSeconds = "00";
-  late StreamController<int> streamController;
+  // late StreamController<int> streamController;
   Duration timerInterval = const Duration(seconds: 1);
   var timerSubscription;
   var timerStream;
@@ -44,7 +44,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   double latitude = 0.0;
   double longitude = 0.0;
   int time = 0;
-  Duration duration = Duration(seconds: 0, hours: 0, minutes: 0);
+  Duration duration = const Duration(seconds: 0, hours: 0, minutes: 0);
   var workingPlanController = TextEditingController(text: "Today i am working");
   final pjpController = TextEditingController(text: LOREUMIPSUM);
   final commentController = TextEditingController();
@@ -57,6 +57,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   DateTime? clockInTime;
   DateTime? clockOutTime;
   String timeDifference = "00:00:00";
+  int checkSuccessHours = 0;
 
   StreamController<String> timerController = StreamController();
   final stopWatch = PublishSubject<int>();
@@ -150,13 +151,17 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                         state.userData.data!.clockInOutData.first.clockOutTime);
                     timeDifference =
                         (clockOutTime!.difference(clockInTime!)).toString();
-                    return clockOutLayout(timeDifference);
+                    var arr = timeDifference.split(".");
+                    timeDifference = arr[0];
+                    var arr2 = timeDifference.split(":");
+                    int hrs = int.parse(arr2[0]);
+                    return clockOutLayout(timeDifference, hrs);
                   } else {
-                    return clockOutLayout(timeDifference);
+                    return clockOutLayout(timeDifference, checkSuccessHours);
                   }
                 }
               } else {
-                return clockOutLayout(timeDifference);
+                return clockOutLayout(timeDifference, checkSuccessHours);
               }
             }
           }
@@ -166,40 +171,15 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
               child: Text(state.failureMessage),
             );
           }
+
           return Container();
         },
       ),
     );
   }
 
-  Stream<int> stopWatchStream() {
-    void stopTimer() {
-      timer?.cancel();
-      counter = 0;
-      streamController.close();
-    }
-
-    void tick(_) {
-      counter++;
-      streamController.add(counter);
-    }
-
-    void startTimer() {
-      timer = Timer.periodic(timerInterval, tick);
-    }
-
-    streamController = StreamController<int>(
-      onListen: startTimer,
-      onCancel: stopTimer,
-      onResume: startTimer,
-      onPause: stopTimer,
-    );
-
-    return streamController.stream;
-  }
-
 // initially we have to view clockOutLayout
-  Widget clockOutLayout(timeDifference) {
+  Widget clockOutLayout(timeDifference, workingHrs) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(10.0),
       child: Column(
@@ -208,8 +188,8 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
           Container(
             width: MediaQuery.of(context).size.width,
             padding: const EdgeInsets.symmetric(vertical: 10),
-            decoration: const BoxDecoration(
-              boxShadow: [
+            decoration: BoxDecoration(
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.grey,
                   blurRadius: 10.0, // soften the shadow
@@ -220,12 +200,18 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                   ),
                 )
               ],
-              gradient: LinearGradient(
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
-                colors: [colorPrimary, colorLightPrimary],
-              ),
-              borderRadius: BorderRadius.all(
+              gradient: workingHrs <= 8
+                  ? const LinearGradient(
+                      begin: Alignment.bottomLeft,
+                      end: Alignment.topRight,
+                      colors: [colorPrimary, colorLightPrimary],
+                    )
+                  : const LinearGradient(
+                      begin: Alignment.bottomLeft,
+                      end: Alignment.topRight,
+                      colors: [colorGreen, colorLightGreen],
+                    ),
+              borderRadius: const BorderRadius.all(
                 Radius.circular(10),
               ),
             ),
@@ -427,8 +413,8 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
           Container(
             width: MediaQuery.of(context).size.width,
             padding: const EdgeInsets.symmetric(vertical: 10),
-            decoration: const BoxDecoration(
-              boxShadow: [
+            decoration: BoxDecoration(
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.grey,
                   blurRadius: 10.0, // soften the shadow
@@ -439,12 +425,18 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                   ),
                 )
               ],
-              gradient: LinearGradient(
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
-                colors: [colorGreen, colorLightGreen],
-              ),
-              borderRadius: BorderRadius.all(
+              gradient: checkSuccessHours <= 8
+                  ? const LinearGradient(
+                      begin: Alignment.bottomLeft,
+                      end: Alignment.topRight,
+                      colors: [colorPrimary, colorLightPrimary],
+                    )
+                  : const LinearGradient(
+                      begin: Alignment.bottomLeft,
+                      end: Alignment.topRight,
+                      colors: [colorGreen, colorLightGreen],
+                    ),
+              borderRadius: const BorderRadius.all(
                 Radius.circular(10),
               ),
             ),
@@ -609,39 +601,31 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   Widget clockOutButtonWithIcon(context) {
     return Center(
       child: ElevatedButton(
-        onPressed: () {
+        onPressed: () async {
           getCurrentTime();
-          debugPrint("inOutTime${webtime}");
-          debugPrint("inOutTime${_ntpTime}");
-          // Duration d = Duration(
-          //     hours: _ntpTime.hour - clockInTime!.hour,
-          //     minutes: _ntpTime.minute - clockInTime!.minute,
-          //     seconds: _ntpTime.second - clockInTime!.second);
-          // //  _ntpTime.difference(clockInTime!).;
-
           webtime = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
-          print("curr time = $webtime");
+          await Future.delayed(const Duration(seconds: 1));
 
-          // setState(() {
-          //   if (commentController.text.isNotEmpty) {
-          //     if (image != null) {
-          //       clockInOutBloc.add(
-          //         ClockOutSuccessEvent(
-          //           inOutTime: webtime,
-          //           workingPlan: commentController.text,
-          //           selfieImage: image!.path,
-          //         ),
-          //       );
-          //       clockInOut = !clockInOut;
-          //       image = null;
-          //       stopAttendenceTimer();
-          //     } else {
-          //       Fluttertoast.showToast(msg: "Please select image");
-          //     }
-          //   } else {
-          //     Fluttertoast.showToast(msg: "Please add comment");
-          //   }
-          // });
+          setState(() {
+            if (commentController.text.isNotEmpty) {
+              if (image != null) {
+                clockInOutBloc.add(
+                  ClockOutSuccessEvent(
+                    inOutTime: webtime,
+                    workingPlan: commentController.text,
+                    selfieImage: image!.path,
+                  ),
+                );
+                clockInOut = !clockInOut;
+                image = null;
+                stopAttendenceTimer();
+              } else {
+                Fluttertoast.showToast(msg: "Please select image");
+              }
+            } else {
+              Fluttertoast.showToast(msg: "Please add comment");
+            }
+          });
         },
         style: ButtonStyle(
           fixedSize: MaterialStateProperty.all(const Size(180, 50)),
@@ -676,38 +660,37 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   }
 
   Widget clockInButtonWithIcon(context) {
-    getCurrentTime();
     return Center(
       child: ElevatedButton(
-        onPressed: () {
-          setState(() {
-            //conditions for clockOutscreen
-            if (workingPlanController.text.isNotEmpty) {
-              if (image != null) {
-                if (latitude != 0.0 && longitude != 0.0) {
-                  clockInOutBloc.add(
-                    ClockInSuccessEvent(
-                      inOutTime: webtime,
-                      workingPlan: workingPlanController.text,
-                      selfieImage: image!.path,
-                      latitude: latitude.toString(),
-                      longitude: longitude.toString(),
-                    ),
-                  );
-                  clockInOut = !clockInOut;
-                  image = null;
-                  // startAttendenceTimer();
-                } else {
-                  Fluttertoast.showToast(msg: "Please turn on GPS location");
-                  getUserLocation();
-                }
+        onPressed: () async {
+          getCurrentTime();
+          if (workingPlanController.text.isNotEmpty) {
+            if (image != null) {
+              if (latitude != 0.0 && longitude != 0.0) {
+                await Future.delayed(const Duration(seconds: 1));
+                clockInOutBloc.add(
+                  ClockInSuccessEvent(
+                    inOutTime: webtime,
+                    workingPlan: workingPlanController.text,
+                    selfieImage: image!.path,
+                    latitude: latitude.toString(),
+                    longitude: longitude.toString(),
+                  ),
+                );
+                clockInOut = !clockInOut;
+                image = null;
+                // startAttendenceTimer();
               } else {
-                Fluttertoast.showToast(msg: "Please select image");
+                Fluttertoast.showToast(msg: "Please turn on GPS location");
+                getUserLocation();
               }
             } else {
-              Fluttertoast.showToast(msg: "Please enter working plan");
+              Fluttertoast.showToast(msg: "Please select image");
             }
-          });
+          } else {
+            Fluttertoast.showToast(msg: "Please enter working plan");
+          }
+          setState(() {});
         },
         style: ButtonStyle(
           fixedSize: MaterialStateProperty.all(const Size(180, 50)),
@@ -834,27 +817,55 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
             fontSize: 17,
           ),
         ),
-        TextFormField(
-          controller: pjpController,
-          readOnly: true,
-          maxLines: 3,
-          keyboardType: TextInputType.text,
-          style: const TextStyle(
-            color: Color(0xff303030),
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-          decoration: const InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Color(0xff555555)),
-            ),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(
-                width: 1,
-                color: Color(0xff555555),
+        BlocBuilder<ClockInOutBloc, ClockInOutStates>(
+          builder: (context, state) {
+            if (state is ClockInOutGetPjpSuccessState) {
+              return TextFormField(
+                controller: pjpController,
+                readOnly: true,
+                maxLines: 3,
+                keyboardType: TextInputType.text,
+                style: const TextStyle(
+                  color: Color(0xff303030),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+                decoration: const InputDecoration(
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xff555555)),
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 1,
+                      color: Color(0xff555555),
+                    ),
+                  ),
+                ),
+              );
+            }
+            return TextFormField(
+              controller: pjpController,
+              readOnly: true,
+              maxLines: 3,
+              keyboardType: TextInputType.text,
+              style: const TextStyle(
+                color: Color(0xff303030),
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
               ),
-            ),
-          ),
+              decoration: const InputDecoration(
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xff555555)),
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    width: 1,
+                    color: Color(0xff555555),
+                  ),
+                ),
+              ),
+            );
+          },
         ),
       ],
     );
@@ -1071,7 +1082,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
 
   getCurrentTime() async {
     _ntpTime = await NTP.now();
-    // webtime = DateFormat().add_Hms().format(_ntpTime);
+    webtime = DateFormat().add_Hms().format(_ntpTime);
     clockOutTime = DateFormat().add_Hms().parse(webtime);
   }
 
@@ -1104,6 +1115,9 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
       time = time + 1;
       // clockOutTime = DateTime.parse(
       //     "${duration.inHours}:${duration.inMinutes % 60}:${duration.inSeconds % 60}");
+
+      //check the timer box color green/red
+      checkSuccessHours = int.parse("${Duration(seconds: time).inHours}");
       debugPrint(
           "timer-->${Duration(seconds: time).inHours}:${Duration(seconds: time).inMinutes % 60}:${Duration(seconds: time).inSeconds % 60}");
       timerController.add(
@@ -1112,12 +1126,8 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   }
 
   stopAttendenceTimer() {
-    timerSubscription.cancel();
-    timerStream = null;
-    setState(() {
-      timerHours = '00';
-      timerMinutes = '00';
-      timerSeconds = '00';
-    });
+    timerController.close();
+    stopWatch.sink.close();
+    stopWatch.close();
   }
 }
