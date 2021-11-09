@@ -14,6 +14,7 @@ import 'package:sfa/ui/forgot_password/model/forgot_password_model.dart';
 import 'package:sfa/ui/home_screen/home_screen_model/home_screen_model.dart';
 import 'package:sfa/ui/home_screen/home_screen_model/menu_model.dart';
 import 'package:sfa/ui/login_screen/login_model/login_response.dart';
+import 'package:sfa/ui/pjp_by_date/model/pjp_by_date_model.dart';
 import 'package:sfa/ui/pjp_screen/pjp_model/pjp_model.dart';
 import 'package:sfa/ui/pjp_screen/update_pjp_model/update_pjp_model.dart';
 import 'package:sfa/ui/splash_screen/model/splash_model.dart';
@@ -677,6 +678,35 @@ class ApiRepository {
         message: "Something went Wrong!",
         success: false,
       );
+    }
+  }
+
+  Future<PjpByDateResponse> pjpByDate(String id, String date) async {
+    Map<String, dynamic> params = {
+      "user_id": id,
+      "in_out_date": date,
+    };
+
+    try {
+      Response response = await dio.post(
+        Url.pjpByDate,
+        data: params,
+      );
+
+      if (response.statusCode == 200) {
+        PjpByDateResponse result =
+            PjpByDateResponse.fromJson(response.toString());
+
+        return result;
+      } else {
+        return PjpByDateResponse(
+            message: response.statusMessage.toString(),
+            success: false,
+            data: []);
+      }
+    } catch (exception) {
+      return PjpByDateResponse(
+          message: "Something went Wrong!", success: false, data: []);
     }
   }
 }

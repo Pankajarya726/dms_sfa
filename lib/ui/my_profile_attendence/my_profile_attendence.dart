@@ -5,7 +5,7 @@ import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:sfa/ui/my_profile_attendence/my_profile_attendence_bloc/my_profile_attendence_bloc.dart';
 import 'package:sfa/ui/my_profile_attendence/my_profile_attendence_bloc/my_profile_attendence_event.dart';
 import 'package:sfa/ui/my_profile_attendence/my_profile_attendence_bloc/my_profile_attendence_state.dart';
-import 'package:sfa/ui/team_member_attendence/model/attendance_model.dart';
+
 import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/constants.dart';
 
@@ -27,7 +27,6 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
       child: Scaffold(
         backgroundColor: Colors.white,
         body: Container(
-          margin: const EdgeInsets.only(top: 8),
           decoration: const BoxDecoration(
             color: colorPrimary,
             borderRadius: BorderRadius.only(
@@ -66,8 +65,8 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                             children: [
                               Image.asset(
                                 "assets/calendar.png",
-                                width: 22,
-                                height: 22,
+                                width: 20,
+                                height: 20,
                                 color: Colors.white,
                               ),
                               const SizedBox(

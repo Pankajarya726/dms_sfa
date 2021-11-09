@@ -58,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   alignment: Alignment.center,
                   children: <Widget>[
                     Image.asset(
-                      "assets/login-banner.png",
+                      "assets/3x/login-banner.png",
                       fit: BoxFit.contain,
                       width: MediaQuery.of(context).size.width,
                     ),

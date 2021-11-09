@@ -65,8 +65,8 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                               children: [
                                 Image.asset(
                                   "assets/calendar.png",
-                                  width: 22,
-                                  height: 22,
+                                  width: 20,
+                                  height: 20,
                                   color: Colors.white,
                                 ),
                                 const SizedBox(
@@ -148,263 +148,264 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                         ),
                       ),
                       //from here
-                      child: SingleChildScrollView(
-                        child: BlocConsumer<MyProfileDetailsBloc,
-                            MyProfileDetailsState>(
-                          listener: (context, state) {
-                            if (state is MyProfileDetailsSelectDateState) {
-                              dateTime = state.dateTime;
-                              var format = DateFormat("yyyy-MM-dd");
-                              myProfileDetailsBloc.add(
+                      child: BlocConsumer<MyProfileDetailsBloc,
+                          MyProfileDetailsState>(
+                        listener: (context, state) {
+                          if (state is MyProfileDetailsSelectDateState) {
+                            dateTime = state.dateTime;
+                            var format = DateFormat("yyyy-MM-dd");
+                            myProfileDetailsBloc.add(
+                              MyProfileDetailsInitialEvent(
+                                  currentDate: format.format(dateTime!)),
+                            );
+                          }
+                          if (state is MyProfileDetailsIncrementDateState) {
+                            dateTime = state.dateTime;
+                            var format = DateFormat("yyyy-MM-dd");
+                            myProfileDetailsBloc.add(
+                              MyProfileDetailsInitialEvent(
+                                  currentDate: format.format(dateTime!)),
+                            );
+                          }
+                          if (state is MyProfileDetailsDecrementDateState) {
+                            dateTime = state.dateTime;
+                            var format = DateFormat("yyyy-MM-dd");
+                            myProfileDetailsBloc.add(
+                              MyProfileDetailsInitialEvent(
+                                  currentDate: format.format(dateTime!)),
+                            );
+                          }
+                        },
+                        builder: (context, state) {
+                          if (state is MyProfileDetailsInitialState) {
+                            var format = DateFormat("yyyy-MM-dd");
+                            myProfileDetailsBloc.add(
                                 MyProfileDetailsInitialEvent(
-                                    currentDate: format.format(dateTime!)),
-                              );
-                            }
-                            if (state is MyProfileDetailsIncrementDateState) {
-                              dateTime = state.dateTime;
-                              var format = DateFormat("yyyy-MM-dd");
-                              myProfileDetailsBloc.add(
-                                MyProfileDetailsInitialEvent(
-                                    currentDate: format.format(dateTime!)),
-                              );
-                            }
-                            if (state is MyProfileDetailsDecrementDateState) {
-                              dateTime = state.dateTime;
-                              var format = DateFormat("yyyy-MM-dd");
-                              myProfileDetailsBloc.add(
-                                MyProfileDetailsInitialEvent(
-                                    currentDate: format.format(dateTime!)),
-                              );
-                            }
-                          },
-                          builder: (context, state) {
-                            if (state is MyProfileDetailsInitialState) {
-                              var format = DateFormat("yyyy-MM-dd");
-                              myProfileDetailsBloc.add(
-                                  MyProfileDetailsInitialEvent(
-                                      currentDate: format.format(dateTime!)));
-                              return const Center(
+                                    currentDate: format.format(dateTime!)));
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          if (state is MyProfileDetailsLoadingState) {
+                            return SizedBox(
+                              height: MediaQuery.of(context).size.height,
+                              child: const Center(
                                 child: CircularProgressIndicator(),
-                              );
-                            }
-                            if (state is MyProfileDetailsLoadingState) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                            if (state is MyProfileDetailsInitialSuccessState) {
-                              return SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          12, 18, 12, 8),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          RichText(
-                                            text: TextSpan(
-                                              children: [
-                                                const TextSpan(
-                                                  text: 'Clock in : ',
+                              ),
+                            );
+                          }
+                          if (state is MyProfileDetailsInitialSuccessState) {
+                            return SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        12, 18, 12, 8),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        RichText(
+                                          text: TextSpan(
+                                            children: [
+                                              const TextSpan(
+                                                text: 'Clock in : ',
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                              TextSpan(
+                                                text: state
+                                                    .detailsStatusResponse
+                                                    .data!
+                                                    .clockInTime,
+                                                style: const TextStyle(
+                                                  color: colorGreen,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        RichText(
+                                          text: TextSpan(
+                                            children: [
+                                              const TextSpan(
+                                                  text: 'Clock out : ',
                                                   style: TextStyle(
                                                     color: Colors.black,
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w500,
-                                                  ),
+                                                  )),
+                                              TextSpan(
+                                                text: state
+                                                    .detailsStatusResponse
+                                                    .data!
+                                                    .clockOutTime,
+                                                style: const TextStyle(
+                                                  color: colorPrimary,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500,
                                                 ),
-                                                TextSpan(
-                                                  text: state
-                                                      .detailsStatusResponse
-                                                      .data!
-                                                      .clockInTime,
-                                                  style: const TextStyle(
-                                                    color: colorGreen,
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                )
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
-                                          RichText(
-                                            text: TextSpan(
-                                              children: [
-                                                const TextSpan(
-                                                    text: 'Clock out : ',
-                                                    style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    )),
-                                                TextSpan(
-                                                  text: state
-                                                      .detailsStatusResponse
-                                                      .data!
-                                                      .clockOutTime,
-                                                  style: const TextStyle(
-                                                    color: colorPrimary,
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      padding: const EdgeInsets.fromLTRB(
-                                          16, 6, 0, 0),
-                                      child: const Text(
-                                        "PJP",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      padding: const EdgeInsets.fromLTRB(
-                                          16, 4, 0, 8),
-                                      child: Text(
-                                        state.detailsStatusResponse.data!
-                                            .pjpDescription,
-                                        style: const TextStyle(
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding:
+                                        const EdgeInsets.fromLTRB(16, 6, 0, 0),
+                                    child: const Text(
+                                      "PJP",
+                                      style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: 16,
-                                        ),
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding:
+                                        const EdgeInsets.fromLTRB(16, 4, 0, 8),
+                                    child: Text(
+                                      state.detailsStatusResponse.data!
+                                          .pjpDescription,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
                                       ),
                                     ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      padding: const EdgeInsets.fromLTRB(
-                                          16, 8, 0, 0),
-                                      child: const Text(
-                                        "Working Plan",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      padding: const EdgeInsets.fromLTRB(
-                                          16, 4, 0, 4),
-                                      child: Text(
-                                        state.detailsStatusResponse.data!
-                                            .inWorkingPlan,
-                                        style: const TextStyle(
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding:
+                                        const EdgeInsets.fromLTRB(16, 8, 0, 0),
+                                    child: const Text(
+                                      "Working Plan",
+                                      style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: 16,
-                                        ),
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding:
+                                        const EdgeInsets.fromLTRB(16, 4, 0, 4),
+                                    child: Text(
+                                      state.detailsStatusResponse.data!
+                                          .inWorkingPlan,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
                                       ),
                                     ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      padding: const EdgeInsets.fromLTRB(
-                                          16, 14, 0, 4),
-                                      child: const Text(
-                                        "Clock-in Salfie",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    Row(children: [
-                                      Container(
-                                        alignment: Alignment.centerLeft,
-                                        height: 150,
-                                        width: 150,
-                                        margin: const EdgeInsets.fromLTRB(
-                                            16, 4, 0, 10),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          image: DecorationImage(
-                                              image: NetworkImage(state
-                                                  .detailsStatusResponse
-                                                  .data!
-                                                  .inImage),
-                                              fit: BoxFit.cover),
-                                        ),
-                                      ),
-                                    ]),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      padding: const EdgeInsets.fromLTRB(
-                                          16, 6, 0, 4),
-                                      child: const Text(
-                                        "Comment",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      padding: const EdgeInsets.fromLTRB(
-                                          16, 0, 0, 4),
-                                      child: Text(
-                                        state.detailsStatusResponse.data!
-                                            .comments,
-                                        style: const TextStyle(
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding:
+                                        const EdgeInsets.fromLTRB(16, 14, 0, 4),
+                                    child: const Text(
+                                      "Clock-in Salfie",
+                                      style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: 16,
-                                        ),
-                                      ),
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
                                     ),
+                                  ),
+                                  Row(children: [
                                     Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      padding: const EdgeInsets.fromLTRB(
-                                          16, 14, 0, 4),
-                                      child: const Text(
-                                        "Clock-out Salfie",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
+                                      alignment: Alignment.centerLeft,
+                                      height: 150,
+                                      width: 150,
+                                      margin: const EdgeInsets.fromLTRB(
+                                          16, 4, 0, 10),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        image: DecorationImage(
+                                            image: NetworkImage(state
+                                                .detailsStatusResponse
+                                                .data!
+                                                .inImage),
+                                            fit: BoxFit.cover),
                                       ),
                                     ),
-                                    Row(children: [
-                                      Container(
-                                        alignment: Alignment.centerLeft,
-                                        height: 150,
-                                        width: 150,
-                                        margin: const EdgeInsets.fromLTRB(
-                                            16, 4, 0, 10),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          image: DecorationImage(
-                                              image: NetworkImage(state
-                                                  .detailsStatusResponse
-                                                  .data!
-                                                  .outImage),
-                                              fit: BoxFit.cover),
-                                        ),
+                                  ]),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding:
+                                        const EdgeInsets.fromLTRB(16, 6, 0, 4),
+                                    child: const Text(
+                                      "Comment",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding:
+                                        const EdgeInsets.fromLTRB(16, 0, 0, 4),
+                                    child: Text(
+                                      state
+                                          .detailsStatusResponse.data!.comments,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
                                       ),
-                                    ]),
-                                  ],
-                                ),
-                              );
-                            }
-                            if (state is MyProfileDetailsFailureState) {
-                              return Center(
+                                    ),
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding:
+                                        const EdgeInsets.fromLTRB(16, 14, 0, 4),
+                                    child: const Text(
+                                      "Clock-out Salfie",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  Row(children: [
+                                    Container(
+                                      alignment: Alignment.centerLeft,
+                                      height: 150,
+                                      width: 150,
+                                      margin: const EdgeInsets.fromLTRB(
+                                          16, 4, 0, 10),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        image: DecorationImage(
+                                            image: NetworkImage(state
+                                                .detailsStatusResponse
+                                                .data!
+                                                .outImage),
+                                            fit: BoxFit.cover),
+                                      ),
+                                    ),
+                                  ]),
+                                ],
+                              ),
+                            );
+                          }
+                          if (state is MyProfileDetailsFailureState) {
+                            return SizedBox(
+                              height: MediaQuery.of(context).size.height,
+                              child: Center(
                                 child: Text(state.failureMessage),
-                              );
-                            }
-                            return Container();
-                          },
-                        ),
+                              ),
+                            );
+                          }
+                          return Container();
+                        },
                       ),
                     ),
                   ),
