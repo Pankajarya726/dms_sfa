@@ -19,12 +19,12 @@ class AttendenceHomeScreen extends StatefulWidget {
 class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
   int currentBottomTabIndex = 0;
   bool isLeader = false;
-  List<Widget> navigationScreens = [
-    const AttendenceClockInOut(),
-    const AbsentScreen(),
-    const TeamMembersScreen(),
-    const PJPScreen(),
-  ];
+  // List<Widget> navigationScreens = [
+  //   const AttendenceClockInOut(),
+  //   const AbsentScreen(),
+  //   const TeamMembersScreen(),
+  //   const PJPScreen(),
+  // ];
   @override
   void initState() {
     getUserDetails();
@@ -116,7 +116,17 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
               : Container(),
         ],
       ),
-      body: navigationScreens[currentBottomTabIndex],
+      body: currentBottomTabIndex == 0
+          ? const AttendenceClockInOut()
+          : currentBottomTabIndex == 1
+              ? const AbsentScreen()
+              : currentBottomTabIndex == 3
+                  ? const PJPScreen()
+                  : currentBottomTabIndex == 2
+                      ? (isLeader == true
+                          ? const TeamMembersScreen()
+                          : const MyProfileHome())
+                      : Container(),
       bottomNavigationBar: BottomNavigationBar(
         selectedFontSize: 15,
         unselectedFontSize: 15,
@@ -388,36 +398,6 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
     setState(() {
       currentBottomTabIndex = index;
     });
-    // if (index == 0) {
-    //   Navigator.push(
-    //       context,
-    //       MaterialPageRoute(
-    //         builder: (context) => const AttendenceClockInOut(),
-    //       ));
-    // }
-
-    // if (index == 1) {
-    //   Navigator.push(
-    //       context,
-    //       MaterialPageRoute(
-    //         builder: (context) => const AbsentScreen(),
-    //       ));
-    // }
-
-    // if (index == 2) {
-    //   Navigator.push(
-    //       context,
-    //       MaterialPageRoute(
-    //         builder: (context) => const TeamMembersScreen(),
-    //       ));
-    // }
-    // if (index == 3) {
-    //   Navigator.push(
-    //       context,
-    //       MaterialPageRoute(
-    //         builder: (context) => const PJPScreen(),
-    //       ));
-    // }
   }
 
   getUserDetails() async {
