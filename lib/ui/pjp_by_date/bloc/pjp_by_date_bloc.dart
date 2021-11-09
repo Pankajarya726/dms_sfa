@@ -19,9 +19,7 @@ class PjpByDateBloc extends Bloc<PjpByDateEvent, PjpByDateState> {
   Stream<PjpByDateState> getPjpData(PjpByDateEvent event) async* {
     PjpByDateResponse response =
         await repository.pjpByDate(event.userId, event.date);
-
     if (response.success) {
-      log(response.data.toString());
       yield PjpByDateSuccessState(response: response);
     } else {
       yield PjpByDateFailureState(message: response.message);
