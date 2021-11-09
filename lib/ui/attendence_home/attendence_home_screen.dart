@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfa/ui/absent/absent_screen.dart';
 import 'package:sfa/ui/add_pjp_screen/add_pjp_screen.dart';
 import 'package:sfa/ui/attendence_clock_in_out/attendence_clock_in_out.dart';
+import 'package:sfa/ui/my_profile/my_profile_home.dart';
 import 'package:sfa/ui/pjp_screen/pjp_screen.dart';
 import 'package:sfa/ui/team_members/team_members_screen.dart';
 import 'package:sfa/utility/colors.dart';

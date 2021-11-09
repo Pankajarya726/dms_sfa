@@ -161,6 +161,11 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
             }
           }
 
+          if (state is ClockInSuccessState) {
+            clockInOutBloc.add(ClockInOutInitialEvent());
+            Fluttertoast.showToast(msg: state.successMessage);
+          }
+
           if (state is ClockInOutFailureState) {
             return Center(
               child: Text(state.failureMessage),
@@ -611,16 +616,10 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
       child: ElevatedButton(
         onPressed: () {
           getCurrentTime();
-          debugPrint("inOutTime${webtime}");
-          debugPrint("inOutTime${_ntpTime}");
-          // Duration d = Duration(
-          //     hours: _ntpTime.hour - clockInTime!.hour,
-          //     minutes: _ntpTime.minute - clockInTime!.minute,
-          //     seconds: _ntpTime.second - clockInTime!.second);
-          // //  _ntpTime.difference(clockInTime!).;
 
           webtime = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
-          print("curr time = $webtime");
+          print(
+              "curr time = ${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}");
 
           // setState(() {
           //   if (commentController.text.isNotEmpty) {
@@ -1071,7 +1070,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
 
   getCurrentTime() async {
     _ntpTime = await NTP.now();
-    // webtime = DateFormat().add_Hms().format(_ntpTime);
+    webtime = DateFormat().add_Hms().format(_ntpTime);
     clockOutTime = DateFormat().add_Hms().parse(webtime);
   }
 
