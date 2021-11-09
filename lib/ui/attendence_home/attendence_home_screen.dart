@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfa/ui/absent/absent_screen.dart';
 import 'package:sfa/ui/add_pjp_screen/add_pjp_screen.dart';
 import 'package:sfa/ui/attendence_clock_in_out/attendence_clock_in_out.dart';
+import 'package:sfa/ui/my_profile/my_profile_home.dart';
 import 'package:sfa/ui/pjp_screen/pjp_screen.dart';
 import 'package:sfa/ui/team_members/team_members_screen.dart';
 import 'package:sfa/utility/colors.dart';
@@ -141,7 +142,7 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
         items: [
           BottomNavigationBarItem(
             icon: Container(
-              padding: const EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.symmetric(vertical: 8),
               child: currentBottomTabIndex == 0
                   ? Image.asset(
                       "assets/f1-a.png",
@@ -158,7 +159,7 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
           ),
           BottomNavigationBarItem(
             icon: Container(
-              padding: const EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.symmetric(vertical: 8),
               child: currentBottomTabIndex == 1
                   ? Image.asset(
                       "assets/f2-a.png",
@@ -173,27 +174,11 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
             ),
             label: "Absent",
           ),
-          BottomNavigationBarItem(
-            icon: Container(
-              child: currentBottomTabIndex == 2
-                  ? Image.asset(
-                      "assets/f3-a.png",
-                      fit: BoxFit.contain,
-                      width: 27,
-                    )
-                  : Image.asset(
-                      "assets/f3.png",
-                      fit: BoxFit.contain,
-                      width: 27,
-                    ),
-            ),
-            label: "Team",
-          ),
           isLeader == true
               ? BottomNavigationBarItem(
-                  icon: Container(
-                    // width: 26,
-                    // height: 30,
+                  icon: SizedBox(
+                    width: 35,
+                    height: 35,
                     child: currentBottomTabIndex == 2
                         ? Image.asset(
                             "assets/f3-a.png",
@@ -207,9 +192,9 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
                   label: "Team",
                 )
               : BottomNavigationBarItem(
-                  icon: Container(
-                    // width: 26,
-                    // height: 30,
+                  icon: SizedBox(
+                    width: 35,
+                    height: 35,
                     child: currentBottomTabIndex == 2
                         ? Image.asset(
                             "assets/f3-a.png",
@@ -224,7 +209,7 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
                 ),
           BottomNavigationBarItem(
             icon: Container(
-              padding: const EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.symmetric(vertical: 8),
               child: currentBottomTabIndex == 3
                   ? Image.asset(
                       "assets/f4-a.png",
