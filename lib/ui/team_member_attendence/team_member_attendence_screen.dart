@@ -111,8 +111,8 @@ class _TeamMemberAttendenceScreenState
                               children: [
                                 Image.asset(
                                   "assets/calendar.png",
-                                  width: 22,
-                                  height: 22,
+                                  width: 20,
+                                  height: 20,
                                   color: Colors.white,
                                 ),
                                 const SizedBox(

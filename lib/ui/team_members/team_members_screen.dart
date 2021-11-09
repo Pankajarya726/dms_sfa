@@ -96,8 +96,11 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
                                 children: [
                                   const Image(
                                     fit: BoxFit.contain,
-                                    width: 15,
-                                    image: AssetImage("assets/calendar.png"),
+                                    width: 20,
+                                    height: 20,
+                                    image: AssetImage(
+                                      "assets/calendar.png",
+                                    ),
                                   ),
                                   const SizedBox(
                                     width: 10,
@@ -127,7 +130,7 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
                                 setState(() {});
                               },
                               child: Image.asset(
-                                "assets/icon_previous.png",
+                                "assets/3x/icon_previous.png",
                                 width: 25,
                               ),
                             ),
@@ -146,7 +149,7 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
                                 setState(() {});
                               },
                               child: Image.asset(
-                                "assets/icon_next.png",
+                                "assets/3x/icon_next.png",
                                 width: 25,
                               ),
                             ),

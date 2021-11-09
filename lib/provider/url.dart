@@ -21,4 +21,5 @@ class Url {
   static const String editProfile = "profileEdit";
   static const String validateAppVer = "validateAppVersion";
   static const String forgotPassword = "forgotPassword";
+  static const String pjpByDate = "getChildUserStatusPjp";
 }
