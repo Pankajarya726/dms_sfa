@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sfa/main.dart';
@@ -22,8 +23,9 @@ class EditProfileBloc extends Bloc<EditProfileEvents, EditProfileState> {
 
   Stream<EditProfileState> editProfile(EditProfileEvent event) async* {
     if (await Network.isConnected()) {
+      log("msg");
       EditProfileResponse response = await repository.editProfile(
-          event.name, event.emailId, File(event.imgFile));
+          event.name, event.emailId, event.imgFile);
       if (response.success) {
         yield EditProfileSuccessState(response: response);
       } else {

@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
@@ -579,13 +580,17 @@ class ApiRepository {
   }
 
   Future<EditProfileResponse> editProfile(
-      String name, String email, File imgFile) async {
-    Map<String, dynamic> params = {
-      "name": name,
-      "email": email,
-      "profile_picture": await MultipartFile.fromFile(imgFile.path,
-          filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg"),
-    };
+      String name, String email, File? imgFile) async {
+    Map<String, dynamic> params = HashMap<String, dynamic>();
+
+    params["name"] = name;
+    params["email"] = email;
+
+    if (imgFile != null) {
+      params["profile_picture"] = await MultipartFile.fromFile(imgFile.path,
+          filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
+    }
+
     FormData data = FormData.fromMap(params);
     try {
       Response response = await dio.post(

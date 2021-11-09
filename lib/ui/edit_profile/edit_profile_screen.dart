@@ -80,33 +80,41 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(100),
-                            child: state.response.data!.image.isNotEmpty
-                                ? SizedBox(
-                                    width: 120,
-                                    height: 120,
-                                    child: CachedNetworkImage(
-                                      width: 90,
-                                      height: 90,
-                                      fit: BoxFit.cover,
-                                      imageUrl: state.response.data!.image,
-                                      errorWidget: (context, url, error) =>
-                                          Image.asset(
-                                              "assets/3x/placeholder.png"),
-                                      placeholder: (context, url) =>
-                                          const CircularProgressIndicator(
-                                        color: colorPrimary,
-                                      ),
-                                    ),
-                                  )
+                            child: image == null
+                                ? state.response.data!.image.isNotEmpty
+                                    ? SizedBox(
+                                        width: 120,
+                                        height: 120,
+                                        child: CachedNetworkImage(
+                                          width: 90,
+                                          height: 90,
+                                          fit: BoxFit.cover,
+                                          imageUrl: state.response.data!.image,
+                                          errorWidget: (context, url, error) =>
+                                              Image.asset(
+                                                  "assets/3x/placeholder.png"),
+                                          placeholder: (context, url) =>
+                                              const CircularProgressIndicator(
+                                            color: colorPrimary,
+                                          ),
+                                        ),
+                                      )
+                                    : SizedBox(
+                                        width: 120,
+                                        height: 120,
+                                        child: Image.asset(
+                                            "assets/3x/placeholder.png",
+                                            width: 90,
+                                            height: 90,
+                                            fit: BoxFit.cover),
+                                      )
                                 : SizedBox(
                                     width: 120,
                                     height: 120,
-                                    child: Image.asset(
-                                        "assets/3x/placeholder.png",
+                                    child: Image.file(File(image!.path),
                                         width: 90,
                                         height: 90,
-                                        fit: BoxFit.cover),
-                                  ),
+                                        fit: BoxFit.cover)),
                           ),
                           Positioned(
                             top: 14,
@@ -198,12 +206,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               onPressed: () {
                                 if (name.text.isNotEmpty &&
                                     emailId.text.isNotEmpty) {
-                                  editProfileBloc.add(
-                                    EditProfileEvent(
+                                  if (image != null) {
+                                    editProfileBloc.add(
+                                      EditProfileEvent(
+                                          name: name.text,
+                                          emailId: emailId.text,
+                                          imgFile: File(image!.path)),
+                                    );
+                                  } else {
+                                    editProfileBloc.add(
+                                      EditProfileEvent(
                                         name: name.text,
                                         emailId: emailId.text,
-                                        imgFile: image!.path),
-                                  );
+                                      ),
+                                    );
+                                  }
                                 } else {
                                   Fluttertoast.showToast(
                                       msg: "Fields cant't be empty");
@@ -327,7 +344,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         .getImage(source: ImageSource.camera, imageQuality: 50);
 
     setState(() {
-      this.image = image!;
+      this.image = image;
     });
   }
 
@@ -336,7 +353,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         .getImage(source: ImageSource.gallery, imageQuality: 50);
 
     setState(() {
-      this.image = image!;
+      this.image = image;
     });
   }
 
