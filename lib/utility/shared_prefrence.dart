@@ -10,6 +10,7 @@ class SharedPrefrence {
   static const confirmEditIcon = "confirm_edit_icon";
   static const isEnable = "is_Enable";
   static const isLeader = "is_Leader";
+  static const name = "name";
 
   static Future<bool> setStringPreference(String key, String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

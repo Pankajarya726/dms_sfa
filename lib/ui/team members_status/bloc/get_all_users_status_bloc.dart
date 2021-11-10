@@ -65,8 +65,6 @@ class GetAllUserStatusBloc
                 userName: element.name));
           }
         }
-        debugPrint("statusList-->$statusList");
-        debugPrint("clockInReject-->${response.data!.clockInReject}");
 
         yield GetAllUserStatusInitialSuccessState(statusList: statusList);
       } else {

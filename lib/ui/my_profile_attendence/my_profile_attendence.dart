@@ -5,9 +5,14 @@ import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:sfa/ui/my_profile_attendence/my_profile_attendence_bloc/my_profile_attendence_bloc.dart';
 import 'package:sfa/ui/my_profile_attendence/my_profile_attendence_bloc/my_profile_attendence_event.dart';
 import 'package:sfa/ui/my_profile_attendence/my_profile_attendence_bloc/my_profile_attendence_state.dart';
+import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_bloc.dart';
+import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_event.dart';
+import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_state.dart';
+import 'package:sfa/ui/team_members_clockout/bloc/get_clock_in_data_bloc.dart';
 
 import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/constants.dart';
+import 'package:sfa/utility/shared_prefrence.dart';
 
 class MyProfileAttendence extends StatefulWidget {
   const MyProfileAttendence({Key? key}) : super(key: key);
@@ -153,32 +158,20 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                       listener: (context, state) {
                         if (state is MyProfileAttendenceSelectDateState) {
                           dateTime = state.dateTime;
-                          var format = DateFormat("yyyy-MM-dd");
-                          myProfileAttendenceBloc.add(
-                              MyProfileAttendenceInitialEvent(
-                                  currentDate: format.format(dateTime!)));
+                          addEvent();
                         }
                         if (state is MyProfileAttendenceIncrementDateState) {
                           dateTime = state.dateTime;
-                          var format = DateFormat("yyyy-MM-dd");
-                          myProfileAttendenceBloc.add(
-                              MyProfileAttendenceInitialEvent(
-                                  currentDate: format.format(dateTime!)));
+                          addEvent();
                         }
                         if (state is MyProfileAttendenceDecrementDateState) {
                           dateTime = state.dateTime;
-                          var format = DateFormat("yyyy-MM-dd");
-                          myProfileAttendenceBloc.add(
-                              MyProfileAttendenceInitialEvent(
-                                  currentDate: format.format(dateTime!)));
+                          addEvent();
                         }
                       },
                       builder: (context, state) {
                         if (state is MyProfileAttendenceInitialState) {
-                          var format = DateFormat("yyyy-MM-dd");
-                          myProfileAttendenceBloc.add(
-                              MyProfileAttendenceInitialEvent(
-                                  currentDate: format.format(dateTime!)));
+                          addEvent();
                           return const Center(
                             child: CircularProgressIndicator(),
                           );
@@ -314,7 +307,17 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                                                     width: 20,
                                                     child: IconButton(
                                                       onPressed: () {
-                                                        showClockOutBottomSheet();
+                                                        showAttendenceBottomSheet(
+                                                            state
+                                                                .response
+                                                                .clockInData![
+                                                                    index]
+                                                                .userId,
+                                                            state
+                                                                .response
+                                                                .clockInData![
+                                                                    index]
+                                                                .date!);
                                                       },
                                                       icon: const Icon(
                                                         Icons.more_vert,
@@ -395,159 +398,10 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
     );
   }
 
-  void showClockOutBottomSheet() async {
-    return showModalBottomSheet(
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      context: context,
-      builder: (context) {
-        return SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
-            child: IntrinsicHeight(
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                decoration: const BoxDecoration(
-                  color: reportBG,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20.0),
-                    topRight: Radius.circular(20.0),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: const Text(
-                          "Oliver",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            color: colorPrimary,
-                            fontSize: 21,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        decoration: const BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 10.0, // soften the shadow
-                              spreadRadius: -1.5, //extend the shadow
-                              offset: Offset(
-                                0, // Move to right 10  horizontally
-                                0, // Move to bottom 10 Vertically
-                              ),
-                            )
-                          ],
-                          gradient: LinearGradient(
-                            begin: Alignment.bottomLeft,
-                            end: Alignment.topRight,
-                            colors: [colorGreen, colorLightGreen],
-                          ),
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10),
-                          ),
-                        ),
-                        child: Column(
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10),
-                              child: Align(
-                                alignment: Alignment.topLeft,
-                                child: Text(
-                                  "Log in: 10:00 AM - Log out: 6:00 PM",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 17,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.only(top: 10, bottom: 10),
-                              child: Text(
-                                "08:08:35",
-                                style: TextStyle(
-                                  fontSize: 45.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  letterSpacing: 5,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                              decoration: const BoxDecoration(
-                                border: Border(
-                                  top: BorderSide(
-                                    width: 1,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Flexible(
-                                    flex: 1,
-                                    child: SizedBox(
-                                      width: 15,
-                                      child:
-                                          Image.asset("assets/zone-clock.png"),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  const Flexible(
-                                    flex: 20,
-                                    child: Text(
-                                      "Time zone in Indore, Madhya Pradesh, India (GMT+5:30)",
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      commonTextField("PJP"),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      commonTextField("Working plan"),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
+  addEvent() {
+    var format = DateFormat("yyyy-MM-dd");
+    myProfileAttendenceBloc.add(
+        MyProfileAttendenceInitialEvent(currentDate: format.format(dateTime!)));
   }
 
   Widget commonTextField(headingText) {
@@ -648,5 +502,285 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
 
   Widget statusNull() {
     return Container();
+  }
+
+  showAttendenceBottomSheet(
+    int userId,
+    DateTime date,
+  ) async {
+    String name =
+        await SharedPrefrence.getStringPreference(SharedPrefrence.name);
+    return showModalBottomSheet(
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      context: context,
+      builder: (context) {
+        return StatusBottomSheet(
+          userId: userId,
+          date: date,
+          name: name,
+        );
+      },
+    ).then((value) => addEvent());
+  }
+}
+
+class StatusBottomSheet extends StatefulWidget {
+  final int userId;
+  final DateTime date;
+  final String name;
+  const StatusBottomSheet(
+      {required this.userId, required this.date, required this.name, Key? key})
+      : super(key: key);
+
+  @override
+  _StatusBottomSheetState createState() => _StatusBottomSheetState();
+}
+
+class _StatusBottomSheetState extends State<StatusBottomSheet> {
+  PjpByDateBloc pjpByDateBloc = PjpByDateBloc();
+  GetClockInDataBloc getClockInDataBloc = GetClockInDataBloc();
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<PjpByDateBloc>(
+      create: (context) => pjpByDateBloc,
+      child: BlocBuilder<PjpByDateBloc, PjpByDateState>(
+        builder: (context, state) {
+          if (state is PjpByDateInitialState) {
+            pjpByDateBloc.add(PjpByDateEvent(
+                date: DateFormat("yyyy-MM-dd").format(widget.date),
+                userId: widget.userId.toString()));
+          }
+          if (state is PjpByDateFailureState) {
+            return Center(
+              child: Text(state.message),
+            );
+          }
+          if (state is PjpByDateLoadingState) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (state is PjpByDateSuccessState) {
+            return ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  child: IntrinsicHeight(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      decoration: const BoxDecoration(
+                        color: reportBG,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(20.0),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              child: Text(
+                                widget.name,
+                                textAlign: TextAlign.left,
+                                style: const TextStyle(
+                                  color: colorPrimary,
+                                  fontSize: 21,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              decoration: BoxDecoration(
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    blurRadius: 10.0, // soften the shadow
+                                    spreadRadius: -1.5, //extend the shadow
+                                    offset: Offset(
+                                      0, // Move to right 10  horizontally
+                                      0, // Move to bottom 10 Vertically
+                                    ),
+                                  )
+                                ],
+                                gradient: state.response.data![0].clockOutTime
+                                        .isNotEmpty
+                                    ? const LinearGradient(
+                                        begin: Alignment.bottomLeft,
+                                        end: Alignment.topRight,
+                                        colors: [
+                                          colorPrimary,
+                                          colorLightPrimary
+                                        ],
+                                      )
+                                    : const LinearGradient(
+                                        begin: Alignment.bottomLeft,
+                                        end: Alignment.topRight,
+                                        colors: [colorGreen, colorLightGreen],
+                                      ),
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    child: Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        "Log in: " +
+                                            state.response.data![0].clockInTime
+                                                .toString() +
+                                            (state.response.data![0]
+                                                    .clockOutTime.isNotEmpty
+                                                ? " - Log out: " +
+                                                    state.response.data![0]
+                                                        .clockOutTime
+                                                        .toString()
+                                                : ""),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const Padding(
+                                    padding:
+                                        EdgeInsets.only(top: 10, bottom: 10),
+                                    child: Text(
+                                      "08:08:35",
+                                      style: TextStyle(
+                                        fontSize: 45.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                        letterSpacing: 5,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: const EdgeInsets.fromLTRB(
+                                        10, 10, 10, 0),
+                                    decoration: const BoxDecoration(
+                                      border: Border(
+                                        top: BorderSide(
+                                          width: 1,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Flexible(
+                                          flex: 1,
+                                          child: SizedBox(
+                                            width: 15,
+                                            child: Image.asset(
+                                                "assets/zone-clock.png"),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        const Flexible(
+                                          flex: 20,
+                                          child: Text(
+                                            "Time zone in Indore, Madhya Pradesh, India (GMT+5:30)",
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            commonTextField(
+                                "PJP", state.response.data![0].pjpDescription),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            commonTextField("Working plan",
+                                state.response.data![0].workingPlan),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+          return Container();
+        },
+      ),
+    );
+  }
+
+  Widget commonTextField(headingText, description) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          headingText,
+          textAlign: TextAlign.left,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 17,
+          ),
+        ),
+        TextFormField(
+          readOnly: true,
+          maxLines: 3,
+          initialValue: description,
+          keyboardType: TextInputType.text,
+          style: const TextStyle(
+            color: Color(0xff303030),
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+          decoration: const InputDecoration(
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xff555555)),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                width: 1,
+                color: Color(0xff555555),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
