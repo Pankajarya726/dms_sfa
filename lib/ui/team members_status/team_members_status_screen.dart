@@ -94,6 +94,7 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
                         MaterialPageRoute(
                           builder: (context) => TeamMembersDetails(
                             userId: statusList[index].userId.toString(),
+                            name: statusList[index].userName,
                           ),
                         ),
                       );
