@@ -21,12 +21,7 @@ class AttendenceHomeScreen extends StatefulWidget {
 class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
   int currentBottomTabIndex = 0;
   bool isLeader = false;
-  // List<Widget> navigationScreens = [
-  //   const AttendenceClockInOut(),
-  //   const AbsentScreen(),
-  //   const TeamMembersScreen(),
-  //   const PJPScreen(),
-  // ];
+
   @override
   void initState() {
     getUserDetails();
