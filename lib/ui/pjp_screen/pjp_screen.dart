@@ -345,6 +345,9 @@ class _PJPScreenState extends State<PJPScreen> {
   }
 
   showPJP(String pjpDescription, DateTime pjpDate, String pjpId) async {
+    var status =
+        await SharedPrefrence.getStringPreference(SharedPrefrence.isEnable);
+
     return showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -355,7 +358,7 @@ class _PJPScreenState extends State<PJPScreen> {
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom),
             child: IntrinsicHeight(
-              child: DateTime.now().isBefore(pjpDate)
+              child: status == "show"
                   ? Container(
                       width: MediaQuery.of(context).size.width,
                       decoration: const BoxDecoration(
