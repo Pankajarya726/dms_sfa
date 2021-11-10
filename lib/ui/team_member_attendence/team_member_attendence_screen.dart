@@ -847,7 +847,7 @@ class _StatusBottomSheetState extends State<StatusBottomSheet> {
                                                 .toString() +
                                             (state.response.data![0]
                                                     .clockOutTime.isNotEmpty
-                                                ? " - Log in: " +
+                                                ? " - Log out: " +
                                                     state.response.data![0]
                                                         .clockOutTime
                                                         .toString()

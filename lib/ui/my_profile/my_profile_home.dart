@@ -17,7 +17,7 @@ class _MyProfileHomeState extends State<MyProfileHome> {
   DateTime? dateTime = DateTime.now();
   String date = "";
   int index = 0;
-  final TabBar _tabBar = TabBar(
+  final TabBar tabBar = TabBar(
     labelColor: Colors.white,
     indicatorColor: colorPrimary,
     unselectedLabelColor: colorPrimary,

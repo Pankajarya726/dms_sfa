@@ -48,7 +48,6 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
       create: (context) => getAllUserStatusBloc,
       child: BlocBuilder<GetAllUserStatusBloc, GetAllUserStatusStates>(
         builder: (context, state) {
-          debugPrint("state-->$state");
           if (state is GetAllUserStatusInitialState) {
             date = format.format(dateTime!);
             getAllUserStatusBloc

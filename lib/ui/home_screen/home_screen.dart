@@ -46,6 +46,8 @@ class _HomeScreenState extends State<HomeScreen> {
             email = state.userData.data!.email;
             homeScreenBloc.add(HomeScreenMenuEvent());
             SharedPrefrence.setStringPreference(
+                SharedPrefrence.name, state.userData.data!.name);
+            SharedPrefrence.setStringPreference(
                 SharedPrefrence.isEnable, state.userData.data!.pjpButton);
           }
           if (state is HomeScreenFailureState) {
