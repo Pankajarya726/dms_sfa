@@ -1115,7 +1115,11 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
 
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       debugPrint("timer--->${timer.tick}");
-      stopWatch.sink.add(timer.tick);
+      if (!stopWatch.isClosed) {
+        stopWatch.sink.add(timer.tick);
+      } else {
+        timer.cancel();
+      }
     });
 
     timerSubscription = stopWatch.listen((int newTick) {

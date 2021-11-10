@@ -18,10 +18,10 @@ class PjpByDateResponse {
 
   factory PjpByDateResponse.fromMap(Map<String, dynamic> json) =>
       PjpByDateResponse(
-        success: json["success"] == null ? null : json["success"],
-        message: json["message"] == null ? null : json["message"],
+        success: json["success"] == null ? false : json["success"],
+        message: json["message"] == null ? "" : json["message"],
         data: json["data"] == null
-            ? null
+            ? []
             : List<PjpByDate>.from(
                 json["data"].map((x) => PjpByDate.fromMap(x))),
       );
@@ -29,9 +29,8 @@ class PjpByDateResponse {
   Map<String, dynamic> toMap() => {
         "success": success == null ? null : success,
         "message": message == null ? null : message,
-        "data": data == null
-            ? null
-            : List<dynamic>.from(data!.map((x) => x.toMap())),
+        "data":
+            data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
       };
 }
 
@@ -55,15 +54,11 @@ class PjpByDate {
   String toJson() => json.encode(toMap());
 
   factory PjpByDate.fromMap(Map<String, dynamic> json) => PjpByDate(
-        clockInTime:
-            json["clock_in_time"] == null ? null : json["clock_in_time"],
-        clockOutTime:
-            json["clock_out_time"] == null ? null : json["clock_out_time"],
-        workingPlan: json["working_plan"] == null ? null : json["working_plan"],
-        approvedStatus:
-            json["approved_status"] == null ? null : json["approved_status"],
-        pjpDescription:
-            json["pjp_description"] == null ? null : json["pjp_description"],
+        clockInTime: json["clock_in_time"] ?? "",
+        clockOutTime: json["clock_out_time"] ?? "",
+        workingPlan: json["working_plan"] ?? "",
+        approvedStatus: json["approved_status"] ?? 0,
+        pjpDescription: json["pjp_description"] ?? "",
       );
 
   Map<String, dynamic> toMap() => {
