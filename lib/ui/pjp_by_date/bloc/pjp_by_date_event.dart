@@ -1,9 +1,14 @@
 import 'package:equatable/equatable.dart';
 
-class PjpByDateEvent extends Equatable {
+class PjpByDateEvents extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
+
+class PjpByDateEvent extends PjpByDateEvents {
   final String userId;
   final String date;
-  const PjpByDateEvent({required this.date, required this.userId});
+  PjpByDateEvent({required this.date, required this.userId});
   @override
   List<Object?> get props => [date, userId];
 }

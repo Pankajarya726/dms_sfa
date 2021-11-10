@@ -3,7 +3,7 @@ import 'package:sfa/ui/pjp_by_date/model/pjp_by_date_model.dart';
 
 class PjpByDateState extends Equatable {
   @override
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [];
 }
 
 class PjpByDateInitialState extends PjpByDateState {}
