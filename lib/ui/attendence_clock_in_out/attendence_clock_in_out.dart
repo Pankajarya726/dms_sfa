@@ -30,15 +30,12 @@ class AttendenceClockInOut extends StatefulWidget {
 
 class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   bool gpsLocation = false;
-  bool clockInOut = false;
   String timerHours = "00";
   String timerMinutes = "00";
   String timerSeconds = "00";
   Duration timerInterval = const Duration(seconds: 1);
   var timerSubscription;
-  var timerStream;
-  late Timer? timer;
-  int counter = 0;
+  Timer? timer;
   LatLng? currenPosition;
   Location location = Location();
   XFile? image;
@@ -54,9 +51,9 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   String workingPlan = "";
   final formKey = GlobalKey<FormState>();
   final formKey2 = GlobalKey<FormState>();
-  late DateTime _ntpTime;
   String webtime = "";
   int clockInStatus = 0;
+  late DateTime _ntpTime;
   DateTime? clockInTime;
   DateTime? clockOutTime;
   String timeDifference = "00:00:00";
@@ -78,15 +75,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     stopWatch.sink.close();
     stopWatch.close();
     super.dispose();
-  }
-
-  getTime() async {
-    _ntpTime = await NTP.now();
-    var format = DateFormat("hh:mm:ss");
-  }
-
-  getUserId() async {
-    userId = await SharedPrefrence.getStringPreference("id");
   }
 
   @override
@@ -1106,7 +1094,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                     selfieImage: image!.path,
                   ),
                 );
-                clockInOut = !clockInOut;
                 image = null;
                 stopAttendenceTimer();
               } else {
@@ -1167,7 +1154,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                     longitude: longitude.toString(),
                   ),
                 );
-                clockInOut = !clockInOut;
+
                 image = null;
                 // startAttendenceTimer();
               } else {
@@ -1460,6 +1447,37 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     );
   }
 
+  Widget roundedButton() {
+    return Center(
+      child: ElevatedButton(
+        onPressed: () {
+          if (formKey.currentState!.validate()) {
+            Navigator.pop(context);
+          }
+        },
+        style: ButtonStyle(
+          padding: MaterialStateProperty.all(
+            const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          ),
+          backgroundColor: MaterialStateProperty.all(colorPrimary),
+          elevation: MaterialStateProperty.all(0),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+          ),
+        ),
+        child: const Text(
+          "Update & Confirm",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+          ),
+        ),
+      ),
+    );
+  }
+
   _imgFromCamera() async {
     XFile? image = await ImagePicker.platform
         .getImage(source: ImageSource.camera, imageQuality: 50);
@@ -1469,7 +1487,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     });
   }
 
-  void showUpdateAndConfirmBottomSheet() async {
+  showUpdateAndConfirmBottomSheet() async {
     return showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -1513,37 +1531,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     );
   }
 
-  Widget roundedButton() {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () {
-          if (formKey.currentState!.validate()) {
-            Navigator.pop(context);
-          }
-        },
-        style: ButtonStyle(
-          padding: MaterialStateProperty.all(
-            const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          ),
-          backgroundColor: MaterialStateProperty.all(colorPrimary),
-          elevation: MaterialStateProperty.all(0),
-          shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-          ),
-        ),
-        child: const Text(
-          "Update & Confirm",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-          ),
-        ),
-      ),
-    );
-  }
-
   getCurrentTime() async {
     _ntpTime = await NTP.now();
     webtime = DateFormat().add_Hms().format(_ntpTime);
@@ -1558,18 +1545,10 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
         DateTime.now().second.toString() +
         ".000";
 
-    debugPrint("${DateFormat().add_Hms().parse(time1)}");
-
     duration = DateFormat().add_Hms().parse(time1).difference(dateTime);
     time = duration.inSeconds;
 
-    debugPrint(
-        "duration-->${Duration(seconds: time).inHours}:${Duration(seconds: time).inMinutes % 60}:${Duration(seconds: time).inSeconds % 60}");
-
-    // timerStream = stopWatchStream();
-
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      debugPrint("timer--->${timer.tick}");
       if (!stopWatch.isClosed) {
         stopWatch.sink.add(timer.tick);
       } else {
@@ -1578,16 +1557,11 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     });
 
     timerSubscription = stopWatch.listen((int newTick) {
-      debugPrint("newTick-->$newTick");
       time = time + 1;
-      // clockOutTime = DateTime.parse(
-      //     "${duration.inHours}:${duration.inMinutes % 60}:${duration.inSeconds % 60}");
 
       //check the timer box color green/red
       checkSuccessHours = int.parse("${Duration(seconds: time).inHours}");
 
-      debugPrint(
-          "timer-->${Duration(seconds: time).inHours}:${Duration(seconds: time).inMinutes % 60}:${Duration(seconds: time).inSeconds % 60}");
       timerController.add(
           "${Duration(seconds: time).inHours}:${Duration(seconds: time).inMinutes % 60}:${Duration(seconds: time).inSeconds % 60}");
     });
@@ -1597,5 +1571,13 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     timerController.close();
     stopWatch.sink.close();
     stopWatch.close();
+  }
+
+  getTime() async {
+    _ntpTime = await NTP.now();
+  }
+
+  getUserId() async {
+    userId = await SharedPrefrence.getStringPreference("id");
   }
 }

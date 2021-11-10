@@ -30,11 +30,13 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
   GetClockInDataBloc getClockInDataBloc = GetClockInDataBloc();
   var format = DateFormat("yyyy-MM-dd");
   DateTime? dateTime = DateTime.now();
+  String date = "";
 
   @override
   void initState() {
     widget.onListenerInitialize(this);
     super.initState();
+    date = format.format(dateTime!);
     addClockInData();
   }
 
@@ -251,12 +253,15 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
   }
 
   addClockInData() {
-    String date = format.format(dateTime!);
+    print("my dt = $date");
+    // String date = format.format(dateTime!);
     getClockInDataBloc.add(GetClockInDataSuccessEvent(dateAdded: date));
   }
 
   @override
   void onDateChange(String date) {
+    print("onDateChange");
+    this.date = date;
     getClockInDataBloc.add(GetClockInDataSuccessEvent(dateAdded: date));
   }
 }
@@ -389,7 +394,7 @@ class _StatusBottomSheetState extends State<StatusBottomSheet> {
                                                 .toString() +
                                             (state.response.data![0]
                                                     .clockOutTime.isNotEmpty
-                                                ? " - Log in: " +
+                                                ? " - Log out: " +
                                                     state.response.data![0]
                                                         .clockOutTime
                                                         .toString()

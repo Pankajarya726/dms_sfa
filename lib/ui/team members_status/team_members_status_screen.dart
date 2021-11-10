@@ -48,7 +48,6 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
       create: (context) => getAllUserStatusBloc,
       child: BlocBuilder<GetAllUserStatusBloc, GetAllUserStatusStates>(
         builder: (context, state) {
-          debugPrint("state-->$state");
           if (state is GetAllUserStatusInitialState) {
             date = format.format(dateTime!);
             getAllUserStatusBloc
@@ -247,8 +246,9 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
           date: date,
         );
       },
-    ).then((value) => getAllUserStatusBloc.add(GetAllUserStatusInitialEvent(
-        statusDate: DateFormat("yyyy-MM-dd").format(dateTime!))));
+    );
+    // .then((value) => getAllUserStatusBloc
+    //     .add(GetAllUserStatusInitialEvent(statusDate: date))
   }
 }
 
@@ -374,7 +374,7 @@ class _StatusBottomSheetState extends State<StatusBottomSheet> {
                                                 .toString() +
                                             (state.response.data![0]
                                                     .clockOutTime.isNotEmpty
-                                                ? " - Log in: " +
+                                                ? " - Log out: " +
                                                     state.response.data![0]
                                                         .clockOutTime
                                                         .toString()
