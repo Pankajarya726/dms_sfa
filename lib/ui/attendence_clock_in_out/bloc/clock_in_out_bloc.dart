@@ -39,7 +39,7 @@ Stream<ClockInOutStates> getInitialData(ClockInOutInitialEvent event) async* {
   if (await Network.isConnected()) {
     DateTime _ntpTime;
     _ntpTime = await NTP.now();
-    var format = DateFormat("dd-MMM-yyyy");
+    var format = DateFormat("yyyy-MM-dd");
     String userId = await SharedPrefrence.getStringPreference("id");
     UserDetails response = await repository.getUserDetailsByUserId(userId);
 
