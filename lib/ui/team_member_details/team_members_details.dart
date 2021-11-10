@@ -7,7 +7,9 @@ import 'package:sfa/utility/colors.dart';
 
 class TeamMembersDetails extends StatefulWidget {
   String userId;
-  TeamMembersDetails({required this.userId, Key? key}) : super(key: key);
+  String name;
+  TeamMembersDetails({required this.userId, required this.name, Key? key})
+      : super(key: key);
 
   @override
   _TeamMembersDetailsState createState() => _TeamMembersDetailsState();
@@ -24,9 +26,9 @@ class _TeamMembersDetailsState extends State<TeamMembersDetails> {
       child: Scaffold(
         backgroundColor: reportBG,
         appBar: AppBar(
-          title: const Text(
-            "Oliver",
-            style: TextStyle(color: Colors.white),
+          title: Text(
+            widget.name,
+            style: const TextStyle(color: Colors.white),
           ),
           elevation: 0.0,
           centerTitle: true,
@@ -128,9 +130,11 @@ class _TeamMembersDetailsState extends State<TeamMembersDetails> {
               children: [
                 TeamMemberDetailsScreen(
                   userId: widget.userId,
+                  name: widget.name,
                 ),
                 TeamMemberAttendenceScreen(
                   userId: widget.userId,
+                  name: widget.name,
                 ),
                 TeamMemberTrackScreen(
                   userId: widget.userId,

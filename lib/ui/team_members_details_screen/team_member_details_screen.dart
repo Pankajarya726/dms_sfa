@@ -9,7 +9,9 @@ import 'package:sfa/utility/shared_prefrence.dart';
 
 class TeamMemberDetailsScreen extends StatefulWidget {
   String userId;
-  TeamMemberDetailsScreen({required this.userId, Key? key}) : super(key: key);
+  String name;
+  TeamMemberDetailsScreen({required this.userId, required this.name, Key? key})
+      : super(key: key);
 
   @override
   _TeamMemberDetailsScreenState createState() =>
