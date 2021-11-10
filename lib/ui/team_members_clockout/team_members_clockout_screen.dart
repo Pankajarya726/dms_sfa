@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -253,14 +252,12 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
   }
 
   addClockInData() {
-    print("my dt = $date");
     // String date = format.format(dateTime!);
     getClockInDataBloc.add(GetClockInDataSuccessEvent(dateAdded: date));
   }
 
   @override
   void onDateChange(String date) {
-    print("onDateChange");
     this.date = date;
     getClockInDataBloc.add(GetClockInDataSuccessEvent(dateAdded: date));
   }
