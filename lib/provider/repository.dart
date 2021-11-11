@@ -313,7 +313,6 @@ class ApiRepository {
       params["location_id"] = location;
     }
 
-    log("absent data = $params");
     try {
       Response response = await dio.post(
         Url.getAbsentData,

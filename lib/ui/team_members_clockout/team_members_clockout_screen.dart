@@ -1,7 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:sfa/listeners/date_change_listener.dart';
+import 'package:sfa/listeners/filter_change_listener.dart';
+import 'package:sfa/ui/attendence_home/attendence_home_screen.dart';
 import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_bloc.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_event.dart';
@@ -15,8 +20,7 @@ import 'package:sfa/utility/shared_prefrence.dart';
 
 class TeamMembersClockoutScreen extends StatefulWidget {
   final Function(DateChangeListener dateChangeListener) onListenerInitialize;
-  const TeamMembersClockoutScreen(
-      {required this.onListenerInitialize, Key? key})
+  TeamMembersClockoutScreen({required this.onListenerInitialize, Key? key})
       : super(key: key);
 
   @override
@@ -35,6 +39,7 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
   @override
   void initState() {
     widget.onListenerInitialize(this);
+
     super.initState();
     date = format.format(dateTime!);
     addClockInData();
@@ -254,8 +259,7 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
 
   addClockInData() {
     // String date = format.format(dateTime!);
-    getClockInDataBloc.add(
-        GetClockInDataSuccessEvent(dateAdded: date, filterName: "Himanshu"));
+    getClockInDataBloc.add(GetClockInDataSuccessEvent(dateAdded: date));
   }
 
   @override
@@ -265,7 +269,13 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
   }
 
   @override
-  void onFilterSelect(FilterData location, String name, String locationType) {}
+  void onFilterSelect(FilterData location, String name, String type) {
+    getClockInDataBloc.add(GetClockInDataSuccessEvent(
+        dateAdded: date,
+        filterName: name,
+        location: location.id,
+        locationType: type));
+  }
 }
 
 class StatusBottomSheet extends StatefulWidget {

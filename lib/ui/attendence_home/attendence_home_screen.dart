@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sfa/listeners/date_change_listener.dart';
 import 'package:sfa/ui/absent/absent_screen.dart';
 import 'package:sfa/ui/add_pjp_screen/add_pjp_screen.dart';
 import 'package:sfa/ui/attendence_clock_in_out/attendence_clock_in_out.dart';
@@ -24,7 +25,7 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
   String filterName = "";
   String locationType = "";
   FilterData? location;
-  FilterChangeListener? filterChangeListener;
+  DateChangeListener? filterChangeListener;
 
   @override
   void initState() {
@@ -246,6 +247,9 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
             this.location = location;
             filterName = name;
             locationType = type;
+            if (filterChangeListener != null) {
+              filterChangeListener!.onFilterSelect(location, name, type);
+            }
           },
         );
       },
@@ -265,8 +269,4 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
       isLeader = leader;
     });
   }
-}
-
-abstract class FilterChangeListener {
-  void onFilterChange(String name, String type, String location);
 }
