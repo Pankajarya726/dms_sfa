@@ -8,6 +8,7 @@ import 'package:sfa/ui/absent/bloc/model/mark_absent_by_user.dart';
 import 'package:sfa/ui/add_pjp_screen/add_pjp_model/add_pjp_model.dart';
 import 'package:sfa/ui/attendence_clock_in_out/model/clock_in_response.dart';
 import 'package:sfa/ui/attendence_clock_in_out/model/clock_out_response.dart';
+import 'package:sfa/ui/attendence_home/filter_model/filter_model.dart';
 import 'package:sfa/ui/change_password/model/model.dart';
 import 'package:sfa/ui/edit_profile/model/edit_profile_model.dart';
 import 'package:sfa/ui/forgot_password/model/forgot_password_model.dart';
@@ -707,6 +708,29 @@ class ApiRepository {
     } catch (exception) {
       return PjpByDateResponse(
           message: "Something went Wrong!", success: false, data: []);
+    }
+  }
+
+  Future<FiltersResponse> getFiltersData(String locationType) async {
+    Map<String, dynamic> params = {
+      "filter_type": locationType,
+    };
+
+    try {
+      Response response = await dio.post(
+        Url.getFilters,
+        data: params,
+      );
+
+      if (response.statusCode == 200) {
+        FiltersResponse result = FiltersResponse.fromJson(response.toString());
+
+        return result;
+      } else {
+        return FiltersResponse(success: 0, data: []);
+      }
+    } catch (exception) {
+      return FiltersResponse(data: [], success: 0);
     }
   }
 }

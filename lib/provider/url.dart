@@ -22,4 +22,5 @@ class Url {
   static const String validateAppVer = "validateAppVersion";
   static const String forgotPassword = "forgotPassword";
   static const String pjpByDate = "getChildUserStatusPjp";
+  static const String getFilters = "getFilterLocation";
 }
