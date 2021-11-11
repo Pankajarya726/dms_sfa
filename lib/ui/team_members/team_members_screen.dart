@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:sfa/ui/attendence_home/attendence_home_screen.dart';
 import 'package:sfa/ui/report_screen/report_screen.dart';
 import 'package:sfa/ui/team%20members_status/team_members_status_screen.dart';
 import 'package:sfa/ui/team_members/bloc/team_member_events.dart';
@@ -11,13 +12,17 @@ import 'package:sfa/ui/team_members_clockout/team_members_clockout_screen.dart';
 import 'package:sfa/utility/colors.dart';
 
 class TeamMembersScreen extends StatefulWidget {
-  const TeamMembersScreen({Key? key}) : super(key: key);
+  final Function(FilterChangeListener filterChangeListener)
+      onFilterListenerInitialize;
+  const TeamMembersScreen({required this.onFilterListenerInitialize, Key? key})
+      : super(key: key);
 
   @override
   _TeamMembersScreenState createState() => _TeamMembersScreenState();
 }
 
-class _TeamMembersScreenState extends State<TeamMembersScreen> {
+class _TeamMembersScreenState extends State<TeamMembersScreen>
+    implements FilterChangeListener {
   final TabBar _tabBar = TabBar(
     labelColor: Colors.white,
     indicatorColor: colorPrimary,
@@ -48,12 +53,23 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
   DateTime? dateTime = DateTime.now();
   String initialDate = "";
   String changeDate = "";
-  DateChangeListener? listener;
+  DateChangeListener? dateListener;
+  FilterChangeListener? filterListener;
   TeamMembersBloc teamMembersBloc = TeamMembersBloc();
+  String selectLocationType = "Bhopal";
+
+  @override
+  void initState() {
+    widget.onFilterListenerInitialize(this);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     initialDate = initialFormat.format(dateTime!);
+    if (filterListener != null) {
+      filterListener!.onFilterChange(selectLocationType);
+    }
     return DefaultTabController(
       initialIndex: 0,
       length: 3,
@@ -87,8 +103,8 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
                                     lastDate: DateTime.now());
                                 initialDate = initialFormat.format(dateTime!);
                                 changeDate = changeFormat.format(dateTime!);
-                                if (listener != null) {
-                                  listener!.onDateChange(changeDate);
+                                if (dateListener != null) {
+                                  dateListener!.onDateChange(changeDate);
                                 }
                                 setState(() {});
                               },
@@ -124,8 +140,8 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
                                     dateTime!.month, dateTime!.day - 1);
                                 initialDate = initialFormat.format(dateTime!);
                                 changeDate = changeFormat.format(dateTime!);
-                                if (listener != null) {
-                                  listener!.onDateChange(changeDate);
+                                if (dateListener != null) {
+                                  dateListener!.onDateChange(changeDate);
                                 }
                                 setState(() {});
                               },
@@ -143,8 +159,8 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
                                     dateTime!.month, dateTime!.day + 1);
                                 initialDate = initialFormat.format(dateTime!);
                                 changeDate = changeFormat.format(dateTime!);
-                                if (listener != null) {
-                                  listener!.onDateChange(changeDate);
+                                if (dateListener != null) {
+                                  dateListener!.onDateChange(changeDate);
                                 }
                                 setState(() {});
                               },
@@ -220,24 +236,32 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
         body: TabBarView(
           children: [
             TeamMembersStatusScreen(
-              onListenerInitialize: (dateChangeListener) {
-                listener = dateChangeListener;
+              onDateListenerInitialize: (dateChangeListener) {
+                dateListener = dateChangeListener;
+              },
+              onFilterListenerInitialize: (filterChangeListener) {
+                filterListener = filterChangeListener;
               },
             ),
             TeamMembersClockoutScreen(
               onListenerInitialize: (dateChangeListener) {
-                listener = dateChangeListener;
+                dateListener = dateChangeListener;
               },
             ),
             TeamMembersAbsentScreen(
               onListenerInitialize: (dateChangeListener) {
-                listener = dateChangeListener;
+                dateListener = dateChangeListener;
               },
             )
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void onFilterChange(String selectFilterValue) {
+    selectLocationType = selectFilterValue;
   }
 }
 
