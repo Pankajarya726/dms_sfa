@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-
 import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_bloc.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_event.dart';
@@ -255,7 +254,8 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
 
   addClockInData() {
     // String date = format.format(dateTime!);
-    getClockInDataBloc.add(GetClockInDataSuccessEvent(dateAdded: date));
+    getClockInDataBloc.add(
+        GetClockInDataSuccessEvent(dateAdded: date, filterName: "Himanshu"));
   }
 
   @override

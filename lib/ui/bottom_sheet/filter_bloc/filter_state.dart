@@ -8,18 +8,9 @@ class FilterState extends Equatable {
 
 class FilterInitialState extends FilterState {}
 
-class FilterLoadingState extends FilterState {}
-
 class FilterSuccessState extends FilterState {
   final FiltersResponse response;
   FilterSuccessState({required this.response});
   @override
   List<Object?> get props => [response];
-}
-
-class FilterFailureState extends FilterState {
-  final String message;
-  FilterFailureState({required this.message});
-  @override
-  List<Object?> get props => [message];
 }

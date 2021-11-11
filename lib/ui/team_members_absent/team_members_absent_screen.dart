@@ -29,6 +29,7 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
   @override
   void initState() {
     widget.onListenerInitialize(this);
+
     super.initState();
   }
 

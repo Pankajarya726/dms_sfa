@@ -17,7 +17,7 @@ class FiltersResponse {
   factory FiltersResponse.fromMap(Map<String, dynamic> json) => FiltersResponse(
         success: json["success"] == null ? false : json["success"],
         data: json["data"] == null
-            ? null
+            ? []
             : List<FilterData>.from(
                 json["data"].map((x) => FilterData.fromMap(x))),
       );
@@ -37,9 +37,9 @@ class FilterData {
     required this.zoneId,
   });
 
-  int id;
+  String id;
   String name;
-  int zoneId;
+  String zoneId;
 
   factory FilterData.fromJson(String str) =>
       FilterData.fromMap(json.decode(str));
@@ -47,13 +47,13 @@ class FilterData {
   String toJson() => json.encode(toMap());
 
   factory FilterData.fromMap(Map<String, dynamic> json) => FilterData(
-        id: json["id"] == null ? null : json["id"],
-        name: json["name"] == null ? null : json["name"],
-        zoneId: json["zone_id"] == null ? null : json["zone_id"],
+        id: json["id"] == null ? "" : json["id"].toString(),
+        name: json["name"] == null ? "" : json["name"].toString(),
+        zoneId: json["zone_id"] == null ? "" : json["zone_id"].toString(),
       );
 
   Map<String, dynamic> toMap() => {
-        "id": id == null ? null : id,
+        "id": id == null ? "" : id,
         "name": name == null ? null : name,
         "zone_id": zoneId == null ? null : zoneId,
       };

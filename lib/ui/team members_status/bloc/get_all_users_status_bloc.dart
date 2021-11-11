@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sfa/main.dart';
@@ -24,8 +26,12 @@ class GetAllUserStatusBloc
       GetAllUserStatusInitialEvent event) async* {
     if (await Network.isConnected()) {
       String userId = await SharedPrefrence.getStringPreference("id");
-      GetAllUsersStatusResponse response =
-          await repository.getAllUsersStatus(userId, event.statusDate);
+      GetAllUsersStatusResponse response = await repository.getAllUsersStatus(
+          userId,
+          event.statusDate,
+          event.filterName,
+          event.locationType,
+          event.location);
       if (response.success) {
         List<AttendanceStatusModel> statusList = [];
 

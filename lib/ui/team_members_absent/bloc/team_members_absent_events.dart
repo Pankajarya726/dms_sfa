@@ -7,9 +7,16 @@ class TeamMembersAbsentEvents extends Equatable {
 
 class TeamMembersAbsentSuccessEvent extends TeamMembersAbsentEvents {
   final String currentDate;
-  TeamMembersAbsentSuccessEvent({required this.currentDate});
+  final String? filterName;
+  final String? locationType;
+  final String? location;
+  TeamMembersAbsentSuccessEvent(
+      {required this.currentDate,
+      this.filterName,
+      this.locationType,
+      this.location});
   @override
-  List<Object?> get props => [currentDate];
+  List<Object?> get props => [currentDate, filterName, locationType, location];
 }
 
 class AbsentApproveRejectEvent extends TeamMembersAbsentEvents {
