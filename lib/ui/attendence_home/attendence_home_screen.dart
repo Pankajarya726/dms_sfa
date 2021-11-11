@@ -21,6 +21,8 @@ class AttendenceHomeScreen extends StatefulWidget {
 class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
   int currentBottomTabIndex = 0;
   bool isLeader = false;
+  FilterChangeListener? filterListener;
+  String filterValue = "bhopal";
 
   @override
   void initState() {
@@ -30,6 +32,9 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (filterListener != null) {
+      filterListener!.onFilterChange(filterValue);
+    }
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -121,7 +126,12 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
                   ? const PJPScreen()
                   : currentBottomTabIndex == 2
                       ? (isLeader == true
-                          ? const TeamMembersScreen()
+                          ? TeamMembersScreen(
+                              onFilterListenerInitialize:
+                                  (filterChangeListener) {
+                                filterListener = filterChangeListener;
+                              },
+                            )
                           : const MyProfileHome())
                       : Container(),
       bottomNavigationBar: BottomNavigationBar(
@@ -408,4 +418,8 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
       isLeader = leader;
     });
   }
+}
+
+abstract class FilterChangeListener {
+  void onFilterChange(String selectFilterValue);
 }

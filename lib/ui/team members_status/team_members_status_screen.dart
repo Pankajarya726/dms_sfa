@@ -1,10 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:sfa/ui/attendence_home/attendence_home_screen.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_bloc.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_event.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_state.dart';
@@ -19,8 +18,14 @@ import 'package:sfa/utility/constants.dart';
 import 'model/get_all_users_status.dart';
 
 class TeamMembersStatusScreen extends StatefulWidget {
-  final Function(DateChangeListener dateChangeListener) onListenerInitialize;
-  const TeamMembersStatusScreen({required this.onListenerInitialize, Key? key})
+  final Function(DateChangeListener dateChangeListener)
+      onDateListenerInitialize;
+  final Function(FilterChangeListener filterChangeListener)
+      onFilterListenerInitialize;
+  const TeamMembersStatusScreen(
+      {required this.onDateListenerInitialize,
+      required this.onFilterListenerInitialize,
+      Key? key})
       : super(key: key);
 
   @override
@@ -29,16 +34,18 @@ class TeamMembersStatusScreen extends StatefulWidget {
 }
 
 class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
-    implements DateChangeListener {
+    implements DateChangeListener, FilterChangeListener {
   GetAllUserStatusBloc getAllUserStatusBloc = GetAllUserStatusBloc();
   List<AttendanceStatusModel> statusList = [];
   var format = DateFormat("yyyy-MM-dd");
   DateTime? dateTime = DateTime.now();
   String date = "";
+  String selectLocationType = "";
 
   @override
   void initState() {
-    widget.onListenerInitialize(this);
+    widget.onDateListenerInitialize(this);
+    widget.onFilterListenerInitialize(this);
     super.initState();
   }
 
@@ -65,6 +72,7 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
             statusList = state.statusList;
           }
           if (state is GetAllUserStatusFailureState) {
+            print("filter values = $selectLocationType");
             return Center(
               child: Text(state.failureMessage),
             );
@@ -230,6 +238,11 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
   void onDateChange(String date) {
     this.date = date;
     getAllUserStatusBloc.add(GetAllUserStatusInitialEvent(statusDate: date));
+  }
+
+  @override
+  void onFilterChange(String selectFilterValue) {
+    selectLocationType = selectFilterValue;
   }
 
   showTeamMemberStatusSheet(String name, int userId, String date) async {
