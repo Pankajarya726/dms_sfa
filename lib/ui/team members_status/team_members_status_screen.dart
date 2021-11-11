@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
@@ -40,7 +42,9 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
   var format = DateFormat("yyyy-MM-dd");
   DateTime? dateTime = DateTime.now();
   String date = "";
-  String selectLocationType = "";
+  String locationType = "";
+  String locationName = "";
+  String filterName = "";
 
   @override
   void initState() {
@@ -69,10 +73,11 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
             );
           }
           if (state is GetAllUserStatusInitialSuccessState) {
+            log("Status  " + filterName + locationName + locationType);
             statusList = state.statusList;
           }
           if (state is GetAllUserStatusFailureState) {
-            print("filter values = $selectLocationType");
+            log("Status  " + filterName + locationName + locationType);
             return Center(
               child: Text(state.failureMessage),
             );
@@ -241,8 +246,10 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
   }
 
   @override
-  void onFilterChange(String selectFilterValue) {
-    selectLocationType = selectFilterValue;
+  void onFilterChange(String name, String type, String location) {
+    filterName = name;
+    locationType = type;
+    locationName = location;
   }
 
   showTeamMemberStatusSheet(String name, int userId, String date) async {

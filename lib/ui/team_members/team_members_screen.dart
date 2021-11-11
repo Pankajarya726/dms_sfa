@@ -56,8 +56,9 @@ class _TeamMembersScreenState extends State<TeamMembersScreen>
   DateChangeListener? dateListener;
   FilterChangeListener? filterListener;
   TeamMembersBloc teamMembersBloc = TeamMembersBloc();
-  String selectLocationType = "Bhopal";
-
+  String locationType = "";
+  String locationName = "";
+  String filterName = "";
   @override
   void initState() {
     widget.onFilterListenerInitialize(this);
@@ -68,7 +69,7 @@ class _TeamMembersScreenState extends State<TeamMembersScreen>
   Widget build(BuildContext context) {
     initialDate = initialFormat.format(dateTime!);
     if (filterListener != null) {
-      filterListener!.onFilterChange(selectLocationType);
+      filterListener!.onFilterChange(filterName, locationType, locationName);
     }
     return DefaultTabController(
       initialIndex: 0,
@@ -260,8 +261,10 @@ class _TeamMembersScreenState extends State<TeamMembersScreen>
   }
 
   @override
-  void onFilterChange(String selectFilterValue) {
-    selectLocationType = selectFilterValue;
+  void onFilterChange(String name, String type, String location) {
+    filterName = name;
+    locationType = type;
+    locationName = location;
   }
 }
 
