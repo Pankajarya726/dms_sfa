@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:sfa/main.dart';
@@ -8,7 +7,7 @@ import 'package:sfa/ui/absent/bloc/model/mark_absent_by_user.dart';
 import 'package:sfa/ui/add_pjp_screen/add_pjp_model/add_pjp_model.dart';
 import 'package:sfa/ui/attendence_clock_in_out/model/clock_in_response.dart';
 import 'package:sfa/ui/attendence_clock_in_out/model/clock_out_response.dart';
-import 'package:sfa/ui/attendence_home/filter_model/filter_model.dart';
+import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
 import 'package:sfa/ui/change_password/model/model.dart';
 import 'package:sfa/ui/edit_profile/model/edit_profile_model.dart';
 import 'package:sfa/ui/forgot_password/model/forgot_password_model.dart';
@@ -727,10 +726,10 @@ class ApiRepository {
 
         return result;
       } else {
-        return FiltersResponse(success: 0, data: []);
+        return FiltersResponse(success: false, data: []);
       }
     } catch (exception) {
-      return FiltersResponse(data: [], success: 0);
+      return FiltersResponse(data: [], success: false);
     }
   }
 }

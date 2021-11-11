@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
 import 'package:sfa/ui/team_members/team_members_screen.dart';
 import 'package:sfa/ui/team_members_absent/bloc/team_members_absent_bloc.dart';
 import 'package:sfa/ui/team_members_absent/bloc/team_members_absent_events.dart';
@@ -411,4 +412,7 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
     this.date = date;
     teamMembersAbsentBloc.add(TeamMembersAbsentSuccessEvent(currentDate: date));
   }
+
+  @override
+  void onFilterSelect(FilterData location, String name, String locationType) {}
 }

@@ -6,7 +6,7 @@ class FiltersResponse {
     required this.data,
   });
 
-  int success;
+  bool success;
   List<FilterData>? data;
 
   factory FiltersResponse.fromJson(String str) =>
@@ -15,17 +15,18 @@ class FiltersResponse {
   String toJson() => json.encode(toMap());
 
   factory FiltersResponse.fromMap(Map<String, dynamic> json) => FiltersResponse(
-        success: json["success"] == "" ? null : json["success"],
+        success: json["success"] == null ? false : json["success"],
         data: json["data"] == null
-            ? []
+            ? null
             : List<FilterData>.from(
                 json["data"].map((x) => FilterData.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
         "success": success == null ? null : success,
-        "data":
-            data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
+        "data": data == null
+            ? null
+            : List<dynamic>.from(data!.map((x) => x.toMap())),
       };
 }
 
@@ -33,12 +34,12 @@ class FilterData {
   FilterData({
     required this.id,
     required this.name,
-    required this.stateId,
+    required this.zoneId,
   });
 
   int id;
   String name;
-  int stateId;
+  int zoneId;
 
   factory FilterData.fromJson(String str) =>
       FilterData.fromMap(json.decode(str));
@@ -46,14 +47,14 @@ class FilterData {
   String toJson() => json.encode(toMap());
 
   factory FilterData.fromMap(Map<String, dynamic> json) => FilterData(
-        id: json["id"] == "" ? null : json["id"],
-        name: json["name"] == "" ? null : json["name"],
-        stateId: json["state_id"] == "" ? null : json["state_id"],
+        id: json["id"] == null ? null : json["id"],
+        name: json["name"] == null ? null : json["name"],
+        zoneId: json["zone_id"] == null ? null : json["zone_id"],
       );
 
   Map<String, dynamic> toMap() => {
         "id": id == null ? null : id,
         "name": name == null ? null : name,
-        "state_id": stateId == null ? null : stateId,
+        "zone_id": zoneId == null ? null : zoneId,
       };
 }

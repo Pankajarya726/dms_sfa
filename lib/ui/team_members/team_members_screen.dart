@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:sfa/ui/attendence_home/attendence_home_screen.dart';
+import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
 import 'package:sfa/ui/report_screen/report_screen.dart';
 import 'package:sfa/ui/team%20members_status/team_members_status_screen.dart';
 import 'package:sfa/ui/team_members/bloc/team_member_events.dart';
@@ -80,6 +81,7 @@ class _TeamMembersScreenState extends State<TeamMembersScreen>
           elevation: 0,
           automaticallyImplyLeading: false,
           backgroundColor: colorPrimary,
+          title: const Text("Team Members"),
           flexibleSpace: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Row(
@@ -270,4 +272,6 @@ class _TeamMembersScreenState extends State<TeamMembersScreen>
 
 abstract class DateChangeListener {
   void onDateChange(String date);
+
+  void onFilterSelect(FilterData location, String name, String locationType);
 }

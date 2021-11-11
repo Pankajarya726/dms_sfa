@@ -6,6 +6,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:sfa/ui/attendence_home/attendence_home_screen.dart';
+
+import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_bloc.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_event.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_state.dart';
@@ -73,11 +75,9 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
             );
           }
           if (state is GetAllUserStatusInitialSuccessState) {
-            log("Status  " + filterName + locationName + locationType);
             statusList = state.statusList;
           }
           if (state is GetAllUserStatusFailureState) {
-            log("Status  " + filterName + locationName + locationType);
             return Center(
               child: Text(state.failureMessage),
             );
@@ -267,8 +267,11 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
         );
       },
     );
-    // .then((value) => getAllUserStatusBloc
-    //     .add(GetAllUserStatusInitialEvent(statusDate: date))
+  }
+
+  @override
+  void onFilterSelect(FilterData location, String name, String locationType) {
+    getAllUserStatusBloc.add(GetAllUserStatusInitialEvent(statusDate: date));
   }
 }
 

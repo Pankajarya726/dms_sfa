@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:sfa/ui/attendence_home/filter_model/filter_model.dart';
+import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
 
 class FilterState extends Equatable {
   @override
