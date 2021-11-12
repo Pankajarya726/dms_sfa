@@ -5,6 +5,8 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:sfa/ui/bottom_sheet/filter_bottom_sheet.dart';
+import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
 import 'package:sfa/utility/colors.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -19,6 +21,9 @@ class _ReportScreenState extends State<ReportScreen> {
   bool accordionStatus = false;
   String startDate = "";
   String endDate = "";
+  String? filterName = "";
+  String? locationType = "";
+  FilterData? location;
 
   @override
   Widget build(BuildContext context) {
@@ -175,166 +180,12 @@ class _ReportScreenState extends State<ReportScreen> {
       backgroundColor: Colors.transparent,
       context: context,
       builder: (context) {
-        return SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
-            child: IntrinsicHeight(
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                decoration: const BoxDecoration(
-                  color: reportBG,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20.0),
-                    topRight: Radius.circular(20.0),
-                  ),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: const Text(
-                          "Filter",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: colorGrayDark,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 15, 20, 10),
-                      child: TextFormField(
-                        style: const TextStyle(
-                            color: colorGrayDark,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17),
-                        autocorrect: true,
-                        enableSuggestions: true,
-                        maxLines: 1,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: colorGrayLite,
-                          hintText: "Name",
-                          prefixText: "   ",
-                          hintStyle: const TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: colorGray),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 2.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 2.0),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
-                      child: TextFormField(
-                        style: const TextStyle(
-                            color: colorGrayDark,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17),
-                        autocorrect: true,
-                        enableSuggestions: true,
-                        maxLines: 1,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: colorGrayLite,
-                          hintText: "Designation",
-                          prefixText: "   ",
-                          hintStyle: const TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: colorGray),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 2.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 2.0),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
-                      child: TextFormField(
-                        style: const TextStyle(
-                            color: colorGrayDark,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17),
-                        autocorrect: true,
-                        enableSuggestions: true,
-                        maxLines: 1,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: colorGrayLite,
-                          hintText: "Location",
-                          prefixText: "   ",
-                          hintStyle: const TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: colorGray),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 2.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 2.0),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 5, 20, 14),
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          height: 50,
-                          width: 180,
-                          decoration: BoxDecoration(
-                            color: colorPrimary,
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "Done",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
+        return FilterBottomSheet(
+          onSelect: (location, name, type) {
+            this.location = location;
+            filterName = name;
+            locationType = type;
+          },
         );
       },
     );

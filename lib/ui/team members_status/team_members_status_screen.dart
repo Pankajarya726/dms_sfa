@@ -37,9 +37,9 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
   var format = DateFormat("yyyy-MM-dd");
   DateTime? dateTime = DateTime.now();
   String date = "";
-  String locationType = "";
-  String locationName = "";
-  String filterName = "";
+  String? locationType;
+  String? locationName;
+  String? filterName;
 
   @override
   void initState() {
@@ -256,10 +256,10 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
   }
 
   @override
-  void onFilterSelect(FilterData location, String name, String type) {
+  void onFilterSelect(location, name, type) {
     filterName = name;
     locationType = type;
-    locationName = location.name;
+    locationName = location!.name;
 
     getAllUserStatusBloc.add(GetAllUserStatusInitialEvent(
         statusDate: date,

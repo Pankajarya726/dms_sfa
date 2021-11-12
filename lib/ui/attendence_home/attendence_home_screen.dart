@@ -22,8 +22,8 @@ class AttendenceHomeScreen extends StatefulWidget {
 class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
   int currentBottomTabIndex = 0;
   bool isLeader = false;
-  String filterName = "";
-  String locationType = "";
+  String? filterName;
+  String? locationType;
   FilterData? location;
   DateChangeListener? filterChangeListener;
 

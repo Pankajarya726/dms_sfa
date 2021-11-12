@@ -8,7 +8,7 @@ import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
 import 'package:sfa/utility/colors.dart';
 
 class FilterBottomSheet extends StatefulWidget {
-  final Function(FilterData location, String name, String locationType)
+  final Function(FilterData? location, String? name, String? locationType)
       onSelect;
   const FilterBottomSheet({Key? key, required this.onSelect}) : super(key: key);
 
@@ -18,8 +18,8 @@ class FilterBottomSheet extends StatefulWidget {
 
 class _FilterBottomSheetState extends State<FilterBottomSheet> {
   FilterBloc filterBloc = FilterBloc();
-  TextEditingController nameController = TextEditingController();
-  String locationType = "";
+  TextEditingController? nameController = TextEditingController();
+  String? locationType;
   FilterData? selectedLocation;
   List<FilterData> locationList = [];
   StreamController<List<FilterData>> streamController = StreamController();
@@ -140,7 +140,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                             setState(() {
                               value = value;
                               locationType = value.toString();
-                              getLocation(locationType);
+                              getLocation(locationType!);
                             });
                           },
                         ),
@@ -196,7 +196,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                       child: InkWell(
                         onTap: () {
                           widget.onSelect(selectedLocation!,
-                              nameController.text, locationType);
+                              nameController!.text, locationType!);
                           Navigator.pop(context);
                         },
                         child: Container(

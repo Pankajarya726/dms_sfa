@@ -56,9 +56,9 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
   DateChangeListener? dateListener;
 
   TeamMembersBloc teamMembersBloc = TeamMembersBloc();
-  String locationType = "";
-  String locationName = "";
-  String filterName = "";
+  String? locationType;
+  String? locationName;
+  String? filterName;
   @override
   void initState() {
     super.initState();
