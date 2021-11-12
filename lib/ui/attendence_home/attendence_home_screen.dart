@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -27,6 +26,7 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
   String locationType = "";
   String locationName = "";
   FilterChangeListener? filterChangeListener;
+
   @override
   void initState() {
     getUserDetails();

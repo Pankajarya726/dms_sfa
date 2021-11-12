@@ -51,6 +51,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   String workingPlan = "";
   final formKey = GlobalKey<FormState>();
   final formKey2 = GlobalKey<FormState>();
+  final formKey3 = GlobalKey<FormState>();
   String webtime = "";
   int clockInStatus = 0;
   late DateTime _ntpTime;
@@ -74,6 +75,9 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     timerController.close();
     stopWatch.sink.close();
     stopWatch.close();
+    workingPlanController.dispose();
+    pjpController.dispose();
+    commentController.dispose();
     super.dispose();
   }
 
@@ -157,6 +161,11 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                     timeDifference = arr[0];
                     var arr2 = timeDifference.split(":");
                     int hrs = int.parse(arr2[0]);
+                    timeDifference = arr2[0].padLeft(2, '0');
+                    timeDifference =
+                        timeDifference + ":" + arr2[1].padLeft(2, '0');
+                    timeDifference =
+                        timeDifference + ":" + arr2[2].padLeft(2, '0');
                     return clockOutLayout(timeDifference, hrs);
                   } else {
                     return clockOutLayout(timeDifference, checkSuccessHours);
@@ -212,7 +221,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                             ),
                           )
                         ],
-                        gradient: workingHrs <= 8
+                        gradient: workingHrs < 8
                             ? const LinearGradient(
                                 begin: Alignment.bottomLeft,
                                 end: Alignment.topRight,
@@ -317,7 +326,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        _imgFromCamera();
+                        _imgFromCamera(context);
                       },
                       child: image == null
                           ? Container(
@@ -441,7 +450,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                         ),
                       )
                     ],
-                    gradient: workingHrs <= 8
+                    gradient: workingHrs < 8
                         ? const LinearGradient(
                             begin: Alignment.bottomLeft,
                             end: Alignment.topRight,
@@ -546,7 +555,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    _imgFromCamera();
+                    _imgFromCamera(context);
                   },
                   child: image == null
                       ? Container(
@@ -666,7 +675,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                       ),
                     )
                   ],
-                  gradient: workingHrs <= 8
+                  gradient: workingHrs < 8
                       ? const LinearGradient(
                           begin: Alignment.bottomLeft,
                           end: Alignment.topRight,
@@ -771,7 +780,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
               ),
               GestureDetector(
                 onTap: () {
-                  _imgFromCamera();
+                  _imgFromCamera(context);
                 },
                 child: image == null
                     ? Container(
@@ -895,7 +904,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                   ),
                 )
               ],
-              gradient: checkSuccessHours <= 8
+              gradient: checkSuccessHours < 8
                   ? const LinearGradient(
                       begin: Alignment.bottomLeft,
                       end: Alignment.topRight,
@@ -1018,7 +1027,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
           ),
           GestureDetector(
             onTap: () {
-              _imgFromCamera();
+              _imgFromCamera(context);
             },
             child: image == null
                 ? Container(
@@ -1370,6 +1379,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
 
   Widget workingPlanTextField(workingPlanText) {
     workingPlanController = TextEditingController(text: workingPlanText);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1414,31 +1424,34 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
             )
           ],
         ),
-        TextFormField(
-          maxLines: 3,
-          readOnly: true,
-          controller: workingPlanController,
-          keyboardType: TextInputType.text,
-          style: const TextStyle(
-            color: Color(0xff303030),
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-          validator: (text) {
-            if (text == null || text.isEmpty) {
-              return "Cannot be empty";
-            } else {
-              return null;
-            }
-          },
-          decoration: const InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Color(0xff555555)),
+        Form(
+          key: formKey3,
+          child: TextFormField(
+            maxLines: 3,
+            readOnly: true,
+            controller: workingPlanController,
+            keyboardType: TextInputType.text,
+            style: const TextStyle(
+              color: Color(0xff303030),
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
             ),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(
-                width: 1,
-                color: Color(0xff555555),
+            validator: (text) {
+              if (text == null || text.isEmpty) {
+                return "Cannot be empty";
+              } else {
+                return null;
+              }
+            },
+            decoration: const InputDecoration(
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Color(0xff555555)),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  width: 1,
+                  color: Color(0xff555555),
+                ),
               ),
             ),
           ),
@@ -1478,7 +1491,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     );
   }
 
-  _imgFromCamera() async {
+  _imgFromCamera(context) async {
     XFile? image = await ImagePicker.platform
         .getImage(source: ImageSource.camera, imageQuality: 50);
 
