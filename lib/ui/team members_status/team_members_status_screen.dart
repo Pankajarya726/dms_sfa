@@ -259,7 +259,9 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
   void onFilterSelect(location, name, type) {
     filterName = name;
     locationType = type;
-    locationName = location!.name;
+    if (location != null) {
+      locationName = location.name;
+    }
 
     getAllUserStatusBloc.add(GetAllUserStatusInitialEvent(
         statusDate: date,

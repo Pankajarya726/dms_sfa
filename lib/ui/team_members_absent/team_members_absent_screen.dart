@@ -419,6 +419,6 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
         currentDate: date,
         filterName: name,
         locationType: type,
-        location: location!.id));
+        location: location != null ? location.id : null));
   }
 }

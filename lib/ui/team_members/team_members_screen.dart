@@ -236,6 +236,7 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
             TeamMembersStatusScreen(
               onDateListenerInitialize: (dateChangeListener) {
                 dateListener = dateChangeListener;
+
                 widget.onFilterListenerInitialize(dateListener!);
               },
             ),

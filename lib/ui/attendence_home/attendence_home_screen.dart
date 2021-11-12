@@ -244,10 +244,9 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
       builder: (context) {
         return FilterBottomSheet(
           onSelect: (location, name, type) {
-            this.location = location;
-            filterName = name;
-            locationType = type;
-            filterChangeListener!.onFilterSelect(location, name, type);
+            if (filterChangeListener != null) {
+              filterChangeListener!.onFilterSelect(location, name, type);
+            }
           },
         );
       },

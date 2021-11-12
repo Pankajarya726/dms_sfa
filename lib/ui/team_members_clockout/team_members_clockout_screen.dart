@@ -268,7 +268,7 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
     getClockInDataBloc.add(GetClockInDataSuccessEvent(
         dateAdded: date,
         filterName: name,
-        location: location!.id,
+        location: location != null ? location.id : null,
         locationType: type));
   }
 }

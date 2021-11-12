@@ -18,7 +18,7 @@ class FilterBottomSheet extends StatefulWidget {
 
 class _FilterBottomSheetState extends State<FilterBottomSheet> {
   FilterBloc filterBloc = FilterBloc();
-  TextEditingController? nameController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
   String? locationType;
   FilterData? selectedLocation;
   List<FilterData> locationList = [];
@@ -195,8 +195,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                       padding: const EdgeInsets.fromLTRB(20, 5, 20, 14),
                       child: InkWell(
                         onTap: () {
-                          widget.onSelect(selectedLocation!,
-                              nameController!.text, locationType!);
+                          widget.onSelect(selectedLocation, nameController.text,
+                              locationType);
                           Navigator.pop(context);
                         },
                         child: Container(
