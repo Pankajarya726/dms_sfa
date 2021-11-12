@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
 import 'package:sfa/ui/team_members/bloc/team_member_events.dart';
 import 'package:sfa/ui/team_members/bloc/team_member_states.dart';
+import 'package:sfa/utility/network.dart';
 
 class TeamMembersBloc extends Bloc<TeamMemberEvents, TeamMemberStates> {
   TeamMembersBloc() : super(TeamMembersInitialState());
@@ -25,11 +26,13 @@ class TeamMembersBloc extends Bloc<TeamMemberEvents, TeamMemberStates> {
 
   Stream<TeamMemberStates> setInitialDate(
       TeamMemberInitialSuccessEvent event) async* {
-    DateTime ntpTime;
-    ntpTime = await NTP.now();
-    var format = DateFormat("dd-MMM-yyyy");
-    yield TeamMembersInitialSuccessState(
-        currentDate: format.format(ntpTime).toString(), dateTime: ntpTime);
+    if (await Network.isConnected()) {
+      DateTime ntpTime;
+      ntpTime = await NTP.now();
+      var format = DateFormat("dd-MMM-yyyy");
+      yield TeamMembersInitialSuccessState(
+          currentDate: format.format(ntpTime).toString(), dateTime: ntpTime);
+    }
   }
 
   // Stream<TeamMemberStates> setPreviousDate(

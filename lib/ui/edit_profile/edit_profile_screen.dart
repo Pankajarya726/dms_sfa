@@ -57,6 +57,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
           body: BlocBuilder<EditProfileBloc, EditProfileState>(
             builder: (context, state) {
+              if (state is EditProfileNetworkState) {
+                return Center(
+                  child: Text(state.message),
+                );
+              }
               if (state is GetUserDetailsFailureState) {
                 return Center(
                   child: Text(state.message),

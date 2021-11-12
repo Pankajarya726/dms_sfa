@@ -18,6 +18,7 @@ import 'package:sfa/ui/login_screen/login_model/login_response.dart';
 import 'package:sfa/ui/pjp_by_date/model/pjp_by_date_model.dart';
 import 'package:sfa/ui/pjp_screen/pjp_model/pjp_model.dart';
 import 'package:sfa/ui/pjp_screen/update_pjp_model/update_pjp_model.dart';
+import 'package:sfa/ui/report_screen/model/report_model.dart';
 import 'package:sfa/ui/splash_screen/model/splash_model.dart';
 import 'package:sfa/ui/team%20members_status/model/get_all_users_status.dart';
 import 'package:sfa/ui/team_member_attendence/model/attendance_model.dart';
@@ -770,6 +771,43 @@ class ApiRepository {
       }
     } catch (exception) {
       return FiltersResponse(data: [], success: false);
+    }
+  }
+
+  Future<ReportResponse> getReport(String? initDate, String? endDate,
+      String? filterName, String? locationType, String? locationId) async {
+    Map<String, dynamic> params = HashMap<String, dynamic>();
+    if (initDate != null) {
+      params["from_date"] = initDate;
+    }
+    if (endDate != null) {
+      params["to_date"] = endDate;
+    }
+
+    if (filterName != null) {
+      params["name"] = filterName;
+    }
+    if (locationType != null) {
+      params["location_type"] = locationType;
+    }
+    if (locationId != null) {
+      params["location_id"] = locationId;
+    }
+    try {
+      Response response = await dio.post(
+        Url.getReport,
+        data: params,
+      );
+
+      if (response.statusCode == 200) {
+        ReportResponse result = ReportResponse.fromJson(response.toString());
+
+        return result;
+      } else {
+        return ReportResponse(success: false, data: []);
+      }
+    } catch (exception) {
+      return ReportResponse(data: [], success: false);
     }
   }
 }

@@ -4,6 +4,7 @@ import 'package:sfa/ui/pjp_screen/pjp_bloc/pjp_event.dart';
 import 'package:sfa/ui/pjp_screen/pjp_bloc/pjp_state.dart';
 import 'package:sfa/ui/pjp_screen/pjp_model/pjp_model.dart';
 import 'package:sfa/ui/pjp_screen/update_pjp_model/update_pjp_model.dart';
+import 'package:sfa/utility/network.dart';
 
 class PjpBloc extends Bloc<PjpEvents, PjpState> {
   PjpBloc() : super(PjpInitialState());
@@ -29,11 +30,15 @@ class PjpBloc extends Bloc<PjpEvents, PjpState> {
   }
 
   Stream<PjpState> pjpData(PjpEvent event) async* {
-    PjpResponse response = await repository.getPjpData(event.id, event.month);
-    if (response.success) {
-      yield PjpSuccessState(response: response.data!);
+    if (await Network.isConnected()) {
+      PjpResponse response = await repository.getPjpData(event.id, event.month);
+      if (response.success) {
+        yield PjpSuccessState(response: response.data!);
+      } else {
+        yield PjpFailureState(message: response.message);
+      }
     } else {
-      yield PjpFailureState(message: response.message);
+      yield PjpFailureState(message: "Please check your internet connection!");
     }
   }
 

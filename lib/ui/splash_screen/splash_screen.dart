@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
@@ -12,6 +10,7 @@ import 'package:sfa/ui/splash_screen/splash_bloc/splash_bloc.dart';
 import 'package:sfa/ui/splash_screen/splash_bloc/splash_event.dart';
 import 'package:sfa/ui/splash_screen/splash_bloc/splash_state.dart';
 import 'package:sfa/utility/colors.dart';
+import 'package:sfa/utility/network.dart';
 import 'package:sfa/utility/shared_prefrence.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -84,29 +83,35 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   getLogin(String appVersio) async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    bool login =
-        await SharedPrefrence.getBooleanPreference(SharedPrefrence.login);
-    if (appVersio == packageInfo.version) {
-      if (login == true) {
-        Timer(
-          const Duration(seconds: 3),
-          () => Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (BuildContext context) => const HomeScreen(),
+    if (await Network.isConnected()) {
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      bool login =
+          await SharedPrefrence.getBooleanPreference(SharedPrefrence.login);
+      if (appVersio == packageInfo.version) {
+        if (login == true) {
+          Timer(
+            const Duration(seconds: 3),
+            () => Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (BuildContext context) => const HomeScreen(),
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          Timer(
+            const Duration(seconds: 3),
+            () => Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (BuildContext context) => const LoginScreen(),
+              ),
+            ),
+          );
+        }
       } else {
-        Timer(
-          const Duration(seconds: 3),
-          () => Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (BuildContext context) => const LoginScreen(),
-            ),
-          ),
-        );
+        Fluttertoast.showToast(msg: "Please update the application");
       }
+    } else {
+      Fluttertoast.showToast(msg: "Please check your internet connection!");
     }
   }
 

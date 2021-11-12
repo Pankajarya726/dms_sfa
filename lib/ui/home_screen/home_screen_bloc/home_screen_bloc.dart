@@ -4,6 +4,7 @@ import 'package:sfa/ui/home_screen/home_screen_bloc/home_screen_event.dart';
 import 'package:sfa/ui/home_screen/home_screen_bloc/home_screen_state.dart';
 import 'package:sfa/ui/home_screen/home_screen_model/home_screen_model.dart';
 import 'package:sfa/ui/home_screen/home_screen_model/menu_model.dart';
+import 'package:sfa/utility/network.dart';
 
 class HomeScreenBloc extends Bloc<HomeScreenEvents, HomeScreenState> {
   HomeScreenBloc() : super(HomeScreenInitialState());
@@ -30,11 +31,16 @@ class HomeScreenBloc extends Bloc<HomeScreenEvents, HomeScreenState> {
   }
 
   Stream<HomeScreenState> getMenu() async* {
-    HomeMenuResponse response = await repository.getMenuData();
-    if (response.success) {
-      yield HomeScreenMenuSuccessState(response: response);
+    if (await Network.isConnected()) {
+      HomeMenuResponse response = await repository.getMenuData();
+      if (response.success) {
+        yield HomeScreenMenuSuccessState(response: response);
+      } else {
+        yield HomeScreenFailureState(messages: response.message);
+      }
     } else {
-      yield HomeScreenFailureState(messages: response.message);
+      yield HomeScreenFailureState(
+          messages: "Please check your internet connection!");
     }
   }
 }

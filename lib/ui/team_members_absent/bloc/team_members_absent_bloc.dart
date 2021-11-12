@@ -41,6 +41,9 @@ class TeamMembersAbsentBloc
       } else {
         yield TeamMembersAbsentFailureState(failureMessage: response.message);
       }
+    } else {
+      yield TeamMembersAbsentFailureState(
+          failureMessage: "Please check your internet connection!");
     }
   }
 
