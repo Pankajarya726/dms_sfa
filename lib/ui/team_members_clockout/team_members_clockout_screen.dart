@@ -20,7 +20,8 @@ import 'package:sfa/utility/shared_prefrence.dart';
 
 class TeamMembersClockoutScreen extends StatefulWidget {
   final Function(DateChangeListener dateChangeListener) onListenerInitialize;
-  TeamMembersClockoutScreen({required this.onListenerInitialize, Key? key})
+  const TeamMembersClockoutScreen(
+      {required this.onListenerInitialize, Key? key})
       : super(key: key);
 
   @override

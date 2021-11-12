@@ -15,7 +15,7 @@ import 'package:sfa/utility/colors.dart';
 class TeamMembersScreen extends StatefulWidget {
   final Function(DateChangeListener dateChangeListener)
       onFilterListenerInitialize;
-  TeamMembersScreen({required this.onFilterListenerInitialize, Key? key})
+  const TeamMembersScreen({required this.onFilterListenerInitialize, Key? key})
       : super(key: key);
 
   @override
@@ -67,9 +67,6 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
   @override
   Widget build(BuildContext context) {
     initialDate = initialFormat.format(dateTime!);
-    // if (dateListener != null) {
-    //   dateListener!.onFilterSelect(filterName, locationType, locationName);
-    // }
     return DefaultTabController(
       initialIndex: 0,
       length: 3,

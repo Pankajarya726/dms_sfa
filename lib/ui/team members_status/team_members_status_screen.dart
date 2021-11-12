@@ -1,14 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:sfa/listeners/date_change_listener.dart';
-import 'package:sfa/listeners/filter_change_listener.dart';
-import 'package:sfa/ui/attendence_home/attendence_home_screen.dart';
-
 import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_bloc.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_event.dart';
@@ -17,7 +12,6 @@ import 'package:sfa/ui/team%20members_status/bloc/get_all_users_status_bloc.dart
 import 'package:sfa/ui/team%20members_status/bloc/get_all_users_status_events.dart';
 import 'package:sfa/ui/team%20members_status/bloc/get_all_users_status_states.dart';
 import 'package:sfa/ui/team_member_details/team_members_details.dart';
-import 'package:sfa/ui/team_members/team_members_screen.dart';
 import 'package:sfa/ui/team_members_clockout/bloc/get_clock_in_data_bloc.dart';
 import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/constants.dart';
@@ -27,7 +21,8 @@ class TeamMembersStatusScreen extends StatefulWidget {
   final Function(DateChangeListener dateChangeListener)
       onDateListenerInitialize;
 
-  TeamMembersStatusScreen({required this.onDateListenerInitialize, Key? key})
+  const TeamMembersStatusScreen(
+      {required this.onDateListenerInitialize, Key? key})
       : super(key: key);
 
   @override

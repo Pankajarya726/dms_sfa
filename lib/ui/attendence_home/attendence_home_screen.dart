@@ -1,7 +1,6 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sfa/listeners/date_change_listener.dart';
 import 'package:sfa/ui/absent/absent_screen.dart';
 import 'package:sfa/ui/add_pjp_screen/add_pjp_screen.dart';
 import 'package:sfa/ui/attendence_clock_in_out/attendence_clock_in_out.dart';
@@ -248,9 +247,7 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
             this.location = location;
             filterName = name;
             locationType = type;
-            if (filterChangeListener != null) {
-              filterChangeListener!.onFilterSelect(location, name, type);
-            }
+            filterChangeListener!.onFilterSelect(location, name, type);
           },
         );
       },
