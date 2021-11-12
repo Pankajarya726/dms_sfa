@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:sfa/ui/attendence_home/attendence_home_screen.dart';
+import 'package:sfa/listeners/date_change_listener.dart';
+
 import 'package:sfa/ui/report_screen/report_screen.dart';
 import 'package:sfa/ui/team%20members_status/team_members_status_screen.dart';
 import 'package:sfa/ui/team_members/bloc/team_member_events.dart';
@@ -12,17 +13,16 @@ import 'package:sfa/ui/team_members_clockout/team_members_clockout_screen.dart';
 import 'package:sfa/utility/colors.dart';
 
 class TeamMembersScreen extends StatefulWidget {
-  final Function(FilterChangeListener filterChangeListener)
+  final Function(DateChangeListener dateChangeListener)
       onFilterListenerInitialize;
-  const TeamMembersScreen({required this.onFilterListenerInitialize, Key? key})
+  TeamMembersScreen({required this.onFilterListenerInitialize, Key? key})
       : super(key: key);
 
   @override
   _TeamMembersScreenState createState() => _TeamMembersScreenState();
 }
 
-class _TeamMembersScreenState extends State<TeamMembersScreen>
-    implements FilterChangeListener {
+class _TeamMembersScreenState extends State<TeamMembersScreen> {
   final TabBar _tabBar = TabBar(
     labelColor: Colors.white,
     indicatorColor: colorPrimary,
@@ -54,23 +54,22 @@ class _TeamMembersScreenState extends State<TeamMembersScreen>
   String initialDate = "";
   String changeDate = "";
   DateChangeListener? dateListener;
-  FilterChangeListener? filterListener;
+
   TeamMembersBloc teamMembersBloc = TeamMembersBloc();
   String locationType = "";
   String locationName = "";
   String filterName = "";
   @override
   void initState() {
-    widget.onFilterListenerInitialize(this);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     initialDate = initialFormat.format(dateTime!);
-    if (filterListener != null) {
-      filterListener!.onFilterChange(filterName, locationType, locationName);
-    }
+    // if (dateListener != null) {
+    //   dateListener!.onFilterSelect(filterName, locationType, locationName);
+    // }
     return DefaultTabController(
       initialIndex: 0,
       length: 3,
@@ -80,6 +79,7 @@ class _TeamMembersScreenState extends State<TeamMembersScreen>
           elevation: 0,
           automaticallyImplyLeading: false,
           backgroundColor: colorPrimary,
+          title: const Text("Team Members"),
           flexibleSpace: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Row(
@@ -239,19 +239,19 @@ class _TeamMembersScreenState extends State<TeamMembersScreen>
             TeamMembersStatusScreen(
               onDateListenerInitialize: (dateChangeListener) {
                 dateListener = dateChangeListener;
-              },
-              onFilterListenerInitialize: (filterChangeListener) {
-                filterListener = filterChangeListener;
+                widget.onFilterListenerInitialize(dateListener!);
               },
             ),
             TeamMembersClockoutScreen(
               onListenerInitialize: (dateChangeListener) {
                 dateListener = dateChangeListener;
+                widget.onFilterListenerInitialize(dateListener!);
               },
             ),
             TeamMembersAbsentScreen(
               onListenerInitialize: (dateChangeListener) {
                 dateListener = dateChangeListener;
+                widget.onFilterListenerInitialize(dateListener!);
               },
             )
           ],
@@ -259,15 +259,4 @@ class _TeamMembersScreenState extends State<TeamMembersScreen>
       ),
     );
   }
-
-  @override
-  void onFilterChange(String name, String type, String location) {
-    filterName = name;
-    locationType = type;
-    locationName = location;
-  }
-}
-
-abstract class DateChangeListener {
-  void onDateChange(String date);
 }

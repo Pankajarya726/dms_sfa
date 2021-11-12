@@ -29,8 +29,12 @@ class GetClockInDataBloc
     if (event is GetClockInDataSuccessEvent) {
       if (await Network.isConnected()) {
         String userId = await SharedPrefrence.getStringPreference("id");
-        GetClockInDataResponse response =
-            await repository.getClockInData(userId, event.dateAdded);
+        GetClockInDataResponse response = await repository.getClockInData(
+            userId,
+            event.dateAdded,
+            event.filterName,
+            event.locationType,
+            event.location);
         if (response.success) {
           yield GetClockInDataSuccessState(getClockInDataResponse: response);
         } else {

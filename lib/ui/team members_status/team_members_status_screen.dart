@@ -5,7 +5,11 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:sfa/listeners/date_change_listener.dart';
+import 'package:sfa/listeners/filter_change_listener.dart';
 import 'package:sfa/ui/attendence_home/attendence_home_screen.dart';
+
+import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_bloc.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_event.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_state.dart';
@@ -22,12 +26,8 @@ import 'model/get_all_users_status.dart';
 class TeamMembersStatusScreen extends StatefulWidget {
   final Function(DateChangeListener dateChangeListener)
       onDateListenerInitialize;
-  final Function(FilterChangeListener filterChangeListener)
-      onFilterListenerInitialize;
-  const TeamMembersStatusScreen(
-      {required this.onDateListenerInitialize,
-      required this.onFilterListenerInitialize,
-      Key? key})
+
+  TeamMembersStatusScreen({required this.onDateListenerInitialize, Key? key})
       : super(key: key);
 
   @override
@@ -36,7 +36,7 @@ class TeamMembersStatusScreen extends StatefulWidget {
 }
 
 class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
-    implements DateChangeListener, FilterChangeListener {
+    implements DateChangeListener {
   GetAllUserStatusBloc getAllUserStatusBloc = GetAllUserStatusBloc();
   List<AttendanceStatusModel> statusList = [];
   var format = DateFormat("yyyy-MM-dd");
@@ -49,7 +49,7 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
   @override
   void initState() {
     widget.onDateListenerInitialize(this);
-    widget.onFilterListenerInitialize(this);
+
     super.initState();
   }
 
@@ -73,11 +73,9 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
             );
           }
           if (state is GetAllUserStatusInitialSuccessState) {
-            log("Status  " + filterName + locationName + locationType);
             statusList = state.statusList;
           }
           if (state is GetAllUserStatusFailureState) {
-            log("Status  " + filterName + locationName + locationType);
             return Center(
               child: Text(state.failureMessage),
             );
@@ -245,13 +243,6 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
     getAllUserStatusBloc.add(GetAllUserStatusInitialEvent(statusDate: date));
   }
 
-  @override
-  void onFilterChange(String name, String type, String location) {
-    filterName = name;
-    locationType = type;
-    locationName = location;
-  }
-
   showTeamMemberStatusSheet(String name, int userId, String date) async {
     return showModalBottomSheet(
       backgroundColor: Colors.white,
@@ -267,8 +258,19 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
         );
       },
     );
-    // .then((value) => getAllUserStatusBloc
-    //     .add(GetAllUserStatusInitialEvent(statusDate: date))
+  }
+
+  @override
+  void onFilterSelect(FilterData location, String name, String type) {
+    filterName = name;
+    locationType = type;
+    locationName = location.name;
+
+    getAllUserStatusBloc.add(GetAllUserStatusInitialEvent(
+        statusDate: date,
+        filterName: filterName,
+        location: locationName,
+        locationType: locationType));
   }
 }
 

@@ -7,7 +7,14 @@ class GetClockInDataEvents extends Equatable {
 
 class GetClockInDataSuccessEvent extends GetClockInDataEvents {
   final String dateAdded;
-  GetClockInDataSuccessEvent({required this.dateAdded});
+  final String? filterName;
+  final String? locationType;
+  final String? location;
+  GetClockInDataSuccessEvent(
+      {required this.dateAdded,
+      this.filterName,
+      this.locationType,
+      this.location});
   @override
   List<Object?> get props => [dateAdded];
 }

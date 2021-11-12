@@ -1,11 +1,12 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfa/ui/absent/absent_screen.dart';
 import 'package:sfa/ui/add_pjp_screen/add_pjp_screen.dart';
 import 'package:sfa/ui/attendence_clock_in_out/attendence_clock_in_out.dart';
-import 'package:sfa/ui/attendence_home/filter_bloc/filter_bloc.dart';
-import 'package:sfa/ui/attendence_home/filter_bloc/filter_state.dart';
+import 'package:sfa/ui/bottom_sheet/filter_bottom_sheet.dart';
+import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
 import 'package:sfa/ui/my_profile/my_profile_home.dart';
 import 'package:sfa/ui/pjp_screen/pjp_screen.dart';
 import 'package:sfa/ui/team_members/team_members_screen.dart';
@@ -22,10 +23,10 @@ class AttendenceHomeScreen extends StatefulWidget {
 class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
   int currentBottomTabIndex = 0;
   bool isLeader = false;
-  TextEditingController filterName = TextEditingController();
+  String filterName = "";
   String locationType = "";
-  String locationName = "";
-  FilterChangeListener? filterChangeListener;
+  FilterData? location;
+  DateChangeListener? filterChangeListener;
 
   @override
   void initState() {
@@ -233,209 +234,24 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
     );
   }
 
-  void showFilters() async {
+  showFilters() async {
     return showModalBottomSheet(
       isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
       backgroundColor: Colors.transparent,
       context: context,
       builder: (context) {
-        return BlocProvider<FilterBloc>(
-          create: (context) => FilterBloc(),
-          child: BlocListener<FilterBloc, FilterState>(
-            listener: (context, state) {
-              if (state is FilterSuccessState) {}
-              if (state is FilterFailureState) {}
-            },
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom),
-                child: IntrinsicHeight(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    decoration: const BoxDecoration(
-                      color: reportBG,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20.0),
-                        topRight: Radius.circular(20.0),
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            child: const Text(
-                              "Filter",
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                  color: colorGrayDark,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 15, 20, 10),
-                          child: TextFormField(
-                            style: const TextStyle(
-                                color: colorGrayDark,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 17),
-                            autocorrect: true,
-                            enableSuggestions: true,
-                            maxLines: 1,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              filled: true,
-                              fillColor: colorGrayLite,
-                              hintText: "Name",
-                              prefixText: "   ",
-                              hintStyle: const TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.bold,
-                                  color: colorGray),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25),
-                                borderSide: const BorderSide(
-                                    color: Colors.transparent, width: 2.0),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25),
-                                borderSide: const BorderSide(
-                                    color: Colors.transparent, width: 2.0),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: colorGrayLite,
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            child: DropdownButtonFormField(
-                              dropdownColor: reportBG,
-                              hint: const Text(
-                                "Select Location Type",
-                                style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                    color: colorGray),
-                              ),
-                              decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(25),
-                                  borderSide: const BorderSide(
-                                      color: Colors.transparent, width: 2.0),
-                                ),
-                              ),
-                              items: <String>['City', 'State', 'District']
-                                  .map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(
-                                    value,
-                                    style: const TextStyle(
-                                        color: colorGrayDark,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 17),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  value = value;
-                                  locationType = value.toString();
-                                });
-                              },
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: colorGrayLite,
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            child: DropdownButtonFormField(
-                              dropdownColor: reportBG,
-                              hint: const Text(
-                                "Select Location",
-                                style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                    color: colorGray),
-                              ),
-                              decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(25),
-                                  borderSide: const BorderSide(
-                                      color: Colors.transparent, width: 2.0),
-                                ),
-                              ),
-                              items: <String>['City', 'State', 'District']
-                                  .map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(
-                                    value,
-                                    style: const TextStyle(
-                                        color: colorGrayDark,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 17),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  value = value;
-                                });
-                              },
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 5, 20, 14),
-                          child: InkWell(
-                            onTap: () {
-                              filterChangeListener!.onFilterChange(
-                                  filterName.text, locationType, locationName);
-
-                              // BlocProvider.of<FilterBloc>(context)
-                              //     .add(FilterEvent(locationType: typeValue!));
-                              // Navigator.pop(context);
-                            },
-                            child: Container(
-                              height: 50,
-                              width: 180,
-                              decoration: BoxDecoration(
-                                color: colorPrimary,
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              child: const Center(
-                                child: Text(
-                                  "Done",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
+        return FilterBottomSheet(
+          onSelect: (location, name, type) {
+            this.location = location;
+            filterName = name;
+            locationType = type;
+            if (filterChangeListener != null) {
+              filterChangeListener!.onFilterSelect(location, name, type);
+            }
+          },
         );
       },
     );
@@ -454,8 +270,4 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
       isLeader = leader;
     });
   }
-}
-
-abstract class FilterChangeListener {
-  void onFilterChange(String name, String type, String location);
 }

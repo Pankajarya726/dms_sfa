@@ -8,7 +8,7 @@ import 'package:sfa/ui/absent/bloc/model/mark_absent_by_user.dart';
 import 'package:sfa/ui/add_pjp_screen/add_pjp_model/add_pjp_model.dart';
 import 'package:sfa/ui/attendence_clock_in_out/model/clock_in_response.dart';
 import 'package:sfa/ui/attendence_clock_in_out/model/clock_out_response.dart';
-import 'package:sfa/ui/attendence_home/filter_model/filter_model.dart';
+import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
 import 'package:sfa/ui/change_password/model/model.dart';
 import 'package:sfa/ui/edit_profile/model/edit_profile_model.dart';
 import 'package:sfa/ui/forgot_password/model/forgot_password_model.dart';
@@ -209,16 +209,30 @@ class ApiRepository {
   }
 
   Future<GetAllUsersStatusResponse> getAllUsersStatus(
-      userId, statusDate) async {
-    Map<String, dynamic> data = {
-      "user_id": userId,
-      "status_date": statusDate,
-    };
+      String userId,
+      String statusDate,
+      String? filterName,
+      String? locationType,
+      String? location) async {
+    Map<String, dynamic> params = HashMap<String, dynamic>();
+
+    params["user_id"] = userId;
+    params["status_date"] = statusDate;
+
+    if (filterName != null) {
+      params["name"] = filterName;
+    }
+    if (locationType != null) {
+      params["location_type"] = locationType;
+    }
+    if (location != null) {
+      params["location_id"] = location;
+    }
 
     try {
       Response response = await dio.post(
         Url.getAllUsersStatus,
-        data: data,
+        data: params,
       );
       if (response.statusCode == 200) {
         GetAllUsersStatusResponse getClockInDataResponse =
@@ -238,16 +252,31 @@ class ApiRepository {
     }
   }
 
-  Future<GetClockInDataResponse> getClockInData(userId, dateAdded) async {
-    Map<String, dynamic> data = {
-      "user_id": userId,
-      "date_added": dateAdded,
-    };
+  Future<GetClockInDataResponse> getClockInData(
+      String userId,
+      String statusDate,
+      String? filterName,
+      String? locationType,
+      String? location) async {
+    Map<String, dynamic> params = HashMap<String, dynamic>();
+
+    params["user_id"] = userId;
+    params["date_added"] = statusDate;
+
+    if (filterName != null) {
+      params["name"] = filterName;
+    }
+    if (locationType != null) {
+      params["location_type"] = locationType;
+    }
+    if (location != null) {
+      params["location_id"] = location;
+    }
 
     try {
       Response response = await dio.post(
         Url.getClockInData,
-        data: data,
+        data: params,
       );
       if (response.statusCode == 200) {
         GetClockInDataResponse getClockInDataResponse =
@@ -267,17 +296,27 @@ class ApiRepository {
   }
 
 // get all absent data repository
-  Future<GetAbsentDataResponse> getAbsentData(userId, absentDate) async {
-    Map<String, dynamic> data = {
-      "user_id": userId,
-      "date_added": absentDate,
-    };
+  Future<GetAbsentDataResponse> getAbsentData(String userId, String absentDate,
+      String? filterName, String? locationType, String? location) async {
+    Map<String, dynamic> params = HashMap<String, dynamic>();
 
-    print("absent data = $data");
+    params["user_id"] = userId;
+    params["date_added"] = absentDate;
+
+    if (filterName != null) {
+      params["name"] = filterName;
+    }
+    if (locationType != null) {
+      params["location_type"] = locationType;
+    }
+    if (location != null) {
+      params["location_id"] = location;
+    }
+
     try {
       Response response = await dio.post(
         Url.getAbsentData,
-        data: FormData.fromMap(data),
+        data: params,
       );
 
       if (response.statusCode == 200) {
@@ -727,10 +766,10 @@ class ApiRepository {
 
         return result;
       } else {
-        return FiltersResponse(success: 0, data: []);
+        return FiltersResponse(success: false, data: []);
       }
     } catch (exception) {
-      return FiltersResponse(data: [], success: 0);
+      return FiltersResponse(data: [], success: false);
     }
   }
 }

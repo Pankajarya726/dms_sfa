@@ -30,8 +30,12 @@ class TeamMembersAbsentBloc
       TeamMembersAbsentSuccessEvent event) async* {
     if (await Network.isConnected()) {
       String userId = await SharedPrefrence.getStringPreference("id");
-      GetAbsentDataResponse response =
-          await apiRepository.getAbsentData(userId, event.currentDate);
+      GetAbsentDataResponse response = await apiRepository.getAbsentData(
+          userId,
+          event.currentDate,
+          event.filterName,
+          event.locationType,
+          event.location);
       if (response.success) {
         yield TeamMembersAbsentSuccessState(getAbsentDataResponse: response);
       } else {
