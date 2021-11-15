@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfa/listeners/date_change_listener.dart';
+import 'package:sfa/listeners/pjp_data_changed_listener.dart';
 import 'package:sfa/ui/absent/absent_screen.dart';
 import 'package:sfa/ui/add_pjp_screen/add_pjp_screen.dart';
 import 'package:sfa/ui/attendence_clock_in_out/attendence_clock_in_out.dart';
 import 'package:sfa/ui/bottom_sheet/filter_bottom_sheet.dart';
 import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
 import 'package:sfa/ui/my_profile/my_profile_home.dart';
-import 'package:sfa/ui/pjp_screen/pjp_bloc/pjp_bloc.dart';
 import 'package:sfa/ui/pjp_screen/pjp_screen.dart';
 import 'package:sfa/ui/team_members/team_members_screen.dart';
 import 'package:sfa/utility/colors.dart';
@@ -27,7 +27,7 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
   String? locationType;
   FilterData? location;
   DateChangeListener? filterChangeListener;
-  PjpBloc pjpBloc = PjpBloc();
+  PjpDataChangeListener? pageLoadListener;
 
   @override
   void initState() {
@@ -106,12 +106,16 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
                       var status = await SharedPrefrence.getStringPreference(
                           SharedPrefrence.isEnable);
 
-                      if (status == "show") {
+                      if (status != "show") {
                         Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => const AddPjpScreen()))
-                            .then((value) => null);
+                            .then((value) {
+                          if (pageLoadListener != null) {
+                            pageLoadListener!.onPageLoad(true);
+                          }
+                        });
                       } else {
                         Fluttertoast.showToast(msg: "Add PJP is not available");
                       }
@@ -126,7 +130,11 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
           : currentBottomTabIndex == 1
               ? const AbsentScreen()
               : currentBottomTabIndex == 3
-                  ? const PJPScreen()
+                  ? PJPScreen(
+                      pageLoad: (listener) {
+                        pageLoadListener = listener;
+                      },
+                    )
                   : currentBottomTabIndex == 2
                       ? (isLeader == true
                           ? TeamMembersScreen(

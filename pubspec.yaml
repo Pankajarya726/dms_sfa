@@ -52,6 +52,10 @@ dependencies:
   rxdart:
   flutter_device_type:
   package_info:
+  syncfusion_flutter_pdf:
+  syncfusion_flutter_datagrid_export:
+  syncfusion_flutter_datagrid:  
+
 
 
 dev_dependencies:
