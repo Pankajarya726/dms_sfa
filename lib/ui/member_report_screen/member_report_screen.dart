@@ -46,7 +46,7 @@ class _MemberReportScreen extends State<MemberReportScreen> {
                         showCalander();
                       },
                       child: Container(
-                        height: 40,
+                        height: 38,
                         width: MediaQuery.of(context).size.width * 0.23,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(25),
@@ -81,7 +81,7 @@ class _MemberReportScreen extends State<MemberReportScreen> {
                         showType();
                       },
                       child: Container(
-                        height: 36,
+                        height: 34,
                         width: MediaQuery.of(context).size.width * 0.26,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(25),
@@ -89,8 +89,10 @@ class _MemberReportScreen extends State<MemberReportScreen> {
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: const [
+                            SizedBox(
+                              width: 9,
+                            ),
                             Text(
                               "Report Type",
                               style: TextStyle(
