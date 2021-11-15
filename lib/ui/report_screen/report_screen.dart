@@ -9,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:sfa/ui/bottom_sheet/filter_bottom_sheet.dart';
 import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
+import 'package:sfa/ui/report_data_grid/report_data_grid.dart';
 import 'package:sfa/ui/report_screen/bloc/report_bloc.dart';
 import 'package:sfa/ui/report_screen/bloc/report_event.dart';
 import 'package:sfa/ui/report_screen/bloc/report_state.dart';
@@ -165,13 +166,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     borderRadius: BorderRadius.circular(100),
                     child: InkWell(
                       onTap: () {
-                        reportBloc.add(GetReportEvent(
-                          initDate: initialDate,
-                          endDate: endingDate,
-                          filterName: filterName,
-                          locationType: locationType,
-                          locationId: location != null ? location!.id : "",
-                        ));
+                        getReport();
                       },
                       child: Container(
                         height: 150,
@@ -205,59 +200,18 @@ class _ReportScreenState extends State<ReportScreen> {
                 }
                 if (state is ReportSuccessState) {
                   return ClipRRect(
-                    borderRadius: BorderRadius.circular(100),
-                    child: InkWell(
-                      onTap: () {
-                        reportBloc.add(GetReportEvent(
-                          initDate: initialDate,
-                          endDate: endingDate,
-                          filterName: filterName,
-                          locationType: locationType,
-                          locationId: location!.id,
-                        ));
-                      },
-                      child: Container(
-                        height: 150,
-                        width: 150,
-                        color: colorPrimary,
-                        child: Column(
-                          children: [
-                            Container(
-                              margin:
-                                  const EdgeInsets.only(bottom: 14, top: 30),
-                              height: 45,
-                              width: 45,
-                              child: Image.asset(
-                                "assets/download.png",
-                                fit: BoxFit.cover,
-                                color: Colors.black,
-                              ),
-                            ),
-                            const Text(
-                              "All Staff",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20.0),
+                        topRight: Radius.circular(20.0),
                       ),
-                    ),
-                  );
+                      child: ReportDataGrid(reportData: state.response.data));
                 }
 
                 return ClipRRect(
                   borderRadius: BorderRadius.circular(100),
                   child: InkWell(
                     onTap: () {
-                      reportBloc.add(GetReportEvent(
-                        initDate: initialDate,
-                        endDate: endingDate,
-                        filterName: filterName,
-                        locationType: locationType,
-                        locationId: location != null ? location!.id : "",
-                      ));
+                      getReport();
                     },
                     child: Container(
                       height: 150,
@@ -309,7 +263,7 @@ class _ReportScreenState extends State<ReportScreen> {
           },
         );
       },
-    );
+    ).then((value) => getReport());
   }
 
   void showCalander() async {
@@ -325,7 +279,7 @@ class _ReportScreenState extends State<ReportScreen> {
           },
         );
       },
-    );
+    ).then((value) => getReport());
   }
 
   void showType() {
@@ -351,6 +305,16 @@ class _ReportScreenState extends State<ReportScreen> {
         );
       },
     );
+  }
+
+  getReport() {
+    reportBloc.add(GetReportEvent(
+      initDate: initialDate,
+      endDate: endingDate,
+      filterName: filterName,
+      locationType: locationType,
+      locationId: location != null ? location!.id : "",
+    ));
   }
 }
 
@@ -426,7 +390,7 @@ class _DateRangePickerViewState extends State<DateRangePickerView> {
             InkWell(
               onTap: () {
                 widget.onDateSelect(startDate, endDate);
-                Navigator.pop(context);
+                Navigator.pop(context, true);
               },
               child: Container(
                 width: MediaQuery.of(context).size.width,
@@ -473,7 +437,7 @@ class RadioListBuilder extends StatefulWidget {
 
 class RadioListBuilderState extends State<RadioListBuilder> {
   Object? value;
-  List<String> types = ["CSV", "PDF"];
+  List<String> types = ["Excel", "PDF"];
   @override
   Widget build(BuildContext context) {
     return Column(
