@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:sfa/ui/absent/bloc/model/mark_absent_by_user.dart';
 
@@ -9,9 +8,11 @@ class AbsentStates extends Equatable {
 
 class AbsentLoadingState extends AbsentStates {}
 
+class AbsentInitialState extends AbsentStates {}
+
 class AbsentFailureState extends AbsentStates {
-  final failureMessage;
-  AbsentFailureState({this.failureMessage});
+  final String failureMessage;
+  AbsentFailureState({required this.failureMessage});
   @override
   List<Object?> get props => [failureMessage];
 }

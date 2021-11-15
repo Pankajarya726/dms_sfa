@@ -8,6 +8,7 @@ import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_m
 import 'package:sfa/ui/team_member_attendence/team_member_attendence_bloc/team_member_attendence_state.dart';
 import 'package:sfa/ui/team_members_absent/model/absent_approve_reject_response.dart';
 import 'package:sfa/ui/team_members_clockout/model/clockin_approve_reject_model.dart';
+import 'package:sfa/utility/network.dart';
 
 class TeamMemberAttendenceBloc
     extends Bloc<TeamMemberAttendenceEvents, TeamMemberAttendenceState> {
@@ -38,12 +39,18 @@ class TeamMemberAttendenceBloc
 
   Stream<TeamMemberAttendenceState> getAttendence(
       GetTeamMemberAttendenceEvent event) async* {
-    AttendanceResponse response =
-        await repository.getTeamMembersAttendence(event.id, event.date);
-    if (response.success) {
-      yield TeamMemberAttendenceSucessState(response: response);
+    if (await Network.isConnected()) {
+      AttendanceResponse response =
+          await repository.getTeamMembersAttendence(event.id, event.date);
+
+      if (response.success) {
+        yield TeamMemberAttendenceSucessState(response: response);
+      } else {
+        yield TeamMemberAttendenceFailureState(message: response.message);
+      }
     } else {
-      yield TeamMemberAttendenceFailureState(message: response.message);
+      yield TeamMemberAttendenceFailureState(
+          message: "Please check your internet connection!");
     }
   }
 
@@ -63,7 +70,7 @@ class TeamMemberAttendenceBloc
       TeamMemberAttendenceAbsentApproveEvent event) async* {
     AbsentApproveRejectResponse response = await repository.absentApproveReject(
         event.approvedBy, event.userId, event.status, event.id);
-    log(response.message);
+
     if (response.success) {
       yield TeamMemberAttendenceAbsentApproveSuccessState(response: response);
     } else {

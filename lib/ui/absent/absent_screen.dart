@@ -18,86 +18,169 @@ class _AbsentScreenState extends State<AbsentScreen> {
   AbsentBloc absentBloc = AbsentBloc();
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(
-            height: 20,
-          ),
-          const Text(
-            "Reason",
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 17,
-            ),
-          ),
-          TextFormField(
-            maxLines: 4,
-            controller: absentReason,
-            keyboardType: TextInputType.text,
-            style: const TextStyle(
-              color: Color(0xff303030),
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-            decoration: const InputDecoration(
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: colorPrimary),
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  width: 1,
-                  color: Color(0xff555555),
+    return BlocProvider<AbsentBloc>(
+      create: (context) => absentBloc,
+      child: BlocListener<AbsentBloc, AbsentStates>(
+        listener: (context, state) {
+          if (state is AbsentSuccessState) {
+            Fluttertoast.showToast(msg: state.markAbsentByUserResponse.message);
+          }
+          if (state is AbsentFailureState) {
+            Fluttertoast.showToast(msg: state.failureMessage);
+          }
+        },
+        child: BlocBuilder<AbsentBloc, AbsentStates>(
+          builder: (context, state) {
+            if (state is AbsentSuccessState) {
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Text(
+                      "Reason",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                      ),
+                    ),
+                    TextFormField(
+                      maxLines: 4,
+                      controller: absentReason,
+                      keyboardType: TextInputType.text,
+                      style: const TextStyle(
+                        color: Color(0xff303030),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      decoration: const InputDecoration(
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: colorPrimary),
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            width: 1,
+                            color: Color(0xff555555),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 80,
+                    ),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          absentBloc.add(AbsentSuccessEvent(
+                              absentReason: absentReason.text));
+                        },
+                        style: ButtonStyle(
+                          fixedSize:
+                              MaterialStateProperty.all(const Size(180, 50)),
+                          backgroundColor:
+                              MaterialStateProperty.all(colorPrimary),
+                          elevation: MaterialStateProperty.all(0),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                        ),
+                        child: const Text(
+                          "Submit",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 80,
-          ),
-          BlocProvider(
-            create: (context) => absentBloc,
-            child: BlocListener<AbsentBloc, AbsentStates>(
-              listener: (context, state) {
-                if (state is AbsentSuccessState) {
-                  Fluttertoast.showToast(
-                      msg: state.markAbsentByUserResponse.message);
-                }
-                if (state is AbsentFailureState) {
-                  Fluttertoast.showToast(msg: state.failureMessage);
-                }
-              },
-              child: Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    absentBloc.add(
-                        AbsentSuccessEvent(absentReason: absentReason.text));
-                  },
-                  style: ButtonStyle(
-                    fixedSize: MaterialStateProperty.all(const Size(180, 50)),
-                    backgroundColor: MaterialStateProperty.all(colorPrimary),
-                    elevation: MaterialStateProperty.all(0),
-                    shape: MaterialStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+              );
+            }
+            if (state is AbsentLoadingState) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Text(
+                    "Reason",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17,
+                    ),
+                  ),
+                  TextFormField(
+                    maxLines: 4,
+                    controller: absentReason,
+                    keyboardType: TextInputType.text,
+                    style: const TextStyle(
+                      color: Color(0xff303030),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    decoration: const InputDecoration(
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: colorPrimary),
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          width: 1,
+                          color: Color(0xff555555),
+                        ),
                       ),
                     ),
                   ),
-                  child: const Text(
-                    "Submit",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
+                  const SizedBox(
+                    height: 80,
+                  ),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        absentBloc.add(AbsentSuccessEvent(
+                            absentReason: absentReason.text));
+                      },
+                      style: ButtonStyle(
+                        fixedSize:
+                            MaterialStateProperty.all(const Size(180, 50)),
+                        backgroundColor:
+                            MaterialStateProperty.all(colorPrimary),
+                        elevation: MaterialStateProperty.all(0),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        "Submit",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ),
-          ),
-        ],
+            );
+          },
+        ),
       ),
     );
   }

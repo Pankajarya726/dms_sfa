@@ -1,11 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:sfa/listeners/date_change_listener.dart';
-import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
 import 'package:sfa/ui/team_members_absent/bloc/team_members_absent_bloc.dart';
 import 'package:sfa/ui/team_members_absent/bloc/team_members_absent_events.dart';
 import 'package:sfa/ui/team_members_absent/bloc/team_members_absent_states.dart';
@@ -32,7 +29,6 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
   @override
   void initState() {
     widget.onListenerInitialize(this);
-
     super.initState();
   }
 
@@ -418,11 +414,11 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
   }
 
   @override
-  void onFilterSelect(FilterData location, String name, String type) {
+  void onFilterSelect(location, name, type) {
     teamMembersAbsentBloc.add(TeamMembersAbsentSuccessEvent(
         currentDate: date,
         filterName: name,
         locationType: type,
-        location: location.id));
+        location: location != null ? location.id : null));
   }
 }

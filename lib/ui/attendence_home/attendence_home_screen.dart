@@ -1,6 +1,4 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfa/listeners/date_change_listener.dart';
 import 'package:sfa/ui/absent/absent_screen.dart';
@@ -24,8 +22,8 @@ class AttendenceHomeScreen extends StatefulWidget {
 class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
   int currentBottomTabIndex = 0;
   bool isLeader = false;
-  String filterName = "";
-  String locationType = "";
+  String? filterName;
+  String? locationType;
   FilterData? location;
   DateChangeListener? filterChangeListener;
 
@@ -106,7 +104,7 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
                       var status = await SharedPrefrence.getStringPreference(
                           SharedPrefrence.isEnable);
 
-                      if (status == "show") {
+                      if (status != "show") {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -246,9 +244,6 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
       builder: (context) {
         return FilterBottomSheet(
           onSelect: (location, name, type) {
-            this.location = location;
-            filterName = name;
-            locationType = type;
             if (filterChangeListener != null) {
               filterChangeListener!.onFilterSelect(location, name, type);
             }

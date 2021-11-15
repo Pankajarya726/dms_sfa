@@ -4,7 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:sfa/ui/bottom_sheet/filter_bottom_sheet.dart';
+import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
+import 'package:sfa/ui/report_screen/bloc/report_bloc.dart';
+import 'package:sfa/ui/report_screen/bloc/report_event.dart';
+import 'package:sfa/ui/report_screen/bloc/report_state.dart';
 import 'package:sfa/utility/colors.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -16,152 +22,228 @@ class ReportScreen extends StatefulWidget {
 }
 
 class _ReportScreenState extends State<ReportScreen> {
+  ReportBloc reportBloc = ReportBloc();
   bool accordionStatus = false;
-  String startDate = "";
-  String endDate = "";
+  String? initialDate;
+  String? endingDate;
+  String? filterName;
+  String? locationType;
+  FilterData? location;
+  String formatType = "";
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: colorPrimary,
-      appBar: AppBar(
-        title: const Text(
-          "Report",
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        actions: [
-          IconButton(
-            onPressed: () {
-              showFilters();
-            },
-            icon: const Image(
-              height: 23,
-              width: 23,
-              image: AssetImage("assets/filter.png"),
-              fit: BoxFit.cover,
+    return BlocProvider<ReportBloc>(
+      create: (context) => reportBloc,
+      child: Scaffold(
+        backgroundColor: colorPrimary,
+        appBar: AppBar(
+          title: const Text(
+            "Report",
+            style: TextStyle(color: Colors.white),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          actions: [
+            IconButton(
+              onPressed: () {
+                showFilters();
+              },
+              icon: const Image(
+                height: 23,
+                width: 23,
+                image: AssetImage("assets/filter.png"),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ],
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(50),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          showCalander();
+                        },
+                        child: Container(
+                          height: 40,
+                          width: MediaQuery.of(context).size.width * 0.23,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(25),
+                            color: Colors.white,
+                            border: Border.all(color: colorGrayDark),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(
+                                height: 15,
+                                width: 15,
+                                child: Image.asset(
+                                  "assets/custom-calendar.png",
+                                  color: colorGrayDark,
+                                ),
+                              ),
+                              const Text(
+                                "Custom",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    color: colorGrayDark),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          showType();
+                        },
+                        child: Container(
+                          height: 36,
+                          width: MediaQuery.of(context).size.width * 0.26,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(25),
+                            color: Colors.white,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: const [
+                              Text(
+                                "Report Type",
+                                style: TextStyle(
+                                    color: colorGrayDark,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Icon(Icons.arrow_drop_down)
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(50),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
+        ),
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          decoration: const BoxDecoration(
+            color: reportBG,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
+            ),
+          ),
+          child: Center(
+            child: BlocBuilder<ReportBloc, ReportState>(
+              builder: (context, state) {
+                if (state is ReportLoadingState) {
+                  return const CircularProgressIndicator();
+                }
+                if (state is ReportNetworkState) {
+                  return Text(state.message);
+                }
+                if (state is ReportFailureState) {
+                  return Text(state.message);
+                }
+                if (state is ReportSuccessState) {
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: InkWell(
                       onTap: () {
-                        showCalander();
+                        reportBloc.add(GetReportEvent(
+                          initDate: initialDate,
+                          endDate: endingDate,
+                          // filterName: filterName,
+                          // locationType: locationType,
+                          // locationId: location!.id,
+                        ));
                       },
                       child: Container(
-                        height: 40,
-                        width: MediaQuery.of(context).size.width * 0.23,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
-                          color: Colors.white,
-                          border: Border.all(color: colorGrayDark),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        height: 150,
+                        width: 150,
+                        color: colorPrimary,
+                        child: Column(
                           children: [
-                            SizedBox(
-                              height: 15,
-                              width: 15,
+                            Container(
+                              margin:
+                                  const EdgeInsets.only(bottom: 14, top: 30),
+                              height: 45,
+                              width: 45,
                               child: Image.asset(
-                                "assets/custom-calendar.png",
-                                color: colorGrayDark,
+                                "assets/download.png",
+                                fit: BoxFit.cover,
+                                color: Colors.black,
                               ),
                             ),
                             const Text(
-                              "Custom",
+                              "All Staff",
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                  color: colorGrayDark),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        showType();
-                      },
-                      child: Container(
-                        height: 36,
-                        width: MediaQuery.of(context).size.width * 0.26,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
-                          color: Colors.white,
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: const [
-                            Text(
-                              "Report Type",
-                              style: TextStyle(
-                                  color: colorGrayDark,
-                                  fontSize: 12,
+                                  color: Colors.white,
+                                  fontSize: 22,
                                   fontWeight: FontWeight.bold),
                             ),
-                            Icon(Icons.arrow_drop_down)
                           ],
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: const BoxDecoration(
-          color: reportBG,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
-          ),
-        ),
-        child: Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(100),
-            child: Container(
-              height: 150,
-              width: 150,
-              color: colorPrimary,
-              child: Column(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 14, top: 30),
-                    height: 45,
-                    width: 45,
-                    child: Image.asset(
-                      "assets/download.png",
-                      fit: BoxFit.cover,
-                      color: Colors.black,
+                  );
+                }
+
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(100),
+                  child: InkWell(
+                    onTap: () {
+                      reportBloc.add(GetReportEvent(
+                        initDate: initialDate,
+                        endDate: endingDate,
+                        // filterName: filterName,
+                        // locationType: locationType,
+                        // locationId: location!.id,
+                      ));
+                    },
+                    child: Container(
+                      height: 150,
+                      width: 150,
+                      color: colorPrimary,
+                      child: Column(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 14, top: 30),
+                            height: 45,
+                            width: 45,
+                            child: Image.asset(
+                              "assets/download.png",
+                              fit: BoxFit.cover,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const Text(
+                            "All Staff",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const Text(
-                    "All Staff",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
+                );
+              },
             ),
           ),
         ),
@@ -175,166 +257,12 @@ class _ReportScreenState extends State<ReportScreen> {
       backgroundColor: Colors.transparent,
       context: context,
       builder: (context) {
-        return SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
-            child: IntrinsicHeight(
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                decoration: const BoxDecoration(
-                  color: reportBG,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20.0),
-                    topRight: Radius.circular(20.0),
-                  ),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: const Text(
-                          "Filter",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: colorGrayDark,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 15, 20, 10),
-                      child: TextFormField(
-                        style: const TextStyle(
-                            color: colorGrayDark,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17),
-                        autocorrect: true,
-                        enableSuggestions: true,
-                        maxLines: 1,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: colorGrayLite,
-                          hintText: "Name",
-                          prefixText: "   ",
-                          hintStyle: const TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: colorGray),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 2.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 2.0),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
-                      child: TextFormField(
-                        style: const TextStyle(
-                            color: colorGrayDark,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17),
-                        autocorrect: true,
-                        enableSuggestions: true,
-                        maxLines: 1,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: colorGrayLite,
-                          hintText: "Designation",
-                          prefixText: "   ",
-                          hintStyle: const TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: colorGray),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 2.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 2.0),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
-                      child: TextFormField(
-                        style: const TextStyle(
-                            color: colorGrayDark,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17),
-                        autocorrect: true,
-                        enableSuggestions: true,
-                        maxLines: 1,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: colorGrayLite,
-                          hintText: "Location",
-                          prefixText: "   ",
-                          hintStyle: const TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: colorGray),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 2.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 2.0),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 5, 20, 14),
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          height: 50,
-                          width: 180,
-                          decoration: BoxDecoration(
-                            color: colorPrimary,
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "Done",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
+        return FilterBottomSheet(
+          onSelect: (location, name, type) {
+            this.location = location;
+            filterName = name;
+            locationType = type;
+          },
         );
       },
     );
@@ -348,9 +276,8 @@ class _ReportScreenState extends State<ReportScreen> {
       builder: (context) {
         return DateRangePickerView(
           onDateSelect: (startDate, endDate) {
-            startDate = startDate;
-            endDate = endDate;
-            log(startDate + "  " + endDate);
+            initialDate = startDate;
+            endingDate = endDate;
           },
         );
       },
@@ -373,7 +300,10 @@ class _ReportScreenState extends State<ReportScreen> {
               topRight: Radius.circular(20.0),
             ),
           ),
-          child: const RadioListBuilder(),
+          child: RadioListBuilder(onFormatSelect: (format) {
+            formatType = format;
+            log(format);
+          }),
         );
       },
     );
@@ -435,11 +365,11 @@ class _DateRangePickerViewState extends State<DateRangePickerView> {
                 selectionColor: colorPrimary,
                 onSelectionChanged: (dateRage) {
                   if (dateRage.value is PickerDateRange) {
-                    startDate = DateFormat('dd/MM/yyyy')
+                    startDate = DateFormat('yyyy-MM-dd')
                         .format(dateRage.value.startDate)
                         .toString();
 
-                    endDate = DateFormat('dd/MM/yyyy')
+                    endDate = DateFormat('yyyy-MM-dd')
                         .format(
                             dateRage.value.endDate ?? dateRage.value.startDate)
                         .toString();
@@ -487,7 +417,9 @@ class _DateRangePickerViewState extends State<DateRangePickerView> {
 }
 
 class RadioListBuilder extends StatefulWidget {
-  const RadioListBuilder({Key? key}) : super(key: key);
+  final Function(String format) onFormatSelect;
+  const RadioListBuilder({required this.onFormatSelect, Key? key})
+      : super(key: key);
 
   @override
   RadioListBuilderState createState() {
@@ -546,10 +478,11 @@ class RadioListBuilderState extends State<RadioListBuilder> {
               padding: const EdgeInsets.only(left: 24, top: 12),
               child: InkWell(
                 onTap: () {
+                  widget.onFormatSelect(value.toString());
                   Navigator.pop(context);
                 },
                 child: const Text(
-                  "Cancel",
+                  "Done",
                   style: TextStyle(
                       color: colorPrimary,
                       fontSize: 20,

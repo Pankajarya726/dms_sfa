@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -358,7 +360,7 @@ class _PJPScreenState extends State<PJPScreen> {
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom),
             child: IntrinsicHeight(
-              child: status == "show"
+              child: status != "show"
                   ? Container(
                       width: MediaQuery.of(context).size.width,
                       decoration: const BoxDecoration(
@@ -456,7 +458,7 @@ class _PJPScreenState extends State<PJPScreen> {
                                       id: pjpId, description: controller.text));
                                   controller.clear();
 
-                                  pjpBloc.add(PjpEvent(id: "15", month: "11"));
+                                  getPjp();
                                   Navigator.pop(context);
                                 } else {
                                   Fluttertoast.showToast(
@@ -554,7 +556,7 @@ class _PJPScreenState extends State<PJPScreen> {
     );
   }
 
-  Future<void> getPjp() async {
+  getPjp() async {
     var id = await SharedPrefrence.getStringPreference(SharedPrefrence.id);
     pjpBloc.add(PjpEvent(id: id, month: DateFormat("MM").format(dateTime)));
   }

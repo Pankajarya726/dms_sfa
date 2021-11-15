@@ -32,7 +32,8 @@ class EditProfileBloc extends Bloc<EditProfileEvents, EditProfileState> {
         EditProfileFailureState(message: response.message);
       }
     } else {
-      yield EditProfileNetworkState(message: "Network not connected");
+      yield EditProfileNetworkState(
+          message: "Please check your internet connection!");
     }
   }
 
@@ -46,7 +47,8 @@ class EditProfileBloc extends Bloc<EditProfileEvents, EditProfileState> {
         yield GetUserDetailsFailureState(message: response.message);
       }
     } else {
-      yield EditProfileNetworkState(message: "Network not connected");
+      yield EditProfileNetworkState(
+          message: "Please check your internet connection!");
     }
   }
 }

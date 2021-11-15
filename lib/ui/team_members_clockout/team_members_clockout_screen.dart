@@ -1,17 +1,11 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:sfa/listeners/date_change_listener.dart';
-import 'package:sfa/listeners/filter_change_listener.dart';
-import 'package:sfa/ui/attendence_home/attendence_home_screen.dart';
-import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_bloc.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_event.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_state.dart';
-import 'package:sfa/ui/team_members/team_members_screen.dart';
 import 'package:sfa/ui/team_members_clockout/bloc/get_clock_in_data_bloc.dart';
 import 'package:sfa/ui/team_members_clockout/bloc/get_clock_in_data_events.dart';
 import 'package:sfa/ui/team_members_clockout/bloc/get_clock_in_data_states.dart';
@@ -20,7 +14,8 @@ import 'package:sfa/utility/shared_prefrence.dart';
 
 class TeamMembersClockoutScreen extends StatefulWidget {
   final Function(DateChangeListener dateChangeListener) onListenerInitialize;
-  TeamMembersClockoutScreen({required this.onListenerInitialize, Key? key})
+  const TeamMembersClockoutScreen(
+      {required this.onListenerInitialize, Key? key})
       : super(key: key);
 
   @override
@@ -269,11 +264,11 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
   }
 
   @override
-  void onFilterSelect(FilterData location, String name, String type) {
+  void onFilterSelect(location, name, type) {
     getClockInDataBloc.add(GetClockInDataSuccessEvent(
         dateAdded: date,
         filterName: name,
-        location: location.id,
+        location: location != null ? location.id : null,
         locationType: type));
   }
 }
