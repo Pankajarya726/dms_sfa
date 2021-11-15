@@ -7,6 +7,7 @@ import 'package:sfa/ui/attendence_clock_in_out/attendence_clock_in_out.dart';
 import 'package:sfa/ui/bottom_sheet/filter_bottom_sheet.dart';
 import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
 import 'package:sfa/ui/my_profile/my_profile_home.dart';
+import 'package:sfa/ui/pjp_screen/pjp_bloc/pjp_bloc.dart';
 import 'package:sfa/ui/pjp_screen/pjp_screen.dart';
 import 'package:sfa/ui/team_members/team_members_screen.dart';
 import 'package:sfa/utility/colors.dart';
@@ -26,6 +27,7 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
   String? locationType;
   FilterData? location;
   DateChangeListener? filterChangeListener;
+  PjpBloc pjpBloc = PjpBloc();
 
   @override
   void initState() {
@@ -104,11 +106,12 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
                       var status = await SharedPrefrence.getStringPreference(
                           SharedPrefrence.isEnable);
 
-                      if (status != "show") {
+                      if (status == "show") {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const AddPjpScreen()));
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const AddPjpScreen()))
+                            .then((value) => null);
                       } else {
                         Fluttertoast.showToast(msg: "Add PJP is not available");
                       }

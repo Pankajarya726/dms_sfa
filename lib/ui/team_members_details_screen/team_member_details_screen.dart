@@ -5,7 +5,6 @@ import 'package:sfa/ui/team_members_details_screen/team_members_details_bloc/tea
 import 'package:sfa/ui/team_members_details_screen/team_members_details_bloc/team_members_details_event.dart';
 import 'package:sfa/ui/team_members_details_screen/team_members_details_bloc/team_members_details_state.dart';
 import 'package:sfa/utility/colors.dart';
-import 'package:sfa/utility/shared_prefrence.dart';
 
 class TeamMemberDetailsScreen extends StatefulWidget {
   String userId;
@@ -85,8 +84,6 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
                               width: MediaQuery.of(context).size.width * 0.30,
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Image.asset(
                                     "assets/2x/calendar.png",
@@ -101,7 +98,7 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
                                       TeamMembersDetailsState>(
                                     builder: (context, state) {
                                       return Text(
-                                        DateFormat("dd-MMM-yyyy")
+                                        DateFormat("dd MMM yyyy")
                                             .format(dateTime),
                                         style: const TextStyle(
                                             color: Colors.white,

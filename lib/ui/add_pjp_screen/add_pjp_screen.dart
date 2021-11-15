@@ -22,9 +22,16 @@ class _AddPjpScreenState extends State<AddPjpScreen> {
   DateRangePickerController pickerController = DateRangePickerController();
   String startDate = "";
   String endDate = "";
-  String date = DateFormat('EEE dd MMM').format(DateTime.now());
+  DateTime currDate = DateTime.now();
+  String date = "";
   String pjpDate = "";
   DateTime dateTime = DateTime.now();
+  @override
+  void initState() {
+    DateTime showDate = DateTime(dateTime.year, dateTime.month + 1, 1);
+    date = DateFormat('EEE dd MMM').format(showDate);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

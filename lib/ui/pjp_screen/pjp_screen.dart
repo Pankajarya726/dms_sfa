@@ -90,7 +90,6 @@ class _PJPScreenState extends State<PJPScreen> {
                             width: MediaQuery.of(context).size.width * 0.30,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 InkWell(
                                   onTap: () {
@@ -109,7 +108,7 @@ class _PJPScreenState extends State<PJPScreen> {
                                 BlocBuilder<PjpBloc, PjpState>(
                                     builder: (context, state) {
                                   return Text(
-                                    DateFormat("MMM-yyyy").format(dateTime),
+                                    DateFormat("MMM yyyy").format(dateTime),
                                     style: const TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
