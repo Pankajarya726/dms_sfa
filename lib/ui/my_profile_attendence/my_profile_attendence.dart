@@ -66,7 +66,6 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                           width: MediaQuery.of(context).size.width * 0.30,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               Image.asset(
                                 "assets/calendar.png",
@@ -81,7 +80,7 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                                   MyProfileAttendenceState>(
                                 builder: (context, state) {
                                   return Text(
-                                    DateFormat("MMM-yyyy").format(dateTime!),
+                                    DateFormat("MMM yyyy").format(dateTime!),
                                     style: const TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,

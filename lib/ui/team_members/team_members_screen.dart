@@ -48,7 +48,7 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
     ],
   );
 
-  var initialFormat = DateFormat("dd-MMM-yyyy");
+  var initialFormat = DateFormat("dd MMM yyyy");
   var changeFormat = DateFormat("yyyy-MM-dd");
   DateTime? dateTime = DateTime.now();
   String initialDate = "";

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfa/listeners/date_change_listener.dart';
+import 'package:sfa/listeners/pjp_data_changed_listener.dart';
 import 'package:sfa/ui/absent/absent_screen.dart';
 import 'package:sfa/ui/add_pjp_screen/add_pjp_screen.dart';
 import 'package:sfa/ui/attendence_clock_in_out/attendence_clock_in_out.dart';
@@ -26,6 +27,7 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
   String? locationType;
   FilterData? location;
   DateChangeListener? filterChangeListener;
+  PjpDataChangeListener? pageLoadListener;
 
   @override
   void initState() {
@@ -106,9 +108,14 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
 
                       if (status != "show") {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const AddPjpScreen()));
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const AddPjpScreen()))
+                            .then((value) {
+                          if (pageLoadListener != null) {
+                            pageLoadListener!.onPageLoad(true);
+                          }
+                        });
                       } else {
                         Fluttertoast.showToast(msg: "Add PJP is not available");
                       }
@@ -123,7 +130,11 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
           : currentBottomTabIndex == 1
               ? const AbsentScreen()
               : currentBottomTabIndex == 3
-                  ? const PJPScreen()
+                  ? PJPScreen(
+                      pageLoad: (listener) {
+                        pageLoadListener = listener;
+                      },
+                    )
                   : currentBottomTabIndex == 2
                       ? (isLeader == true
                           ? TeamMembersScreen(

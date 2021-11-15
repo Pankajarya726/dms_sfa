@@ -61,7 +61,6 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                             width: MediaQuery.of(context).size.width * 0.30,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 Image.asset(
                                   "assets/calendar.png",
@@ -76,7 +75,7 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                                     MyProfileDetailsState>(
                                   builder: (context, state) {
                                     return Text(
-                                      DateFormat("dd-MMM-yyyy")
+                                      DateFormat("dd MMM yyyy")
                                           .format(dateTime!),
                                       style: const TextStyle(
                                           color: Colors.white,

@@ -134,7 +134,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           addEvent(currPassword.text, newPassword.text,
                               confPassword.text);
                         } else {
-                          Fluttertoast.showToast(msg: "Password cant't match");
+                          Fluttertoast.showToast(msg: "Password can't match");
                         }
                       } else {
                         Fluttertoast.showToast(msg: "Fields can't be empty");

@@ -1,10 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
+import 'package:sfa/listeners/pjp_data_changed_listener.dart';
 import 'package:sfa/ui/pjp_screen/pjp_bloc/pjp_bloc.dart';
 import 'package:sfa/ui/pjp_screen/pjp_bloc/pjp_event.dart';
 import 'package:sfa/ui/pjp_screen/pjp_bloc/pjp_state.dart';
@@ -12,19 +11,22 @@ import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/shared_prefrence.dart';
 
 class PJPScreen extends StatefulWidget {
-  const PJPScreen({Key? key}) : super(key: key);
+  final Function(PjpDataChangeListener isPageLoad) pageLoad;
+  const PJPScreen({Key? key, required this.pageLoad}) : super(key: key);
 
   @override
   _PJPScreenState createState() => _PJPScreenState();
 }
 
-class _PJPScreenState extends State<PJPScreen> {
+class _PJPScreenState extends State<PJPScreen>
+    implements PjpDataChangeListener {
   PjpBloc pjpBloc = PjpBloc();
   TextEditingController controller = TextEditingController();
   DateTime dateTime = DateTime.now();
 
   @override
   initState() {
+    widget.pageLoad(this);
     super.initState();
     getPjp();
   }
@@ -90,7 +92,6 @@ class _PJPScreenState extends State<PJPScreen> {
                             width: MediaQuery.of(context).size.width * 0.30,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 InkWell(
                                   onTap: () {
@@ -109,7 +110,7 @@ class _PJPScreenState extends State<PJPScreen> {
                                 BlocBuilder<PjpBloc, PjpState>(
                                     builder: (context, state) {
                                   return Text(
-                                    DateFormat("MMM-yyyy").format(dateTime),
+                                    DateFormat("MMM yyyy").format(dateTime),
                                     style: const TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -571,5 +572,12 @@ class _PJPScreenState extends State<PJPScreen> {
     ).then((date) {
       pjpBloc.add(DateSelectEvent(dateTime: date!));
     });
+  }
+
+  @override
+  void onPageLoad(bool pageLoad) {
+    if (pageLoad) {
+      getPjp();
+    }
   }
 }

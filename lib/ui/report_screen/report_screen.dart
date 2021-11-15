@@ -5,6 +5,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:sfa/ui/bottom_sheet/filter_bottom_sheet.dart';
 import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
@@ -73,7 +74,7 @@ class _ReportScreenState extends State<ReportScreen> {
                           showCalander();
                         },
                         child: Container(
-                          height: 40,
+                          height: 38,
                           width: MediaQuery.of(context).size.width * 0.23,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(25),
@@ -108,7 +109,7 @@ class _ReportScreenState extends State<ReportScreen> {
                           showType();
                         },
                         child: Container(
-                          height: 36,
+                          height: 34,
                           width: MediaQuery.of(context).size.width * 0.26,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(25),
@@ -116,8 +117,10 @@ class _ReportScreenState extends State<ReportScreen> {
                           ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: const [
+                              SizedBox(
+                                width: 9,
+                              ),
                               Text(
                                 "Report Type",
                                 style: TextStyle(
@@ -157,7 +160,48 @@ class _ReportScreenState extends State<ReportScreen> {
                   return Text(state.message);
                 }
                 if (state is ReportFailureState) {
-                  return Text(state.message);
+                  Fluttertoast.showToast(msg: state.message);
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: InkWell(
+                      onTap: () {
+                        reportBloc.add(GetReportEvent(
+                          initDate: initialDate,
+                          endDate: endingDate,
+                          filterName: filterName,
+                          locationType: locationType,
+                          locationId: location != null ? location!.id : "",
+                        ));
+                      },
+                      child: Container(
+                        height: 150,
+                        width: 150,
+                        color: colorPrimary,
+                        child: Column(
+                          children: [
+                            Container(
+                              margin:
+                                  const EdgeInsets.only(bottom: 14, top: 30),
+                              height: 45,
+                              width: 45,
+                              child: Image.asset(
+                                "assets/download.png",
+                                fit: BoxFit.cover,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const Text(
+                              "All Staff",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
                 }
                 if (state is ReportSuccessState) {
                   return ClipRRect(
@@ -167,9 +211,9 @@ class _ReportScreenState extends State<ReportScreen> {
                         reportBloc.add(GetReportEvent(
                           initDate: initialDate,
                           endDate: endingDate,
-                          // filterName: filterName,
-                          // locationType: locationType,
-                          // locationId: location!.id,
+                          filterName: filterName,
+                          locationType: locationType,
+                          locationId: location!.id,
                         ));
                       },
                       child: Container(
@@ -210,9 +254,9 @@ class _ReportScreenState extends State<ReportScreen> {
                       reportBloc.add(GetReportEvent(
                         initDate: initialDate,
                         endDate: endingDate,
-                        // filterName: filterName,
-                        // locationType: locationType,
-                        // locationId: location!.id,
+                        filterName: filterName,
+                        locationType: locationType,
+                        locationId: location != null ? location!.id : "",
                       ));
                     },
                     child: Container(
