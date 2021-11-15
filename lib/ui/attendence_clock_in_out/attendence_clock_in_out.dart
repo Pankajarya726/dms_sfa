@@ -68,6 +68,8 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   String administrativeArea = "";
   String country = "";
   Location location = Location();
+  String pjpText = "";
+  int workingPlanTextcount = 0;
 
   @override
   void initState() {
@@ -204,7 +206,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
         if (state is PjpByDateSuccessState) {
           if (state.response.data!.isNotEmpty || state.response.data != null) {
             for (int i = 0; i < state.response.data!.length; i++) {
-              String pjpText = state.response.data![i].pjpDescription;
+              pjpText = state.response.data![i].pjpDescription;
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
@@ -310,11 +312,12 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                     const SizedBox(
                       height: 20,
                     ),
-                    pjpTextField(pjpText),
+                    pjpTextField(state.response.data![i].pjpDescription),
                     const SizedBox(
                       height: 20,
                     ),
-                    workingPlanTextField(pjpText),
+                    workingPlanTextField(
+                        state.response.data![i].pjpDescription),
                     const SizedBox(
                       height: 20,
                     ),
@@ -561,8 +564,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    log("controller ${workingPlanController.text}");
-                    log("controller ${workingPlan}");
                     _imgFromCamera(context);
                   },
                   child: image == null
@@ -663,230 +664,231 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
             ),
           );
         }
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                decoration: BoxDecoration(
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.grey,
-                      blurRadius: 10.0, // soften the shadow
-                      spreadRadius: -1.5, //extend the shadow
-                      offset: Offset(
-                        0, // Move to right 10  horizontally
-                        0, // Move to bottom 10 Vertically
-                      ),
-                    )
-                  ],
-                  gradient: workingHrs < 8
-                      ? const LinearGradient(
-                          begin: Alignment.bottomLeft,
-                          end: Alignment.topRight,
-                          colors: [colorPrimary, colorLightPrimary],
-                        )
-                      : const LinearGradient(
-                          begin: Alignment.bottomLeft,
-                          end: Alignment.topRight,
-                          colors: [colorGreen, colorLightGreen],
-                        ),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          "${DateFormat("dd MMM yyyy").format(_ntpTime)} at ${DateFormat().add_jm().format(_ntpTime)}",
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10, bottom: 10),
-                      child: Text(
-                        timeDifference,
-                        style: const TextStyle(
-                          fontSize: 45.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          letterSpacing: 5,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          top: BorderSide(
-                            width: 1,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Flexible(
-                            flex: 1,
-                            child: SizedBox(
-                              width: 15,
-                              child: Image.asset("assets/zone-clock.png"),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          const Flexible(
-                            flex: 20,
-                            child: Text(
-                              "Time zone in Indore, Madhya Pradesh (GMT+5:30)",
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              pjpTextField("PJP not found"),
-              const SizedBox(
-                height: 20,
-              ),
-              workingPlanTextField(""),
-              const SizedBox(
-                height: 20,
-              ),
-              const Text(
-                "Clock In Selfie",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 17,
-                ),
-              ),
-              const SizedBox(
-                height: 12,
-              ),
-              GestureDetector(
-                onTap: () {
-                  _imgFromCamera(context);
-                },
-                child: image == null
-                    ? Container(
-                        width: 150,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(10),
-                          ),
-                          border: Border.all(
-                            color: Colors.grey,
-                            style: BorderStyle.solid,
-                            width: 2,
-                          ),
-                        ),
-                        child: Align(
-                          child: Image.asset(
-                            "assets/camera.png",
-                            width: 50,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      )
-                    : Container(
-                        width: 150,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(10),
-                          ),
-                          border: Border.all(
-                            color: Colors.grey,
-                            style: BorderStyle.solid,
-                            width: 2,
-                          ),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(8),
-                          ),
-                          child: Image.file(
-                            File(image!.path),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    width: 20,
-                    child: Checkbox(
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      shape: const CircleBorder(),
-                      value: gpsLocation,
-                      activeColor: colorPrimary,
-                      checkColor: Colors.white,
-                      onChanged: (value) {
-                        getUserLocation();
-                        setState(() {
-                          gpsLocation = value!;
-                        });
-                      },
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      getUserLocation();
-                      setState(() {
-                        gpsLocation = !gpsLocation;
-                      });
-                    },
-                    child: const Text(
-                      "GPS location",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              clockInButtonWithIcon(context),
-            ],
-          ),
-        );
+        return Container();
+        // return SingleChildScrollView(
+        //   padding: const EdgeInsets.all(10.0),
+        //   child: Column(
+        //     crossAxisAlignment: CrossAxisAlignment.start,
+        //     children: [
+        //       Container(
+        //         width: MediaQuery.of(context).size.width,
+        //         padding: const EdgeInsets.symmetric(vertical: 10),
+        //         decoration: BoxDecoration(
+        //           boxShadow: const [
+        //             BoxShadow(
+        //               color: Colors.grey,
+        //               blurRadius: 10.0, // soften the shadow
+        //               spreadRadius: -1.5, //extend the shadow
+        //               offset: Offset(
+        //                 0, // Move to right 10  horizontally
+        //                 0, // Move to bottom 10 Vertically
+        //               ),
+        //             )
+        //           ],
+        //           gradient: workingHrs < 8
+        //               ? const LinearGradient(
+        //                   begin: Alignment.bottomLeft,
+        //                   end: Alignment.topRight,
+        //                   colors: [colorPrimary, colorLightPrimary],
+        //                 )
+        //               : const LinearGradient(
+        //                   begin: Alignment.bottomLeft,
+        //                   end: Alignment.topRight,
+        //                   colors: [colorGreen, colorLightGreen],
+        //                 ),
+        //           borderRadius: const BorderRadius.all(
+        //             Radius.circular(10),
+        //           ),
+        //         ),
+        //         child: Column(
+        //           children: [
+        //             Padding(
+        //               padding: const EdgeInsets.symmetric(horizontal: 10),
+        //               child: Align(
+        //                 alignment: Alignment.topLeft,
+        //                 child: Text(
+        //                   "${DateFormat("dd MMM yyyy").format(_ntpTime)} at ${DateFormat().add_jm().format(_ntpTime)}",
+        //                   style: const TextStyle(
+        //                     color: Colors.white,
+        //                     fontWeight: FontWeight.bold,
+        //                   ),
+        //                 ),
+        //               ),
+        //             ),
+        //             Padding(
+        //               padding: const EdgeInsets.only(top: 10, bottom: 10),
+        //               child: Text(
+        //                 timeDifference,
+        //                 style: const TextStyle(
+        //                   fontSize: 45.0,
+        //                   fontWeight: FontWeight.bold,
+        //                   color: Colors.white,
+        //                   letterSpacing: 5,
+        //                 ),
+        //               ),
+        //             ),
+        //             Container(
+        //               width: MediaQuery.of(context).size.width,
+        //               padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+        //               decoration: const BoxDecoration(
+        //                 border: Border(
+        //                   top: BorderSide(
+        //                     width: 1,
+        //                     color: Colors.white,
+        //                   ),
+        //                 ),
+        //               ),
+        //               child: Row(
+        //                 children: [
+        //                   Flexible(
+        //                     flex: 1,
+        //                     child: SizedBox(
+        //                       width: 15,
+        //                       child: Image.asset("assets/zone-clock.png"),
+        //                     ),
+        //                   ),
+        //                   const SizedBox(
+        //                     width: 5,
+        //                   ),
+        //                   const Flexible(
+        //                     flex: 20,
+        //                     child: Text(
+        //                       "Time zone in Indore, Madhya Pradesh (GMT+5:30)",
+        //                       overflow: TextOverflow.ellipsis,
+        //                       style: TextStyle(
+        //                         color: Colors.white,
+        //                         fontSize: 13,
+        //                       ),
+        //                     ),
+        //                   ),
+        //                 ],
+        //               ),
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+        //       const SizedBox(
+        //         height: 20,
+        //       ),
+        //       pjpTextField("PJP not found"),
+        //       const SizedBox(
+        //         height: 20,
+        //       ),
+        //       workingPlanTextField(""),
+        //       const SizedBox(
+        //         height: 20,
+        //       ),
+        //       const Text(
+        //         "Clock In Selfie",
+        //         style: TextStyle(
+        //           fontWeight: FontWeight.bold,
+        //           fontSize: 17,
+        //         ),
+        //       ),
+        //       const SizedBox(
+        //         height: 12,
+        //       ),
+        //       GestureDetector(
+        //         onTap: () {
+        //           _imgFromCamera(context);
+        //         },
+        //         child: image == null
+        //             ? Container(
+        //                 width: 150,
+        //                 height: 150,
+        //                 decoration: BoxDecoration(
+        //                   color: Colors.white,
+        //                   borderRadius: const BorderRadius.all(
+        //                     Radius.circular(10),
+        //                   ),
+        //                   border: Border.all(
+        //                     color: Colors.grey,
+        //                     style: BorderStyle.solid,
+        //                     width: 2,
+        //                   ),
+        //                 ),
+        //                 child: Align(
+        //                   child: Image.asset(
+        //                     "assets/camera.png",
+        //                     width: 50,
+        //                     fit: BoxFit.contain,
+        //                   ),
+        //                 ),
+        //               )
+        //             : Container(
+        //                 width: 150,
+        //                 height: 150,
+        //                 decoration: BoxDecoration(
+        //                   borderRadius: const BorderRadius.all(
+        //                     Radius.circular(10),
+        //                   ),
+        //                   border: Border.all(
+        //                     color: Colors.grey,
+        //                     style: BorderStyle.solid,
+        //                     width: 2,
+        //                   ),
+        //                 ),
+        //                 child: ClipRRect(
+        //                   borderRadius: const BorderRadius.all(
+        //                     Radius.circular(8),
+        //                   ),
+        //                   child: Image.file(
+        //                     File(image!.path),
+        //                     fit: BoxFit.cover,
+        //                   ),
+        //                 ),
+        //               ),
+        //       ),
+        //       const SizedBox(
+        //         height: 10,
+        //       ),
+        //       Row(
+        //         mainAxisSize: MainAxisSize.min,
+        //         children: [
+        //           SizedBox(
+        //             width: 20,
+        //             child: Checkbox(
+        //               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        //               shape: const CircleBorder(),
+        //               value: gpsLocation,
+        //               activeColor: colorPrimary,
+        //               checkColor: Colors.white,
+        //               onChanged: (value) {
+        //                 getUserLocation();
+        //                 setState(() {
+        //                   gpsLocation = value!;
+        //                 });
+        //               },
+        //             ),
+        //           ),
+        //           const SizedBox(
+        //             width: 10,
+        //           ),
+        //           InkWell(
+        //             onTap: () {
+        //               getUserLocation();
+        //               setState(() {
+        //                 gpsLocation = !gpsLocation;
+        //               });
+        //             },
+        //             child: const Text(
+        //               "GPS location",
+        //               textAlign: TextAlign.left,
+        //               style: TextStyle(
+        //                 fontWeight: FontWeight.bold,
+        //                 fontSize: 17,
+        //               ),
+        //             ),
+        //           ),
+        //         ],
+        //       ),
+        //       const SizedBox(
+        //         height: 20,
+        //       ),
+        //       clockInButtonWithIcon(context),
+        //     ],
+        //   ),
+        // );
       },
     );
   }
@@ -912,7 +914,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                   ),
                 )
               ],
-              gradient: checkSuccessHours < 8
+              gradient: checkSuccessHours < 1
                   ? const LinearGradient(
                       begin: Alignment.bottomLeft,
                       end: Alignment.topRight,
@@ -1355,8 +1357,12 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   }
 
   Widget workingPlanTextField(workingPlanText) {
-    workingPlanController = TextEditingController(text: workingPlanText);
-
+    if (workingPlanText != "") {
+      if (workingPlanTextcount == 0) {
+        workingPlanController = TextEditingController(text: workingPlanText);
+      }
+    }
+    workingPlanTextcount++;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1502,8 +1508,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   _imgFromCamera(context) async {
     XFile? image = await ImagePicker.platform
         .getImage(source: ImageSource.camera, imageQuality: 50);
-    log("controller ${workingPlanController.text}");
-    log("controller ${workingPlan}");
+
     setState(() {
       this.image = image;
     });
@@ -1583,6 +1588,10 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
 
       //check the timer box color green/red
       checkSuccessHours = int.parse("${Duration(seconds: time).inHours}");
+      if (checkSuccessHours > 0) {
+        setState(() {});
+        print("set state called when checkSuccessHours updated");
+      }
 
       timerController.add(
           "${Duration(seconds: time).inHours}:${Duration(seconds: time).inMinutes % 60}:${Duration(seconds: time).inSeconds % 60}");

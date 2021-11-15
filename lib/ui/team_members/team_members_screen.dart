@@ -54,11 +54,12 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
   String initialDate = "";
   String changeDate = "";
   DateChangeListener? dateListener;
-
   TeamMembersBloc teamMembersBloc = TeamMembersBloc();
   String? locationType;
   String? locationName;
   String? filterName;
+
+
   @override
   void initState() {
     super.initState();
