@@ -914,7 +914,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                   ),
                 )
               ],
-              gradient: checkSuccessHours < 1
+              gradient: checkSuccessHours < 8
                   ? const LinearGradient(
                       begin: Alignment.bottomLeft,
                       end: Alignment.topRight,
@@ -1588,9 +1588,9 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
 
       //check the timer box color green/red
       checkSuccessHours = int.parse("${Duration(seconds: time).inHours}");
-      if (checkSuccessHours > 0) {
+      int checkSec = int.parse("${Duration(seconds: time).inSeconds % 60}");
+      if (checkSuccessHours >= 8 && checkSec == 0) {
         setState(() {});
-        print("set state called when checkSuccessHours updated");
       }
 
       timerController.add(
