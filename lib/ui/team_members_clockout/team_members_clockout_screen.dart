@@ -17,8 +17,9 @@ import 'package:sfa/utility/shared_prefrence.dart';
 
 class TeamMembersClockoutScreen extends StatefulWidget {
   final Function(DateChangeListener dateChangeListener) onListenerInitialize;
+  final String passedDate;
   const TeamMembersClockoutScreen(
-      {required this.onListenerInitialize, Key? key})
+      {required this.passedDate, required this.onListenerInitialize, Key? key})
       : super(key: key);
 
   @override
@@ -30,16 +31,13 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
     implements DateChangeListener {
   bool clockInOut = false;
   GetClockInDataBloc getClockInDataBloc = GetClockInDataBloc();
-  var format = DateFormat("yyyy-MM-dd");
-  DateTime? dateTime = DateTime.now();
   String date = "";
 
   @override
   void initState() {
     widget.onListenerInitialize(this);
-
     super.initState();
-    date = format.format(dateTime!);
+    date = widget.passedDate;
     addClockInData();
   }
 
@@ -256,7 +254,6 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
   }
 
   addClockInData() {
-    // String date = format.format(dateTime!);
     getClockInDataBloc.add(GetClockInDataSuccessEvent(dateAdded: date));
   }
 

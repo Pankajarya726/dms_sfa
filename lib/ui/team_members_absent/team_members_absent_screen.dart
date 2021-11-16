@@ -10,8 +10,9 @@ import 'package:sfa/utility/colors.dart';
 
 class TeamMembersAbsentScreen extends StatefulWidget {
   final Function(DateChangeListener dateChangeListener) onListenerInitialize;
-
-  const TeamMembersAbsentScreen({required this.onListenerInitialize, Key? key})
+  final String passedDate;
+  const TeamMembersAbsentScreen(
+      {required this.passedDate, required this.onListenerInitialize, Key? key})
       : super(key: key);
   @override
   _TeamMembersAbsentScreenState createState() =>
@@ -21,14 +22,12 @@ class TeamMembersAbsentScreen extends StatefulWidget {
 class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
     implements DateChangeListener {
   TeamMembersAbsentBloc teamMembersAbsentBloc = TeamMembersAbsentBloc();
-
-  var format = DateFormat("yyyy-MM-dd");
-  DateTime? dateTime = DateTime.now();
   String date = "";
 
   @override
   void initState() {
     widget.onListenerInitialize(this);
+    date = widget.passedDate;
     super.initState();
   }
 
@@ -40,26 +39,15 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
         listener: (context, state) {
           if (state is AbsentApproveSuccessState) {
             Fluttertoast.showToast(msg: state.successMessage);
-            if (date.isNotEmpty) {
-              teamMembersAbsentBloc
-                  .add(TeamMembersAbsentSuccessEvent(currentDate: date));
-            } else {
-              date = format.format(dateTime!);
-              teamMembersAbsentBloc
-                  .add(TeamMembersAbsentSuccessEvent(currentDate: date));
-            }
+            teamMembersAbsentBloc
+                .add(TeamMembersAbsentSuccessEvent(currentDate: date));
+            Navigator.pop(context);
           }
         },
         builder: (context, state) {
           if (state is TeamMembersAbsentInitialState) {
-            if (date.isNotEmpty) {
-              teamMembersAbsentBloc
-                  .add(TeamMembersAbsentSuccessEvent(currentDate: date));
-            } else {
-              date = format.format(dateTime!);
-              teamMembersAbsentBloc
-                  .add(TeamMembersAbsentSuccessEvent(currentDate: date));
-            }
+            teamMembersAbsentBloc
+                .add(TeamMembersAbsentSuccessEvent(currentDate: date));
 
             return const Center(
               child: CircularProgressIndicator(),

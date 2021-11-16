@@ -4,7 +4,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:sfa/listeners/date_change_listener.dart';
-import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_bloc.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_event.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_state.dart';
@@ -20,9 +19,11 @@ import 'model/get_all_users_status.dart';
 class TeamMembersStatusScreen extends StatefulWidget {
   final Function(DateChangeListener dateChangeListener)
       onDateListenerInitialize;
-
+  final String passedDate;
   const TeamMembersStatusScreen(
-      {required this.onDateListenerInitialize, Key? key})
+      {required this.passedDate,
+      required this.onDateListenerInitialize,
+      Key? key})
       : super(key: key);
 
   @override
@@ -44,7 +45,7 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
   @override
   void initState() {
     widget.onDateListenerInitialize(this);
-
+    date = widget.passedDate;
     super.initState();
   }
 
@@ -55,7 +56,6 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
       child: BlocBuilder<GetAllUserStatusBloc, GetAllUserStatusStates>(
         builder: (context, state) {
           if (state is GetAllUserStatusInitialState) {
-            date = format.format(dateTime!);
             getAllUserStatusBloc
                 .add(GetAllUserStatusInitialEvent(statusDate: date));
             return const Center(

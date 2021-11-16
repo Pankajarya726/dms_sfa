@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:sfa/listeners/date_change_listener.dart';
+import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
 
 import 'package:sfa/ui/report_screen/report_screen.dart';
 import 'package:sfa/ui/team%20members_status/team_members_status_screen.dart';
@@ -23,31 +24,6 @@ class TeamMembersScreen extends StatefulWidget {
 }
 
 class _TeamMembersScreenState extends State<TeamMembersScreen> {
-  final TabBar _tabBar = TabBar(
-    labelColor: Colors.white,
-    indicatorColor: colorPrimary,
-    unselectedLabelColor: colorPrimary,
-    indicator: BoxDecoration(
-      borderRadius: BorderRadius.circular(50),
-      color: colorPrimary,
-    ),
-    labelStyle: const TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.bold,
-    ),
-    tabs: const [
-      Tab(
-        text: "Status",
-      ),
-      Tab(
-        text: "Clock-in",
-      ),
-      Tab(
-        text: "Absent",
-      ),
-    ],
-  );
-
   var initialFormat = DateFormat("dd MMM yyyy");
   var changeFormat = DateFormat("yyyy-MM-dd");
   DateTime? dateTime = DateTime.now();
@@ -59,15 +35,40 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
   String? locationName;
   String? filterName;
 
-
   @override
   void initState() {
     super.initState();
+    changeDate = changeFormat.format(dateTime!);
   }
 
   @override
   Widget build(BuildContext context) {
     initialDate = initialFormat.format(dateTime!);
+    final TabBar _tabBar = TabBar(
+      labelColor: Colors.white,
+      indicatorColor: colorPrimary,
+      unselectedLabelColor: colorPrimary,
+      indicator: BoxDecoration(
+        borderRadius: BorderRadius.circular(50),
+        color: colorPrimary,
+      ),
+      labelStyle: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+      ),
+      tabs: const [
+        Tab(
+          text: "Status",
+        ),
+        Tab(
+          text: "Clock-in",
+        ),
+        Tab(
+          text: "Absent",
+        ),
+      ],
+    );
+
     return DefaultTabController(
       initialIndex: 0,
       length: 3,
@@ -235,19 +236,21 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
         body: TabBarView(
           children: [
             TeamMembersStatusScreen(
+              passedDate: changeDate,
               onDateListenerInitialize: (dateChangeListener) {
                 dateListener = dateChangeListener;
-
                 widget.onFilterListenerInitialize(dateListener!);
               },
             ),
             TeamMembersClockoutScreen(
+              passedDate: changeDate,
               onListenerInitialize: (dateChangeListener) {
                 dateListener = dateChangeListener;
                 widget.onFilterListenerInitialize(dateListener!);
               },
             ),
             TeamMembersAbsentScreen(
+              passedDate: changeDate,
               onListenerInitialize: (dateChangeListener) {
                 dateListener = dateChangeListener;
                 widget.onFilterListenerInitialize(dateListener!);
