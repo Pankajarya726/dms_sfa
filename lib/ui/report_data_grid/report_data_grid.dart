@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -117,29 +118,41 @@ class _ReportDataGridState extends State<ReportDataGrid>
   }
 
   Future<void> exportDataGridToExcel() async {
-    Directory? directory = await getExternalStorageDirectory();
-    String path = directory!.path +
-        DateFormat("/dd MMM yyyy hh mm ss").format(DateTime.now()) +
-        ".xlsx";
-    log(path);
-    final xlsio.Workbook workbook = key.currentState!.exportToExcelWorkbook();
-    final List<int> bytes = workbook.saveAsStream();
-    File(path).writeAsBytes(bytes);
-    workbook.dispose();
+    Directory? directory;
+
+    try {
+      directory = await DownloadsPathProvider.downloadsDirectory;
+      String path = directory!.path +
+          DateFormat("/dd MMM yyyy hh mm ss").format(DateTime.now()) +
+          ".xlsx";
+      log(path);
+      final xlsio.Workbook workbook = key.currentState!.exportToExcelWorkbook();
+      final List<int> bytes = workbook.saveAsStream();
+      File(path).writeAsBytes(bytes);
+      workbook.dispose();
+      Fluttertoast.showToast(msg: "File Saved " + path);
+    } catch (exception) {
+      log(exception.toString());
+    }
   }
 
   Future<void> exportDataGridToPdf() async {
-    Directory? directory = await getExternalStorageDirectory();
-    String path = directory!.path +
-        DateFormat("/dd MMM yyyy hh mm ss").format(DateTime.now()) +
-        ".pdf";
-    log(path);
-    final PdfDocument document =
-        key.currentState!.exportToPdfDocument(fitAllColumnsInOnePage: true);
-
-    final List<int> bytes = document.save();
-    File(path).writeAsBytes(bytes);
-    document.dispose();
+    Directory? directory;
+    try {
+      directory = await DownloadsPathProvider.downloadsDirectory;
+      String path = directory!.path +
+          DateFormat("/dd MMM yyyy hh mm ss").format(DateTime.now()) +
+          ".pdf";
+      log(path);
+      final PdfDocument document =
+          key.currentState!.exportToPdfDocument(fitAllColumnsInOnePage: true);
+      final List<int> bytes = document.save();
+      File(path).writeAsBytes(bytes);
+      document.dispose();
+      Fluttertoast.showToast(msg: "File Saved " + path);
+    } catch (exception) {
+      log(exception.toString());
+    }
   }
 
   @override
