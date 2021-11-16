@@ -8,10 +8,12 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:location/location.dart';
+// import 'package:location/location.dart';
 import 'package:ntp/ntp.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_bloc.dart';
@@ -39,7 +41,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   var timerSubscription;
   Timer? timer;
   LatLng? currenPosition;
-  // Location location = Location();
   XFile? image;
   ClockInOutBloc clockInOutBloc = ClockInOutBloc();
   PjpByDateBloc pjpByDateBloc = PjpByDateBloc();
@@ -67,16 +68,17 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   String locality = "";
   String administrativeArea = "";
   String country = "";
-  Location location = Location();
+  // Location location = Location();
   String pjpText = "";
   int workingPlanTextcount = 0;
+  String timeZone = "";
 
   @override
   void initState() {
     super.initState();
-
     getTime();
     getUserId();
+    getUserLocation();
   }
 
   @override
@@ -140,12 +142,23 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
             clockInOutBloc.add(ClockInOutInitialEvent());
           }
           if (state is ClockInOutLoadingState) {
+            waitForSeconds();
+            getUserPosition();
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
 
           if (state is ClockInOutInitialSuccessState) {
+            getUserPosition();
+            waitForSeconds();
+            timeZone = "Time Zone in " +
+                locality +
+                ", " +
+                administrativeArea +
+                " (GMT+5:30)";
+            print("timezone $timeZone");
+
             if (clockInStatus == 1) {
               return clockInLayout();
             } else {
@@ -193,6 +206,10 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
         },
       ),
     );
+  }
+
+  waitForSeconds() async {
+    await Future.delayed(const Duration(seconds: 5));
   }
 
 // initially we have to view clockOutLayout
@@ -292,16 +309,25 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                                 const SizedBox(
                                   width: 5,
                                 ),
-                                const Flexible(
+                                Flexible(
                                   flex: 20,
-                                  child: Text(
-                                    "Time zone in Indore, Madhya Pradesh (GMT+5:30)",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 13,
-                                    ),
-                                  ),
+                                  child: locality.isNotEmpty
+                                      ? Text(
+                                          timeZone,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13,
+                                          ),
+                                        )
+                                      : const Text(
+                                          "",
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13,
+                                          ),
+                                        ),
                                 ),
                               ],
                             ),
@@ -524,16 +550,25 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                             const SizedBox(
                               width: 5,
                             ),
-                            const Flexible(
+                            Flexible(
                               flex: 20,
-                              child: Text(
-                                "Time zone in Indore, Madhya Pradesh (GMT+5:30)",
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                ),
-                              ),
+                              child: locality.isNotEmpty
+                                  ? Text(
+                                      timeZone,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 13,
+                                      ),
+                                    )
+                                  : const Text(
+                                      "",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 13,
+                                      ),
+                                    ),
                             ),
                           ],
                         ),
@@ -1474,36 +1509,36 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     );
   }
 
-  Future getUserLocation() async {
-    bool _serviceEnabled;
-    PermissionStatus _permissionGranted;
+  // Future getUserLocation() async {
+  //   bool _serviceEnabled;
+  //   PermissionStatus _permissionGranted;
 
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        return;
-      }
-    }
+  //   _serviceEnabled = await location.serviceEnabled();
+  //   if (!_serviceEnabled) {
+  //     _serviceEnabled = await location.requestService();
+  //     if (!_serviceEnabled) {
+  //       return;
+  //     }
+  //   }
 
-    _permissionGranted = await location.hasPermission();
+  //   _permissionGranted = await location.hasPermission();
 
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
+  //   if (_permissionGranted == PermissionStatus.denied) {
+  //     _permissionGranted = await location.requestPermission();
 
-      if (_permissionGranted != PermissionStatus.granted) {
-        return;
-      }
-    }
-    LocationData position = await location.getLocation();
-    setState(() {
-      currenPosition = LatLng(position.latitude!, position.longitude!);
-      latitude = position.latitude!;
-      longitude = position.longitude!;
-      print("lat = $latitude");
-      print("lon = $longitude");
-    });
-  }
+  //     if (_permissionGranted != PermissionStatus.granted) {
+  //       return;
+  //     }
+  //   }
+  //   LocationData position = await location.getLocation();
+  //   setState(() {
+  //     currenPosition = LatLng(position.latitude!, position.longitude!);
+  //     latitude = position.latitude!;
+  //     longitude = position.longitude!;
+  //     print("lat = $latitude");
+  //     print("lon = $longitude");
+  //   });
+  // }
 
   _imgFromCamera(context) async {
     XFile? image = await ImagePicker.platform
@@ -1611,50 +1646,49 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   getUserId() async {
     userId = await SharedPrefrence.getStringPreference("id");
   }
+
+  Future<Position> getUserLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      await Geolocator.getCurrentPosition()
+          .then((value) => clockInOutBloc.add(ClockInOutInitialEvent()));
+      return Future.error('Location services are disabled.');
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+
+    return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+  }
+
+  Future<void> getUserPosition() async {
+    Position position = await getUserLocation();
+    latitude = position.latitude;
+    longitude = position.longitude;
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+
+    Placemark place = placemarks[0];
+    locality = place.locality!;
+    administrativeArea = place.administrativeArea!;
+    country = place.country!;
+  }
 }
-
-// Future<Position> getUserLocation() async {
-  //   bool serviceEnabled;
-  //   LocationPermission permission;
-
-  //   // Test if location services are enabled.
-  //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  //   if (!serviceEnabled) {
-  //     // Location services are not enabled don't continue
-  //     // accessing the position and request users of the
-  //     // App to enable the location services.
-  //     await Geolocator.getCurrentPosition()
-  //         .then((value) => clockInOutBloc.add(ClockInOutInitialEvent()));
-  //     return Future.error('Location services are disabled.');
-  //   }
-  //   permission = await Geolocator.checkPermission();
-  //   if (permission == LocationPermission.denied) {
-  //     permission = await Geolocator.requestPermission();
-  //     if (permission == LocationPermission.denied) {
-  //       return Future.error('Location permissions are denied');
-  //     }
-  //   }
-  //   if (permission == LocationPermission.deniedForever) {
-  //     // Permissions are denied forever, handle appropriately.
-  //     return Future.error(
-  //         'Location permissions are permanently denied, we cannot request permissions.');
-  //   }
-  //   // When we reach here, permissions are granted and we can
-  //   // continue accessing the position of the device.
-
-  //   return await Geolocator.getCurrentPosition(
-  //       desiredAccuracy: LocationAccuracy.high);
-  // }
-
-  // Future<void> getUserPosition() async {
-  //   Position position = await getUserLocation();
-  //   latitude = position.latitude;
-  //   longitude = position.longitude;
-  //   List<Placemark> placemarks =
-  //       await placemarkFromCoordinates(position.latitude, position.longitude);
-
-  //   Placemark place = placemarks[0];
-  //   locality = place.locality!;
-  //   administrativeArea = place.administrativeArea!;
-  //   country = place.country!;
-  // }

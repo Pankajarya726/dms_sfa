@@ -57,6 +57,8 @@ dependencies:
   syncfusion_flutter_datagrid:  
   path_provider:
   downloads_path_provider_28: ^0.1.2 
+  geocoding:
+  geolocator:
 
 
 
