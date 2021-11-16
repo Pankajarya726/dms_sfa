@@ -44,222 +44,232 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             Fluttertoast.showToast(msg: state.message);
           }
         },
-        child: Scaffold(
-          backgroundColor: Colors.white,
-          appBar: AppBar(
-            title: const Text("Edit Profile"),
-            centerTitle: true,
-            backgroundColor: colorPrimary,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.pop(context, true),
+        child: WillPopScope(
+          onWillPop: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context, true);
+            }
+            return Future.value(true);
+          },
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AppBar(
+              title: const Text("Edit Profile"),
+              centerTitle: true,
+              backgroundColor: colorPrimary,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () => Navigator.pop(context, true),
+              ),
             ),
-          ),
-          body: BlocBuilder<EditProfileBloc, EditProfileState>(
-            builder: (context, state) {
-              if (state is EditProfileNetworkState) {
-                return Center(
-                  child: Text(state.message),
-                );
-              }
-              if (state is GetUserDetailsFailureState) {
-                return Center(
-                  child: Text(state.message),
-                );
-              }
-              if (state is EditProfileLoadingState) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (state is GetUserDetailsSucessState) {
-                name.text = state.response.data!.name;
-                emailId.text = state.response.data!.email;
+            body: BlocBuilder<EditProfileBloc, EditProfileState>(
+              builder: (context, state) {
+                if (state is EditProfileNetworkState) {
+                  return Center(
+                    child: Text(state.message),
+                  );
+                }
+                if (state is GetUserDetailsFailureState) {
+                  return Center(
+                    child: Text(state.message),
+                  );
+                }
+                if (state is EditProfileLoadingState) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (state is GetUserDetailsSucessState) {
+                  name.text = state.response.data!.name;
+                  emailId.text = state.response.data!.email;
 
-                return Column(
-                  children: [
-                    Container(
-                      alignment: Alignment.center,
-                      height: 200,
-                      width: MediaQuery.of(context).size.width,
-                      child: Stack(
+                  return Column(
+                    children: [
+                      Container(
                         alignment: Alignment.center,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(100),
-                            child: image == null
-                                ? state.response.data!.image.isNotEmpty
-                                    ? SizedBox(
-                                        width: 120,
-                                        height: 120,
-                                        child: CachedNetworkImage(
-                                          width: 90,
-                                          height: 90,
-                                          fit: BoxFit.cover,
-                                          imageUrl: state.response.data!.image,
-                                          errorWidget: (context, url, error) =>
-                                              Image.asset(
-                                                  "assets/3x/placeholder.png"),
-                                          placeholder: (context, url) =>
-                                              const CircularProgressIndicator(
-                                            color: colorPrimary,
-                                          ),
-                                        ),
-                                      )
-                                    : SizedBox(
-                                        width: 120,
-                                        height: 120,
-                                        child: Image.asset(
-                                            "assets/3x/placeholder.png",
+                        height: 200,
+                        width: MediaQuery.of(context).size.width,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(100),
+                              child: image == null
+                                  ? state.response.data!.image.isNotEmpty
+                                      ? SizedBox(
+                                          width: 120,
+                                          height: 120,
+                                          child: CachedNetworkImage(
                                             width: 90,
                                             height: 90,
-                                            fit: BoxFit.cover),
-                                      )
-                                : SizedBox(
-                                    width: 120,
-                                    height: 120,
-                                    child: Image.file(File(image!.path),
-                                        width: 90,
-                                        height: 90,
-                                        fit: BoxFit.cover)),
-                          ),
-                          Positioned(
-                            top: 14,
-                            right: 0,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(100),
-                              child: InkWell(
-                                onTap: () {
-                                  showPicker();
-                                },
-                                child: Container(
-                                  color: colorPrimary,
-                                  child: Image.asset(
-                                    "assets/edit.png",
-                                    width: 24,
-                                    height: 24,
-                                    fit: BoxFit.cover,
+                                            fit: BoxFit.cover,
+                                            imageUrl:
+                                                state.response.data!.image,
+                                            errorWidget: (context, url,
+                                                    error) =>
+                                                Image.asset(
+                                                    "assets/3x/placeholder.png"),
+                                            placeholder: (context, url) =>
+                                                const CircularProgressIndicator(
+                                              color: colorPrimary,
+                                            ),
+                                          ),
+                                        )
+                                      : SizedBox(
+                                          width: 120,
+                                          height: 120,
+                                          child: Image.asset(
+                                              "assets/3x/placeholder.png",
+                                              width: 90,
+                                              height: 90,
+                                              fit: BoxFit.cover),
+                                        )
+                                  : SizedBox(
+                                      width: 120,
+                                      height: 120,
+                                      child: Image.file(File(image!.path),
+                                          width: 90,
+                                          height: 90,
+                                          fit: BoxFit.cover)),
+                            ),
+                            Positioned(
+                              top: 14,
+                              right: 0,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(100),
+                                child: InkWell(
+                                  onTap: () {
+                                    showPicker();
+                                  },
+                                  child: Container(
+                                    color: colorPrimary,
+                                    child: Image.asset(
+                                      "assets/edit.png",
+                                      width: 24,
+                                      height: 24,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.fromLTRB(20, 10, 20, 20),
-                              child: TextFormField(
-                                controller: name,
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 17),
-                                autocorrect: true,
-                                enableSuggestions: true,
-                                maxLines: 1,
-                                textInputAction: TextInputAction.next,
-                                decoration: const InputDecoration(
-                                  fillColor: colorGrayLite,
-                                  border: InputBorder.none,
-                                  hintText: "Name",
-                                  hintStyle: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black),
-                                  focusedBorder: UnderlineInputBorder(),
-                                  enabledBorder: UnderlineInputBorder(),
-                                ),
-                                onSaved: (value) {
-                                  name.text = value!;
-                                },
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.fromLTRB(20, 10, 20, 50),
-                              child: TextFormField(
-                                controller: emailId,
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 17),
-                                autocorrect: true,
-                                enableSuggestions: true,
-                                maxLines: 1,
-                                textInputAction: TextInputAction.done,
-                                decoration: const InputDecoration(
-                                  fillColor: colorGrayLite,
-                                  border: InputBorder.none,
-                                  hintText: "Email ID",
-                                  hintStyle: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black),
-                                  focusedBorder: UnderlineInputBorder(),
-                                  enabledBorder: UnderlineInputBorder(),
-                                ),
-                                onSaved: (value) {
-                                  emailId.text = value!;
-                                },
-                              ),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                if (name.text.isNotEmpty &&
-                                    emailId.text.isNotEmpty) {
-                                  if (image != null) {
-                                    editProfileBloc.add(
-                                      EditProfileEvent(
-                                          name: name.text,
-                                          emailId: emailId.text,
-                                          imgFile: File(image!.path)),
-                                    );
-                                  } else {
-                                    editProfileBloc.add(
-                                      EditProfileEvent(
-                                        name: name.text,
-                                        emailId: emailId.text,
-                                      ),
-                                    );
-                                  }
-                                } else {
-                                  Fluttertoast.showToast(
-                                      msg: "Fields cant't be empty");
-                                }
-                              },
-                              style: ButtonStyle(
-                                fixedSize: MaterialStateProperty.all(
-                                    const Size(220, 60)),
-                                backgroundColor:
-                                    MaterialStateProperty.all(colorPrimary),
-                                elevation: MaterialStateProperty.all(0),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                ),
-                              ),
-                              child: const Text(
-                                "Update",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
+                            )
                           ],
                         ),
                       ),
-                    )
-                  ],
-                );
-              }
-              return Container();
-            },
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(20, 10, 20, 20),
+                                child: TextFormField(
+                                  controller: name,
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 17),
+                                  autocorrect: true,
+                                  enableSuggestions: true,
+                                  maxLines: 1,
+                                  textInputAction: TextInputAction.next,
+                                  decoration: const InputDecoration(
+                                    fillColor: colorGrayLite,
+                                    border: InputBorder.none,
+                                    hintText: "Name",
+                                    hintStyle: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black),
+                                    focusedBorder: UnderlineInputBorder(),
+                                    enabledBorder: UnderlineInputBorder(),
+                                  ),
+                                  onSaved: (value) {
+                                    name.text = value!;
+                                  },
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(20, 10, 20, 50),
+                                child: TextFormField(
+                                  controller: emailId,
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 17),
+                                  autocorrect: true,
+                                  enableSuggestions: true,
+                                  maxLines: 1,
+                                  textInputAction: TextInputAction.done,
+                                  decoration: const InputDecoration(
+                                    fillColor: colorGrayLite,
+                                    border: InputBorder.none,
+                                    hintText: "Email ID",
+                                    hintStyle: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black),
+                                    focusedBorder: UnderlineInputBorder(),
+                                    enabledBorder: UnderlineInputBorder(),
+                                  ),
+                                  onSaved: (value) {
+                                    emailId.text = value!;
+                                  },
+                                ),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  if (name.text.isNotEmpty &&
+                                      emailId.text.isNotEmpty) {
+                                    if (image != null) {
+                                      editProfileBloc.add(
+                                        EditProfileEvent(
+                                            name: name.text,
+                                            emailId: emailId.text,
+                                            imgFile: File(image!.path)),
+                                      );
+                                    } else {
+                                      editProfileBloc.add(
+                                        EditProfileEvent(
+                                          name: name.text,
+                                          emailId: emailId.text,
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    Fluttertoast.showToast(
+                                        msg: "Fields cant't be empty");
+                                  }
+                                },
+                                style: ButtonStyle(
+                                  fixedSize: MaterialStateProperty.all(
+                                      const Size(220, 60)),
+                                  backgroundColor:
+                                      MaterialStateProperty.all(colorPrimary),
+                                  elevation: MaterialStateProperty.all(0),
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                ),
+                                child: const Text(
+                                  "Update",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  );
+                }
+                return Container();
+              },
+            ),
           ),
         ),
       ),
