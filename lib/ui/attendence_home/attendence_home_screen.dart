@@ -38,93 +38,97 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        backgroundColor: colorPrimary,
-        title: currentBottomTabIndex == 0
-            ? const Text("Attendence")
-            : currentBottomTabIndex == 1
-                ? const Text("Absent")
-                : currentBottomTabIndex == 3
-                    ? const Text("PJP")
-                    : const Text("Team Members"),
-        centerTitle: true,
-        actions: [
-          currentBottomTabIndex == 2
-              ? IconButton(
-                  onPressed: () {
-                    showFilters();
-                  },
-                  icon: const Image(
-                    fit: BoxFit.contain,
-                    width: 23,
-                    image: AssetImage("assets/filter.png"),
-                  ),
-                )
-              : Container(),
-          currentBottomTabIndex == 3
-              ? Container()
-              : IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Image(
-                    fit: BoxFit.contain,
-                    width: 23,
-                    image: AssetImage("assets/home.png"),
-                  ),
-                ),
-          currentBottomTabIndex == 3
-              ? Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: MaterialButton(
-                    height: 30,
-                    padding: const EdgeInsets.symmetric(horizontal: 2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(3),
-                    ),
-                    color: Colors.white70,
-                    elevation: 0,
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          "assets/report.png",
-                          width: 15,
-                          fit: BoxFit.fill,
+      appBar: isLeader != true && currentBottomTabIndex == 2
+          ? null
+          : AppBar(
+              elevation: 0,
+              automaticallyImplyLeading: false,
+              backgroundColor: colorPrimary,
+              title: currentBottomTabIndex == 0
+                  ? const Text("Attendence")
+                  : currentBottomTabIndex == 1
+                      ? const Text("Absent")
+                      : currentBottomTabIndex == 3
+                          ? const Text("PJP")
+                          : const Text("Team Members"),
+              centerTitle: true,
+              actions: [
+                currentBottomTabIndex == 2
+                    ? IconButton(
+                        onPressed: () {
+                          showFilters();
+                        },
+                        icon: const Image(
+                          fit: BoxFit.contain,
+                          width: 23,
+                          image: AssetImage("assets/filter.png"),
                         ),
-                        const SizedBox(width: 10),
-                        const Text(
-                          "Add PJP",
-                          style: TextStyle(
-                            color: Colors.black,
+                      )
+                    : Container(),
+                currentBottomTabIndex == 3
+                    ? Container()
+                    : IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Image(
+                          fit: BoxFit.contain,
+                          width: 23,
+                          image: AssetImage("assets/home.png"),
+                        ),
+                      ),
+                currentBottomTabIndex == 3
+                    ? Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: MaterialButton(
+                          height: 30,
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(3),
                           ),
-                        ),
-                      ],
-                    ),
-                    onPressed: () async {
-                      var status = await SharedPrefrence.getStringPreference(
-                          SharedPrefrence.isEnable);
+                          color: Colors.white70,
+                          elevation: 0,
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                "assets/report.png",
+                                width: 15,
+                                fit: BoxFit.fill,
+                              ),
+                              const SizedBox(width: 10),
+                              const Text(
+                                "Add PJP",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                          onPressed: () async {
+                            var status =
+                                await SharedPrefrence.getStringPreference(
+                                    SharedPrefrence.isEnable);
 
-                      if (status != "show") {
-                        Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const AddPjpScreen()))
-                            .then((value) {
-                          if (pageLoadListener != null) {
-                            pageLoadListener!.onPageLoad(true);
-                          }
-                        });
-                      } else {
-                        Fluttertoast.showToast(msg: "Add PJP is not available");
-                      }
-                    },
-                  ),
-                )
-              : Container(),
-        ],
-      ),
+                            if (status != "show") {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const AddPjpScreen())).then((value) {
+                                if (pageLoadListener != null) {
+                                  pageLoadListener!.onPageLoad(true);
+                                }
+                              });
+                            } else {
+                              Fluttertoast.showToast(
+                                  msg: "Add PJP is not available");
+                            }
+                          },
+                        ),
+                      )
+                    : Container(),
+              ],
+            ),
       body: currentBottomTabIndex == 0
           ? const AttendenceClockInOut()
           : currentBottomTabIndex == 1
