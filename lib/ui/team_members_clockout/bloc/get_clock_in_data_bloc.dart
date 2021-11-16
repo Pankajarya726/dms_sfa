@@ -44,8 +44,6 @@ class GetClockInDataBloc
         yield GetClockInDataFailureState(
             failureMessage: "Please check your internet connection!");
       }
-    } else {
-      yield GetClockInDataFailureState(failureMessage: "Something went wrong!");
     }
   }
 
@@ -53,7 +51,6 @@ class GetClockInDataBloc
       ClockInApproveRejectEvent event) async* {
     ClockInApproveRes response = await repository.clockInApprovReject(
         event.id, event.status, event.approvedBy);
-    log(response.message);
     if (response.success) {
       yield ClockInApproveRejectSuccessState(res: response);
     } else {

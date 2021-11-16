@@ -1,21 +1,37 @@
+import 'dart:developer';
+import 'dart:io';
+import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sfa/listeners/report_type_listener.dart';
+import 'package:syncfusion_flutter_datagrid_export/export.dart';
 import 'package:sfa/ui/report_screen/model/report_model.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart';
+import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xlsio;
 
 class ReportDataGrid extends StatefulWidget {
+  final Function(ReportTypeListener reportTypeListener) onTypeSelect;
   List<ReportData>? reportData;
-  ReportDataGrid({Key? key, required this.reportData}) : super(key: key);
+  ReportDataGrid(
+      {Key? key, required this.reportData, required this.onTypeSelect})
+      : super(key: key);
 
   @override
   _ReportDataGridState createState() => _ReportDataGridState();
 }
 
-class _ReportDataGridState extends State<ReportDataGrid> {
+class _ReportDataGridState extends State<ReportDataGrid>
+    implements ReportTypeListener {
   ReportDataSource? reportDataSource;
+  final GlobalKey<SfDataGridState> key = GlobalKey<SfDataGridState>();
 
   @override
   void initState() {
     reportDataSource = ReportDataSource(reportData: widget.reportData!);
+    widget.onTypeSelect(this);
     super.initState();
   }
 
@@ -23,8 +39,8 @@ class _ReportDataGridState extends State<ReportDataGrid> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SfDataGrid(
+        key: key,
         source: reportDataSource!,
-        allowSorting: true,
         highlightRowOnHover: true,
         columnWidthMode: ColumnWidthMode.auto,
         gridLinesVisibility: GridLinesVisibility.both,
@@ -99,6 +115,54 @@ class _ReportDataGridState extends State<ReportDataGrid> {
         ],
       ),
     );
+  }
+
+  Future<void> exportDataGridToExcel() async {
+    Directory? directory;
+
+    try {
+      directory = await DownloadsPathProvider.downloadsDirectory;
+      String path = directory!.path +
+          DateFormat("/dd MMM yyyy hh mm ss").format(DateTime.now()) +
+          ".xlsx";
+      log(path);
+      final xlsio.Workbook workbook = key.currentState!.exportToExcelWorkbook();
+      final List<int> bytes = workbook.saveAsStream();
+      File(path).writeAsBytes(bytes);
+      workbook.dispose();
+      Fluttertoast.showToast(msg: "File Saved " + path);
+    } catch (exception) {
+      log(exception.toString());
+    }
+  }
+
+  Future<void> exportDataGridToPdf() async {
+    Directory? directory;
+    try {
+      directory = await DownloadsPathProvider.downloadsDirectory;
+      String path = directory!.path +
+          DateFormat("/dd MMM yyyy hh mm ss").format(DateTime.now()) +
+          ".pdf";
+      log(path);
+      final PdfDocument document =
+          key.currentState!.exportToPdfDocument(fitAllColumnsInOnePage: true);
+      final List<int> bytes = document.save();
+      File(path).writeAsBytes(bytes);
+      document.dispose();
+      Fluttertoast.showToast(msg: "File Saved " + path);
+    } catch (exception) {
+      log(exception.toString());
+    }
+  }
+
+  @override
+  void onTypeSelect(String reportType) {
+    if (reportType == "0") {
+      exportDataGridToExcel();
+    }
+    if (reportType == "1") {
+      exportDataGridToPdf();
+    }
   }
 }
 

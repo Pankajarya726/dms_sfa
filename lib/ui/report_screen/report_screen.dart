@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:sfa/listeners/report_type_listener.dart';
 import 'package:sfa/ui/bottom_sheet/filter_bottom_sheet.dart';
 import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
 import 'package:sfa/ui/report_data_grid/report_data_grid.dart';
@@ -32,6 +33,7 @@ class _ReportScreenState extends State<ReportScreen> {
   String? locationType;
   FilterData? location;
   String formatType = "";
+  ReportTypeListener? reportTypeListener;
 
   @override
   Widget build(BuildContext context) {
@@ -204,7 +206,12 @@ class _ReportScreenState extends State<ReportScreen> {
                         topLeft: Radius.circular(20.0),
                         topRight: Radius.circular(20.0),
                       ),
-                      child: ReportDataGrid(reportData: state.response.data));
+                      child: ReportDataGrid(
+                        reportData: state.response.data,
+                        onTypeSelect: (listener) {
+                          reportTypeListener = listener;
+                        },
+                      ));
                 }
 
                 return ClipRRect(
@@ -289,7 +296,7 @@ class _ReportScreenState extends State<ReportScreen> {
       context: context,
       builder: (context) {
         return Container(
-          height: MediaQuery.of(context).size.height * 0.23,
+          height: MediaQuery.of(context).size.height * 0.17,
           width: MediaQuery.of(context).size.width,
           decoration: const BoxDecoration(
             color: reportBG,
@@ -300,11 +307,16 @@ class _ReportScreenState extends State<ReportScreen> {
           ),
           child: RadioListBuilder(onFormatSelect: (format) {
             formatType = format;
-            log(format);
           }),
         );
       },
-    );
+    ).then((value) {
+      if (reportTypeListener != null) {
+        reportTypeListener!.onTypeSelect(formatType);
+      } else {
+        Fluttertoast.showToast(msg: "Press download button first!");
+      }
+    });
   }
 
   getReport() {
@@ -440,67 +452,39 @@ class RadioListBuilderState extends State<RadioListBuilder> {
   List<String> types = ["Excel", "PDF"];
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 145,
-          child: ListView.separated(
-            primary: false,
-            padding: const EdgeInsetsDirectional.only(top: 10),
-            itemBuilder: (context, index) {
-              return RadioListTile(
-                value: index,
-                groupValue: value,
-                onChanged: (currentIndex) {
-                  setState(
-                    () {
-                      value = currentIndex;
-                    },
-                  );
-                },
-                title: Text(
-                  types[index],
-                  style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-              );
-            },
-            itemCount: 2,
-            separatorBuilder: (BuildContext context, int index) {
-              return const Divider(
-                color: Colors.grey,
-                thickness: 1,
-              );
-            },
+    return ListView.separated(
+      primary: false,
+      padding: const EdgeInsetsDirectional.only(top: 10),
+      itemBuilder: (context, index) {
+        return RadioListTile(
+          value: index,
+          groupValue: value,
+          onChanged: (currentIndex) {
+            setState(
+              () {
+                value = currentIndex;
+                widget.onFormatSelect(value.toString());
+                Timer(
+                  const Duration(milliseconds: 200),
+                  () => Navigator.pop(context),
+                );
+              },
+            );
+          },
+          title: Text(
+            types[index],
+            style: const TextStyle(
+                color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
           ),
-        ),
-        Container(
-          height: 1,
+        );
+      },
+      itemCount: 2,
+      separatorBuilder: (BuildContext context, int index) {
+        return const Divider(
           color: Colors.grey,
-        ),
-        Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 24, top: 12),
-              child: InkWell(
-                onTap: () {
-                  widget.onFormatSelect(value.toString());
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  "Done",
-                  style: TextStyle(
-                      color: colorPrimary,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-          ],
-        )
-      ],
+          thickness: 1,
+        );
+      },
     );
   }
 }

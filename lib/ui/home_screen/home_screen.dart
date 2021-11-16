@@ -143,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   MaterialPageRoute(
                                       builder: (context) =>
                                           const SettingsScreen()))
-                              .then((value) => value ? getUserId() : null);
+                              .then((value) => getUserId());
                         },
                         child: const CircleAvatar(
                           radius: 12,
