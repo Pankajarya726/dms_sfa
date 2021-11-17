@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -162,6 +164,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 padding:
                                     const EdgeInsets.fromLTRB(20, 10, 20, 20),
                                 child: TextFormField(
+                                  maxLength: 30,
                                   controller: name,
                                   style: const TextStyle(
                                       color: Colors.black,
@@ -172,6 +175,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   maxLines: 1,
                                   textInputAction: TextInputAction.next,
                                   decoration: const InputDecoration(
+                                    counterText: "",
                                     fillColor: colorGrayLite,
                                     border: InputBorder.none,
                                     hintText: "Name",
@@ -200,6 +204,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   enableSuggestions: true,
                                   maxLines: 1,
                                   textInputAction: TextInputAction.done,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r"[a-zA-Z.@0-9]")),
+                                  ],
                                   decoration: const InputDecoration(
                                     fillColor: colorGrayLite,
                                     border: InputBorder.none,
@@ -220,20 +228,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 onPressed: () {
                                   if (name.text.isNotEmpty &&
                                       emailId.text.isNotEmpty) {
-                                    if (image != null) {
-                                      editProfileBloc.add(
-                                        EditProfileEvent(
+                                    if (EmailValidator.validate(emailId.text) ==
+                                        true) {
+                                      if (image != null) {
+                                        editProfileBloc.add(
+                                          EditProfileEvent(
+                                              name: name.text,
+                                              emailId: emailId.text,
+                                              imgFile: File(image!.path)),
+                                        );
+                                      } else {
+                                        editProfileBloc.add(
+                                          EditProfileEvent(
                                             name: name.text,
                                             emailId: emailId.text,
-                                            imgFile: File(image!.path)),
-                                      );
+                                          ),
+                                        );
+                                      }
                                     } else {
-                                      editProfileBloc.add(
-                                        EditProfileEvent(
-                                          name: name.text,
-                                          emailId: emailId.text,
-                                        ),
-                                      );
+                                      Fluttertoast.showToast(
+                                          msg: "Enter valid email format");
                                     }
                                   } else {
                                     Fluttertoast.showToast(
