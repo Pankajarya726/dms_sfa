@@ -56,7 +56,7 @@ class ApiRepository {
       } else {
         return LoginResponse(
             success: false,
-            message: "Invalid Login details",
+            message: response.statusMessage.toString(),
             id: 0,
             accessToken: "",
             tokenType: "",
@@ -130,7 +130,7 @@ class ApiRepository {
       } else {
         return ClockInResponse(
           success: false,
-          message: "Something went wrong!",
+          message: response.statusMessage.toString(),
         );
       }
     } catch (exception) {

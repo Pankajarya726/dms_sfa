@@ -23,12 +23,14 @@ class LoginResponse {
   String toJson() => json.encode(toMap());
 
   factory LoginResponse.fromMap(Map<String, dynamic> json) => LoginResponse(
-        success: json["success"] == null ? null : json["success"],
-        message: json["message"] == null ? null : json["message"],
-        id: json["id"] == null ? null : json["id"],
-        accessToken: json["access_token"] == null ? null : json["access_token"],
-        tokenType: json["token_type"] == null ? null : json["token_type"],
-        isLeader: json["is_leader"] == null ? null : json["is_leader"],
+        success: json["success"] == null ? "null" : json["success"],
+        message: json["message"] == null ? "" : json["message"].toString(),
+        id: json["id"] == null ? 0 : json["id"],
+        accessToken:
+            json["access_token"] == null ? "" : json["access_token"].toString(),
+        tokenType:
+            json["token_type"] == null ? "" : json["token_type"].toString(),
+        isLeader: json["is_leader"] == null ? false : json["is_leader"],
       );
 
   Map<String, dynamic> toMap() => {

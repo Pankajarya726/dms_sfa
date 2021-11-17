@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfa/ui/forgot_password/bloc/forgot_password_bloc.dart';
@@ -42,7 +43,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               child: Column(
                 children: [
                   Image.asset(
-                    "assets/login-banner.png",
+                    "assets/3x/login-banner.png",
                     fit: BoxFit.contain,
                     width: MediaQuery.of(context).size.width,
                   ),
@@ -59,6 +60,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(25, 50, 25, 10),
                       child: TextFormField(
+                        maxLength: 12,
                         controller: mobileNo,
                         style: const TextStyle(
                             color: Colors.black,
@@ -69,7 +71,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         maxLines: 1,
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
                         decoration: InputDecoration(
+                          counterText: "",
                           prefixText: "   ",
                           filled: true,
                           fillColor: colorGrayLite,

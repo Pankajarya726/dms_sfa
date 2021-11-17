@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sfa/ui/forgot_password/frogot_password.dart';
@@ -45,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Fluttertoast.showToast(msg: state.loginResponse.message.toString());
           }
           if (state is LoginFailureState) {
-            Fluttertoast.showToast(msg: state.message.toString());
+            Fluttertoast.showToast(msg: state.message);
           }
         },
         child: Scaffold(
@@ -63,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: MediaQuery.of(context).size.width,
                     ),
                     const Positioned(
-                      bottom: -6,
+                      bottom: -5,
                       child: Text(
                         "LOGIN",
                         style: TextStyle(
@@ -102,6 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(25, 50, 25, 0),
                     child: TextFormField(
+                      maxLength: 12,
                       controller: mobileNumber,
                       style: const TextStyle(
                           color: Colors.black,
@@ -112,7 +114,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       maxLines: 1,
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
                       decoration: InputDecoration(
+                        counterText: "",
                         prefixText: "   ",
                         filled: true,
                         fillColor: colorGrayLite,
@@ -173,35 +179,35 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 5, 25, 0),
-                    child: Container(
-                      alignment: Alignment.centerRight,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ForgotPasswordScreen()));
-                        },
-                        child: const Text(
-                          "Forgot Password ?",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                // Center(
+                //   child: Padding(
+                //     padding: const EdgeInsets.fromLTRB(0, 5, 25, 0),
+                //     child: Container(
+                //       alignment: Alignment.centerRight,
+                //       child: InkWell(
+                //         onTap: () {
+                //           Navigator.push(
+                //               context,
+                //               MaterialPageRoute(
+                //                   builder: (context) =>
+                //                       const ForgotPasswordScreen()));
+                //         },
+                //         child: const Text(
+                //           "Forgot Password ?",
+                //           style: TextStyle(
+                //               color: Colors.black,
+                //               fontWeight: FontWeight.bold,
+                //               fontSize: 16),
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 BlocBuilder<LoginBloc, LoginState>(
                   builder: (context, state) {
                     return Center(
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 50, 0, 20),
+                        padding: const EdgeInsets.fromLTRB(0, 50, 0, 30),
                         child: ElevatedButton(
                           onPressed: () {
                             sendLoginData(context, mobileNumber.text.toString(),
