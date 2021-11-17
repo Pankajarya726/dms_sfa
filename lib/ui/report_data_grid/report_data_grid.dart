@@ -41,6 +41,7 @@ class _ReportDataGridState extends State<ReportDataGrid>
         key: key,
         source: reportDataSource!,
         highlightRowOnHover: true,
+        isScrollbarAlwaysShown: false,
         columnWidthMode: ColumnWidthMode.auto,
         gridLinesVisibility: GridLinesVisibility.both,
         headerGridLinesVisibility: GridLinesVisibility.both,

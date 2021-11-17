@@ -120,7 +120,11 @@ class _SettingScreenState extends State<SettingsScreen> {
                                                   fontWeight: FontWeight.w600),
                                             );
                                     }
-                                    return Container();
+                                    return const Text("Username",
+                                        style: TextStyle(
+                                            color: Color(0xfff24b55),
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w600));
                                   }),
                                   const SizedBox(
                                     height: 10,
@@ -142,7 +146,11 @@ class _SettingScreenState extends State<SettingsScreen> {
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w600));
                                     }
-                                    return Container();
+                                    return const Text("Designation",
+                                        style: TextStyle(
+                                            color: Color(0xff303030),
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600));
                                   }),
                                 ],
                               ),
@@ -192,7 +200,11 @@ class _SettingScreenState extends State<SettingsScreen> {
                                               height: 90,
                                               fit: BoxFit.cover);
                                     }
-                                    return Container();
+                                    return Image.asset(
+                                        "assets/3x/placeholder.png",
+                                        width: 90,
+                                        height: 90,
+                                        fit: BoxFit.cover);
                                   }),
                                 ),
                               ),
