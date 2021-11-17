@@ -110,6 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontWeight: FontWeight.bold,
                           fontSize: 17),
                       autocorrect: true,
+                      cursorColor: colorPrimary,
                       enableSuggestions: true,
                       maxLines: 1,
                       textInputAction: TextInputAction.next,

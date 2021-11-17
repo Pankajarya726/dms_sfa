@@ -146,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               .then((value) => getUserId());
                         },
                         child: const CircleAvatar(
-                          radius: 12,
+                          radius: 14,
                           backgroundImage: AssetImage("assets/setting.png"),
                         ),
                       ),

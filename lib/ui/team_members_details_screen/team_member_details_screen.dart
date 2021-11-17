@@ -299,7 +299,7 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
                                       padding: const EdgeInsets.fromLTRB(
                                           16, 14, 0, 4),
                                       child: const Text(
-                                        "Clock-in Salfie",
+                                        "Clock-in Selfie",
                                         style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 18,
@@ -352,7 +352,7 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
                                       padding: const EdgeInsets.fromLTRB(
                                           16, 14, 0, 4),
                                       child: const Text(
-                                        "Clock-out Salfie",
+                                        "Clock-out Selfie",
                                         style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 18,
