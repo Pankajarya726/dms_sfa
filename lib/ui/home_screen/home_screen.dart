@@ -58,14 +58,15 @@ class _HomeScreenState extends State<HomeScreen> {
           body: Column(
             children: [
               Container(
+                padding: const EdgeInsets.only(top: 35),
                 alignment: Alignment.center,
                 color: colorPrimary,
-                padding: const EdgeInsets.only(top: 35),
-                height: 120,
+                height: 130,
                 width: MediaQuery.of(context).size.width,
                 child: BlocBuilder<HomeScreenBloc, HomeScreenState>(
                   builder: (context, state) {
                     return ListTile(
+                      horizontalTitleGap: 18,
                       onTap: () {
                         Navigator.push(
                             context,
@@ -76,8 +77,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           ? ClipRRect(
                               borderRadius: BorderRadius.circular(50),
                               child: CachedNetworkImage(
-                                width: 58,
-                                height: 58,
+                                width: 56,
+                                height: 56,
                                 fit: BoxFit.cover,
                                 imageUrl: imageUrl,
                                 errorWidget: (context, url, error) =>
@@ -89,8 +90,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             )
                           : Container(
-                              width: 58.0,
-                              height: 58.0,
+                              width: 56,
+                              height: 56,
                               decoration: const BoxDecoration(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(50.0)),
@@ -121,15 +122,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ? Text(
                                       "  " + designation + "  ",
                                       style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
                                         color: Colors.white,
-                                        fontSize: 16,
+                                        fontSize: 15,
                                       ),
                                     )
                                   : const Text(
                                       "  Designation  ",
                                       style: TextStyle(
+                                        fontWeight: FontWeight.w500,
                                         color: Colors.white,
-                                        fontSize: 16,
+                                        fontSize: 15,
                                       ),
                                     ),
                             ),

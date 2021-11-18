@@ -146,7 +146,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   child: Container(
                                     color: colorPrimary,
                                     child: Image.asset(
-                                      "assets/edit.png",
+                                      "assets/e-profile.png",
                                       width: 24,
                                       height: 24,
                                       fit: BoxFit.cover,
