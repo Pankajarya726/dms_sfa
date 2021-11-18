@@ -30,6 +30,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             currPassword.clear();
             newPassword.clear();
             confPassword.clear();
+            Navigator.pop(context, true);
           }
           if (state is ChangePasswordFailureState) {
             Fluttertoast.showToast(msg: state.message);

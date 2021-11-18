@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sfa/ui/edit_profile/edit_profile_bloc/edit_profie_bloc.dart';
 import 'package:sfa/ui/edit_profile/edit_profile_bloc/edit_profile_event.dart';
 import 'package:sfa/ui/edit_profile/edit_profile_bloc/edit_profile_state.dart';
+import 'package:sfa/ui/settings_screen/settings_screen.dart';
 import 'package:sfa/utility/colors.dart';
 import 'package:sfa/utility/shared_prefrence.dart';
 
@@ -41,6 +42,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           if (state is EditProfileSuccessState) {
             loadUserDetails();
             Fluttertoast.showToast(msg: state.response.message);
+            Navigator.pop(context, true);
           }
           if (state is EditProfileFailureState) {
             Fluttertoast.showToast(msg: state.message);
