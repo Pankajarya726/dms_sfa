@@ -60,6 +60,7 @@ dependencies:
   geocoding:
   geolocator:
 
+  email_validator:
 
 
 dev_dependencies:

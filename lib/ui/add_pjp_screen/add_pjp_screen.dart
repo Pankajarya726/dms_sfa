@@ -28,7 +28,8 @@ class _AddPjpScreenState extends State<AddPjpScreen> {
   DateTime dateTime = DateTime.now();
   @override
   void initState() {
-    DateTime showDate = DateTime(dateTime.year, dateTime.month + 1, 1);
+    // DateTime showDate = DateTime(dateTime.year, dateTime.month + 1, 1);
+    DateTime showDate = DateTime(dateTime.year, dateTime.month, 1);
     date = DateFormat('EEE dd MMM').format(showDate);
     super.initState();
   }
@@ -93,8 +94,11 @@ class _AddPjpScreenState extends State<AddPjpScreen> {
                           controller: pickerController,
                           backgroundColor: colorPrimary,
                           selectionMode: DateRangePickerSelectionMode.single,
-                          minDate:
-                              DateTime(dateTime.year, dateTime.month + 1, 1),
+                          // minDate:
+                          //     DateTime(dateTime.year, dateTime.month + 1, 1),
+                          // maxDate:
+                          //     DateTime(dateTime.year, dateTime.month + 2, -0),
+                          minDate: DateTime(dateTime.year, dateTime.month, 1),
                           maxDate:
                               DateTime(dateTime.year, dateTime.month + 2, -0),
                           selectionTextStyle:

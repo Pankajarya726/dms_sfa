@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -89,6 +87,7 @@ class _TeamMemberTrackScreenState extends State<TeamMemberTrackScreen> {
                       double.parse(state.response.data![0].longitude));
 
                   return GoogleMap(
+                    tiltGesturesEnabled: true,
                     mapType: MapType.normal,
                     compassEnabled: true,
                     zoomControlsEnabled: true,

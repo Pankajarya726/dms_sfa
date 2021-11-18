@@ -1,11 +1,9 @@
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-
 import 'package:sfa/listeners/report_type_listener.dart';
 import 'package:syncfusion_flutter_datagrid_export/export.dart';
 import 'package:sfa/ui/report_screen/model/report_model.dart';
@@ -43,6 +41,7 @@ class _ReportDataGridState extends State<ReportDataGrid>
         key: key,
         source: reportDataSource!,
         highlightRowOnHover: true,
+        isScrollbarAlwaysShown: false,
         columnWidthMode: ColumnWidthMode.auto,
         gridLinesVisibility: GridLinesVisibility.both,
         headerGridLinesVisibility: GridLinesVisibility.both,

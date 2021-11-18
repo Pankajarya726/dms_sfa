@@ -41,6 +41,9 @@ class _SplashScreenState extends State<SplashScreen> {
           if (state is SplashFailureState) {
             Fluttertoast.showToast(msg: "Something went wrong!");
           }
+          if (state is SplashNetworkState) {
+            logoutDialog(context);
+          }
         },
         child: Scaffold(
           backgroundColor: colorPrimary,
@@ -83,35 +86,31 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   getLogin(String appVersio) async {
-    if (await Network.isConnected()) {
-      PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      bool login =
-          await SharedPrefrence.getBooleanPreference(SharedPrefrence.login);
-      if (appVersio == packageInfo.version) {
-        if (login == true) {
-          Timer(
-            const Duration(seconds: 3),
-            () => Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (BuildContext context) => const HomeScreen(),
-              ),
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    bool login =
+        await SharedPrefrence.getBooleanPreference(SharedPrefrence.login);
+    if (appVersio == packageInfo.version) {
+      if (login == true) {
+        Timer(
+          const Duration(seconds: 3),
+          () => Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (BuildContext context) => const HomeScreen(),
             ),
-          );
-        } else {
-          Timer(
-            const Duration(seconds: 3),
-            () => Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (BuildContext context) => const LoginScreen(),
-              ),
-            ),
-          );
-        }
+          ),
+        );
       } else {
-        Fluttertoast.showToast(msg: "Please update the application");
+        Timer(
+          const Duration(seconds: 3),
+          () => Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (BuildContext context) => const LoginScreen(),
+            ),
+          ),
+        );
       }
     } else {
-      Fluttertoast.showToast(msg: "Please check your internet connection!");
+      Fluttertoast.showToast(msg: "Please update the application");
     }
   }
 
@@ -126,5 +125,39 @@ class _SplashScreenState extends State<SplashScreen> {
       splashBloc
           .add(SplashEvent(appVersion: packageInfo.version, deviceType: "2"));
     }
+  }
+
+  logoutDialog(context) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.fromLTRB(25, 10, 25, 10),
+          title: const Text("Something Wrong!",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600)),
+          content: const Text("Please check your internet and try again.",
+              style: TextStyle(
+                  color: Color.fromRGBO(85, 85, 85, 1),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500)),
+          actions: [
+            MaterialButton(
+              child: const Text("Retry",
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: Color(0xfff4511e),
+                      fontWeight: FontWeight.w600)),
+              onPressed: () {
+                addEvent();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
