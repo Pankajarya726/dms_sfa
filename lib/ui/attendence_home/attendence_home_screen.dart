@@ -45,7 +45,7 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
               automaticallyImplyLeading: false,
               backgroundColor: colorPrimary,
               title: currentBottomTabIndex == 0
-                  ? const Text("Attendence")
+                  ? const Text("Attendance")
                   : currentBottomTabIndex == 1
                       ? const Text("Absent")
                       : currentBottomTabIndex == 3

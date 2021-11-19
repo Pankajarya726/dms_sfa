@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sfa/listeners/date_change_listener.dart';
 import 'package:sfa/ui/team_members_absent/bloc/team_members_absent_bloc.dart';
 import 'package:sfa/ui/team_members_absent/bloc/team_members_absent_events.dart';
@@ -23,6 +23,8 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
     implements DateChangeListener {
   TeamMembersAbsentBloc teamMembersAbsentBloc = TeamMembersAbsentBloc();
   String date = "";
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -35,133 +37,144 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => teamMembersAbsentBloc,
-      child: BlocConsumer<TeamMembersAbsentBloc, TeamMembersAbsentStates>(
-        listener: (context, state) {
-          if (state is AbsentApproveSuccessState) {
-            Fluttertoast.showToast(msg: state.successMessage);
-            teamMembersAbsentBloc
-                .add(TeamMembersAbsentSuccessEvent(currentDate: date));
-            Navigator.pop(context);
-          }
-        },
-        builder: (context, state) {
-          if (state is TeamMembersAbsentInitialState) {
-            teamMembersAbsentBloc
-                .add(TeamMembersAbsentSuccessEvent(currentDate: date));
+      child: Scaffold(
+        body: SmartRefresher(
+          primary: false,
+          controller: refreshController,
+          onRefresh: onRefresh,
+          enablePullDown: true,
+          child: BlocConsumer<TeamMembersAbsentBloc, TeamMembersAbsentStates>(
+            listener: (context, state) {
+              if (state is AbsentApproveSuccessState) {
+                Fluttertoast.showToast(msg: state.successMessage);
+                teamMembersAbsentBloc
+                    .add(TeamMembersAbsentSuccessEvent(currentDate: date));
+                Navigator.pop(context);
+              }
+            },
+            builder: (context, state) {
+              if (state is TeamMembersAbsentInitialState) {
+                teamMembersAbsentBloc
+                    .add(TeamMembersAbsentSuccessEvent(currentDate: date));
 
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (state is TeamMembersAbsentLoadingState) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (state is TeamMembersAbsentSuccessState) {
-            return ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              itemCount: state.getAbsentDataResponse.data!.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 15),
-                  padding: const EdgeInsets.fromLTRB(15, 12, 0, 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: -8,
-                        blurRadius: 7,
-                        offset:
-                            const Offset(0, 3), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(0),
-                    dense: true,
-                    onTap: () {},
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          state.getAbsentDataResponse.data![index].name,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (state is TeamMembersAbsentLoadingState) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (state is TeamMembersAbsentSuccessState) {
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  itemCount: state.getAbsentDataResponse.data!.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 15),
+                      padding: const EdgeInsets.fromLTRB(15, 12, 0, 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: -8,
+                            blurRadius: 7,
+                            offset: const Offset(
+                                0, 3), // changes position of shadow
                           ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          state.getAbsentDataResponse.data![index].absentReason,
-                          style: const TextStyle(
-                            overflow: TextOverflow.ellipsis,
-                            color: colorLightBlack,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                    trailing: IntrinsicWidth(
-                      child: Row(
-                        children: [
-                          buttonApprove(
-                            state.getAbsentDataResponse.data![index].userId
-                                .toString(),
-                            state.getAbsentDataResponse.data![index].id
-                                .toString(),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          buttonReject(
-                            state.getAbsentDataResponse.data![index].userId
-                                .toString(),
-                            state.getAbsentDataResponse.data![index].id
-                                .toString(),
-                          ),
-                          SizedBox(
-                            width: 40,
-                            child: IconButton(
-                              onPressed: () {
-                                showAbsentBottomSheet(
-                                  state.getAbsentDataResponse.data![index].name,
-                                  state.getAbsentDataResponse.data![index]
-                                      .absentReason,
-                                  state
-                                      .getAbsentDataResponse.data![index].userId
-                                      .toString(),
-                                  state.getAbsentDataResponse.data![index].id
-                                      .toString(),
-                                );
-                              },
-                              icon: const Icon(
-                                Icons.more_vert,
-                                color: Colors.black,
-                                size: 27,
-                              ),
-                            ),
-                          )
                         ],
                       ),
-                    ),
-                  ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.all(0),
+                        dense: true,
+                        onTap: () {},
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              state.getAbsentDataResponse.data![index].name,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              state.getAbsentDataResponse.data![index]
+                                  .absentReason,
+                              style: const TextStyle(
+                                overflow: TextOverflow.ellipsis,
+                                color: colorLightBlack,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                        trailing: IntrinsicWidth(
+                          child: Row(
+                            children: [
+                              buttonApprove(
+                                state.getAbsentDataResponse.data![index].userId
+                                    .toString(),
+                                state.getAbsentDataResponse.data![index].id
+                                    .toString(),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              buttonReject(
+                                state.getAbsentDataResponse.data![index].userId
+                                    .toString(),
+                                state.getAbsentDataResponse.data![index].id
+                                    .toString(),
+                              ),
+                              SizedBox(
+                                width: 40,
+                                child: IconButton(
+                                  onPressed: () {
+                                    showAbsentBottomSheet(
+                                      state.getAbsentDataResponse.data![index]
+                                          .name,
+                                      state.getAbsentDataResponse.data![index]
+                                          .absentReason,
+                                      state.getAbsentDataResponse.data![index]
+                                          .userId
+                                          .toString(),
+                                      state
+                                          .getAbsentDataResponse.data![index].id
+                                          .toString(),
+                                    );
+                                  },
+                                  icon: const Icon(
+                                    Icons.more_vert,
+                                    color: Colors.black,
+                                    size: 27,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 );
-              },
-            );
-          }
-          if (state is TeamMembersAbsentFailureState) {
-            return Center(
-              child: Text(state.failureMessage),
-            );
-          }
-          return Container();
-        },
+              }
+              if (state is TeamMembersAbsentFailureState) {
+                return Center(
+                  child: Text(state.failureMessage),
+                );
+              }
+              return Container();
+            },
+          ),
+        ),
       ),
     );
   }
@@ -408,5 +421,10 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
         filterName: name,
         locationType: type,
         location: location != null ? location.id : null));
+  }
+
+  void onRefresh() {
+    teamMembersAbsentBloc.add(TeamMembersAbsentSuccessEvent(currentDate: date));
+    refreshController.refreshCompleted();
   }
 }

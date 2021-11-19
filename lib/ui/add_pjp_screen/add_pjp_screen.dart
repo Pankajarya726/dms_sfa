@@ -42,6 +42,7 @@ class _AddPjpScreenState extends State<AddPjpScreen> {
         listener: (context, state) {
           if (state is AddPJPSuccessState) {
             Fluttertoast.showToast(msg: state.response.message.toString());
+            getDescription.clear();
           }
           if (state is AddPJPFailureState) {
             Fluttertoast.showToast(msg: state.messages);
@@ -164,51 +165,44 @@ class _AddPjpScreenState extends State<AddPjpScreen> {
                                 ),
                               ),
                             ),
-                            BlocBuilder<AddPJPBloc, AddPJPState>(
-                              builder: (context, state) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 50),
-                                  child: ElevatedButton(
-                                    onPressed: () async {
-                                      String id = await SharedPrefrence
-                                          .getStringPreference(
-                                              SharedPrefrence.id);
-                                      if (getDescription.text.isNotEmpty) {
-                                        addPJPBloc.add(AddPJPEvent(
-                                            id: id,
-                                            date: pjpDate,
-                                            description: getDescription.text));
-                                        getDescription.clear();
-                                      } else {
-                                        Fluttertoast.showToast(
-                                            msg: "Field can't be empty");
-                                      }
-                                    },
-                                    style: ButtonStyle(
-                                      fixedSize: MaterialStateProperty.all(
-                                        const Size(220, 60),
-                                      ),
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              colorPrimary),
-                                      elevation: MaterialStateProperty.all(0),
-                                      shape: MaterialStateProperty.all(
-                                        RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(30),
-                                        ),
-                                      ),
-                                    ),
-                                    child: const Text(
-                                      "Done",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 50),
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  String id =
+                                      await SharedPrefrence.getStringPreference(
+                                          SharedPrefrence.id);
+                                  if (getDescription.text.isNotEmpty) {
+                                    addPJPBloc.add(AddPJPEvent(
+                                        id: id,
+                                        date: pjpDate,
+                                        description: getDescription.text));
+                                  } else {
+                                    Fluttertoast.showToast(
+                                        msg: "Field can't be empty");
+                                  }
+                                },
+                                style: ButtonStyle(
+                                  fixedSize: MaterialStateProperty.all(
+                                    const Size(220, 60),
+                                  ),
+                                  backgroundColor:
+                                      MaterialStateProperty.all(colorPrimary),
+                                  elevation: MaterialStateProperty.all(0),
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
                                     ),
                                   ),
-                                );
-                              },
+                                ),
+                                child: const Text(
+                                  "Done",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
                             ),
                           ],
                         ),

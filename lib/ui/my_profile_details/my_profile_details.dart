@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sfa/ui/my_profile_details/my_profile_details_bloc/my_profile_details_bloc.dart';
 import 'package:sfa/ui/my_profile_details/my_profile_details_bloc/my_profile_details_event.dart';
 import 'package:sfa/ui/my_profile_details/my_profile_details_bloc/my_profile_details_state.dart';
@@ -17,6 +18,8 @@ class MyProfileDetails extends StatefulWidget {
 class _MyProfileDetailsState extends State<MyProfileDetails> {
   MyProfileDetailsBloc myProfileDetailsBloc = MyProfileDetailsBloc();
   DateTime? dateTime = DateTime.now();
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,11 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
       create: (context) => myProfileDetailsBloc,
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: IntrinsicHeight(
+        body: SmartRefresher(
+          primary: false,
+          controller: refreshController,
+          onRefresh: onRefresh,
+          enablePullDown: true,
           child: Container(
             width: MediaQuery.of(context).size.width,
             decoration: const BoxDecoration(
@@ -426,5 +433,11 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
 
     myProfileDetailsBloc
         .add(MyProfileDetailsSelectDateEvent(dateTime: dateTime!));
+  }
+
+  void onRefresh() {
+    myProfileDetailsBloc
+        .add(MyProfileDetailsSelectDateEvent(dateTime: dateTime!));
+    refreshController.refreshCompleted();
   }
 }
