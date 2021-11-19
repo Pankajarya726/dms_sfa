@@ -82,19 +82,23 @@ class _AddPjpScreenState extends State<AddPjpScreen> {
                           selectionRadius: 20,
                           monthViewSettings:
                               const DateRangePickerMonthViewSettings(
-                                  viewHeaderStyle:
-                                      DateRangePickerViewHeaderStyle(
-                                          textStyle:
-                                              TextStyle(color: Colors.white))),
+                            weekendDays: [7],
+                            viewHeaderStyle: DateRangePickerViewHeaderStyle(
+                              textStyle: TextStyle(color: Colors.white),
+                            ),
+                          ),
                           monthCellStyle: const DateRangePickerMonthCellStyle(
+                            disabledDatesDecoration:
+                                BoxDecoration(color: Colors.grey),
                             todayTextStyle: TextStyle(color: Colors.white),
                             disabledDatesTextStyle:
-                                TextStyle(color: Colors.white54),
+                                TextStyle(color: colorGrayLite),
                             textStyle: TextStyle(color: Colors.white),
                           ),
                           controller: pickerController,
                           backgroundColor: colorPrimary,
                           selectionMode: DateRangePickerSelectionMode.single,
+
                           // minDate:
                           //     DateTime(dateTime.year, dateTime.month + 1, 1),
                           // maxDate:
@@ -219,8 +223,14 @@ class _AddPjpScreenState extends State<AddPjpScreen> {
   }
 
   onSelected(DateRangePickerSelectionChangedArgs args) {
-    date = DateFormat('EEE dd MMM').format(args.value);
-    pjpDate = DateFormat('yyyy-MM-dd').format(args.value);
+    DateTime d = args.value;
+    if (d.weekday == 7) {
+      pickerController.selectedDate = DateTime.parse(pjpDate);
+    } else {
+      date = DateFormat('EEE dd MMM').format(args.value);
+      pjpDate = DateFormat('yyyy-MM-dd').format(args.value);
+      pickerController.selectedDate = d;
+    }
     setState(() {});
   }
 }
