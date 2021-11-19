@@ -55,3 +55,16 @@ class ClockInOutGetPjpSuccessEvent extends ClockInOutEvents {
   @override
   List<Object?> get props => [];
 }
+
+class ClockInOutGetUserLocationEvent extends ClockInOutEvents {
+  @override
+  List<Object?> get props => [];
+}
+
+class PjpByDateEvent extends ClockInOutEvents {
+  final String userId;
+  final String date;
+  PjpByDateEvent({required this.date, required this.userId});
+  @override
+  List<Object?> get props => [date, userId];
+}

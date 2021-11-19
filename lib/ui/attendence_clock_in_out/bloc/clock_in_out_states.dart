@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:sfa/ui/home_screen/home_screen_model/home_screen_model.dart';
+import 'package:sfa/ui/pjp_by_date/model/pjp_by_date_model.dart';
 import 'package:sfa/ui/pjp_screen/pjp_model/pjp_model.dart';
 
 class ClockInOutStates extends Equatable {
@@ -82,4 +83,35 @@ class ClockInOutGetPjpFailureState extends ClockInOutStates {
   ClockInOutGetPjpFailureState({required this.failureMessage});
   @override
   List<Object?> get props => [failureMessage];
+}
+
+class ClockInOutGetUserLocationState extends ClockInOutStates {
+  final String timeZone;
+  final double latitude;
+  final double longitude;
+  ClockInOutGetUserLocationState({
+    required this.timeZone,
+    required this.latitude,
+    required this.longitude,
+  });
+  @override
+  List<Object?> get props => [
+        timeZone,
+        latitude,
+        longitude,
+      ];
+}
+
+class PjpByDateFailureState extends ClockInOutStates {
+  final String message;
+  PjpByDateFailureState({required this.message});
+  @override
+  List<Object?> get props => [message];
+}
+
+class PjpByDateSuccessState extends ClockInOutStates {
+  final List<PjpByDate> pjp;
+  PjpByDateSuccessState({required this.pjp});
+  @override
+  List<Object?> get props => [pjp];
 }
