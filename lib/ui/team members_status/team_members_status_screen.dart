@@ -57,35 +57,35 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
     return BlocProvider(
       create: (context) => getAllUserStatusBloc,
       child: Scaffold(
-        body: BlocBuilder<GetAllUserStatusBloc, GetAllUserStatusStates>(
-          builder: (context, state) {
-            if (state is GetAllUserStatusInitialState) {
-              getAllUserStatusBloc
-                  .add(GetAllUserStatusInitialEvent(statusDate: date));
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (state is GetAllUserStatusLoadingState) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (state is GetAllUserStatusInitialSuccessState) {
-              statusList = state.statusList;
-            }
-            if (state is GetAllUserStatusFailureState) {
-              return Center(
-                child: Text(state.failureMessage),
-              );
-            }
-            if (statusList.isNotEmpty) {
-              return SmartRefresher(
-                primary: false,
-                controller: refreshController,
-                onRefresh: onRefresh,
-                enablePullDown: true,
-                child: ListView.builder(
+        body: SmartRefresher(
+          primary: false,
+          controller: refreshController,
+          onRefresh: onRefresh,
+          enablePullDown: true,
+          child: BlocBuilder<GetAllUserStatusBloc, GetAllUserStatusStates>(
+            builder: (context, state) {
+              if (state is GetAllUserStatusInitialState) {
+                getAllUserStatusBloc
+                    .add(GetAllUserStatusInitialEvent(statusDate: date));
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (state is GetAllUserStatusLoadingState) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (state is GetAllUserStatusInitialSuccessState) {
+                statusList = state.statusList;
+              }
+              if (state is GetAllUserStatusFailureState) {
+                return Center(
+                  child: Text(state.failureMessage),
+                );
+              }
+              if (statusList.isNotEmpty) {
+                return ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   itemCount: statusList.length,
                   itemBuilder: (context, index) {
@@ -170,16 +170,16 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
                       ),
                     );
                   },
-                ),
-              );
-            }
-            if (statusList.isEmpty) {
-              return const Center(
-                child: Text("Data not found"),
-              );
-            }
-            return Container();
-          },
+                );
+              }
+              if (statusList.isEmpty) {
+                return const Center(
+                  child: Text("Data not found"),
+                );
+              }
+              return Container();
+            },
+          ),
         ),
       ),
     );
