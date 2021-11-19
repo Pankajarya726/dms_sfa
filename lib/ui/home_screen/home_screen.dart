@@ -157,28 +157,29 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Expanded(
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  color: colorGrayLite,
-                  child: BlocBuilder<HomeScreenBloc, HomeScreenState>(
-                    builder: (context, state) {
-                      if (state is HomeScreenMenuLoadingState) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      if (state is HomeScreenMenuFailureState) {
-                        return Center(
-                          child: Text(state.messages),
-                        );
-                      }
-                      if (state is HomeScreenMenuSuccessState) {
-                        return SmartRefresher(
-                          primary: false,
-                          controller: refreshController,
-                          onRefresh: onRefresh,
-                          enablePullDown: true,
-                          child: ListView.builder(
+                child: SmartRefresher(
+                  primary: false,
+                  controller: refreshController,
+                  onRefresh: onRefresh,
+                  enablePullDown: true,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    color: colorGrayLite,
+                    child: BlocBuilder<HomeScreenBloc, HomeScreenState>(
+                      builder: (context, state) {
+                        if (state is HomeScreenMenuLoadingState) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (state is HomeScreenMenuFailureState) {
+                          return Center(
+                            child: Text(state.messages),
+                          );
+                        }
+                        if (state is HomeScreenMenuSuccessState) {
+                          return ListView.builder(
+                            primary: false,
                             padding: const EdgeInsets.only(top: 16),
                             shrinkWrap: false,
                             itemCount: 6,
@@ -249,11 +250,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               );
                             },
-                          ),
-                        );
-                      }
-                      return Container();
-                    },
+                          );
+                        }
+                        return Container();
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -271,5 +272,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void onRefresh() {
     getUserId();
+    refreshController.refreshCompleted();
   }
 }

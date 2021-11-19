@@ -88,11 +88,10 @@ class _AddPjpScreenState extends State<AddPjpScreen> {
                             ),
                           ),
                           monthCellStyle: const DateRangePickerMonthCellStyle(
+                            weekendTextStyle: TextStyle(color: colorLightBlack),
                             disabledDatesDecoration:
                                 BoxDecoration(color: Colors.grey),
                             todayTextStyle: TextStyle(color: Colors.white),
-                            disabledDatesTextStyle:
-                                TextStyle(color: colorGrayLite),
                             textStyle: TextStyle(color: Colors.white),
                           ),
                           controller: pickerController,
