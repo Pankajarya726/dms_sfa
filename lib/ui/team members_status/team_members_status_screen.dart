@@ -3,6 +3,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sfa/listeners/date_change_listener.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_bloc.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_event.dart';
@@ -41,6 +42,8 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
   String? locationType;
   String? locationName;
   String? filterName;
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -53,123 +56,131 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => getAllUserStatusBloc,
-      child: BlocBuilder<GetAllUserStatusBloc, GetAllUserStatusStates>(
-        builder: (context, state) {
-          if (state is GetAllUserStatusInitialState) {
-            getAllUserStatusBloc
-                .add(GetAllUserStatusInitialEvent(statusDate: date));
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (state is GetAllUserStatusLoadingState) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (state is GetAllUserStatusInitialSuccessState) {
-            statusList = state.statusList;
-          }
-          if (state is GetAllUserStatusFailureState) {
-            return Center(
-              child: Text(state.failureMessage),
-            );
-          }
-          if (statusList.isNotEmpty) {
-            return ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              itemCount: statusList.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 15),
-                  padding: const EdgeInsets.fromLTRB(15, 12, 0, 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: -8,
-                        blurRadius: 7,
-                        offset:
-                            const Offset(0, 3), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(0),
-                    dense: true,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => TeamMembersDetails(
-                            userId: statusList[index].userId.toString(),
-                            name: statusList[index].userName,
+      child: Scaffold(
+        body: BlocBuilder<GetAllUserStatusBloc, GetAllUserStatusStates>(
+          builder: (context, state) {
+            if (state is GetAllUserStatusInitialState) {
+              getAllUserStatusBloc
+                  .add(GetAllUserStatusInitialEvent(statusDate: date));
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (state is GetAllUserStatusLoadingState) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (state is GetAllUserStatusInitialSuccessState) {
+              statusList = state.statusList;
+            }
+            if (state is GetAllUserStatusFailureState) {
+              return Center(
+                child: Text(state.failureMessage),
+              );
+            }
+            if (statusList.isNotEmpty) {
+              return SmartRefresher(
+                primary: false,
+                controller: refreshController,
+                onRefresh: onRefresh,
+                enablePullDown: true,
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  itemCount: statusList.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 15),
+                      padding: const EdgeInsets.fromLTRB(15, 12, 0, 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: -8,
+                            blurRadius: 7,
+                            offset: const Offset(
+                                0, 3), // changes position of shadow
                           ),
-                        ),
-                      );
-                    },
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          statusList[index].userName,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          statusList[index].status,
-                          style: const TextStyle(
-                            color: Color(0xff303030),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                    trailing: IntrinsicWidth(
-                      child: Row(
-                        children: [
-                          statusList[index].approveStatus == 1
-                              ? statusAccepted()
-                              : statusRejected(),
-                          SizedBox(
-                            width: 40,
-                            child: IconButton(
-                              onPressed: () {
-                                showTeamMemberStatusSheet(
-                                    statusList[index].userName,
-                                    statusList[index].userId,
-                                    date);
-                              },
-                              icon: const Icon(
-                                Icons.more_vert,
-                                color: Colors.black,
-                                size: 27,
-                              ),
-                            ),
-                          )
                         ],
                       ),
-                    ),
-                  ),
-                );
-              },
-            );
-          }
-          if (statusList.isEmpty) {
-            return const Center(
-              child: Text("Data not found"),
-            );
-          }
-          return Container();
-        },
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.all(0),
+                        dense: true,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TeamMembersDetails(
+                                userId: statusList[index].userId.toString(),
+                                name: statusList[index].userName,
+                              ),
+                            ),
+                          );
+                        },
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              statusList[index].userName,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              statusList[index].status,
+                              style: const TextStyle(
+                                color: Color(0xff303030),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                        trailing: IntrinsicWidth(
+                          child: Row(
+                            children: [
+                              statusList[index].approveStatus == 1
+                                  ? statusAccepted()
+                                  : statusRejected(),
+                              SizedBox(
+                                width: 40,
+                                child: IconButton(
+                                  onPressed: () {
+                                    showTeamMemberStatusSheet(
+                                        statusList[index].userName,
+                                        statusList[index].userId,
+                                        date);
+                                  },
+                                  icon: const Icon(
+                                    Icons.more_vert,
+                                    color: Colors.black,
+                                    size: 27,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            }
+            if (statusList.isEmpty) {
+              return const Center(
+                child: Text("Data not found"),
+              );
+            }
+            return Container();
+          },
+        ),
       ),
     );
   }
@@ -268,6 +279,11 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
         filterName: filterName,
         location: locationName,
         locationType: locationType));
+  }
+
+  void onRefresh() {
+    getAllUserStatusBloc.add(GetAllUserStatusInitialEvent(statusDate: date));
+    refreshController.refreshCompleted();
   }
 }
 
