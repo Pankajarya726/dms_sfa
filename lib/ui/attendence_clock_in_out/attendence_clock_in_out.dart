@@ -12,7 +12,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_bloc.dart';
 import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_events.dart';
@@ -29,9 +28,6 @@ class AttendenceClockInOut extends StatefulWidget {
 
 class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   bool gpsLocation = false;
-  String timerHours = "00";
-  String timerMinutes = "00";
-  String timerSeconds = "00";
   Duration timerInterval = const Duration(seconds: 1);
   var timerSubscription;
   Timer? timer;
@@ -58,8 +54,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   int checkSuccessHours = 0;
   String userId = "";
   StreamController<String> timerController = StreamController();
-  RefreshController refreshController =
-      RefreshController(initialRefresh: false);
   final stopWatch = PublishSubject<int>();
   String locality = "";
   String administrativeArea = "";
@@ -87,149 +81,92 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   Widget build(BuildContext context) {
     return BlocProvider<ClockInOutBloc>(
       create: (BuildContext context) => clockInOutBloc,
-      child: Scaffold(
-        body: SmartRefresher(
-          primary: false,
-          controller: refreshController,
-          onRefresh: onRefresh,
-          enablePullDown: true,
-          child: BlocConsumer<ClockInOutBloc, ClockInOutStates>(
-            listener: (context, state) {
-              if (state is ClockInSuccessState) {
-                clockInOutBloc.add(ClockInOutInitialEvent());
-                Fluttertoast.showToast(msg: state.successMessage);
-              }
-              if (state is ClockInFailureState) {
-                clockInOutBloc.add(ClockInOutInitialEvent());
-                Fluttertoast.showToast(msg: state.failureMessage);
-              }
-              if (state is ClockOutSuccessState) {
-                clockInOutBloc.add(ClockInOutInitialEvent());
-                Fluttertoast.showToast(msg: state.successMessage);
-              }
-              if (state is ClockOutFailureState) {
-                clockInOutBloc.add(ClockInOutInitialEvent());
-                Fluttertoast.showToast(msg: state.failureMessage);
-              }
+      child: BlocConsumer<ClockInOutBloc, ClockInOutStates>(
+        listener: (context, state) {
+          if (state is ClockInSuccessState) {
+            clockInOutBloc.add(ClockInOutInitialEvent());
+            Fluttertoast.showToast(msg: state.successMessage);
+          }
+          if (state is ClockInFailureState) {
+            clockInOutBloc.add(ClockInOutInitialEvent());
+            Fluttertoast.showToast(msg: state.failureMessage);
+          }
+          if (state is ClockOutSuccessState) {
+            clockInOutBloc.add(ClockInOutInitialEvent());
+            Fluttertoast.showToast(msg: state.successMessage);
+          }
+          if (state is ClockOutFailureState) {
+            clockInOutBloc.add(ClockInOutInitialEvent());
+            Fluttertoast.showToast(msg: state.failureMessage);
+          }
 
-              if (state is ClockInOutGetUserLocationState) {
-                timeZone = state.timeZone;
-                latitude = state.latitude;
-                longitude = state.longitude;
-              }
-              if (state is ClockInOutInitialSuccessState) {
-                if (state.userData.data!.clockInOutData.isNotEmpty) {
-                  clockInStatus =
-                      state.userData.data!.clockInOutData.first.inOutStatus;
-
-                  if (clockInStatus == 1) {
-                    clockInTime = DateFormat("HH:mm:ss").parse(
-                        state.userData.data!.clockInOutData.first.clockInTime);
-                    startAttendenceTimer(clockInTime!);
-                  } else if (clockInStatus == 2) {
-                    clockInTime = DateFormat("HH:mm:ss").parse(
-                        state.userData.data!.clockInOutData.first.clockInTime);
-                    clockOutTime = DateFormat("HH:mm:ss").parse(
-                        state.userData.data!.clockInOutData.first.clockOutTime);
-                    timeDifference =
-                        (clockOutTime!.difference(clockInTime!)).toString();
-                    var arr = timeDifference.split(".");
-                    timeDifference = arr[0];
-                    var arr2 = timeDifference.split(":");
-                    int hrs = int.parse(arr2[0]);
-                    checkSuccessHours = hrs;
-                    timeDifference = arr2[0].padLeft(2, '0');
-                    timeDifference =
-                        timeDifference + ":" + arr2[1].padLeft(2, '0');
-                    timeDifference =
-                        timeDifference + ":" + arr2[2].padLeft(2, '0');
-                  }
-
-                  // if (state.userData.data!.clockInOutData[i].clockInTime
-                  //         .isNotEmpty &&
-                  //     state.userData.data!.clockInOutData[i].clockOutTime
-                  //         .isNotEmpty) {
-                  //   clockInTime = DateFormat("HH:mm:ss").parse(
-                  //       state.userData.data!.clockInOutData.first.clockInTime);
-                  //   clockOutTime = DateFormat("HH:mm:ss").parse(
-                  //       state.userData.data!.clockInOutData.first.clockOutTime);
-
-                  //   // return clockOutLayout(timeDifference, hrs);
-                  // }
-
-                }
-                clockInOutBloc.add(ClockInOutGetUserLocationEvent());
-              }
-            },
-            builder: (context, state) {
-              if (state is ClockInOutInitialState) {
-                clockInOutBloc.add(ClockInOutInitialEvent());
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              if (state is ClockInOutLoadingState) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-
-              // if (state is ClockInOutInitialSuccessState) {
-              //   print("ClockInOutInitialSuccessState----->");
-              //   if (state.userData.data!.clockInOutData.isNotEmpty) {
-              //     for (int i = 0;
-              //         i < state.userData.data!.clockInOutData.length;
-              //         i++) {
-              //       if (state.userData.data!.clockInOutData[i].clockInTime
-              //               .isNotEmpty &&
-              //           state.userData.data!.clockInOutData[i].clockOutTime
-              //               .isNotEmpty) {
-              //         clockInTime = DateFormat("HH:mm:ss").parse(
-              //             state.userData.data!.clockInOutData.first.clockInTime);
-              //         clockOutTime = DateFormat("HH:mm:ss").parse(
-              //             state.userData.data!.clockInOutData.first.clockOutTime);
-              //         timeDifference =
-              //             (clockOutTime!.difference(clockInTime!)).toString();
-              //         var arr = timeDifference.split(".");
-              //         timeDifference = arr[0];
-              //         var arr2 = timeDifference.split(":");
-              //         int hrs = int.parse(arr2[0]);
-              //         timeDifference = arr2[0].padLeft(2, '0');
-              //         timeDifference =
-              //             timeDifference + ":" + arr2[1].padLeft(2, '0');
-              //         timeDifference =
-              //             timeDifference + ":" + arr2[2].padLeft(2, '0');
-              //         return clockOutLayout(timeDifference, hrs);
-              //       } else {
-              //         return clockOutLayout(timeDifference, checkSuccessHours);
-              //       }
-              //     }
-              //   } else {
-              //     print("first else called");
-              //     return clockOutLayout(timeDifference, checkSuccessHours);
-              //   }
-              // }
-
-              if (state is ClockInOutFailureState) {
-                return Center(
-                  child: Text(state.failureMessage),
-                );
-              }
+          if (state is ClockInOutGetUserLocationState) {
+            timeZone = state.timeZone;
+            latitude = state.latitude;
+            longitude = state.longitude;
+          }
+          if (state is ClockInOutInitialSuccessState) {
+            if (state.userData.data!.clockInOutData.isNotEmpty) {
+              clockInStatus =
+                  state.userData.data!.clockInOutData.first.inOutStatus;
 
               if (clockInStatus == 1) {
-                return clockInLayout();
-              } else {
-                return clockOutLayout(timeDifference, checkSuccessHours);
+                clockInTime = DateFormat("HH:mm:ss").parse(
+                    state.userData.data!.clockInOutData.first.clockInTime);
+                startAttendenceTimer(clockInTime!);
+              } else if (clockInStatus == 2) {
+                clockInTime = DateFormat("HH:mm:ss").parse(
+                    state.userData.data!.clockInOutData.first.clockInTime);
+                clockOutTime = DateFormat("HH:mm:ss").parse(
+                    state.userData.data!.clockInOutData.first.clockOutTime);
+                timeDifference =
+                    (clockOutTime!.difference(clockInTime!)).toString();
+                var arr = timeDifference.split(".");
+                timeDifference = arr[0];
+                var arr2 = timeDifference.split(":");
+                int hrs = int.parse(arr2[0]);
+                checkSuccessHours = hrs;
+                timeDifference = arr2[0].padLeft(2, '0');
+                timeDifference = timeDifference + ":" + arr2[1].padLeft(2, '0');
+                timeDifference = timeDifference + ":" + arr2[2].padLeft(2, '0');
               }
-            },
-          ),
-        ),
+            }
+            clockInOutBloc.add(ClockInOutGetUserLocationEvent());
+          }
+        },
+        builder: (context, state) {
+          if (state is ClockInOutInitialState) {
+            clockInOutBloc.add(ClockInOutInitialEvent());
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (state is ClockInOutLoadingState) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (state is ClockInOutFailureState) {
+            return Center(
+              child: Text(state.failureMessage),
+            );
+          }
+
+          if (clockInStatus == 1) {
+            return clockInLayout(timeDifference, checkSuccessHours);
+          } else if (clockInStatus == 2) {
+            return clockInLayout(timeDifference, checkSuccessHours);
+          } else {
+            return clockOutLayout();
+          }
+        },
       ),
     );
   }
 
 // initially we have to view clockOutLayout
-  Widget clockOutLayout(timeDifference, workingHrs) {
+  Widget clockOutLayout() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(10.0),
       child: Column(
@@ -238,30 +175,24 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
           Container(
             width: MediaQuery.of(context).size.width,
             padding: const EdgeInsets.symmetric(vertical: 10),
-            decoration: BoxDecoration(
-              boxShadow: const [
+            decoration: const BoxDecoration(
+              boxShadow: [
                 BoxShadow(
                   color: Colors.grey,
-                  blurRadius: 10.0,
-                  spreadRadius: -1.5,
+                  blurRadius: 10.0, // soften the shadow
+                  spreadRadius: -1.5, //extend the shadow
                   offset: Offset(
-                    0,
-                    0,
+                    0, // Move to right 10  horizontally
+                    0, // Move to bottom 10 Vertically
                   ),
                 )
               ],
-              gradient: workingHrs < 8
-                  ? const LinearGradient(
-                      begin: Alignment.bottomLeft,
-                      end: Alignment.topRight,
-                      colors: [colorPrimary, colorLightPrimary],
-                    )
-                  : const LinearGradient(
-                      begin: Alignment.bottomLeft,
-                      end: Alignment.topRight,
-                      colors: [colorGreen, colorLightGreen],
-                    ),
-              borderRadius: const BorderRadius.all(
+              gradient: LinearGradient(
+                begin: Alignment.bottomLeft,
+                end: Alignment.topRight,
+                colors: [colorPrimary, colorLightPrimary],
+              ),
+              borderRadius: BorderRadius.all(
                 Radius.circular(10),
               ),
             ),
@@ -418,7 +349,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                   activeColor: colorPrimary,
                   checkColor: Colors.white,
                   onChanged: (value) {
-                    getUserLocation();
+                    getUserPosition();
                     setState(() {
                       gpsLocation = value!;
                     });
@@ -430,7 +361,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
               ),
               InkWell(
                 onTap: () {
-                  getUserLocation();
+                  getUserPosition();
                   setState(() {
                     gpsLocation = !gpsLocation;
                   });
@@ -455,7 +386,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     );
   }
 
-  Widget clockInLayout() {
+  Widget clockInLayout(timeDifference, checkSuccessHours) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(10.0),
       child: Column(
@@ -468,11 +399,11 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
               boxShadow: const [
                 BoxShadow(
                   color: Colors.grey,
-                  blurRadius: 10.0,
-                  spreadRadius: -1.5,
+                  blurRadius: 10.0, // soften the shadow
+                  spreadRadius: -1.5, //extend the shadow
                   offset: Offset(
-                    0,
-                    0,
+                    0, // Move to right 10  horizontally
+                    0, // Move to bottom 10 Vertically
                   ),
                 )
               ],
@@ -498,7 +429,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                   child: Align(
                     alignment: Alignment.topLeft,
                     child: Text(
-                      "${DateFormat("dd MMM yyyy").format(_ntpTime)} at ${DateFormat().add_jm().format(_ntpTime)}",
+                      "${DateFormat("dd MMM yyyy").format(_ntpTime)} at ${DateFormat().add_jm().format(clockInTime!)}",
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -508,37 +439,47 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 10, bottom: 10),
-                  child: StreamBuilder<String>(
-                    stream: timerController.stream,
-                    builder: (context, snap) {
-                      if (snap.hasData && snap.data!.isNotEmpty) {
-                        String timerHrss = snap.data!;
-                        var arr = timerHrss.split(":");
-                        String hrs = arr[0];
-                        String min = arr[1];
-                        String sec = arr[2];
-                        return Text(
-                          "${hrs.padLeft(2, '0')}:${min.padLeft(2, '0')}:${sec.padLeft(2, '0')}",
+                  child: clockInStatus == 1
+                      ? StreamBuilder<String>(
+                          stream: timerController.stream,
+                          builder: (context, snap) {
+                            if (snap.hasData && snap.data!.isNotEmpty) {
+                              String timerHrss = snap.data!;
+                              var arr = timerHrss.split(":");
+                              String hrs = arr[0];
+                              String min = arr[1];
+                              String sec = arr[2];
+                              return Text(
+                                "${hrs.padLeft(2, '0')}:${min.padLeft(2, '0')}:${sec.padLeft(2, '0')}",
+                                style: const TextStyle(
+                                  fontSize: 45.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  letterSpacing: 5,
+                                ),
+                              );
+                            }
+
+                            return const Text(
+                              "00:00:00",
+                              style: TextStyle(
+                                fontSize: 45.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                letterSpacing: 5,
+                              ),
+                            );
+                          },
+                        )
+                      : Text(
+                          timeDifference,
                           style: const TextStyle(
                             fontSize: 45.0,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                             letterSpacing: 5,
                           ),
-                        );
-                      }
-
-                      return Text(
-                        "$timerHours:$timerMinutes:$timerSeconds",
-                        style: const TextStyle(
-                          fontSize: 45.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          letterSpacing: 5,
                         ),
-                      );
-                    },
-                  ),
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width,
@@ -599,7 +540,9 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
           ),
           GestureDetector(
             onTap: () {
-              _imgFromCamera(context);
+              if (clockInStatus == 1) {
+                _imgFromCamera(context);
+              }
             },
             child: image == null
                 ? Container(
@@ -664,24 +607,28 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
           getCurrentTime();
           webtime = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
           await Future.delayed(const Duration(seconds: 1));
-
           setState(() {
-            if (commentController.text.isNotEmpty) {
-              if (image != null) {
-                clockInOutBloc.add(
-                  ClockOutSuccessEvent(
-                    inOutTime: webtime,
-                    workingPlan: commentController.text,
-                    selfieImage: image!.path,
-                  ),
-                );
-                image = null;
-                stopAttendenceTimer();
+            if (clockInStatus == 1) {
+              if (commentController.text.isNotEmpty) {
+                if (image != null) {
+                  clockInOutBloc.add(
+                    ClockOutSuccessEvent(
+                      inOutTime: webtime,
+                      workingPlan: commentController.text,
+                      selfieImage: image!.path,
+                    ),
+                  );
+                  image = null;
+                  stopAttendenceTimer();
+                } else {
+                  Fluttertoast.showToast(
+                      msg: "Please capture clock out selfie");
+                }
               } else {
-                Fluttertoast.showToast(msg: "Please select image");
+                Fluttertoast.showToast(msg: "Please add comment");
               }
             } else {
-              Fluttertoast.showToast(msg: "Please add comment");
+              Fluttertoast.showToast(msg: "You have clocked-out");
             }
           });
         },
@@ -724,7 +671,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
           getCurrentTime();
           if (workingPlanController.text.isNotEmpty) {
             if (image != null) {
-              if (latitude != 0.0 && longitude != 0.0) {
+              if (latitude != 0.0 && longitude != 0.0 && gpsLocation) {
                 await Future.delayed(const Duration(seconds: 1));
                 clockInOutBloc.add(
                   ClockInSuccessEvent(
@@ -885,8 +832,10 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
         Form(
           key: formKey2,
           child: TextFormField(
-            controller: commentController,
+            readOnly: clockInStatus == 2 ? true : false,
+            enableInteractiveSelection: clockInStatus == 2 ? false : true,
             maxLines: 3,
+            controller: commentController,
             keyboardType: TextInputType.text,
             style: const TextStyle(
               color: Color(0xff303030),
@@ -1104,6 +1053,13 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
         startTimerDateTime.second.toString() +
         ".000";
 
+    // String time1 = DateTime.now().hour.toString() +
+    //     ":" +
+    //     DateTime.now().minute.toString() +
+    //     ":" +
+    //     DateTime.now().second.toString() +
+    //     ".000";
+
     duration = DateFormat().add_Hms().parse(time1).difference(dateTime);
     time = duration.inSeconds;
 
@@ -1118,6 +1074,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     timerSubscription = stopWatch.listen((int newTick) {
       time = time + 1;
 
+      //check the timer box color green/red
       checkSuccessHours = int.parse("${Duration(seconds: time).inHours}");
       int checkSec = int.parse("${Duration(seconds: time).inSeconds % 60}");
       if (checkSuccessHours >= 8 && checkSec == 0) {
@@ -1146,7 +1103,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   Future<Position> getUserLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
-
+    // Test if location services are enabled.
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
     permission = await Geolocator.checkPermission();
@@ -1159,9 +1116,13 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
       }
     }
     if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+
       return Future.error(
           'Location permissions are permanently denied, we cannot request permissions.');
     }
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
 
     return await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
@@ -1180,10 +1141,10 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     String country = place.country!;
     String timeZone =
         "Time Zone in " + city + ", " + state + ", " + country + " (GMT+5:30)";
-  }
-
-  void onRefresh() {
-    clockInOutBloc.add(ClockInOutInitialEvent());
-    refreshController.refreshCompleted();
+    print("place latitude = $latitude");
+    print("place longtitude = $longitude");
+    print("place country = $country");
+    print("place state = $administrativeArea");
+    print("place city = $locality");
   }
 }

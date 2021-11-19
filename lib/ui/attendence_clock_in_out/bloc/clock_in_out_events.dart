@@ -51,11 +51,6 @@ class ClockOutSuccessEvent extends ClockInOutEvents {
       ];
 }
 
-class ClockInOutGetPjpSuccessEvent extends ClockInOutEvents {
-  @override
-  List<Object?> get props => [];
-}
-
 class ClockInOutGetUserLocationEvent extends ClockInOutEvents {
   @override
   List<Object?> get props => [];

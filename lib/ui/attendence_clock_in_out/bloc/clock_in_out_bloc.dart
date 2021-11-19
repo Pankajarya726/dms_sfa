@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
@@ -38,9 +36,7 @@ class ClockInOutBloc extends Bloc<ClockInOutEvents, ClockInOutStates> {
       yield ClockInOutLoadingState();
       yield* clockOutSuccess(event);
     }
-    // if (event is ClockInOutGetPjpSuccessEvent) {
-    //   yield* getPjpData(event);
-    // }
+
     if (event is ClockInOutGetUserLocationEvent) {
       yield ClockInOutLoadingState();
       yield* getUserLocation(event);
