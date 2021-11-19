@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sfa/ui/team_member_track_screen/track_bloc/track_bloc.dart';
 import 'package:sfa/ui/team_member_track_screen/track_bloc/track_event.dart';
 import 'package:sfa/ui/team_member_track_screen/track_bloc/track_state.dart';
@@ -22,6 +23,8 @@ class _TeamMemberTrackScreenState extends State<TeamMemberTrackScreen> {
   late GoogleMapController googleMapController;
   LatLng? currenPosition;
   Location location = Location();
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
   @override
   void initState() {
     getData();
@@ -50,64 +53,70 @@ class _TeamMemberTrackScreenState extends State<TeamMemberTrackScreen> {
       create: (context) => trackBloc,
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Container(
-          decoration: const BoxDecoration(
-            color: reportBG,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
+        body: SmartRefresher(
+          primary: false,
+          controller: refreshController,
+          onRefresh: onRefresh,
+          enablePullDown: true,
+          child: Container(
+            decoration: const BoxDecoration(
+              color: reportBG,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
             ),
-          ),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-            child: BlocBuilder<TrackBloc, TrackState>(
-              builder: (context, state) {
-                if (state is TrackLoadingState) {
-                  return SizedBox(
-                    height: MediaQuery.of(context).size.height,
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                }
-                if (state is TrackFailureState) {
-                  return SizedBox(
-                    height: MediaQuery.of(context).size.height,
-                    child: Center(
-                      child: Text(state.message),
-                    ),
-                  );
-                }
-                if (state is TrackSuccessState) {
-                  currenPosition = LatLng(
-                      double.parse(state.response.data![0].latitude),
-                      double.parse(state.response.data![0].longitude));
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+              child: BlocBuilder<TrackBloc, TrackState>(
+                builder: (context, state) {
+                  if (state is TrackLoadingState) {
+                    return SizedBox(
+                      height: MediaQuery.of(context).size.height,
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+                  if (state is TrackFailureState) {
+                    return SizedBox(
+                      height: MediaQuery.of(context).size.height,
+                      child: Center(
+                        child: Text(state.message),
+                      ),
+                    );
+                  }
+                  if (state is TrackSuccessState) {
+                    currenPosition = LatLng(
+                        double.parse(state.response.data![0].latitude),
+                        double.parse(state.response.data![0].longitude));
 
-                  return GoogleMap(
-                    tiltGesturesEnabled: true,
-                    mapType: MapType.normal,
-                    compassEnabled: true,
-                    zoomControlsEnabled: true,
-                    scrollGesturesEnabled: true,
-                    zoomGesturesEnabled: true,
-                    markers: Set.from(markers),
-                    initialCameraPosition:
-                        CameraPosition(target: currenPosition!, zoom: 14.0),
-                    onMapCreated: (controller) {
-                      setState(
-                        () {
-                          googleMapController = controller;
-                          addMarker(currenPosition);
-                        },
-                      );
-                    },
-                  );
-                }
-                return Container();
-              },
+                    return GoogleMap(
+                      tiltGesturesEnabled: true,
+                      mapType: MapType.normal,
+                      compassEnabled: true,
+                      zoomControlsEnabled: true,
+                      scrollGesturesEnabled: true,
+                      zoomGesturesEnabled: true,
+                      markers: Set.from(markers),
+                      initialCameraPosition:
+                          CameraPosition(target: currenPosition!, zoom: 14.0),
+                      onMapCreated: (controller) {
+                        setState(
+                          () {
+                            googleMapController = controller;
+                            addMarker(currenPosition);
+                          },
+                        );
+                      },
+                    );
+                  }
+                  return Container();
+                },
+              ),
             ),
           ),
         ),
@@ -119,5 +128,10 @@ class _TeamMemberTrackScreenState extends State<TeamMemberTrackScreen> {
     trackBloc.add(TrackEvent(
         id: widget.userId,
         date: DateFormat("yyyy-MM-dd").format(DateTime.now())));
+  }
+
+  onRefresh() {
+    getData();
+    refreshController.refreshCompleted();
   }
 }

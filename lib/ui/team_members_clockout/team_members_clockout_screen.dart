@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sfa/listeners/date_change_listener.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_bloc.dart';
@@ -32,6 +33,8 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
   bool clockInOut = false;
   GetClockInDataBloc getClockInDataBloc = GetClockInDataBloc();
   String date = "";
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -45,125 +48,136 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => getClockInDataBloc,
-      child: BlocConsumer<GetClockInDataBloc, GetClockInDataStates>(
-        listener: (context, state) {
-          if (state is ClockInApproveRejectSuccessState) {
-            Fluttertoast.showToast(msg: state.res.message);
-            addClockInData();
-          }
-          if (state is ClockInApproveRejectFailureState) {
-            Fluttertoast.showToast(msg: state.message);
-            addClockInData();
-          }
-        },
-        builder: (context, state) {
-          if (state is GetClockInDataLoadingState) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+      child: Scaffold(
+        body: SmartRefresher(
+          primary: false,
+          controller: refreshController,
+          onRefresh: onRefresh,
+          enablePullDown: true,
+          child: BlocConsumer<GetClockInDataBloc, GetClockInDataStates>(
+            listener: (context, state) {
+              if (state is ClockInApproveRejectSuccessState) {
+                Fluttertoast.showToast(msg: state.res.message);
+                addClockInData();
+              }
+              if (state is ClockInApproveRejectFailureState) {
+                Fluttertoast.showToast(msg: state.message);
+                addClockInData();
+              }
+            },
+            builder: (context, state) {
+              if (state is GetClockInDataLoadingState) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
 
-          if (state is GetClockInDataSuccessState) {
-            return ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              itemCount: state.getClockInDataResponse.data!.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 15),
-                  padding: const EdgeInsets.fromLTRB(15, 12, 0, 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: -8,
-                        blurRadius: 7,
-                        offset:
-                            const Offset(0, 3), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(0),
-                    dense: true,
-                    onTap: () {},
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          state.getClockInDataResponse.data![index].name,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+              if (state is GetClockInDataSuccessState) {
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  itemCount: state.getClockInDataResponse.data!.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 15),
+                      padding: const EdgeInsets.fromLTRB(15, 12, 0, 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: -8,
+                            blurRadius: 7,
+                            offset: const Offset(
+                                0, 3), // changes position of shadow
                           ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          state.getClockInDataResponse.data![index].clockInTime,
-                          style: const TextStyle(
-                            color: Color(0xff303030),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                    trailing: IntrinsicWidth(
-                      child: Row(
-                        children: [
-                          buttonsApprove(
-                              state.getClockInDataResponse.data![index].id,
-                              state.getClockInDataResponse.data![index].userId,
-                              colorGreen,
-                              "Approve"),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          buttonsReject(
-                              state.getClockInDataResponse.data![index].id,
-                              state.getClockInDataResponse.data![index].userId,
-                              colorRed,
-                              "Reject"),
-                          SizedBox(
-                            width: 40,
-                            child: IconButton(
-                              onPressed: () {
-                                showClockOutBottomSheet(
-                                    state.getClockInDataResponse.data![index]
-                                        .name,
-                                    state
-                                        .getClockInDataResponse.data![index].id,
-                                    state.getClockInDataResponse.data![index]
-                                        .userId,
-                                    state.getClockInDataResponse.data![index]
-                                        .inOutDate!);
-                              },
-                              icon: const Icon(
-                                Icons.more_vert,
-                                color: Colors.black,
-                                size: 27,
-                              ),
-                            ),
-                          )
                         ],
                       ),
-                    ),
-                  ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.all(0),
+                        dense: true,
+                        onTap: () {},
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              state.getClockInDataResponse.data![index].name,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              state.getClockInDataResponse.data![index]
+                                  .clockInTime,
+                              style: const TextStyle(
+                                color: Color(0xff303030),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                        trailing: IntrinsicWidth(
+                          child: Row(
+                            children: [
+                              buttonsApprove(
+                                  state.getClockInDataResponse.data![index].id,
+                                  state.getClockInDataResponse.data![index]
+                                      .userId,
+                                  colorGreen,
+                                  "Approve"),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              buttonsReject(
+                                  state.getClockInDataResponse.data![index].id,
+                                  state.getClockInDataResponse.data![index]
+                                      .userId,
+                                  colorRed,
+                                  "Reject"),
+                              SizedBox(
+                                width: 40,
+                                child: IconButton(
+                                  onPressed: () {
+                                    showClockOutBottomSheet(
+                                        state.getClockInDataResponse
+                                            .data![index].name,
+                                        state.getClockInDataResponse
+                                            .data![index].id,
+                                        state.getClockInDataResponse
+                                            .data![index].userId,
+                                        state.getClockInDataResponse
+                                            .data![index].inOutDate!);
+                                  },
+                                  icon: const Icon(
+                                    Icons.more_vert,
+                                    color: Colors.black,
+                                    size: 27,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 );
-              },
-            );
-          }
+              }
 
-          if (state is GetClockInDataFailureState) {
-            return Center(
-              child: Text(state.failureMessage),
-            );
-          }
-          return Container();
-        },
+              if (state is GetClockInDataFailureState) {
+                return Center(
+                  child: Text(state.failureMessage),
+                );
+              }
+              return Container();
+            },
+          ),
+        ),
       ),
     );
   }
@@ -270,6 +284,11 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
         filterName: name,
         location: location != null ? location.id : null,
         locationType: type));
+  }
+
+  void onRefresh() {
+    addClockInData();
+    refreshController.refreshCompleted();
   }
 }
 

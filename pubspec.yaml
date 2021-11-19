@@ -58,6 +58,7 @@ dependencies:
   path_provider:
   downloads_path_provider_28: ^0.1.2 
   email_validator:
+  pull_to_refresh:
 
 
 dev_dependencies:

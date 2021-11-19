@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sfa/ui/team_members_details_screen/team_members_details_bloc/team_members_details_bloc.dart';
 import 'package:sfa/ui/team_members_details_screen/team_members_details_bloc/team_members_details_event.dart';
 import 'package:sfa/ui/team_members_details_screen/team_members_details_bloc/team_members_details_state.dart';
@@ -20,6 +21,8 @@ class TeamMemberDetailsScreen extends StatefulWidget {
 class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
   TeamMembersDetailsBloc teamMembersDetailsBloc = TeamMembersDetailsBloc();
   DateTime dateTime = DateTime.now();
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
   @override
   void initState() {
     super.initState();
@@ -47,7 +50,11 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
         },
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          body: IntrinsicHeight(
+          body: SmartRefresher(
+            primary: false,
+            controller: refreshController,
+            onRefresh: onRefresh,
+            enablePullDown: true,
             child: Container(
               width: MediaQuery.of(context).size.width,
               decoration: const BoxDecoration(
@@ -408,5 +415,10 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
   void addEvent() async {
     teamMembersDetailsBloc.add(GetTeamMembersDetailsEvents(
         id: widget.userId, date: DateFormat("yyyy-MM-dd").format(dateTime)));
+  }
+
+  void onRefresh() {
+    addEvent();
+    refreshController.refreshCompleted();
   }
 }
