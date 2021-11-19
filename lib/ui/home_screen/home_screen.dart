@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sfa/ui/attendence_home/attendence_home_screen.dart';
 import 'package:sfa/ui/home_screen/home_screen_bloc/home_screen_bloc.dart';
 import 'package:sfa/ui/home_screen/home_screen_bloc/home_screen_event.dart';
@@ -21,7 +22,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   HomeScreenBloc homeScreenBloc = HomeScreenBloc();
-
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
   String imageUrl = "";
   String employeeName = "";
   String designation = "";
@@ -37,25 +39,22 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return BlocProvider<HomeScreenBloc>(
       create: (context) => homeScreenBloc,
-      child: BlocListener<HomeScreenBloc, HomeScreenState>(
-        listener: (context, state) {
-          if (state is HomeScreenSuccessState) {
-            imageUrl = state.userData.data!.image;
-            employeeName = state.userData.data!.name;
-            designation = state.userData.data!.designation;
-            email = state.userData.data!.email;
-            homeScreenBloc.add(HomeScreenMenuEvent());
-            SharedPrefrence.setStringPreference(
-                SharedPrefrence.name, state.userData.data!.name);
-            SharedPrefrence.setStringPreference(
-                SharedPrefrence.isEnable, state.userData.data!.pjpButton);
-          }
-          if (state is HomeScreenFailureState) {
-            log(state.messages);
-          }
-        },
-        child: Scaffold(
-          body: Column(
+      child: Scaffold(
+        body: BlocListener<HomeScreenBloc, HomeScreenState>(
+          listener: (context, state) {
+            if (state is HomeScreenSuccessState) {
+              imageUrl = state.userData.data!.image;
+              employeeName = state.userData.data!.name;
+              designation = state.userData.data!.designation;
+              email = state.userData.data!.email;
+              homeScreenBloc.add(HomeScreenMenuEvent());
+              SharedPrefrence.setStringPreference(
+                  SharedPrefrence.name, state.userData.data!.name);
+              SharedPrefrence.setStringPreference(
+                  SharedPrefrence.isEnable, state.userData.data!.pjpButton);
+            }
+          },
+          child: Column(
             children: [
               Container(
                 padding: const EdgeInsets.only(top: 35),
@@ -158,95 +157,104 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Expanded(
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  color: colorGrayLite,
-                  child: BlocBuilder<HomeScreenBloc, HomeScreenState>(
-                    builder: (context, state) {
-                      if (state is HomeScreenMenuLoadingState) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      if (state is HomeScreenMenuFailureState) {
-                        return Center(
-                          child: Text(state.messages),
-                        );
-                      }
-                      if (state is HomeScreenMenuSuccessState) {
-                        return ListView.builder(
-                          padding: const EdgeInsets.only(top: 16),
-                          shrinkWrap: false,
-                          itemCount: 6,
-                          itemBuilder: (context, int index) {
-                            return Card(
-                              margin: const EdgeInsets.fromLTRB(14, 0, 14, 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: ListTile(
-                                onTap: () {
-                                  if (index == 0) {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const AttendenceHomeScreen()));
-                                  }
-                                },
-                                horizontalTitleGap: 20,
-                                leading: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(0, 8, 0, 0),
-                                  child: Container(
-                                    height: 50,
-                                    width: 50,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      image: DecorationImage(
-                                          image: NetworkImage(state
-                                              .response.data![index].menuImage),
-                                          fit: BoxFit.cover),
+                child: SmartRefresher(
+                  primary: false,
+                  controller: refreshController,
+                  onRefresh: onRefresh,
+                  enablePullDown: true,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    color: colorGrayLite,
+                    child: BlocBuilder<HomeScreenBloc, HomeScreenState>(
+                      builder: (context, state) {
+                        if (state is HomeScreenMenuLoadingState) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (state is HomeScreenMenuFailureState) {
+                          return Center(
+                            child: Text(state.messages),
+                          );
+                        }
+                        if (state is HomeScreenMenuSuccessState) {
+                          return ListView.builder(
+                            primary: false,
+                            padding: const EdgeInsets.only(top: 16),
+                            shrinkWrap: false,
+                            itemCount: 6,
+                            itemBuilder: (context, int index) {
+                              return Card(
+                                margin:
+                                    const EdgeInsets.fromLTRB(14, 0, 14, 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: ListTile(
+                                  onTap: () {
+                                    if (index == 0) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const AttendenceHomeScreen()));
+                                    }
+                                  },
+                                  horizontalTitleGap: 20,
+                                  leading: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                                    child: Container(
+                                      height: 50,
+                                      width: 50,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        image: DecorationImage(
+                                            image: NetworkImage(state.response
+                                                .data![index].menuImage),
+                                            fit: BoxFit.cover),
+                                      ),
                                     ),
                                   ),
-                                ),
-                                title: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(0, 16, 0, 0),
-                                  child: Text(
-                                    state.response.data![index].menuName,
-                                    style: const TextStyle(
+                                  title: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 16, 0, 0),
+                                    child: Text(
+                                      state.response.data![index].menuName,
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 21,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  subtitle: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 2, 0, 16),
+                                    child: Text(
+                                      state.response.data![index]
+                                          .menuDescription,
+                                      style: const TextStyle(
                                         color: Colors.black,
-                                        fontSize: 21,
-                                        fontWeight: FontWeight.bold),
+                                        fontSize: 16,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                subtitle: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(0, 2, 0, 16),
-                                  child: Text(
-                                    state.response.data![index].menuDescription,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
+                                  trailing: const Padding(
+                                    padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
+                                    child: Icon(
+                                      Icons.keyboard_arrow_right,
+                                      size: 28,
+                                      color: colorGrayDark,
                                     ),
                                   ),
                                 ),
-                                trailing: const Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
-                                  child: Icon(
-                                    Icons.keyboard_arrow_right,
-                                    size: 28,
-                                    color: colorGrayDark,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      }
-                      return Container();
-                    },
+                              );
+                            },
+                          );
+                        }
+                        return Container();
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -260,5 +268,10 @@ class _HomeScreenState extends State<HomeScreen> {
   getUserId() async {
     var userId = await SharedPrefrence.getStringPreference(SharedPrefrence.id);
     homeScreenBloc.add(HomeScreenEvent(id: userId));
+  }
+
+  void onRefresh() {
+    getUserId();
+    refreshController.refreshCompleted();
   }
 }
