@@ -12,6 +12,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_bloc.dart';
 import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_events.dart';
@@ -61,6 +62,8 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   String pjpText = "";
   int workingPlanTextcount = 0;
   String timeZone = "";
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -79,26 +82,32 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<ClockInOutBloc>(
-      create: (BuildContext context) => clockInOutBloc,
-      child: BlocConsumer<ClockInOutBloc, ClockInOutStates>(
-        listener: (context, state) {
-          if (state is ClockInSuccessState) {
-            clockInOutBloc.add(ClockInOutInitialEvent());
-            Fluttertoast.showToast(msg: state.successMessage);
-          }
-          if (state is ClockInFailureState) {
-            clockInOutBloc.add(ClockInOutInitialEvent());
-            Fluttertoast.showToast(msg: state.failureMessage);
-          }
-          if (state is ClockOutSuccessState) {
-            clockInOutBloc.add(ClockInOutInitialEvent());
-            Fluttertoast.showToast(msg: state.successMessage);
-          }
-          if (state is ClockOutFailureState) {
-            clockInOutBloc.add(ClockInOutInitialEvent());
-            Fluttertoast.showToast(msg: state.failureMessage);
-          }
+    return Scaffold(
+      body: SmartRefresher(
+        primary: false,
+        controller: refreshController,
+        onRefresh: onRefresh,
+        enablePullDown: true,
+        child: BlocProvider<ClockInOutBloc>(
+          create: (BuildContext context) => clockInOutBloc,
+          child: BlocConsumer<ClockInOutBloc, ClockInOutStates>(
+            listener: (context, state) {
+              if (state is ClockInSuccessState) {
+                clockInOutBloc.add(ClockInOutInitialEvent());
+                Fluttertoast.showToast(msg: state.successMessage);
+              }
+              if (state is ClockInFailureState) {
+                clockInOutBloc.add(ClockInOutInitialEvent());
+                Fluttertoast.showToast(msg: state.failureMessage);
+              }
+              if (state is ClockOutSuccessState) {
+                clockInOutBloc.add(ClockInOutInitialEvent());
+                Fluttertoast.showToast(msg: state.successMessage);
+              }
+              if (state is ClockOutFailureState) {
+                clockInOutBloc.add(ClockInOutInitialEvent());
+                Fluttertoast.showToast(msg: state.failureMessage);
+              }
 
           if (state is ClockInOutGetUserLocationState) {
             timeZone = state.timeZone;
@@ -1168,5 +1177,10 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
         ", " +
         country +
         " (GMT+5:30)";
+  }
+
+  void onRefresh() {
+    clockInOutBloc.add(ClockInOutInitialEvent());
+    refreshController.refreshCompleted();
   }
 }
