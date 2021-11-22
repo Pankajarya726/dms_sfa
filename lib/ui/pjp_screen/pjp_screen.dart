@@ -155,10 +155,18 @@ class _PJPScreenState extends State<PJPScreen>
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    dateTime = DateTime(dateTime.year,
-                                        dateTime.month + 1, dateTime.day);
-                                    pjpBloc.add(
-                                        DateIncrementEvent(dateTime: dateTime));
+                                    if (DateTime.now().month ==
+                                            dateTime.month &&
+                                        DateTime.now().year == dateTime.year) {
+                                      Fluttertoast.showToast(
+                                          msg:
+                                              "You can't select month before today");
+                                    } else {
+                                      dateTime = DateTime(dateTime.year,
+                                          dateTime.month + 1, dateTime.day);
+                                      pjpBloc.add(DateIncrementEvent(
+                                          dateTime: dateTime));
+                                    }
                                   },
                                   child: Image.asset(
                                     "assets/2x/icon_next.png",
@@ -583,12 +591,13 @@ class _PJPScreenState extends State<PJPScreen>
   datePicker() {
     showMonthPicker(
       context: context,
-      firstDate: DateTime(DateTime.now().year - 0),
-      lastDate: DateTime(DateTime.now().year + 0, 12),
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
       initialDate: dateTime,
       locale: const Locale("en"),
     ).then((date) {
-      pjpBloc.add(DateSelectEvent(dateTime: date!));
+      dateTime = date!;
+      pjpBloc.add(DateSelectEvent(dateTime: date));
     });
   }
 

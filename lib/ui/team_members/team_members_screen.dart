@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:sfa/listeners/date_change_listener.dart';
 import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
@@ -96,13 +97,16 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
                           children: [
                             GestureDetector(
                               onTap: () async {
-                                dateTime = await showDatePicker(
+                                DateTime? d = await showDatePicker(
                                     context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime(1950),
+                                    initialDate: dateTime!,
+                                    firstDate: DateTime(2020),
                                     lastDate: DateTime.now());
                                 initialDate = initialFormat.format(dateTime!);
                                 changeDate = changeFormat.format(dateTime!);
+                                if (d != null) {
+                                  dateTime = d;
+                                }
                                 if (dateListener != null) {
                                   dateListener!.onDateChange(changeDate);
                                 }
@@ -155,10 +159,19 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
                             ),
                             InkWell(
                               onTap: () {
-                                dateTime = DateTime(dateTime!.year,
-                                    dateTime!.month, dateTime!.day + 1);
-                                initialDate = initialFormat.format(dateTime!);
-                                changeDate = changeFormat.format(dateTime!);
+                                if (DateTime.now().day == dateTime!.day &&
+                                    DateTime.now().month == dateTime!.month &&
+                                    DateTime.now().year == dateTime!.year) {
+                                  Fluttertoast.showToast(
+                                      msg:
+                                          "You can't select date before today");
+                                } else {
+                                  dateTime = DateTime(dateTime!.year,
+                                      dateTime!.month, dateTime!.day + 1);
+                                  initialDate = initialFormat.format(dateTime!);
+                                  changeDate = changeFormat.format(dateTime!);
+                                }
+
                                 if (dateListener != null) {
                                   dateListener!.onDateChange(changeDate);
                                 }
@@ -172,7 +185,96 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
                           ],
                         );
                       }
-                      return Container();
+                      return Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              DateTime? d = await showDatePicker(
+                                  context: context,
+                                  initialDate: dateTime!,
+                                  firstDate: DateTime(2020),
+                                  lastDate: DateTime.now());
+                              initialDate = initialFormat.format(dateTime!);
+                              changeDate = changeFormat.format(dateTime!);
+                              if (d != null) {
+                                dateTime = d;
+                              }
+                              if (dateListener != null) {
+                                dateListener!.onDateChange(changeDate);
+                              }
+                              setState(() {});
+                            },
+                            child: Row(
+                              children: [
+                                const Image(
+                                  fit: BoxFit.contain,
+                                  width: 20,
+                                  height: 20,
+                                  image: AssetImage(
+                                    "assets/calendar.png",
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  initialDate,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              dateTime = DateTime(dateTime!.year,
+                                  dateTime!.month, dateTime!.day - 1);
+                              initialDate = initialFormat.format(dateTime!);
+                              changeDate = changeFormat.format(dateTime!);
+                              if (dateListener != null) {
+                                dateListener!.onDateChange(changeDate);
+                              }
+                              setState(() {});
+                            },
+                            child: Image.asset(
+                              "assets/3x/icon_previous.png",
+                              width: 25,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              if (DateTime.now().day == dateTime!.day &&
+                                  DateTime.now().month == dateTime!.month &&
+                                  DateTime.now().year == dateTime!.year) {
+                                Fluttertoast.showToast(
+                                    msg: "You can't select date before today");
+                              } else {
+                                dateTime = DateTime(dateTime!.year,
+                                    dateTime!.month, dateTime!.day + 1);
+                                initialDate = initialFormat.format(dateTime!);
+                                changeDate = changeFormat.format(dateTime!);
+                              }
+
+                              if (dateListener != null) {
+                                dateListener!.onDateChange(changeDate);
+                              }
+                              setState(() {});
+                            },
+                            child: Image.asset(
+                              "assets/3x/icon_next.png",
+                              width: 25,
+                            ),
+                          ),
+                        ],
+                      );
                     },
                   ),
                 ),

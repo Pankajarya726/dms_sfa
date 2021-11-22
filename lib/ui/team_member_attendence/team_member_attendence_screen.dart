@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -172,10 +173,18 @@ class _TeamMemberAttendenceScreenState
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    dateTime = DateTime(dateTime.year,
-                                        dateTime.month + 1, dateTime.day);
-                                    teamMemberAttendenceBloc.add(
-                                        IncrementDateEvent(date: dateTime));
+                                    if (DateTime.now().month ==
+                                            dateTime.month &&
+                                        DateTime.now().year == dateTime.year) {
+                                      Fluttertoast.showToast(
+                                          msg:
+                                              "You can't select month before today");
+                                    } else {
+                                      dateTime = DateTime(dateTime.year,
+                                          dateTime.month + 1, dateTime.day);
+                                      teamMemberAttendenceBloc.add(
+                                          IncrementDateEvent(date: dateTime));
+                                    }
                                   },
                                   child: Image.asset(
                                     "assets/2x/icon_next.png",
@@ -655,12 +664,13 @@ class _TeamMemberAttendenceScreenState
   void datePicker() async {
     showMonthPicker(
       context: context,
-      firstDate: DateTime(DateTime.now().year - 0),
-      lastDate: DateTime(DateTime.now().year + 0, 12),
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
       initialDate: dateTime,
       locale: const Locale("en"),
     ).then((date) {
-      teamMemberAttendenceBloc.add(SelectDateEvent(date: date!));
+      dateTime = date!;
+      teamMemberAttendenceBloc.add(SelectDateEvent(date: date));
     });
   }
 

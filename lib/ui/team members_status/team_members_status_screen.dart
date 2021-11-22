@@ -271,7 +271,7 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
     filterName = name;
     locationType = type;
     if (location != null) {
-      locationName = location.name;
+      locationName = location.id;
     }
 
     getAllUserStatusBloc.add(GetAllUserStatusInitialEvent(

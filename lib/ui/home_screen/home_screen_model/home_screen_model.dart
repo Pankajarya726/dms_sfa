@@ -102,12 +102,12 @@ class ClockInOutData {
   String toJson() => json.encode(toMap());
 
   factory ClockInOutData.fromMap(Map<String, dynamic> json) => ClockInOutData(
-        inOutStatus:
-            json["in_out_status"] == null ? null : json["in_out_status"],
-        clockInTime:
-            json["clock_in_time"] == null ? null : json["clock_in_time"],
+        inOutStatus: json["in_out_status"] == null ? 0 : json["in_out_status"],
+        clockInTime: json["clock_in_time"] == null
+            ? ""
+            : json["clock_in_time"].toString(),
         clockOutTime: json["clock_out_time"],
-        userId: json["user_id"] == null ? null : json["user_id"],
+        userId: json["user_id"] == null ? 0 : json["user_id"],
       );
 
   Map<String, dynamic> toMap() => {

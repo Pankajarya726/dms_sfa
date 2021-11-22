@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sfa/ui/team_members_details_screen/team_members_details_bloc/team_members_details_bloc.dart';
@@ -142,10 +145,19 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    dateTime = DateTime(dateTime.year,
-                                        dateTime.month, dateTime.day + 1);
-                                    teamMembersDetailsBloc.add(
-                                        DateIncrementEvent(date: dateTime));
+                                    if (DateTime.now().day == dateTime.day &&
+                                        DateTime.now().month ==
+                                            dateTime.month &&
+                                        DateTime.now().year == dateTime.year) {
+                                      Fluttertoast.showToast(
+                                          msg:
+                                              "You can't select date before today");
+                                    } else {
+                                      dateTime = DateTime(dateTime.year,
+                                          dateTime.month, dateTime.day + 1);
+                                      teamMembersDetailsBloc.add(
+                                          DateIncrementEvent(date: dateTime));
+                                    }
                                   },
                                   child: Image.asset(
                                     "assets/2x/icon_next.png",

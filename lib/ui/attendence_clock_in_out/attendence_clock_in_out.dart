@@ -83,31 +83,31 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SmartRefresher(
-        primary: false,
-        controller: refreshController,
-        onRefresh: onRefresh,
-        enablePullDown: true,
-        child: BlocProvider<ClockInOutBloc>(
-          create: (BuildContext context) => clockInOutBloc,
-          child: BlocConsumer<ClockInOutBloc, ClockInOutStates>(
-            listener: (context, state) {
-              if (state is ClockInSuccessState) {
-                clockInOutBloc.add(ClockInOutInitialEvent());
-                Fluttertoast.showToast(msg: state.successMessage);
-              }
-              if (state is ClockInFailureState) {
-                clockInOutBloc.add(ClockInOutInitialEvent());
-                Fluttertoast.showToast(msg: state.failureMessage);
-              }
-              if (state is ClockOutSuccessState) {
-                clockInOutBloc.add(ClockInOutInitialEvent());
-                Fluttertoast.showToast(msg: state.successMessage);
-              }
-              if (state is ClockOutFailureState) {
-                clockInOutBloc.add(ClockInOutInitialEvent());
-                Fluttertoast.showToast(msg: state.failureMessage);
-              }
+        body: SmartRefresher(
+      primary: false,
+      controller: refreshController,
+      onRefresh: onRefresh,
+      enablePullDown: true,
+      child: BlocProvider<ClockInOutBloc>(
+        create: (BuildContext context) => clockInOutBloc,
+        child: BlocConsumer<ClockInOutBloc, ClockInOutStates>(
+          listener: (context, state) {
+            if (state is ClockInSuccessState) {
+              clockInOutBloc.add(ClockInOutInitialEvent());
+              Fluttertoast.showToast(msg: state.successMessage);
+            }
+            if (state is ClockInFailureState) {
+              clockInOutBloc.add(ClockInOutInitialEvent());
+              Fluttertoast.showToast(msg: state.failureMessage);
+            }
+            if (state is ClockOutSuccessState) {
+              clockInOutBloc.add(ClockInOutInitialEvent());
+              Fluttertoast.showToast(msg: state.successMessage);
+            }
+            if (state is ClockOutFailureState) {
+              clockInOutBloc.add(ClockInOutInitialEvent());
+              Fluttertoast.showToast(msg: state.failureMessage);
+            }
 
               if (state is ClockInOutGetUserLocationState) {
                 timeZone = state.timeZone;

@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -24,7 +27,7 @@ class MyProfileAttendence extends StatefulWidget {
 
 class _MyProfileAttendenceState extends State<MyProfileAttendence> {
   MyProfileAttendenceBloc myProfileAttendenceBloc = MyProfileAttendenceBloc();
-  DateTime? dateTime = DateTime.now();
+  DateTime dateTime = DateTime.now();
   RefreshController refreshController =
       RefreshController(initialRefresh: false);
 
@@ -88,7 +91,7 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                                     MyProfileAttendenceState>(
                                   builder: (context, state) {
                                     return Text(
-                                      DateFormat("MMM yyyy").format(dateTime!),
+                                      DateFormat("MMM yyyy").format(dateTime),
                                       style: const TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
@@ -109,12 +112,12 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  dateTime = DateTime(dateTime!.year,
-                                      dateTime!.month - 1, dateTime!.day);
+                                  dateTime = DateTime(dateTime.year,
+                                      dateTime.month - 1, dateTime.day);
 
                                   myProfileAttendenceBloc.add(
                                       MyProfileAttendenceDecrementDateEvent(
-                                          dateTime: dateTime!));
+                                          dateTime: dateTime));
                                 },
                                 child: Image.asset(
                                   "assets/2x/icon_previous.png",
@@ -126,12 +129,19 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                               ),
                               InkWell(
                                 onTap: () {
-                                  dateTime = DateTime(dateTime!.year,
-                                      dateTime!.month + 1, dateTime!.day);
+                                  if (DateTime.now().month == dateTime.month &&
+                                      DateTime.now().year == dateTime.year) {
+                                    Fluttertoast.showToast(
+                                        msg:
+                                            "You can't select month before today");
+                                  } else {
+                                    dateTime = DateTime(dateTime.year,
+                                        dateTime.month + 1, dateTime.day);
 
-                                  myProfileAttendenceBloc.add(
-                                      MyProfileAttendenceIncrementDateEvent(
-                                          dateTime: dateTime!));
+                                    myProfileAttendenceBloc.add(
+                                        MyProfileAttendenceIncrementDateEvent(
+                                            dateTime: dateTime));
+                                  }
                                 },
                                 child: Image.asset(
                                   "assets/2x/icon_next.png",
@@ -410,7 +420,7 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
   addEvent() {
     var format = DateFormat("yyyy-MM-dd");
     myProfileAttendenceBloc.add(
-        MyProfileAttendenceInitialEvent(currentDate: format.format(dateTime!)));
+        MyProfileAttendenceInitialEvent(currentDate: format.format(dateTime)));
   }
 
   Widget commonTextField(headingText) {
@@ -499,13 +509,14 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
   void showPicker() async {
     showMonthPicker(
       context: context,
-      firstDate: DateTime(DateTime.now().year - 0),
-      lastDate: DateTime(DateTime.now().year + 0, 12),
-      initialDate: dateTime!,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+      initialDate: dateTime,
       locale: const Locale("en"),
     ).then((date) {
+      dateTime = date!;
       myProfileAttendenceBloc
-          .add(MyProfileAttendenceSelectDateEvent(dateTime: date!));
+          .add(MyProfileAttendenceSelectDateEvent(dateTime: dateTime));
     });
   }
 
