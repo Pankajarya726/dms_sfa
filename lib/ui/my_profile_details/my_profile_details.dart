@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -19,7 +20,7 @@ class MyProfileDetails extends StatefulWidget {
 
 class _MyProfileDetailsState extends State<MyProfileDetails> {
   MyProfileDetailsBloc myProfileDetailsBloc = MyProfileDetailsBloc();
-  DateTime? dateTime = DateTime.now();
+  DateTime dateTime = DateTime.now();
   RefreshController refreshController =
       RefreshController(initialRefresh: false);
 
@@ -85,7 +86,7 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                                   builder: (context, state) {
                                     return Text(
                                       DateFormat("dd MMM yyyy")
-                                          .format(dateTime!),
+                                          .format(dateTime),
                                       style: const TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
@@ -106,11 +107,11 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  dateTime = DateTime(dateTime!.year,
-                                      dateTime!.month, dateTime!.day - 1);
+                                  dateTime = DateTime(dateTime.year,
+                                      dateTime.month, dateTime.day - 1);
                                   myProfileDetailsBloc.add(
                                       MyProfileDetailsDecrementDateEvent(
-                                          dateTime: dateTime!));
+                                          dateTime: dateTime));
                                 },
                                 child: Image.asset(
                                   "assets/2x/icon_previous.png",
@@ -122,11 +123,19 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                               ),
                               InkWell(
                                 onTap: () {
-                                  dateTime = DateTime(dateTime!.year,
-                                      dateTime!.month, dateTime!.day + 1);
-                                  myProfileDetailsBloc.add(
-                                      MyProfileDetailsIncrementDateEvent(
-                                          dateTime: dateTime!));
+                                  if (DateTime.now().day == dateTime.day &&
+                                      DateTime.now().month == dateTime.month &&
+                                      DateTime.now().year == dateTime.year) {
+                                    Fluttertoast.showToast(
+                                        msg:
+                                            "You can't select date before today");
+                                  } else {
+                                    dateTime = DateTime(dateTime.year,
+                                        dateTime.month, dateTime.day + 1);
+                                    myProfileDetailsBloc.add(
+                                        MyProfileDetailsIncrementDateEvent(
+                                            dateTime: dateTime));
+                                  }
                                 },
                                 child: Image.asset(
                                   "assets/2x/icon_next.png",
@@ -164,7 +173,7 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                             var format = DateFormat("yyyy-MM-dd");
                             myProfileDetailsBloc.add(
                               MyProfileDetailsInitialEvent(
-                                  currentDate: format.format(dateTime!)),
+                                  currentDate: format.format(dateTime)),
                             );
                           }
                           if (state is MyProfileDetailsIncrementDateState) {
@@ -172,7 +181,7 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                             var format = DateFormat("yyyy-MM-dd");
                             myProfileDetailsBloc.add(
                               MyProfileDetailsInitialEvent(
-                                  currentDate: format.format(dateTime!)),
+                                  currentDate: format.format(dateTime)),
                             );
                           }
                           if (state is MyProfileDetailsDecrementDateState) {
@@ -180,7 +189,7 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                             var format = DateFormat("yyyy-MM-dd");
                             myProfileDetailsBloc.add(
                               MyProfileDetailsInitialEvent(
-                                  currentDate: format.format(dateTime!)),
+                                  currentDate: format.format(dateTime)),
                             );
                           }
                         },
@@ -189,7 +198,7 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                             var format = DateFormat("yyyy-MM-dd");
                             myProfileDetailsBloc.add(
                                 MyProfileDetailsInitialEvent(
-                                    currentDate: format.format(dateTime!)));
+                                    currentDate: format.format(dateTime)));
                             return const Center(
                               child: CircularProgressIndicator(),
                             );
@@ -429,7 +438,7 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
   void showPicker() async {
     DateTime? d = await showDatePicker(
         context: context,
-        initialDate: dateTime!,
+        initialDate: dateTime,
         firstDate: DateTime(1950),
         lastDate: DateTime.now());
     if (d != null) {
@@ -437,12 +446,12 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
     }
 
     myProfileDetailsBloc
-        .add(MyProfileDetailsSelectDateEvent(dateTime: dateTime!));
+        .add(MyProfileDetailsSelectDateEvent(dateTime: dateTime));
   }
 
   void onRefresh() {
     myProfileDetailsBloc
-        .add(MyProfileDetailsSelectDateEvent(dateTime: dateTime!));
+        .add(MyProfileDetailsSelectDateEvent(dateTime: dateTime));
     refreshController.refreshCompleted();
   }
 }
