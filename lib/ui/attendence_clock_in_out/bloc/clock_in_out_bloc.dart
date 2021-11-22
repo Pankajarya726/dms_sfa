@@ -149,12 +149,21 @@ Stream<ClockInOutStates> getUserLocation(
         "Time Zone in " + city + ", " + state + ", " + country + " (GMT+5:30)";
 
     yield ClockInOutGetUserLocationState(
-        timeZone: timeZone, latitude: latitude, longitude: longitude);
+        timeZone: timeZone,
+        latitude: latitude,
+        longitude: longitude,
+        city: city,
+        state: state,
+        country: country);
   } catch (exception) {
     yield ClockInOutGetUserLocationState(
-        timeZone: "Please turn on location to see time zone",
-        latitude: 00.00,
-        longitude: 00.00);
+      timeZone: "Please turn on location to see time zone",
+      latitude: 00.00,
+      longitude: 00.00,
+      city: "",
+      state: "",
+      country: "",
+    );
   }
 }
 
