@@ -55,8 +55,8 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   String userId = "";
   StreamController<String> timerController = StreamController();
   final stopWatch = PublishSubject<int>();
-  String locality = "";
-  String administrativeArea = "";
+  String city = "";
+  String myState = "";
   String country = "";
   String pjpText = "";
   int workingPlanTextcount = 0;
@@ -104,6 +104,9 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
             timeZone = state.timeZone;
             latitude = state.latitude;
             longitude = state.longitude;
+            city = state.city;
+            myState = state.state;
+            country = state.country;
           }
           if (state is ClockInOutInitialSuccessState) {
             if (state.userData.data!.clockInOutData.isNotEmpty) {
@@ -247,15 +250,35 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                         width: 5,
                       ),
                       Flexible(
-                          flex: 20,
-                          child: Text(
-                            timeZone,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 13,
-                            ),
-                          )),
+                        flex: 20,
+                        child: city.isNotEmpty
+                            ? Text(
+                                timeZone,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                ),
+                              )
+                            : timeZone ==
+                                    "Please turn on location to see time zone"
+                                ? Text(
+                                    timeZone,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                    ),
+                                  )
+                                : const Text(
+                                    "Time zone not available",
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                      ),
                     ],
                   ),
                 ),
@@ -349,7 +372,9 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                   activeColor: colorPrimary,
                   checkColor: Colors.white,
                   onChanged: (value) {
-                    getUserPosition();
+                    if (gpsLocation == false) {
+                      getUserPosition();
+                    }
                     setState(() {
                       gpsLocation = value!;
                     });
@@ -361,7 +386,9 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
               ),
               InkWell(
                 onTap: () {
-                  getUserPosition();
+                  if (gpsLocation == false) {
+                    getUserPosition();
+                  }
                   setState(() {
                     gpsLocation = !gpsLocation;
                   });
@@ -988,9 +1015,11 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     XFile? image = await ImagePicker.platform
         .getImage(source: ImageSource.camera, imageQuality: 50);
 
-    setState(() {
-      this.image = image;
-    });
+    if (image != null) {
+      setState(() {
+        this.image = image;
+      });
+    }
   }
 
   showUpdateAndConfirmBottomSheet() async {
@@ -1052,13 +1081,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
         ":" +
         startTimerDateTime.second.toString() +
         ".000";
-
-    // String time1 = DateTime.now().hour.toString() +
-    //     ":" +
-    //     DateTime.now().minute.toString() +
-    //     ":" +
-    //     DateTime.now().second.toString() +
-    //     ".000";
 
     duration = DateFormat().add_Hms().parse(time1).difference(dateTime);
     time = duration.inSeconds;
@@ -1136,15 +1158,15 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
         await placemarkFromCoordinates(position.latitude, position.longitude);
 
     Placemark place = placemarks[0];
-    String city = place.locality!;
-    String state = place.administrativeArea!;
-    String country = place.country!;
-    String timeZone =
-        "Time Zone in " + city + ", " + state + ", " + country + " (GMT+5:30)";
-    print("place latitude = $latitude");
-    print("place longtitude = $longitude");
-    print("place country = $country");
-    print("place state = $administrativeArea");
-    print("place city = $locality");
+    city = place.locality!;
+    myState = place.administrativeArea!;
+    country = place.country!;
+    timeZone = "Time Zone in " +
+        city +
+        ", " +
+        myState +
+        ", " +
+        country +
+        " (GMT+5:30)";
   }
 }

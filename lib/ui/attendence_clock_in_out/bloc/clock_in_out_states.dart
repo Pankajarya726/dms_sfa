@@ -74,16 +74,25 @@ class ClockInOutGetUserLocationState extends ClockInOutStates {
   final String timeZone;
   final double latitude;
   final double longitude;
+  final String city;
+  final String state;
+  final String country;
   ClockInOutGetUserLocationState({
     required this.timeZone,
     required this.latitude,
     required this.longitude,
+    required this.city,
+    required this.state,
+    required this.country,
   });
   @override
   List<Object?> get props => [
         timeZone,
         latitude,
         longitude,
+        city,
+        state,
+        country,
       ];
 }
 
