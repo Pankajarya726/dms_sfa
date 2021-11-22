@@ -96,7 +96,7 @@ class _TeamMembersDetailsState extends State<TeamMembersDetails> {
                       text: "Details",
                     ),
                     Tab(
-                      text: "Attendence",
+                      text: "Attendance",
                     ),
                     Tab(
                       text: "Track",

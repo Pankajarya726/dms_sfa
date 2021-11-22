@@ -212,16 +212,17 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
                 )
               : BottomNavigationBarItem(
                   icon: SizedBox(
-                    width: 35,
-                    height: 35,
+                    width: 25,
+                    height: 40,
                     child: currentBottomTabIndex == 2
                         ? Image.asset(
-                            "assets/f3-a.png",
+                            "assets/3x/f5-a.png",
                             fit: BoxFit.contain,
                           )
                         : Image.asset(
-                            "assets/f3.png",
+                            "assets/3x/f5.png",
                             fit: BoxFit.contain,
+                            color: colorGray,
                           ),
                   ),
                   label: "Profile",

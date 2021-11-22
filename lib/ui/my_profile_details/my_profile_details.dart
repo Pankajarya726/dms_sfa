@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -425,11 +427,14 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
   }
 
   void showPicker() async {
-    dateTime = await showDatePicker(
+    DateTime? d = await showDatePicker(
         context: context,
-        initialDate: DateTime.now(),
+        initialDate: dateTime!,
         firstDate: DateTime(1950),
         lastDate: DateTime.now());
+    if (d != null) {
+      dateTime = d;
+    }
 
     myProfileDetailsBloc
         .add(MyProfileDetailsSelectDateEvent(dateTime: dateTime!));

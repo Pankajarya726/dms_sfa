@@ -117,7 +117,7 @@ class _MyProfileHomeState extends State<MyProfileHome> {
                       text: "Details",
                     ),
                     Tab(
-                      text: "Attendence",
+                      text: "Attendance",
                     ),
                   ],
                 ),

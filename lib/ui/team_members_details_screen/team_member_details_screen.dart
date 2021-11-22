@@ -403,13 +403,17 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
   }
 
   void datePicker() async {
-    DateTime? date = await showDatePicker(
+    DateTime? d = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: dateTime,
       firstDate: DateTime(2020),
       lastDate: DateTime.now(),
     );
-    teamMembersDetailsBloc.add(SelectDateEvent(date: date!));
+    if (d != null) {
+      dateTime = d;
+    }
+
+    teamMembersDetailsBloc.add(SelectDateEvent(date: dateTime));
   }
 
   void addEvent() async {

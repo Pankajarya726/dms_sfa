@@ -31,6 +31,7 @@ class _AddPjpScreenState extends State<AddPjpScreen> {
     // DateTime showDate = DateTime(dateTime.year, dateTime.month + 1, 1);
     DateTime showDate = DateTime(dateTime.year, dateTime.month, 1);
     date = DateFormat('EEE dd MMM').format(showDate);
+
     super.initState();
   }
 
