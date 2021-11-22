@@ -439,7 +439,7 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
     DateTime? d = await showDatePicker(
         context: context,
         initialDate: dateTime,
-        firstDate: DateTime(1950),
+        firstDate: DateTime(2020),
         lastDate: DateTime.now());
     if (d != null) {
       dateTime = d;
