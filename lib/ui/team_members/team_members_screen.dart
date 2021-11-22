@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:sfa/listeners/date_change_listener.dart';
 import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
@@ -155,10 +156,19 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
                             ),
                             InkWell(
                               onTap: () {
-                                dateTime = DateTime(dateTime!.year,
-                                    dateTime!.month, dateTime!.day + 1);
-                                initialDate = initialFormat.format(dateTime!);
-                                changeDate = changeFormat.format(dateTime!);
+                                if (DateTime.now().day == dateTime!.day &&
+                                    DateTime.now().month == dateTime!.month &&
+                                    DateTime.now().year == dateTime!.year) {
+                                  Fluttertoast.showToast(
+                                      msg:
+                                          "You can't select date before today");
+                                } else {
+                                  dateTime = DateTime(dateTime!.year,
+                                      dateTime!.month, dateTime!.day + 1);
+                                  initialDate = initialFormat.format(dateTime!);
+                                  changeDate = changeFormat.format(dateTime!);
+                                }
+
                                 if (dateListener != null) {
                                   dateListener!.onDateChange(changeDate);
                                 }
