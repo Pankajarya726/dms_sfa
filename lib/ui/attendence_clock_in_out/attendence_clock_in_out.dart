@@ -109,70 +109,74 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                 Fluttertoast.showToast(msg: state.failureMessage);
               }
 
-          if (state is ClockInOutGetUserLocationState) {
-            timeZone = state.timeZone;
-            latitude = state.latitude;
-            longitude = state.longitude;
-            city = state.city;
-            myState = state.state;
-            country = state.country;
-          }
-          if (state is ClockInOutInitialSuccessState) {
-            if (state.userData.data!.clockInOutData.isNotEmpty) {
-              clockInStatus =
-                  state.userData.data!.clockInOutData.first.inOutStatus;
+              if (state is ClockInOutGetUserLocationState) {
+                timeZone = state.timeZone;
+                latitude = state.latitude;
+                longitude = state.longitude;
+                city = state.city;
+                myState = state.state;
+                country = state.country;
+              }
+              if (state is ClockInOutInitialSuccessState) {
+                if (state.userData.data!.clockInOutData.isNotEmpty) {
+                  clockInStatus =
+                      state.userData.data!.clockInOutData.first.inOutStatus;
+
+                  if (clockInStatus == 1) {
+                    clockInTime = DateFormat("HH:mm:ss").parse(
+                        state.userData.data!.clockInOutData.first.clockInTime);
+                    startAttendenceTimer(clockInTime!);
+                  } else if (clockInStatus == 2) {
+                    clockInTime = DateFormat("HH:mm:ss").parse(
+                        state.userData.data!.clockInOutData.first.clockInTime);
+                    clockOutTime = DateFormat("HH:mm:ss").parse(
+                        state.userData.data!.clockInOutData.first.clockOutTime);
+                    timeDifference =
+                        (clockOutTime!.difference(clockInTime!)).toString();
+                    var arr = timeDifference.split(".");
+                    timeDifference = arr[0];
+                    var arr2 = timeDifference.split(":");
+                    int hrs = int.parse(arr2[0]);
+                    checkSuccessHours = hrs;
+                    timeDifference = arr2[0].padLeft(2, '0');
+                    timeDifference =
+                        timeDifference + ":" + arr2[1].padLeft(2, '0');
+                    timeDifference =
+                        timeDifference + ":" + arr2[2].padLeft(2, '0');
+                  }
+                }
+                clockInOutBloc.add(ClockInOutGetUserLocationEvent());
+              }
+            },
+            builder: (context, state) {
+              if (state is ClockInOutInitialState) {
+                clockInOutBloc.add(ClockInOutInitialEvent());
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (state is ClockInOutLoadingState) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              if (state is ClockInOutFailureState) {
+                return Center(
+                  child: Text(state.failureMessage),
+                );
+              }
 
               if (clockInStatus == 1) {
-                clockInTime = DateFormat("HH:mm:ss").parse(
-                    state.userData.data!.clockInOutData.first.clockInTime);
-                startAttendenceTimer(clockInTime!);
+                return clockInLayout(timeDifference, checkSuccessHours);
               } else if (clockInStatus == 2) {
-                clockInTime = DateFormat("HH:mm:ss").parse(
-                    state.userData.data!.clockInOutData.first.clockInTime);
-                clockOutTime = DateFormat("HH:mm:ss").parse(
-                    state.userData.data!.clockInOutData.first.clockOutTime);
-                timeDifference =
-                    (clockOutTime!.difference(clockInTime!)).toString();
-                var arr = timeDifference.split(".");
-                timeDifference = arr[0];
-                var arr2 = timeDifference.split(":");
-                int hrs = int.parse(arr2[0]);
-                checkSuccessHours = hrs;
-                timeDifference = arr2[0].padLeft(2, '0');
-                timeDifference = timeDifference + ":" + arr2[1].padLeft(2, '0');
-                timeDifference = timeDifference + ":" + arr2[2].padLeft(2, '0');
+                return clockInLayout(timeDifference, checkSuccessHours);
+              } else {
+                return clockOutLayout();
               }
-            }
-            clockInOutBloc.add(ClockInOutGetUserLocationEvent());
-          }
-        },
-        builder: (context, state) {
-          if (state is ClockInOutInitialState) {
-            clockInOutBloc.add(ClockInOutInitialEvent());
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (state is ClockInOutLoadingState) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          if (state is ClockInOutFailureState) {
-            return Center(
-              child: Text(state.failureMessage),
-            );
-          }
-
-          if (clockInStatus == 1) {
-            return clockInLayout(timeDifference, checkSuccessHours);
-          } else if (clockInStatus == 2) {
-            return clockInLayout(timeDifference, checkSuccessHours);
-          } else {
-            return clockOutLayout();
-          }
-        },
+            },
+          ),
+        ),
       ),
     );
   }
