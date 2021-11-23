@@ -49,7 +49,6 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
                 Fluttertoast.showToast(msg: state.successMessage);
                 teamMembersAbsentBloc
                     .add(TeamMembersAbsentSuccessEvent(currentDate: date));
-                Navigator.pop(context);
               }
             },
             builder: (context, state) {
@@ -279,6 +278,7 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
               userAttendenceId: userAttendenceId,
             ),
           );
+          Navigator.pop(context);
         },
         style: ButtonStyle(
           fixedSize: MaterialStateProperty.all(
@@ -313,6 +313,7 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
               userAttendenceId: userAttendenceId,
             ),
           );
+          Navigator.pop(context);
         },
         style: ButtonStyle(
           fixedSize: MaterialStateProperty.all(
@@ -362,6 +363,7 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
             userAttendenceId: userAttendenceId,
           ),
         );
+        // Navigator.pop(context);
       },
       child: const Text(
         "Approve",
@@ -398,6 +400,7 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
             userAttendenceId: userAttendenceId,
           ),
         );
+        // Navigator.pop(context);
       },
       child: const Text(
         "Reject",
