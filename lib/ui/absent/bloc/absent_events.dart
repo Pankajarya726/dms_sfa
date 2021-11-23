@@ -5,6 +5,11 @@ class AbsentEvents extends Equatable {
   List<Object?> get props => [];
 }
 
+class AbsentInitialEvent extends AbsentEvents {
+  @override
+  List<Object?> get props => [];
+}
+
 class AbsentSuccessEvent extends AbsentEvents {
   final String absentReason;
   AbsentSuccessEvent({required this.absentReason});

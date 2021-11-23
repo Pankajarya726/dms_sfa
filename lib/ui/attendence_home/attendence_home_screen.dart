@@ -33,8 +33,6 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
   FilterData? location;
   DateChangeListener? filterChangeListener;
   PjpDataChangeListener? pageLoadListener;
-  ClockInOutBloc clockInOutBloc = ClockInOutBloc();
-  bool clockInOutData = false;
 
   @override
   void initState() {
@@ -44,235 +42,214 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => clockInOutBloc,
-      child: BlocBuilder<ClockInOutBloc, ClockInOutStates>(
-        builder: (context, state) {
-          if (state is ClockInOutInitialState) {
-            clockInOutBloc.add(ClockInOutInitialEvent());
-          }
-          if (state is ClockInOutInitialSuccessState) {
-            if (state.userData.data!.clockInOutData.isNotEmpty) {
-              clockInOutData = true;
-            } else {
-              clockInOutData = false;
-            }
-          }
-
-          return Scaffold(
-            appBar: isLeader != true && currentBottomTabIndex == 2
-                ? null
-                : AppBar(
-                    elevation: 0,
-                    automaticallyImplyLeading: false,
-                    backgroundColor: colorPrimary,
-                    title: currentBottomTabIndex == 0
-                        ? const Text("Attendance")
-                        : currentBottomTabIndex == 1
-                            ? const Text("Absent")
-                            : currentBottomTabIndex == 3
-                                ? const Text("PJP")
-                                : const Text("Team Members"),
-                    centerTitle: true,
-                    actions: [
-                      currentBottomTabIndex == 2
-                          ? IconButton(
-                              onPressed: () {
-                                showFilters();
-                              },
-                              icon: const Image(
-                                fit: BoxFit.contain,
-                                width: 23,
-                                image: AssetImage("assets/filter.png"),
-                              ),
-                            )
-                          : Container(),
-                      currentBottomTabIndex == 3
-                          ? Container()
-                          : IconButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              icon: const Image(
-                                fit: BoxFit.contain,
-                                width: 23,
-                                image: AssetImage("assets/home.png"),
-                              ),
-                            ),
-                      currentBottomTabIndex == 3
-                          ? Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: MaterialButton(
-                                height: 30,
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 2),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(3),
-                                ),
-                                color: Colors.white70,
-                                elevation: 0,
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      "assets/report.png",
-                                      width: 15,
-                                      fit: BoxFit.fill,
-                                    ),
-                                    const SizedBox(width: 10),
-                                    const Text(
-                                      "Add PJP",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                onPressed: () async {
-                                  var status =
-                                      await SharedPrefrence.getStringPreference(
-                                          SharedPrefrence.isEnable);
-
-                                  if (status != "show") {
-                                    Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const AddPjpScreen()))
-                                        .then((value) {
-                                      if (pageLoadListener != null) {
-                                        pageLoadListener!.onPageLoad(true);
-                                      }
-                                    });
-                                  } else {
-                                    Fluttertoast.showToast(
-                                        msg: "Add PJP is not available");
-                                  }
-                                },
-                              ),
-                            )
-                          : Container(),
-                    ],
-                  ),
-            body: currentBottomTabIndex == 0
-                ? const AttendenceClockInOut()
-                : currentBottomTabIndex == 1
-                    ? const AbsentScreen()
-                    : currentBottomTabIndex == 3
-                        ? PJPScreen(
-                            pageLoad: (listener) {
-                              pageLoadListener = listener;
-                            },
-                          )
-                        : currentBottomTabIndex == 2
-                            ? (isLeader == true
-                                ? TeamMembersScreen(
-                                    onFilterListenerInitialize:
-                                        (filterListener) {
-                                      filterChangeListener = filterListener;
-                                    },
-                                  )
-                                : const MyProfileHome())
-                            : Container(),
-            bottomNavigationBar: BottomNavigationBar(
-              selectedFontSize: 15,
-              unselectedFontSize: 15,
-              selectedItemColor: colorPrimary,
-              showUnselectedLabels: true,
-              unselectedItemColor: colorGrayDark,
-              currentIndex: currentBottomTabIndex,
-              type: BottomNavigationBarType.fixed,
-              onTap: ontemTaped,
-              elevation: 20,
-              items: [
-                BottomNavigationBarItem(
-                  icon: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: currentBottomTabIndex == 0
-                        ? Image.asset(
-                            "assets/f1-a.png",
-                            fit: BoxFit.contain,
-                            width: 22,
-                          )
-                        : Image.asset(
-                            "assets/f1.png",
-                            fit: BoxFit.contain,
-                            width: 22,
-                          ),
-                  ),
-                  label: "Home",
-                ),
-                BottomNavigationBarItem(
-                  icon: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: currentBottomTabIndex == 1
-                        ? Image.asset(
-                            "assets/f2-a.png",
-                            fit: BoxFit.contain,
-                            width: 22,
-                          )
-                        : Image.asset(
-                            "assets/f2.png",
-                            fit: BoxFit.contain,
-                            width: 22,
-                          ),
-                  ),
-                  label: "Absent",
-                ),
-                isLeader == true
-                    ? BottomNavigationBarItem(
-                        icon: SizedBox(
-                          width: 35,
-                          height: 35,
-                          child: currentBottomTabIndex == 2
-                              ? Image.asset(
-                                  "assets/f3-a.png",
-                                  fit: BoxFit.contain,
-                                )
-                              : Image.asset(
-                                  "assets/f3.png",
-                                  fit: BoxFit.contain,
-                                ),
+    return Scaffold(
+      appBar: isLeader != true && currentBottomTabIndex == 2
+          ? null
+          : AppBar(
+              elevation: 0,
+              automaticallyImplyLeading: false,
+              backgroundColor: colorPrimary,
+              title: currentBottomTabIndex == 0
+                  ? const Text("Attendance")
+                  : currentBottomTabIndex == 1
+                      ? const Text("Absent")
+                      : currentBottomTabIndex == 3
+                          ? const Text("PJP")
+                          : const Text("Team Members"),
+              centerTitle: true,
+              actions: [
+                currentBottomTabIndex == 2
+                    ? IconButton(
+                        onPressed: () {
+                          showFilters();
+                        },
+                        icon: const Image(
+                          fit: BoxFit.contain,
+                          width: 23,
+                          image: AssetImage("assets/filter.png"),
                         ),
-                        label: "Team",
                       )
-                    : BottomNavigationBarItem(
-                        icon: SizedBox(
-                          width: 25,
-                          height: 40,
-                          child: currentBottomTabIndex == 2
-                              ? Image.asset(
-                                  "assets/3x/f5-a.png",
-                                  fit: BoxFit.contain,
-                                )
-                              : Image.asset(
-                                  "assets/3x/f5.png",
-                                  fit: BoxFit.contain,
-                                  color: colorGray,
-                                ),
+                    : Container(),
+                currentBottomTabIndex == 3
+                    ? Container()
+                    : IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Image(
+                          fit: BoxFit.contain,
+                          width: 23,
+                          image: AssetImage("assets/home.png"),
                         ),
-                        label: "Profile",
                       ),
-                BottomNavigationBarItem(
-                  icon: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: currentBottomTabIndex == 3
-                        ? Image.asset(
-                            "assets/f4-a.png",
-                            fit: BoxFit.contain,
-                            width: 22,
-                          )
-                        : Image.asset(
-                            "assets/f4.png",
-                            fit: BoxFit.contain,
-                            width: 22,
+                currentBottomTabIndex == 3
+                    ? Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: MaterialButton(
+                          height: 30,
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(3),
                           ),
-                  ),
-                  label: "PJP",
-                ),
+                          color: Colors.white70,
+                          elevation: 0,
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                "assets/report.png",
+                                width: 15,
+                                fit: BoxFit.fill,
+                              ),
+                              const SizedBox(width: 10),
+                              const Text(
+                                "Add PJP",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                          onPressed: () async {
+                            var status =
+                                await SharedPrefrence.getStringPreference(
+                                    SharedPrefrence.isEnable);
+
+                            if (status != "show") {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const AddPjpScreen())).then((value) {
+                                if (pageLoadListener != null) {
+                                  pageLoadListener!.onPageLoad(true);
+                                }
+                              });
+                            } else {
+                              Fluttertoast.showToast(
+                                  msg: "Add PJP is not available");
+                            }
+                          },
+                        ),
+                      )
+                    : Container(),
               ],
             ),
-          );
-        },
+      body: currentBottomTabIndex == 0
+          ? const AttendenceClockInOut()
+          : currentBottomTabIndex == 1
+              ? const AbsentScreen()
+              : currentBottomTabIndex == 3
+                  ? PJPScreen(
+                      pageLoad: (listener) {
+                        pageLoadListener = listener;
+                      },
+                    )
+                  : currentBottomTabIndex == 2
+                      ? (isLeader == true
+                          ? TeamMembersScreen(
+                              onFilterListenerInitialize: (filterListener) {
+                                filterChangeListener = filterListener;
+                              },
+                            )
+                          : const MyProfileHome())
+                      : Container(),
+      bottomNavigationBar: BottomNavigationBar(
+        selectedFontSize: 15,
+        unselectedFontSize: 15,
+        selectedItemColor: colorPrimary,
+        showUnselectedLabels: true,
+        unselectedItemColor: colorGrayDark,
+        currentIndex: currentBottomTabIndex,
+        type: BottomNavigationBarType.fixed,
+        onTap: ontemTaped,
+        elevation: 20,
+        items: [
+          BottomNavigationBarItem(
+            icon: Container(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: currentBottomTabIndex == 0
+                  ? Image.asset(
+                      "assets/f1-a.png",
+                      fit: BoxFit.contain,
+                      width: 22,
+                    )
+                  : Image.asset(
+                      "assets/f1.png",
+                      fit: BoxFit.contain,
+                      width: 22,
+                    ),
+            ),
+            label: "Home",
+          ),
+          BottomNavigationBarItem(
+            icon: Container(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: currentBottomTabIndex == 1
+                  ? Image.asset(
+                      "assets/f2-a.png",
+                      fit: BoxFit.contain,
+                      width: 22,
+                    )
+                  : Image.asset(
+                      "assets/f2.png",
+                      fit: BoxFit.contain,
+                      width: 22,
+                    ),
+            ),
+            label: "Absent",
+          ),
+          isLeader == true
+              ? BottomNavigationBarItem(
+                  icon: SizedBox(
+                    width: 35,
+                    height: 35,
+                    child: currentBottomTabIndex == 2
+                        ? Image.asset(
+                            "assets/f3-a.png",
+                            fit: BoxFit.contain,
+                          )
+                        : Image.asset(
+                            "assets/f3.png",
+                            fit: BoxFit.contain,
+                          ),
+                  ),
+                  label: "Team",
+                )
+              : BottomNavigationBarItem(
+                  icon: SizedBox(
+                    width: 25,
+                    height: 40,
+                    child: currentBottomTabIndex == 2
+                        ? Image.asset(
+                            "assets/3x/f5-a.png",
+                            fit: BoxFit.contain,
+                          )
+                        : Image.asset(
+                            "assets/3x/f5.png",
+                            fit: BoxFit.contain,
+                            color: colorGray,
+                          ),
+                  ),
+                  label: "Profile",
+                ),
+          BottomNavigationBarItem(
+            icon: Container(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: currentBottomTabIndex == 3
+                  ? Image.asset(
+                      "assets/f4-a.png",
+                      fit: BoxFit.contain,
+                      width: 22,
+                    )
+                  : Image.asset(
+                      "assets/f4.png",
+                      fit: BoxFit.contain,
+                      width: 22,
+                    ),
+            ),
+            label: "PJP",
+          ),
+        ],
       ),
     );
   }
@@ -301,11 +278,6 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
     setState(() {
       currentBottomTabIndex = index;
     });
-
-    if (clockInOutData == true && currentBottomTabIndex == 1) {
-      Fluttertoast.showToast(msg: "Already clock in today");
-      currentBottomTabIndex2 = currentBottomTabIndex;
-    }
   }
 
   getUserDetails() async {
