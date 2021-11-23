@@ -103,11 +103,13 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
                               context,
                               MaterialPageRoute(
                                   builder: (context) => TeamMembersDetails(
-                                      userId: state.getClockInDataResponse
-                                          .data![index].userId
-                                          .toString(),
-                                      name: state.getClockInDataResponse
-                                          .data![index].name)));
+                                        userId: state.getClockInDataResponse
+                                            .data![index].userId
+                                            .toString(),
+                                        name: state.getClockInDataResponse
+                                            .data![index].name,
+                                        date: date,
+                                      )));
                         },
                         title: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

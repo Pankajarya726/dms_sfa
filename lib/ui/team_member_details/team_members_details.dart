@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:sfa/ui/member_report_screen/member_report_screen.dart';
@@ -9,7 +11,9 @@ import 'package:sfa/utility/colors.dart';
 class TeamMembersDetails extends StatefulWidget {
   String userId;
   String name;
-  TeamMembersDetails({required this.userId, required this.name, Key? key})
+  String date;
+  TeamMembersDetails(
+      {required this.userId, required this.name, required this.date, Key? key})
       : super(key: key);
 
   @override
@@ -132,6 +136,7 @@ class _TeamMembersDetailsState extends State<TeamMembersDetails> {
                 TeamMemberDetailsScreen(
                   userId: widget.userId,
                   name: widget.name,
+                  date: widget.date,
                 ),
                 TeamMemberAttendenceScreen(
                   userId: widget.userId,
