@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +11,7 @@ import 'package:sfa/listeners/date_change_listener.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_bloc.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_event.dart';
 import 'package:sfa/ui/pjp_by_date/bloc/pjp_by_date_state.dart';
+import 'package:sfa/ui/team_member_details/team_members_details.dart';
 import 'package:sfa/ui/team_members_clockout/bloc/get_clock_in_data_bloc.dart';
 import 'package:sfa/ui/team_members_clockout/bloc/get_clock_in_data_events.dart';
 import 'package:sfa/ui/team_members_clockout/bloc/get_clock_in_data_states.dart';
@@ -96,7 +98,17 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
                       child: ListTile(
                         contentPadding: const EdgeInsets.all(0),
                         dense: true,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeamMembersDetails(
+                                      userId: state.getClockInDataResponse
+                                          .data![index].userId
+                                          .toString(),
+                                      name: state.getClockInDataResponse
+                                          .data![index].name)));
+                        },
                         title: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -198,7 +210,9 @@ class _TeamMembersClockoutScreenState extends State<TeamMembersClockoutScreen>
           date: date,
         );
       },
-    ).then((value) => addClockInData());
+    ).then((value) {
+      return Timer(const Duration(milliseconds: 350), () => addClockInData());
+    });
   }
 
   Widget buttonsApprove(int id, int userId, color, text) {

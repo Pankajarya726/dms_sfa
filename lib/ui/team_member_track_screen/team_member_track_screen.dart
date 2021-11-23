@@ -82,11 +82,8 @@ class _TeamMemberTrackScreenState extends State<TeamMemberTrackScreen> {
                     );
                   }
                   if (state is TrackFailureState) {
-                    return SizedBox(
-                      height: MediaQuery.of(context).size.height,
-                      child: Center(
-                        child: Text(state.message),
-                      ),
+                    return Center(
+                      child: Text(state.message),
                     );
                   }
                   if (state is TrackSuccessState) {

@@ -20,6 +20,7 @@ class GetClockInDataBloc
     yield* getClockInData(event);
 
     if (event is ClockInApproveRejectEvent) {
+      yield GetClockInDataLoadingState();
       yield* clockInActions(event);
     }
   }
