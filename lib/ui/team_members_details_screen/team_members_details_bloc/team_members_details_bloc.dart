@@ -29,12 +29,17 @@ class TeamMembersDetailsBloc
   Stream<TeamMembersDetailsState> getData(
       GetTeamMembersDetailsEvents event) async* {
     if (await Network.isConnected()) {
-      DetailsStatusResponse response =
-          await repository.getTeamMembersDetails(event.id, event.date);
-      if (response.success) {
-        yield TeamMembersDetailsSuccessState(response: response);
+      DateTime d = DateTime.parse(event.date);
+      if (d.weekday != 7) {
+        DetailsStatusResponse response =
+            await repository.getTeamMembersDetails(event.id, event.date);
+        if (response.success) {
+          yield TeamMembersDetailsSuccessState(response: response);
+        } else {
+          yield TeamMembersDetailsFailureState(message: response.message);
+        }
       } else {
-        yield TeamMembersDetailsFailureState(message: response.message);
+        yield TeamMembersDetailsFailureState(message: "Weekend Off");
       }
     } else {
       yield TeamMembersDetailsFailureState(

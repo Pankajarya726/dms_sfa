@@ -29,17 +29,22 @@ class TeamMembersAbsentBloc
   Stream<TeamMembersAbsentStates> getAbsentData(
       TeamMembersAbsentSuccessEvent event) async* {
     if (await Network.isConnected()) {
-      String userId = await SharedPrefrence.getStringPreference("id");
-      GetAbsentDataResponse response = await apiRepository.getAbsentData(
-          userId,
-          event.currentDate,
-          event.filterName,
-          event.locationType,
-          event.location);
-      if (response.success) {
-        yield TeamMembersAbsentSuccessState(getAbsentDataResponse: response);
+      DateTime d = DateTime.parse(event.currentDate);
+      if (d.weekday != 7) {
+        String userId = await SharedPrefrence.getStringPreference("id");
+        GetAbsentDataResponse response = await apiRepository.getAbsentData(
+            userId,
+            event.currentDate,
+            event.filterName,
+            event.locationType,
+            event.location);
+        if (response.success) {
+          yield TeamMembersAbsentSuccessState(getAbsentDataResponse: response);
+        } else {
+          yield TeamMembersAbsentFailureState(failureMessage: response.message);
+        }
       } else {
-        yield TeamMembersAbsentFailureState(failureMessage: response.message);
+        yield TeamMembersAbsentFailureState(failureMessage: "Weekend Off");
       }
     } else {
       yield TeamMembersAbsentFailureState(

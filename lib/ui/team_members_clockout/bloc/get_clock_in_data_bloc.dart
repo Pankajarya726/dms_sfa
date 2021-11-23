@@ -28,17 +28,22 @@ class GetClockInDataBloc
       GetClockInDataEvents event) async* {
     if (event is GetClockInDataSuccessEvent) {
       if (await Network.isConnected()) {
-        String userId = await SharedPrefrence.getStringPreference("id");
-        GetClockInDataResponse response = await repository.getClockInData(
-            userId,
-            event.dateAdded,
-            event.filterName,
-            event.locationType,
-            event.location);
-        if (response.success) {
-          yield GetClockInDataSuccessState(getClockInDataResponse: response);
+        DateTime d = DateTime.parse(event.dateAdded);
+        if (d.weekday != 7) {
+          String userId = await SharedPrefrence.getStringPreference("id");
+          GetClockInDataResponse response = await repository.getClockInData(
+              userId,
+              event.dateAdded,
+              event.filterName,
+              event.locationType,
+              event.location);
+          if (response.success) {
+            yield GetClockInDataSuccessState(getClockInDataResponse: response);
+          } else {
+            yield GetClockInDataFailureState(failureMessage: response.message);
+          }
         } else {
-          yield GetClockInDataFailureState(failureMessage: response.message);
+          yield GetClockInDataFailureState(failureMessage: "Weekend Off");
         }
       } else {
         yield GetClockInDataFailureState(

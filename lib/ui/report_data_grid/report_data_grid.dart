@@ -4,6 +4,7 @@ import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sfa/listeners/report_type_listener.dart';
 import 'package:syncfusion_flutter_datagrid_export/export.dart';
 import 'package:sfa/ui/report_screen/model/report_model.dart';
@@ -118,9 +119,9 @@ class _ReportDataGridState extends State<ReportDataGrid>
   }
 
   Future<void> exportDataGridToExcel() async {
-    Directory? directory;
-
-    try {
+    var permission = await Permission.storage.request();
+    if (permission.isGranted) {
+      Directory? directory;
       directory = await DownloadsPathProvider.downloadsDirectory;
       String path = directory!.path +
           DateFormat("/dd MMM yyyy hh mm ss").format(DateTime.now()) +
@@ -131,14 +132,16 @@ class _ReportDataGridState extends State<ReportDataGrid>
       File(path).writeAsBytes(bytes);
       workbook.dispose();
       Fluttertoast.showToast(msg: "File Saved " + path);
-    } catch (exception) {
-      log(exception.toString());
+    }
+    if (permission.isPermanentlyDenied) {
+      openAppSettings();
     }
   }
 
   Future<void> exportDataGridToPdf() async {
-    Directory? directory;
-    try {
+    var permission = await Permission.storage.request();
+    if (permission.isGranted) {
+      Directory? directory;
       directory = await DownloadsPathProvider.downloadsDirectory;
       String path = directory!.path +
           DateFormat("/dd MMM yyyy hh mm ss").format(DateTime.now()) +
@@ -150,8 +153,9 @@ class _ReportDataGridState extends State<ReportDataGrid>
       File(path).writeAsBytes(bytes);
       document.dispose();
       Fluttertoast.showToast(msg: "File Saved " + path);
-    } catch (exception) {
-      log(exception.toString());
+    }
+    if (permission.isPermanentlyDenied) {
+      openAppSettings();
     }
   }
 
