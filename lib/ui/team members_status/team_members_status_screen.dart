@@ -115,6 +115,7 @@ class _TeamMembersStatusScreenState extends State<TeamMembersStatusScreen>
                               builder: (context) => TeamMembersDetails(
                                 userId: statusList[index].userId.toString(),
                                 name: statusList[index].userName,
+                                date: date,
                               ),
                             ),
                           );

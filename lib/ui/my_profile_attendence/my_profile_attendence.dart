@@ -311,13 +311,13 @@ class _MyProfileAttendenceState extends State<MyProfileAttendence> {
                                                                         "Absent Approved"
                                                                 ? statusAccepted()
                                                                 : state.response.clockInData![index].approvedStatus ==
-                                                                            2 &&
+                                                                            3 &&
                                                                         state.response.clockInData![index].status ==
                                                                             "Absent Rejected"
-                                                                    ? statusAccepted()
-                                                                    : state.response.clockInData![index].approvedStatus == 1 && state.response.clockInData![index].status == "Present Panding"
+                                                                    ? statusRejected()
+                                                                    : state.response.clockInData![index].approvedStatus == 1 && state.response.clockInData![index].status == "Present Pending"
                                                                         ? buttonPending()
-                                                                        : state.response.clockInData![index].approvedStatus == 1 && state.response.clockInData![index].status == "Absent Panding"
+                                                                        : state.response.clockInData![index].approvedStatus == 1 && state.response.clockInData![index].status == "Absent Pending"
                                                                             ? buttonPending()
                                                                             : statusNull(),
                                                     SizedBox(

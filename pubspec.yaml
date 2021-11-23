@@ -62,6 +62,7 @@ dependencies:
   dropdown_search: 
   email_validator:
   pull_to_refresh:
+  permission_handler:
 
 
 dev_dependencies:

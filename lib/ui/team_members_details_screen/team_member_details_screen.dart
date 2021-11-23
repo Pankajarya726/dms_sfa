@@ -13,7 +13,9 @@ import 'package:sfa/utility/colors.dart';
 class TeamMemberDetailsScreen extends StatefulWidget {
   String userId;
   String name;
-  TeamMemberDetailsScreen({required this.userId, required this.name, Key? key})
+  String date;
+  TeamMemberDetailsScreen(
+      {required this.userId, required this.name, required this.date, Key? key})
       : super(key: key);
 
   @override
@@ -29,6 +31,7 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
   @override
   void initState() {
     super.initState();
+    dateTime = DateTime.parse(widget.date);
     addEvent();
   }
 

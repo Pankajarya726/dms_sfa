@@ -34,15 +34,20 @@ class MyProfileDetailsBloc
   Stream<MyProfileDetailsState> getMyProfileData(
       MyProfileDetailsInitialEvent event) async* {
     if (await Network.isConnected()) {
-      String userId = await SharedPrefrence.getStringPreference("id");
-      DetailsStatusResponse response =
-          await repository.getTeamMembersDetails(userId, event.currentDate);
+      DateTime d = DateTime.parse(event.currentDate);
+      if (d.weekday != 7) {
+        String userId = await SharedPrefrence.getStringPreference("id");
+        DetailsStatusResponse response =
+            await repository.getTeamMembersDetails(userId, event.currentDate);
 
-      if (response.success) {
-        yield MyProfileDetailsInitialSuccessState(
-            detailsStatusResponse: response);
+        if (response.success) {
+          yield MyProfileDetailsInitialSuccessState(
+              detailsStatusResponse: response);
+        } else {
+          yield MyProfileDetailsFailureState(failureMessage: response.message);
+        }
       } else {
-        yield MyProfileDetailsFailureState(failureMessage: response.message);
+        yield MyProfileDetailsFailureState(failureMessage: "Weekend Off");
       }
     } else {
       yield MyProfileDetailsFailureState(

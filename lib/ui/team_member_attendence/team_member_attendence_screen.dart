@@ -234,8 +234,6 @@ class _TeamMemberAttendenceScreenState
                             }
 
                             if (state is TeamMemberAttendenceSucessState) {
-                              log(state.response.clockInData!.length
-                                  .toString());
                               return SingleChildScrollView(
                                 child: Padding(
                                   padding: const EdgeInsets.only(bottom: 15),
@@ -348,12 +346,12 @@ class _TeamMemberAttendenceScreenState
                                                                       state.response.clockInData![index].status ==
                                                                           "Absent Approved"
                                                                   ? statusAccepted()
-                                                                  : state.response.clockInData![index].approvedStatus == 2 &&
+                                                                  : state.response.clockInData![index].approvedStatus == 3 &&
                                                                           state.response.clockInData![index].status == "Absent Rejected"
                                                                       ? statusAccepted()
-                                                                      : state.response.clockInData![index].approvedStatus == 1 && state.response.clockInData![index].status == "Present Panding"
+                                                                      : state.response.clockInData![index].approvedStatus == 1 && state.response.clockInData![index].status == "Present Pending"
                                                                           ? presentStatusPending(state.response.clockInData![index].id.toString())
-                                                                          : state.response.clockInData![index].approvedStatus == 1 && state.response.clockInData![index].status == "Absent Panding"
+                                                                          : state.response.clockInData![index].approvedStatus == 1 && state.response.clockInData![index].status == "Absent Pending"
                                                                               ? absentStatusPending(state.response.clockInData![index].id, state.response.clockInData![index].userId)
                                                                               : statusNull(),
                                                       SizedBox(
