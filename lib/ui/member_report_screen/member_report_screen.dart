@@ -106,10 +106,11 @@ class _MemberReportScreen extends State<MemberReportScreen> {
                             color: Colors.white,
                           ),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: const [
                               SizedBox(
-                                width: 9,
+                                width: 3,
                               ),
                               Text(
                                 "Report Type",
@@ -256,7 +257,7 @@ class _MemberReportScreen extends State<MemberReportScreen> {
           },
         );
       },
-    ).then((value) => getReport());
+    ).then((value) => getReportByDate());
   }
 
   void showType() {
@@ -266,7 +267,7 @@ class _MemberReportScreen extends State<MemberReportScreen> {
       context: context,
       builder: (context) {
         return Container(
-          height: MediaQuery.of(context).size.height * 0.17,
+          height: 148,
           width: MediaQuery.of(context).size.width,
           decoration: const BoxDecoration(
             color: reportBG,
@@ -287,6 +288,18 @@ class _MemberReportScreen extends State<MemberReportScreen> {
         Fluttertoast.showToast(msg: "Press download button first!");
       }
     });
+  }
+
+  getReportByDate() {
+    if (initialDate!.isNotEmpty && endingDate!.isNotEmpty) {
+      reportBloc.add(GetReportEvent(
+        initDate: initialDate,
+        endDate: endingDate,
+        filterName: filterName,
+        locationType: locationType,
+        locationId: location != null ? location!.id : "",
+      ));
+    }
   }
 
   getReport() {

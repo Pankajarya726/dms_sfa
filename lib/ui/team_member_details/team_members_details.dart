@@ -132,6 +132,7 @@ class _TeamMembersDetailsState extends State<TeamMembersDetails> {
               ),
             ),
             child: TabBarView(
+              physics: const NeverScrollableScrollPhysics(),
               children: [
                 TeamMemberDetailsScreen(
                   userId: widget.userId,

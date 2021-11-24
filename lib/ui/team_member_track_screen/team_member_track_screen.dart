@@ -74,11 +74,8 @@ class _TeamMemberTrackScreenState extends State<TeamMemberTrackScreen> {
               child: BlocBuilder<TrackBloc, TrackState>(
                 builder: (context, state) {
                   if (state is TrackLoadingState) {
-                    return SizedBox(
-                      height: MediaQuery.of(context).size.height,
-                      child: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                    return const Center(
+                      child: CircularProgressIndicator(),
                     );
                   }
                   if (state is TrackFailureState) {

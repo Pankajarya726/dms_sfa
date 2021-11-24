@@ -110,13 +110,15 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
                                   BlocBuilder<TeamMembersDetailsBloc,
                                       TeamMembersDetailsState>(
                                     builder: (context, state) {
-                                      return Text(
-                                        DateFormat("dd MMM yyyy")
-                                            .format(dateTime),
-                                        style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14),
+                                      return SizedBox(
+                                        child: Text(
+                                          DateFormat("dd MMM yyyy")
+                                              .format(dateTime),
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13.5),
+                                        ),
                                       );
                                     },
                                   )
@@ -230,15 +232,28 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
                                                     fontWeight: FontWeight.w500,
                                                   ),
                                                 ),
-                                                TextSpan(
-                                                  text: state.response.data!
-                                                      .clockInTime,
-                                                  style: const TextStyle(
-                                                    color: colorGreen,
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                )
+                                                if (state.response.data!
+                                                    .clockInTime.isNotEmpty)
+                                                  TextSpan(
+                                                    text: state.response.data!
+                                                        .clockInTime,
+                                                    style: const TextStyle(
+                                                      color: colorGreen,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  )
+                                                else
+                                                  const TextSpan(
+                                                    text: "--",
+                                                    style: TextStyle(
+                                                      color: colorGreen,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  )
                                               ],
                                             ),
                                           ),
@@ -253,15 +268,27 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
                                                       fontWeight:
                                                           FontWeight.w500,
                                                     )),
-                                                TextSpan(
-                                                  text: state.response.data!
-                                                      .clockOutTime,
-                                                  style: const TextStyle(
-                                                    color: colorPrimary,
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
+                                                state.response.data!
+                                                        .clockOutTime.isNotEmpty
+                                                    ? TextSpan(
+                                                        text: state.response
+                                                            .data!.clockOutTime,
+                                                        style: const TextStyle(
+                                                          color: colorPrimary,
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      )
+                                                    : const TextSpan(
+                                                        text: "--",
+                                                        style: TextStyle(
+                                                          color: colorPrimary,
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      ),
                                               ],
                                             ),
                                           ),
