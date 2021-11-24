@@ -114,7 +114,7 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
                                 await SharedPrefrence.getStringPreference(
                                     SharedPrefrence.isEnable);
 
-                            if (status != "show") {
+                            if (status == "show") {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(

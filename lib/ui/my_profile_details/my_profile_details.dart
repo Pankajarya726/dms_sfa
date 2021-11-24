@@ -233,17 +233,29 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                                                   fontWeight: FontWeight.w500,
                                                 ),
                                               ),
-                                              TextSpan(
-                                                text: state
-                                                    .detailsStatusResponse
-                                                    .data!
-                                                    .clockInTime,
-                                                style: const TextStyle(
-                                                  color: colorGreen,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              )
+                                              state.detailsStatusResponse.data!
+                                                      .clockInTime.isNotEmpty
+                                                  ? TextSpan(
+                                                      text: state
+                                                          .detailsStatusResponse
+                                                          .data!
+                                                          .clockInTime,
+                                                      style: const TextStyle(
+                                                        color: colorGreen,
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    )
+                                                  : const TextSpan(
+                                                      text: "--",
+                                                      style: TextStyle(
+                                                        color: colorGreen,
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    )
                                             ],
                                           ),
                                         ),
@@ -257,17 +269,29 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w500,
                                                   )),
-                                              TextSpan(
-                                                text: state
-                                                    .detailsStatusResponse
-                                                    .data!
-                                                    .clockOutTime,
-                                                style: const TextStyle(
-                                                  color: colorPrimary,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
+                                              state.detailsStatusResponse.data!
+                                                      .clockOutTime.isNotEmpty
+                                                  ? TextSpan(
+                                                      text: state
+                                                          .detailsStatusResponse
+                                                          .data!
+                                                          .clockOutTime,
+                                                      style: const TextStyle(
+                                                        color: colorPrimary,
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    )
+                                                  : const TextSpan(
+                                                      text: "--",
+                                                      style: TextStyle(
+                                                        color: colorPrimary,
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
                                             ],
                                           ),
                                         ),

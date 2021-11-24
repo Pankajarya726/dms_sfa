@@ -387,7 +387,7 @@ class _PJPScreenState extends State<PJPScreen>
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom),
             child: IntrinsicHeight(
-              child: status != "show"
+              child: status == "show"
                   ? Container(
                       width: MediaQuery.of(context).size.width,
                       decoration: const BoxDecoration(

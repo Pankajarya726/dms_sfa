@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sfa/listeners/date_change_listener.dart';
+import 'package:sfa/ui/team_member_details/team_members_details.dart';
 import 'package:sfa/ui/team_members_absent/bloc/team_members_absent_bloc.dart';
 import 'package:sfa/ui/team_members_absent/bloc/team_members_absent_events.dart';
 import 'package:sfa/ui/team_members_absent/bloc/team_members_absent_states.dart';
@@ -89,7 +90,19 @@ class _TeamMembersAbsentScreenState extends State<TeamMembersAbsentScreen>
                       child: ListTile(
                         contentPadding: const EdgeInsets.all(0),
                         dense: true,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeamMembersDetails(
+                                        userId: state.getAbsentDataResponse
+                                            .data![index].userId
+                                            .toString(),
+                                        name: state.getAbsentDataResponse
+                                            .data![index].name,
+                                        date: date,
+                                      )));
+                        },
                         title: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
