@@ -236,10 +236,13 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                                               state.detailsStatusResponse.data!
                                                       .clockInTime.isNotEmpty
                                                   ? TextSpan(
-                                                      text: state
-                                                          .detailsStatusResponse
-                                                          .data!
-                                                          .clockInTime,
+                                                      text: DateFormat.jms()
+                                                          .format(DateFormat(
+                                                                  "HH:mm:ss")
+                                                              .parse(state
+                                                                  .detailsStatusResponse
+                                                                  .data!
+                                                                  .clockInTime)),
                                                       style: const TextStyle(
                                                         color: colorGreen,
                                                         fontSize: 16,
@@ -272,10 +275,13 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                                               state.detailsStatusResponse.data!
                                                       .clockOutTime.isNotEmpty
                                                   ? TextSpan(
-                                                      text: state
-                                                          .detailsStatusResponse
-                                                          .data!
-                                                          .clockOutTime,
+                                                      text: DateFormat.jms()
+                                                          .format(DateFormat(
+                                                                  "HH:mm:ss")
+                                                              .parse(state
+                                                                  .detailsStatusResponse
+                                                                  .data!
+                                                                  .clockOutTime)),
                                                       style: const TextStyle(
                                                         color: colorPrimary,
                                                         fontSize: 16,

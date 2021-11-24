@@ -28,6 +28,9 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
   DateTime dateTime = DateTime.now();
   RefreshController refreshController =
       RefreshController(initialRefresh: false);
+  // DateTime? clockInTime;
+  // DateTime? clockOutTime;
+
   @override
   void initState() {
     super.initState();
@@ -211,6 +214,15 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
                               );
                             }
                             if (state is TeamMembersDetailsSuccessState) {
+                              // if (state.response.data!.clockInTime.isNotEmpty) {
+                              //   clockInTime = DateFormat("HH:mm:ss")
+                              //       .parse(state.response.data!.clockInTime);
+                              // }
+                              // if (state
+                              //     .response.data!.clockOutTime.isNotEmpty) {
+                              //   clockOutTime = DateFormat("HH:mm:ss")
+                              //       .parse(state.response.data!.clockOutTime);
+                              // }
                               return SingleChildScrollView(
                                 child: Column(
                                   children: [
@@ -235,8 +247,13 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
                                                 if (state.response.data!
                                                     .clockInTime.isNotEmpty)
                                                   TextSpan(
-                                                    text: state.response.data!
-                                                        .clockInTime,
+                                                    text: DateFormat.jms()
+                                                        .format(DateFormat(
+                                                                "HH:mm:ss")
+                                                            .parse(state
+                                                                .response
+                                                                .data!
+                                                                .clockInTime)),
                                                     style: const TextStyle(
                                                       color: colorGreen,
                                                       fontSize: 16,
@@ -271,8 +288,13 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
                                                 state.response.data!
                                                         .clockOutTime.isNotEmpty
                                                     ? TextSpan(
-                                                        text: state.response
-                                                            .data!.clockOutTime,
+                                                        text: DateFormat.jms()
+                                                            .format(DateFormat(
+                                                                    "HH:mm:ss")
+                                                                .parse(state
+                                                                    .response
+                                                                    .data!
+                                                                    .clockOutTime)),
                                                         style: const TextStyle(
                                                           color: colorPrimary,
                                                           fontSize: 16,

@@ -669,22 +669,46 @@ class _StatusBottomSheetState extends State<StatusBottomSheet> {
                                         horizontal: 10),
                                     child: Align(
                                       alignment: Alignment.topLeft,
-                                      child: Text(
-                                        "Log in: " +
-                                            state.response.data![0].clockInTime
-                                                .toString() +
-                                            (state.response.data![0]
-                                                    .clockOutTime.isNotEmpty
-                                                ? " - Log out: " +
-                                                    state.response.data![0]
-                                                        .clockOutTime
-                                                        .toString()
-                                                : ""),
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15,
-                                        ),
+                                      child: Row(
+                                        mainAxisAlignment: state.response.data!
+                                                .first.clockOutTime.isNotEmpty
+                                            ? MainAxisAlignment.spaceBetween
+                                            : MainAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Log in : " +
+                                                DateFormat.jms().format(
+                                                    DateFormat("HH:mm:ss")
+                                                        .parse(state
+                                                            .response
+                                                            .data!
+                                                            .first
+                                                            .clockInTime)),
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                          state.response.data!.first
+                                                  .clockOutTime.isNotEmpty
+                                              ? Text(
+                                                  "Log out : " +
+                                                      DateFormat.jms().format(
+                                                          DateFormat("HH:mm:ss")
+                                                              .parse(state
+                                                                  .response
+                                                                  .data!
+                                                                  .first
+                                                                  .clockOutTime)),
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 15,
+                                                  ),
+                                                )
+                                              : Container(),
+                                        ],
                                       ),
                                     ),
                                   ),
