@@ -90,7 +90,7 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                                       style: const TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 14),
+                                          fontSize: 13.5),
                                     );
                                   },
                                 )

@@ -110,13 +110,15 @@ class _TeamMemberDetailsScreenState extends State<TeamMemberDetailsScreen> {
                                   BlocBuilder<TeamMembersDetailsBloc,
                                       TeamMembersDetailsState>(
                                     builder: (context, state) {
-                                      return Text(
-                                        DateFormat("dd MMM yyyy")
-                                            .format(dateTime),
-                                        style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14),
+                                      return SizedBox(
+                                        child: Text(
+                                          DateFormat("dd MMM yyyy")
+                                              .format(dateTime),
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13.5),
+                                        ),
                                       );
                                     },
                                   )
