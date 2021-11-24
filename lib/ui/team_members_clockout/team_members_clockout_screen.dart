@@ -350,24 +350,7 @@ class _StatusBottomSheetState extends State<StatusBottomSheet> {
   Widget build(BuildContext context) {
     return BlocProvider<PjpByDateBloc>(
       create: (context) => pjpByDateBloc,
-      child: BlocConsumer<PjpByDateBloc, PjpByDateState>(
-        listener: (context, state) {
-          if (state is PjpByDateSuccessState) {
-            if (state.response.data!.isNotEmpty) {
-              clockInStatus = state.response.data!.first.approvedStatus;
-            }
-            if (clockInStatus == 1) {
-              clockInTime = DateFormat("HH:mm:ss")
-                  .parse(state.response.data!.first.clockInTime);
-              startAttendenceTimer(clockInTime!);
-            } else if (clockInStatus == 2) {
-              clockInTime = DateFormat("HH:mm:ss")
-                  .parse(state.response.data!.first.clockInTime);
-              clockOutTime = DateFormat("HH:mm:ss")
-                  .parse(state.response.data!.first.clockOutTime);
-            }
-          }
-        },
+      child: BlocBuilder<PjpByDateBloc, PjpByDateState>(
         builder: (context, state) {
           if (state is PjpByDateInitialState) {
             pjpByDateBloc.add(PjpByDateEvent(
@@ -385,23 +368,30 @@ class _StatusBottomSheetState extends State<StatusBottomSheet> {
             );
           }
           if (state is PjpByDateSuccessState) {
-            if (state.response.data!.first.clockOutTime.isNotEmpty &&
-                state.response.data!.first.clockInTime.isNotEmpty) {
-              stopAttendenceTimer();
-              clockInTime = DateFormat("HH:mm:ss")
-                  .parse(state.response.data!.first.clockInTime);
-              clockOutTime = DateFormat("HH:mm:ss")
-                  .parse(state.response.data!.first.clockOutTime);
-              timeDifference =
-                  (clockOutTime!.difference(clockInTime!)).toString();
-              var arr = timeDifference.split(".");
-              timeDifference = arr[0];
-              var arr2 = timeDifference.split(":");
-              int hrs = int.parse(arr2[0]);
-              checkSuccessHours = int.parse(arr2[0]);
-              timeDifference = arr2[0].padLeft(2, '0');
-              timeDifference = timeDifference + ":" + arr2[1].padLeft(2, '0');
-              timeDifference = timeDifference + ":" + arr2[2].padLeft(2, '0');
+            if (state.response.data!.isNotEmpty) {
+              if (state.response.data!.first.clockInTime.isNotEmpty) {
+                clockInTime = DateFormat("HH:mm:ss")
+                    .parse(state.response.data!.first.clockInTime);
+                startAttendenceTimer(clockInTime!);
+              }
+              if (state.response.data!.first.clockOutTime.isNotEmpty &&
+                  state.response.data!.first.clockInTime.isNotEmpty) {
+                stopAttendenceTimer();
+                clockInTime = DateFormat("HH:mm:ss")
+                    .parse(state.response.data!.first.clockInTime);
+                clockOutTime = DateFormat("HH:mm:ss")
+                    .parse(state.response.data!.first.clockOutTime);
+                timeDifference =
+                    (clockOutTime!.difference(clockInTime!)).toString();
+                var arr = timeDifference.split(".");
+                timeDifference = arr[0];
+                var arr2 = timeDifference.split(":");
+                int hrs = int.parse(arr2[0]);
+                checkSuccessHours = int.parse(arr2[0]);
+                timeDifference = arr2[0].padLeft(2, '0');
+                timeDifference = timeDifference + ":" + arr2[1].padLeft(2, '0');
+                timeDifference = timeDifference + ":" + arr2[2].padLeft(2, '0');
+              }
             }
 
             return ClipRRect(
@@ -516,9 +506,8 @@ class _StatusBottomSheetState extends State<StatusBottomSheet> {
                                         children: [
                                           Text(
                                             "Log in : " +
-                                                state.response.data![0]
-                                                    .clockInTime
-                                                    .toString(),
+                                                DateFormat.jms()
+                                                    .format(clockInTime!),
                                             style: const TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
@@ -529,9 +518,8 @@ class _StatusBottomSheetState extends State<StatusBottomSheet> {
                                                   .isNotEmpty
                                               ? Text(
                                                   "Log out : " +
-                                                      state.response.data![0]
-                                                          .clockOutTime
-                                                          .toString(),
+                                                      DateFormat.jms().format(
+                                                          clockOutTime!),
                                                   style: const TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,
