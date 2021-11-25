@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sfa/ui/bottom_sheet/filter_bloc/filter_bloc.dart';
@@ -156,37 +157,41 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                           child: StreamBuilder<List<FilterData>>(
                             stream: streamController.stream,
                             builder: (context, snapShot) {
-                              return DropdownButtonFormField<FilterData>(
-                                dropdownColor: reportBG,
-                                hint: const Text(
-                                  "Select Location",
-                                  style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                      color: colorGray),
-                                ),
-                                decoration: InputDecoration(
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(25),
-                                    borderSide: const BorderSide(
-                                        color: Colors.transparent, width: 2.0),
-                                  ),
-                                ),
-                                items: locationList.map((FilterData value) {
-                                  return DropdownMenuItem<FilterData>(
-                                    value: value,
-                                    child: Text(
-                                      value.name,
-                                      style: const TextStyle(
-                                          color: colorGrayDark,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 17),
-                                    ),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
-                                  selectedLocation = value;
-                                },
+                              // return DropdownButtonFormField<FilterData>(
+                              //   dropdownColor: reportBG,
+                              //   hint: const Text(
+                              //     "Select Location",
+                              //     style: TextStyle(
+                              //         fontSize: 17,
+                              //         fontWeight: FontWeight.bold,
+                              //         color: colorGray),
+                              //   ),
+                              //   decoration: InputDecoration(
+                              //     enabledBorder: OutlineInputBorder(
+                              //       borderRadius: BorderRadius.circular(25),
+                              //       borderSide: const BorderSide(
+                              //           color: Colors.transparent, width: 2.0),
+                              //     ),
+                              //   ),
+                              //   items: locationList.map((FilterData value) {
+                              //     return DropdownMenuItem<FilterData>(
+                              //       value: value,
+                              //       child: Text(
+                              //         value.name,
+                              //         style: const TextStyle(
+                              //             color: colorGrayDark,
+                              //             fontWeight: FontWeight.bold,
+                              //             fontSize: 17),
+                              //       ),
+                              //     );
+                              //   }).toList(),
+                              //   onChanged: (value) {
+                              //     selectedLocation = value;
+                              //   },
+                              // );
+                              return DropdownSearch<FilterData>(
+                                mode: Mode.DIALOG,
+                                showSearchBox: true,
                               );
                             },
                           )),

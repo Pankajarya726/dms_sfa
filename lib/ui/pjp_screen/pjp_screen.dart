@@ -96,23 +96,20 @@ class _PJPScreenState extends State<PJPScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           InkWell(
-                            onTap: () async {},
+                            onTap: () async {
+                              datePicker();
+                            },
                             child: SizedBox(
                               height: 30,
                               width: MediaQuery.of(context).size.width * 0.30,
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  InkWell(
-                                    onTap: () {
-                                      datePicker();
-                                    },
-                                    child: Image.asset(
-                                      "assets/calendar.png",
-                                      width: 22,
-                                      height: 22,
-                                      color: Colors.white,
-                                    ),
+                                  Image.asset(
+                                    "assets/calendar.png",
+                                    width: 22,
+                                    height: 22,
+                                    color: Colors.white,
                                   ),
                                   const SizedBox(
                                     width: 10,
@@ -376,7 +373,7 @@ class _PJPScreenState extends State<PJPScreen>
   showPJP(String pjpDescription, DateTime pjpDate, String pjpId) async {
     var status =
         await SharedPrefrence.getStringPreference(SharedPrefrence.isEnable);
-
+    controller.text = pjpDescription;
     return showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -387,7 +384,7 @@ class _PJPScreenState extends State<PJPScreen>
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom),
             child: IntrinsicHeight(
-              child: status == "show"
+              child: status == "show" && pjpDate.isAfter(dateTime)
                   ? Container(
                       width: MediaQuery.of(context).size.width,
                       decoration: const BoxDecoration(
@@ -401,7 +398,7 @@ class _PJPScreenState extends State<PJPScreen>
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(14, 14, 0, 0),
+                            padding: const EdgeInsets.fromLTRB(14, 14, 14, 0),
                             child: SizedBox(
                               width: MediaQuery.of(context).size.width,
                               child: Text(
@@ -415,7 +412,7 @@ class _PJPScreenState extends State<PJPScreen>
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(14, 12, 14, 0),
+                            padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
                             child: SizedBox(
                               width: MediaQuery.of(context).size.width,
                               child: const Text(
@@ -429,31 +426,7 @@ class _PJPScreenState extends State<PJPScreen>
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              child: Text(
-                                pjpDescription,
-                                textAlign: TextAlign.justify,
-                                style: const TextStyle(
-                                    color: Colors.black, fontSize: 17),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.fromLTRB(14, 15, 14, 10),
-                            child: const Text(
-                              "Working plan",
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 17,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+                            padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
                             child: TextFormField(
                               controller: controller,
                               maxLines: 4,
@@ -474,6 +447,9 @@ class _PJPScreenState extends State<PJPScreen>
                                   ),
                                 ),
                               ),
+                              onSaved: (value) {
+                                controller.text = value!;
+                              },
                             ),
                           ),
                           Padding(
