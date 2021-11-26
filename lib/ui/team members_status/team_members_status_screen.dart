@@ -320,7 +320,9 @@ class _StatusBottomSheetState extends State<StatusBottomSheet> {
 
   @override
   void dispose() {
-    stopAttendenceTimer();
+    if (timer != null) {
+      stopAttendenceTimer();
+    }
     super.dispose();
   }
 
@@ -346,14 +348,14 @@ class _StatusBottomSheetState extends State<StatusBottomSheet> {
           }
           if (state is PjpByDateSuccessState) {
             if (state.response.data!.isNotEmpty) {
-              if (state.response.data!.first.clockInTime.isNotEmpty) {
+              if (state.response.data!.first.clockInTime.isNotEmpty &&
+                  state.response.data!.first.clockOutTime.isEmpty) {
                 clockInTime = DateFormat("HH:mm:ss")
                     .parse(state.response.data!.first.clockInTime);
                 startAttendenceTimer(clockInTime!);
               }
               if (state.response.data!.first.clockOutTime.isNotEmpty &&
                   state.response.data!.first.clockInTime.isNotEmpty) {
-                stopAttendenceTimer();
                 clockInTime = DateFormat("HH:mm:ss")
                     .parse(state.response.data!.first.clockInTime);
                 clockOutTime = DateFormat("HH:mm:ss")
@@ -391,222 +393,297 @@ class _StatusBottomSheetState extends State<StatusBottomSheet> {
                       ),
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              child: Text(
-                                widget.name,
-                                textAlign: TextAlign.left,
-                                style: const TextStyle(
-                                  color: colorPrimary,
-                                  fontSize: 21,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              decoration: BoxDecoration(
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Colors.grey,
-                                    blurRadius: 10.0, // soften the shadow
-                                    spreadRadius: -1.5, //extend the shadow
-                                    offset: Offset(
-                                      0, // Move to right 10  horizontally
-                                      0, // Move to bottom 10 Vertically
-                                    ),
-                                  )
-                                ],
-                                gradient: state.response.data!.first
-                                        .clockOutTime.isEmpty
-                                    ? (checkSuccessHours < 8
-                                        ? const LinearGradient(
-                                            begin: Alignment.bottomLeft,
-                                            end: Alignment.topRight,
-                                            colors: [
-                                              colorPrimary,
-                                              colorLightPrimary
-                                            ],
-                                          )
-                                        : const LinearGradient(
-                                            begin: Alignment.bottomLeft,
-                                            end: Alignment.topRight,
-                                            colors: [
-                                              colorGreen,
-                                              colorLightGreen
-                                            ],
-                                          ))
-                                    : (checkSuccessHours < 8
-                                        ? const LinearGradient(
-                                            begin: Alignment.bottomLeft,
-                                            end: Alignment.topRight,
-                                            colors: [
-                                              colorPrimary,
-                                              colorLightPrimary
-                                            ],
-                                          )
-                                        : const LinearGradient(
-                                            begin: Alignment.bottomLeft,
-                                            end: Alignment.topRight,
-                                            colors: [
-                                              colorGreen,
-                                              colorLightGreen
-                                            ],
-                                          )),
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                              ),
-                              child: Column(
+                        child: state.response.data!.first.clockOutTime
+                                    .isNotEmpty &&
+                                state
+                                    .response.data!.first.clockInTime.isNotEmpty
+                            ? Column(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10),
-                                    child: Align(
-                                      alignment: Alignment.topLeft,
-                                      child: Row(
-                                        mainAxisAlignment: state.response.data!
-                                                .first.clockOutTime.isNotEmpty
-                                            ? MainAxisAlignment.spaceBetween
-                                            : MainAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "Log in : " +
-                                                DateFormat.jms()
-                                                    .format(clockInTime!),
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15,
-                                            ),
-                                          ),
-                                          state.response.data!.first
-                                                  .clockOutTime.isNotEmpty
-                                              ? Text(
-                                                  "Log out : " +
-                                                      DateFormat.jms().format(
-                                                          clockOutTime!),
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 15,
-                                                  ),
-                                                )
-                                              : Container(),
-                                        ],
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Text(
+                                      widget.name,
+                                      textAlign: TextAlign.left,
+                                      style: const TextStyle(
+                                        color: colorPrimary,
+                                        fontSize: 21,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10, bottom: 10),
-                                    child: state.response.data!.first
-                                            .clockOutTime.isEmpty
-                                        ? StreamBuilder<String>(
-                                            stream: timerController.stream,
-                                            builder: (context, snap) {
-                                              if (snap.hasData &&
-                                                  snap.data!.isNotEmpty) {
-                                                String timerHrss = snap.data!;
-                                                var arr = timerHrss.split(":");
-                                                String hrs = arr[0];
-                                                String min = arr[1];
-                                                String sec = arr[2];
-                                                return Text(
-                                                  "${hrs.padLeft(2, '0')}:${min.padLeft(2, '0')}:${sec.padLeft(2, '0')}",
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    decoration: BoxDecoration(
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Colors.grey,
+                                          blurRadius: 10.0, // soften the shadow
+                                          spreadRadius:
+                                              -1.5, //extend the shadow
+                                          offset: Offset(
+                                            0, // Move to right 10  horizontally
+                                            0, // Move to bottom 10 Vertically
+                                          ),
+                                        )
+                                      ],
+                                      gradient: state.response.data!.first
+                                              .clockOutTime.isEmpty
+                                          ? (checkSuccessHours < 8
+                                              ? const LinearGradient(
+                                                  begin: Alignment.bottomLeft,
+                                                  end: Alignment.topRight,
+                                                  colors: [
+                                                    colorPrimary,
+                                                    colorLightPrimary
+                                                  ],
+                                                )
+                                              : const LinearGradient(
+                                                  begin: Alignment.bottomLeft,
+                                                  end: Alignment.topRight,
+                                                  colors: [
+                                                    colorGreen,
+                                                    colorLightGreen
+                                                  ],
+                                                ))
+                                          : (checkSuccessHours < 8
+                                              ? const LinearGradient(
+                                                  begin: Alignment.bottomLeft,
+                                                  end: Alignment.topRight,
+                                                  colors: [
+                                                    colorPrimary,
+                                                    colorLightPrimary
+                                                  ],
+                                                )
+                                              : const LinearGradient(
+                                                  begin: Alignment.bottomLeft,
+                                                  end: Alignment.topRight,
+                                                  colors: [
+                                                    colorGreen,
+                                                    colorLightGreen
+                                                  ],
+                                                )),
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(10),
+                                      ),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          child: Align(
+                                            alignment: Alignment.topLeft,
+                                            child: Row(
+                                              mainAxisAlignment: state
+                                                      .response
+                                                      .data!
+                                                      .first
+                                                      .clockOutTime
+                                                      .isNotEmpty
+                                                  ? MainAxisAlignment
+                                                      .spaceBetween
+                                                  : MainAxisAlignment.start,
+                                              children: [
+                                                state.response.data!.first
+                                                        .clockInTime.isNotEmpty
+                                                    ? Text(
+                                                        "Log in : " +
+                                                            DateFormat.jms()
+                                                                .format(
+                                                                    clockInTime!),
+                                                        style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 15,
+                                                        ),
+                                                      )
+                                                    : const Text(
+                                                        "Log in : ",
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 15,
+                                                        ),
+                                                      ),
+                                                state.response.data!.first
+                                                        .clockOutTime.isNotEmpty
+                                                    ? Text(
+                                                        "Log out : " +
+                                                            DateFormat.jms()
+                                                                .format(
+                                                                    clockOutTime!),
+                                                        style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 15,
+                                                        ),
+                                                      )
+                                                    : Container()
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10, bottom: 10),
+                                          child: state.response.data!.first
+                                                  .clockOutTime.isEmpty
+                                              ? StreamBuilder<String>(
+                                                  stream:
+                                                      timerController.stream,
+                                                  builder: (context, snap) {
+                                                    if (snap.hasData &&
+                                                        snap.data!.isNotEmpty) {
+                                                      String timerHrss =
+                                                          snap.data!;
+                                                      var arr =
+                                                          timerHrss.split(":");
+                                                      String hrs = arr[0];
+                                                      String min = arr[1];
+                                                      String sec = arr[2];
+                                                      return Text(
+                                                        "${hrs.padLeft(2, '0')}:${min.padLeft(2, '0')}:${sec.padLeft(2, '0')}",
+                                                        style: const TextStyle(
+                                                          fontSize: 45.0,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.white,
+                                                          letterSpacing: 5,
+                                                        ),
+                                                      );
+                                                    }
+                                                    return const Text(
+                                                      "00:00:00",
+                                                      style: TextStyle(
+                                                        fontSize: 45.0,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white,
+                                                        letterSpacing: 5,
+                                                      ),
+                                                    );
+                                                  },
+                                                )
+                                              : Text(
+                                                  timeDifference,
                                                   style: const TextStyle(
                                                     fontSize: 45.0,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.white,
                                                     letterSpacing: 5,
                                                   ),
-                                                );
-                                              }
-                                              return const Text(
-                                                "00:00:00",
-                                                style: TextStyle(
-                                                  fontSize: 45.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                  letterSpacing: 5,
                                                 ),
-                                              );
-                                            },
-                                          )
-                                        : Text(
-                                            timeDifference,
-                                            style: const TextStyle(
-                                              fontSize: 45.0,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                              letterSpacing: 5,
+                                        ),
+                                        Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          padding: const EdgeInsets.fromLTRB(
+                                              10, 10, 10, 0),
+                                          decoration: const BoxDecoration(
+                                            border: Border(
+                                              top: BorderSide(
+                                                width: 1,
+                                                color: Colors.white,
+                                              ),
                                             ),
                                           ),
-                                  ),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    padding: const EdgeInsets.fromLTRB(
-                                        10, 10, 10, 0),
-                                    decoration: const BoxDecoration(
-                                      border: Border(
-                                        top: BorderSide(
-                                          width: 1,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Flexible(
-                                          flex: 1,
-                                          child: SizedBox(
-                                            width: 15,
-                                            child: Image.asset(
-                                                "assets/zone-clock.png"),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                        const Flexible(
-                                          flex: 20,
-                                          child: Text(
-                                            "Time zone in Indore, Madhya Pradesh, India (GMT+5:30)",
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 13,
-                                            ),
+                                          child: Row(
+                                            children: [
+                                              Flexible(
+                                                flex: 1,
+                                                child: SizedBox(
+                                                  width: 15,
+                                                  child: Image.asset(
+                                                      "assets/zone-clock.png"),
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                width: 5,
+                                              ),
+                                              const Flexible(
+                                                flex: 20,
+                                                child: Text(
+                                                  "Time zone in Indore, Madhya Pradesh, India (GMT+5:30)",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  commonTextField("PJP",
+                                      state.response.data![0].pjpDescription),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  commonTextField("Working plan",
+                                      state.response.data![0].workingPlan),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                ],
+                              )
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Text(
+                                      widget.name,
+                                      textAlign: TextAlign.left,
+                                      style: const TextStyle(
+                                        color: colorPrimary,
+                                        fontSize: 21,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                  const Text(
+                                    "Reason",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 7,
+                                  ),
+                                  const Text(
+                                    "Absent Reason",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                      color: Color(0xff303030),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
                                 ],
                               ),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            commonTextField(
-                                "PJP", state.response.data![0].pjpDescription),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            commonTextField("Working plan",
-                                state.response.data![0].workingPlan),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                          ],
-                        ),
                       ),
                     ),
                   ),
