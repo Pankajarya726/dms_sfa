@@ -16,13 +16,14 @@ class ClockInSuccessEvent extends ClockInOutEvents {
   final String selfieImage;
   final String latitude;
   final String longitude;
-  ClockInSuccessEvent({
-    required this.inOutTime,
-    required this.workingPlan,
-    required this.selfieImage,
-    required this.latitude,
-    required this.longitude,
-  });
+  final int workingPlanConfirmation;
+  ClockInSuccessEvent(
+      {required this.inOutTime,
+      required this.workingPlan,
+      required this.selfieImage,
+      required this.latitude,
+      required this.longitude,
+      required this.workingPlanConfirmation});
   @override
   List<Object?> get props => [
         inOutTime,
@@ -30,6 +31,7 @@ class ClockInSuccessEvent extends ClockInOutEvents {
         selfieImage,
         latitude,
         longitude,
+        workingPlanConfirmation,
       ];
 }
 

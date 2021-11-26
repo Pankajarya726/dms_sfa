@@ -64,6 +64,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   String timeZone = "";
   RefreshController refreshController =
       RefreshController(initialRefresh: false);
+  int workingPlanConfirmation = 0;
 
   @override
   void initState() {
@@ -715,12 +716,12 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                 await Future.delayed(const Duration(seconds: 1));
                 clockInOutBloc.add(
                   ClockInSuccessEvent(
-                    inOutTime: webtime,
-                    workingPlan: workingPlanController.text,
-                    selfieImage: image!.path,
-                    latitude: latitude.toString(),
-                    longitude: longitude.toString(),
-                  ),
+                      inOutTime: webtime,
+                      workingPlan: workingPlanController.text,
+                      selfieImage: image!.path,
+                      latitude: latitude.toString(),
+                      longitude: longitude.toString(),
+                      workingPlanConfirmation: workingPlanConfirmation),
                 );
 
                 image = null;
@@ -933,7 +934,27 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
               height: 30,
               child: IconButton(
                 padding: const EdgeInsets.symmetric(horizontal: 7),
-                onPressed: () {},
+                onPressed: () {
+                  if (pjpController.text == "PJP not found") {
+                    if (workingPlanController.text.isEmpty) {
+                      Fluttertoast.showToast(msg: "Please add working plan");
+                    } else {
+                      Fluttertoast.showToast(msg: "Working plan added");
+                    }
+                  } else {
+                    if (workingPlanController.text.isNotEmpty) {
+                      if (workingPlanConfirmation != 1) {
+                        Fluttertoast.showToast(msg: "PJP confirmed");
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: "You have already edited PJP");
+                      }
+                    } else {
+                      Fluttertoast.showToast(
+                          msg: "PJP not found, please add working plan");
+                    }
+                  }
+                },
                 icon: Image.asset(
                   "assets/confirm.png",
                   width: 30,
@@ -998,6 +1019,12 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
       child: ElevatedButton(
         onPressed: () {
           if (formKey.currentState!.validate()) {
+            if (pjpController.text == "PJP not found") {
+              Fluttertoast.showToast(msg: "Working plan added");
+            } else {
+              workingPlanConfirmation = 1;
+              Fluttertoast.showToast(msg: "PJP edited");
+            }
             Navigator.pop(context);
           }
         },

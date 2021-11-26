@@ -86,12 +86,14 @@ class Data {
 class ClockInOutData {
   ClockInOutData({
     required this.inOutStatus,
+    required this.absentReason,
     required this.clockInTime,
     required this.clockOutTime,
     required this.userId,
   });
 
   int inOutStatus;
+  String absentReason;
   String clockInTime;
   dynamic clockOutTime;
   int userId;
@@ -103,6 +105,9 @@ class ClockInOutData {
 
   factory ClockInOutData.fromMap(Map<String, dynamic> json) => ClockInOutData(
         inOutStatus: json["in_out_status"] == null ? 0 : json["in_out_status"],
+        absentReason: json["absent_reason"] == null
+            ? ""
+            : json["absent_reason"].toString(),
         clockInTime: json["clock_in_time"] == null
             ? ""
             : json["clock_in_time"].toString(),
@@ -112,6 +117,7 @@ class ClockInOutData {
 
   Map<String, dynamic> toMap() => {
         "in_out_status": inOutStatus == null ? null : inOutStatus,
+        "absent_reason": absentReason == null ? null : absentReason,
         "clock_in_time": clockInTime == null ? null : clockInTime,
         "clock_out_time": clockOutTime,
         "user_id": userId == null ? null : userId,
