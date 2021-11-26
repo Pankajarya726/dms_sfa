@@ -94,14 +94,16 @@ class _AttendenceHomeScreenState extends State<AttendenceHomeScreen> {
                           color: Colors.white70,
                           elevation: 0,
                           child: Row(
-                            children: [
-                              Image.asset(
-                                "assets/report.png",
+                            children: const [
+                              SizedBox(
                                 width: 15,
-                                fit: BoxFit.fill,
+                                child: Icon(
+                                  Icons.add_circle,
+                                  color: Colors.black,
+                                ),
                               ),
-                              const SizedBox(width: 10),
-                              const Text(
+                              SizedBox(width: 10),
+                              Text(
                                 "Add PJP",
                                 style: TextStyle(
                                   color: Colors.black,

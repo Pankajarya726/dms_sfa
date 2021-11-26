@@ -28,7 +28,12 @@ class _AddPjpScreenState extends State<AddPjpScreen> {
   DateTime dateTime = DateTime.now();
   @override
   void initState() {
+    // pickerController.selectedDate =
+    //     DateTime(dateTime.year, dateTime.month + 1, 1);
     // DateTime showDate = DateTime(dateTime.year, dateTime.month + 1, 1);
+    pickerController.selectedDate = DateTime(dateTime.year, dateTime.month, 1);
+    pjpDate = DateFormat('yyyy-MM-dd')
+        .format(DateTime(dateTime.year, dateTime.month, 1));
     DateTime showDate = DateTime(dateTime.year, dateTime.month, 1);
     date = DateFormat('EEE dd MMM').format(showDate);
 
@@ -79,6 +84,13 @@ class _AddPjpScreenState extends State<AddPjpScreen> {
                                 color: Colors.white,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold),
+                          ),
+                          yearCellStyle: DateRangePickerYearCellStyle(
+                            todayCellDecoration: BoxDecoration(
+                                color: Colors.white60,
+                                borderRadius: BorderRadius.circular(25)),
+                            todayTextStyle:
+                                const TextStyle(color: Colors.black),
                           ),
                           selectionRadius: 20,
                           monthViewSettings:
@@ -226,6 +238,7 @@ class _AddPjpScreenState extends State<AddPjpScreen> {
     DateTime d = args.value;
     if (d.weekday == 7) {
       pickerController.selectedDate = DateTime.parse(pjpDate);
+      Fluttertoast.showToast(msg: "You can't select weekend days");
     } else {
       date = DateFormat('EEE dd MMM').format(args.value);
       pjpDate = DateFormat('yyyy-MM-dd').format(args.value);

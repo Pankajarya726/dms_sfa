@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:developer';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sfa/ui/bottom_sheet/filter_bloc/filter_bloc.dart';
@@ -147,7 +149,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                       child: Container(
                           decoration: BoxDecoration(
                             color: colorGrayLite,
@@ -156,36 +158,90 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                           child: StreamBuilder<List<FilterData>>(
                             stream: streamController.stream,
                             builder: (context, snapShot) {
-                              return DropdownButtonFormField<FilterData>(
-                                dropdownColor: reportBG,
-                                hint: const Text(
-                                  "Select Location",
-                                  style: TextStyle(
+                              // return DropdownButtonFormField<FilterData>(
+                              //   dropdownColor: reportBG,
+                              //   hint: const Text(
+                              //     "Select Location",
+                              //     style: TextStyle(
+                              //         fontSize: 17,
+                              //         fontWeight: FontWeight.bold,
+                              //         color: colorGray),
+                              //   ),
+                              //   decoration: InputDecoration(
+                              //     enabledBorder: OutlineInputBorder(
+                              //       borderRadius: BorderRadius.circular(25),
+                              //       borderSide: const BorderSide(
+                              //           color: Colors.transparent, width: 2.0),
+                              //     ),
+                              //   ),
+                              //   items: locationList.map((FilterData value) {
+                              //     return DropdownMenuItem<FilterData>(
+                              //       value: value,
+                              //       child: Text(
+                              //         value.name,
+                              //         style: const TextStyle(
+                              //             color: colorGrayDark,
+                              //             fontWeight: FontWeight.bold,
+                              //             fontSize: 17),
+                              //       ),
+                              //     );
+                              //   }).toList(),
+                              //   onChanged: (value) {
+                              //     selectedLocation = value;
+                              //   },
+                              // );
+                              return DropdownSearch<FilterData>(
+                                mode: Mode.BOTTOM_SHEET,
+                                maxHeight: 400,
+                                popupTitle: const Padding(
+                                  padding: EdgeInsets.fromLTRB(14, 24, 14, 14),
+                                  child: Text(
+                                    "Select Location",
+                                    style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                        color: colorGrayDark),
+                                  ),
+                                ),
+                                showSearchBox: true,
+                                items: locationList,
+                                onChanged: (value) {
+                                  selectedLocation = value!;
+                                },
+                                dropdownSearchDecoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.all(10),
+                                  hintText: "Select Location",
+                                  hintStyle: const TextStyle(
                                       fontSize: 17,
                                       fontWeight: FontWeight.bold,
                                       color: colorGray),
-                                ),
-                                decoration: InputDecoration(
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(25),
                                     borderSide: const BorderSide(
                                         color: Colors.transparent, width: 2.0),
                                   ),
                                 ),
-                                items: locationList.map((FilterData value) {
-                                  return DropdownMenuItem<FilterData>(
-                                    value: value,
-                                    child: Text(
-                                      value.name,
-                                      style: const TextStyle(
-                                          color: colorGrayDark,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 17),
-                                    ),
+                                popupItemBuilder: (context, data, value) {
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(14),
+                                        child: Text(
+                                          data.name,
+                                          style: const TextStyle(
+                                              color: colorGrayDark,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 17),
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 0.5,
+                                        color: colorGray,
+                                      )
+                                    ],
                                   );
-                                }).toList(),
-                                onChanged: (value) {
-                                  selectedLocation = value;
                                 },
                               );
                             },
