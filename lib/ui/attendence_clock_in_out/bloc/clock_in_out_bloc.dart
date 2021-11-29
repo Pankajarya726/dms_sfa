@@ -84,7 +84,8 @@ Stream<ClockInOutStates> clockInSuccess(ClockInSuccessEvent event) async* {
         event.workingPlan,
         File(event.selfieImage),
         event.latitude,
-        event.longitude);
+        event.longitude,
+        event.workingPlanConfirmation);
     if (response.success) {
       yield ClockInSuccessState(successMessage: response.message);
     } else {

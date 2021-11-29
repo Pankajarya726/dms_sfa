@@ -104,8 +104,9 @@ class ApiRepository {
     String inOutDate,
     String workingPlan,
     File selfieImage,
-    String latitude,
-    String longitude,
+    String clockInLatitude,
+    String clockInLongitude,
+    int isWorkingPlanChanged,
   ) async {
     Map<String, dynamic> data = {
       "user_id": id,
@@ -114,8 +115,9 @@ class ApiRepository {
       "working_plan": workingPlan,
       "clock_in_image": await MultipartFile.fromFile(selfieImage.path,
           filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg"),
-      "latitude": latitude,
-      "longitude": longitude,
+      "clock_in_latitude": clockInLatitude,
+      "clock_in_longitude": clockInLongitude,
+      "is_working_plan_changed": isWorkingPlanChanged
     };
 
     FormData formData = FormData.fromMap(data);
