@@ -43,7 +43,7 @@ class _LocationAlertDialogState extends State<LocationAlertDialog> {
                     fontSize: 17),
                 autocorrect: true,
                 enableSuggestions: true,
-                maxLines: 2,
+                maxLines: 1,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   filled: true,

@@ -151,18 +151,36 @@ class _PJPScreenState extends State<PJPScreen>
                                   width: 10,
                                 ),
                                 InkWell(
-                                  onTap: () {
-                                    if (DateTime.now().month ==
-                                            dateTime.month &&
-                                        DateTime.now().year == dateTime.year) {
-                                      Fluttertoast.showToast(
-                                          msg:
-                                              "You can't select month before today");
+                                  onTap: () async {
+                                    var status = await SharedPrefrence
+                                        .getStringPreference(
+                                            SharedPrefrence.isEnable);
+                                    if (status == "show") {
+                                      if (DateTime.now().month + 1 ==
+                                              dateTime.month &&
+                                          DateTime.now().year ==
+                                              dateTime.year) {
+                                        Fluttertoast.showToast(
+                                            msg: "Month selection restricted");
+                                      } else {
+                                        dateTime = DateTime(dateTime.year,
+                                            dateTime.month + 1, dateTime.day);
+                                        pjpBloc.add(DateIncrementEvent(
+                                            dateTime: dateTime));
+                                      }
                                     } else {
-                                      dateTime = DateTime(dateTime.year,
-                                          dateTime.month + 1, dateTime.day);
-                                      pjpBloc.add(DateIncrementEvent(
-                                          dateTime: dateTime));
+                                      if (DateTime.now().month ==
+                                              dateTime.month &&
+                                          DateTime.now().year ==
+                                              dateTime.year) {
+                                        Fluttertoast.showToast(
+                                            msg: "Month selection restricted");
+                                      } else {
+                                        dateTime = DateTime(dateTime.year,
+                                            dateTime.month + 1, dateTime.day);
+                                        pjpBloc.add(DateIncrementEvent(
+                                            dateTime: dateTime));
+                                      }
                                     }
                                   },
                                   child: Image.asset(
@@ -371,6 +389,7 @@ class _PJPScreenState extends State<PJPScreen>
   }
 
   showPJP(String pjpDescription, DateTime pjpDate, String pjpId) async {
+    var todaysDate = DateTime.now();
     var status =
         await SharedPrefrence.getStringPreference(SharedPrefrence.isEnable);
     controller.text = pjpDescription;
@@ -384,7 +403,9 @@ class _PJPScreenState extends State<PJPScreen>
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom),
             child: IntrinsicHeight(
-              child: status == "show" && pjpDate.isAfter(dateTime)
+              child: status == "show" &&
+                      DateTime(pjpDate.month)
+                          .isAfter(DateTime(todaysDate.month))
                   ? Container(
                       width: MediaQuery.of(context).size.width,
                       decoration: const BoxDecoration(

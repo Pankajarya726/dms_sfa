@@ -1,3 +1,7 @@
+// To parse this JSON data, do
+//
+//     final trackResponse = trackResponseFromMap(jsonString);
+
 import 'dart:convert';
 
 class TrackResponse {
@@ -9,7 +13,7 @@ class TrackResponse {
 
   bool success;
   String message;
-  List<TrackData>? data;
+  List<TrackData> data;
 
   factory TrackResponse.fromJson(String str) =>
       TrackResponse.fromMap(json.decode(str));
@@ -20,7 +24,7 @@ class TrackResponse {
         success: json["success"] == null ? null : json["success"],
         message: json["message"] == null ? null : json["message"],
         data: json["data"] == null
-            ? null
+            ? []
             : List<TrackData>.from(
                 json["data"].map((x) => TrackData.fromMap(x))),
       );
@@ -30,7 +34,7 @@ class TrackResponse {
         "message": message == null ? null : message,
         "data": data == null
             ? null
-            : List<dynamic>.from(data!.map((x) => x.toMap())),
+            : List<dynamic>.from(data.map((x) => x.toMap())),
       };
 }
 
@@ -39,38 +43,54 @@ class TrackData {
     required this.userId,
     required this.inOutStatus,
     required this.inOutDate,
-    required this.latitude,
-    required this.longitude,
+    required this.clockInLatitude,
+    required this.clockInLongitude,
+    required this.clockOutLatitude,
+    required this.clockOutLongitude,
   });
 
   int userId;
   int inOutStatus;
   DateTime? inOutDate;
-  String latitude;
-  String longitude;
+  String clockInLatitude;
+  String clockInLongitude;
+  String clockOutLatitude;
+  String clockOutLongitude;
 
   factory TrackData.fromJson(String str) => TrackData.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
   factory TrackData.fromMap(Map<String, dynamic> json) => TrackData(
-        userId: json["user_id"] == null ? null : json["user_id"],
-        inOutStatus:
-            json["in_out_status"] == null ? null : json["in_out_status"],
+        userId: json["user_id"] == null ? 0 : json["user_id"],
+        inOutStatus: json["in_out_status"] == null ? 0 : json["in_out_status"],
         inOutDate: json["in_out_date"] == null
             ? null
             : DateTime.parse(json["in_out_date"]),
-        latitude: json["latitude"] == null ? null : json["latitude"],
-        longitude: json["longitude"] == null ? null : json["longitude"],
+        clockInLatitude: json["clock_in_latitude"] == null
+            ? ""
+            : json["clock_in_latitude"].toString(),
+        clockInLongitude: json["clock_in_longitude"] == null
+            ? ""
+            : json["clock_in_longitude"].toString(),
+        clockOutLatitude: json["clock_out_latitude"] == null
+            ? ""
+            : json["clock_out_latitude"].toString(),
+        clockOutLongitude: json["clock_out_longitude"] == null
+            ? ""
+            : json["clock_out_longitude"].toString(),
       );
 
   Map<String, dynamic> toMap() => {
-        "user_id": userId == null ? null : userId,
-        "in_out_status": inOutStatus == null ? null : inOutStatus,
+        "user_id": userId == null ? 0 : userId,
+        "in_out_status": inOutStatus == null ? 0 : inOutStatus,
         "in_out_date": inOutDate == null
-            ? null
+            ? ""
             : "${inOutDate!.year.toString().padLeft(4, '0')}-${inOutDate!.month.toString().padLeft(2, '0')}-${inOutDate!.day.toString().padLeft(2, '0')}",
-        "latitude": latitude == null ? null : latitude,
-        "longitude": longitude == null ? null : longitude,
+        "clock_in_latitude": clockInLatitude == null ? "" : clockInLatitude,
+        "clock_in_longitude": clockInLongitude == null ? "" : clockInLongitude,
+        "clock_out_latitude": clockOutLatitude == null ? "" : clockOutLatitude,
+        "clock_out_longitude":
+            clockOutLongitude == null ? "" : clockOutLongitude,
       };
 }
