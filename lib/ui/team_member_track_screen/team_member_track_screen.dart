@@ -32,16 +32,19 @@ class _TeamMemberTrackScreenState extends State<TeamMemberTrackScreen> {
     super.initState();
   }
 
-  addMarker(currenPosition) {
+  addMarker(currenPosition, clockInLatitude, clockInLongitude) {
     setState(
       () {
         markers.add(
           Marker(
-            markerId: MarkerId(currenPosition.toString()),
-            position: currenPosition,
-            draggable: true,
-            onDragEnd: (dragEndPosition) {},
-          ),
+              markerId: MarkerId(currenPosition.toString()),
+              position: currenPosition,
+              draggable: true,
+              icon: BitmapDescriptor.defaultMarkerWithHue(currenPosition ==
+                      LatLng(double.parse(clockInLatitude),
+                          double.parse(clockInLongitude))
+                  ? BitmapDescriptor.hueGreen
+                  : BitmapDescriptor.hueRed)),
         );
       },
     );
@@ -112,7 +115,10 @@ class _TeamMemberTrackScreenState extends State<TeamMemberTrackScreen> {
                             setState(
                               () {
                                 googleMapController = controller;
-                                addMarker(currenPosition);
+                                addMarker(
+                                    currenPosition,
+                                    state.response.data[0].clockInLatitude,
+                                    state.response.data[0].clockInLongitude);
                               },
                             );
                           },
