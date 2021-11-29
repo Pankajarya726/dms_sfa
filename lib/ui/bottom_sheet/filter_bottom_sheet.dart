@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:developer';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sfa/ui/bottom_sheet/filter_bloc/filter_bloc.dart';
 import 'package:sfa/ui/bottom_sheet/filter_bloc/filter_event.dart';
 import 'package:sfa/ui/bottom_sheet/filter_bloc/filter_state.dart';
 import 'package:sfa/ui/bottom_sheet/filter_model/filter_model.dart';
+import 'package:sfa/ui/dialogs/location_dialog.dart';
 import 'package:sfa/utility/colors.dart';
 
 class FilterBottomSheet extends StatefulWidget {
@@ -23,6 +23,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   TextEditingController nameController = TextEditingController();
   TextEditingController locationTypeController = TextEditingController();
   TextEditingController locationNameController = TextEditingController();
+  TextEditingController filterController = TextEditingController();
 
   FilterData? selectedLocation;
   List<FilterData> locationList = [];
@@ -352,7 +353,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                             border: InputBorder.none,
                             filled: true,
                             fillColor: colorGrayLite,
-                            hintText: "Select Location",
+                            hintText: "Select Location Name",
                             prefixText: "   ",
                             suffixIcon: InkWell(
                               onTap: () {
@@ -521,94 +522,61 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               fontSize: 17,
             ),
           ),
-          content: IntrinsicHeight(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
-                  child: SizedBox(
-                    height: 50,
-                    child: TextFormField(
-                      controller: nameController,
-                      style: const TextStyle(
-                          color: colorGrayDark,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17),
-                      autocorrect: true,
-                      enableSuggestions: true,
-                      maxLines: 2,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        filled: true,
-                        fillColor: colorGrayLite,
-                        hintText: "Search",
-                        prefixIcon: const Icon(
-                          Icons.search,
-                          color: colorGrayDark,
-                        ),
-                        contentPadding: const EdgeInsets.fromLTRB(12, 30, 0, 0),
-                        hintStyle: const TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: colorGray),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(
-                              color: Colors.transparent, width: 2.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(
-                              color: Colors.transparent, width: 2.0),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(left: 8, right: 8),
-                  height: MediaQuery.of(context).size.width * 0.70,
-                  width: MediaQuery.of(context).size.width * 0.90,
-                  color: reportBG,
-                  child: ListView.separated(
-                    shrinkWrap: false,
-                    itemCount: locationList.length,
-                    primary: false,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        onTap: () {
-                          Navigator.pop(context);
+          content: LocationAlertDialog(
+            locationList: locationList,
+            onLoctionSelect: (FilterData data) {
+              locationNameController.text = data.name;
+              selectedLocation = data;
+            },
+          ),
+        );
+      },
+    );
+  }
 
-                          setState(() {
-                            locationNameController.text =
-                                locationList[index].name;
-                            selectedLocation = locationList[index];
-                          });
-                        },
-                        contentPadding: const EdgeInsets.all(0),
-                        minVerticalPadding: 0,
-                        horizontalTitleGap: 0,
-                        dense: true,
-                        title: Text(
-                          locationList[index].name,
-                          style: const TextStyle(
-                            color: colorGrayDark,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17,
-                          ),
-                        ),
-                      );
-                    },
-                    separatorBuilder: (context, int index) {
-                      return const Divider(
-                        color: colorGray,
-                      );
-                    },
-                  ),
-                ),
-              ],
+  searchFilter(String? value) {
+    filterList = locationList
+        .where((item) => item.name.toLowerCase().contains(value!.toLowerCase()))
+        .toList();
+    if (filterList.isNotEmpty) {
+      return buidlLocationList(filterList);
+    } else {
+      return const Center(child: Text("Data not found!"));
+    }
+  }
+
+  buidlLocationList(List<FilterData> listData) {
+    return ListView.separated(
+      shrinkWrap: false,
+      itemCount: listData.length,
+      primary: false,
+      itemBuilder: (context, index) {
+        return ListTile(
+          onTap: () {
+            Navigator.pop(context);
+
+            setState(() {
+              locationNameController.text = listData[index].name;
+              selectedLocation = listData[index];
+            });
+          },
+          contentPadding: const EdgeInsets.all(0),
+          minVerticalPadding: 0,
+          horizontalTitleGap: 0,
+          dense: true,
+          title: Text(
+            listData[index].name,
+            style: const TextStyle(
+              color: colorGrayDark,
+              fontWeight: FontWeight.bold,
+              fontSize: 17,
             ),
           ),
+        );
+      },
+      separatorBuilder: (context, int index) {
+        return const Divider(
+          color: colorGray,
         );
       },
     );
