@@ -38,6 +38,7 @@ class Data {
     required this.image,
     required this.designation,
     required this.clockInOutData,
+    required this.pjpDescription,
     required this.pjpButton,
   });
 
@@ -48,6 +49,7 @@ class Data {
   String image;
   String designation;
   List<ClockInOutData> clockInOutData;
+  String pjpDescription;
   String pjpButton;
 
   factory Data.fromJson(String str) => Data.fromMap(json.decode(str));
@@ -66,6 +68,8 @@ class Data {
             ? []
             : List<ClockInOutData>.from(
                 json["clockInOutData"].map((x) => ClockInOutData.fromMap(x))),
+        pjpDescription:
+            json["pjp_description"] == null ? null : json["pjp_description"],
         pjpButton: json["pjp_button"] == null ? null : json["pjp_button"],
       );
 
@@ -79,6 +83,7 @@ class Data {
         "clockInOutData": clockInOutData == null
             ? null
             : List<dynamic>.from(clockInOutData.map((x) => x.toMap())),
+        "pjp_description": pjpDescription == null ? null : pjpDescription,
         "pjp_button": pjpButton == null ? null : pjpButton,
       };
 }
@@ -90,6 +95,8 @@ class ClockInOutData {
     required this.clockInTime,
     required this.clockOutTime,
     required this.userId,
+    required this.comment,
+    required this.clockOutImage,
   });
 
   int inOutStatus;
@@ -97,6 +104,8 @@ class ClockInOutData {
   String clockInTime;
   dynamic clockOutTime;
   int userId;
+  String comment;
+  String clockOutImage;
 
   factory ClockInOutData.fromJson(String str) =>
       ClockInOutData.fromMap(json.decode(str));
@@ -113,6 +122,10 @@ class ClockInOutData {
             : json["clock_in_time"].toString(),
         clockOutTime: json["clock_out_time"],
         userId: json["user_id"] == null ? 0 : json["user_id"],
+        comment: json["comment"] == null ? "" : json["comment"].toString(),
+        clockOutImage: json["clock_out_image"] == null
+            ? ""
+            : json["clock_out_image"].toString(),
       );
 
   Map<String, dynamic> toMap() => {
@@ -121,5 +134,7 @@ class ClockInOutData {
         "clock_in_time": clockInTime == null ? null : clockInTime,
         "clock_out_time": clockOutTime,
         "user_id": userId == null ? null : userId,
+        "comment": comment == null ? null : comment,
+        "clock_out_image": clockOutImage == null ? null : clockOutImage,
       };
 }

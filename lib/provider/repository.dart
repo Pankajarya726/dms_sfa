@@ -150,6 +150,8 @@ class ApiRepository {
     String inOutDate,
     String workingPlan,
     File selfieImage,
+    String clockOutLatitude,
+    String clockOutLongitude,
   ) async {
     Map<String, dynamic> data = {
       "user_id": id,
@@ -158,6 +160,8 @@ class ApiRepository {
       "comment": workingPlan,
       "clock_out_image": await MultipartFile.fromFile(selfieImage.path,
           filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg"),
+      "clock_out_latitude": clockOutLatitude,
+      "clock_out_longitude": clockOutLongitude,
     };
 
     FormData formData = FormData.fromMap(data);
