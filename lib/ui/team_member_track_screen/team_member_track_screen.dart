@@ -19,10 +19,11 @@ class TeamMemberTrackScreen extends StatefulWidget {
 }
 
 class _TeamMemberTrackScreenState extends State<TeamMemberTrackScreen> {
-  List<Marker> markers = [];
+  Set<Marker> markers = {};
   TrackBloc trackBloc = TrackBloc();
   late GoogleMapController googleMapController;
   LatLng? currenPosition;
+  List<LatLng> markerPosition = [];
   Location location = Location();
 
   @override
@@ -31,22 +32,23 @@ class _TeamMemberTrackScreenState extends State<TeamMemberTrackScreen> {
     super.initState();
   }
 
-  addMarker(currenPosition, clockInLatitude, clockInLongitude) {
-    setState(
-      () {
-        markers.add(
-          Marker(
-              markerId: MarkerId(currenPosition.toString()),
-              position: currenPosition,
-              draggable: true,
-              icon: BitmapDescriptor.defaultMarkerWithHue(currenPosition ==
-                      LatLng(double.parse(clockInLatitude),
-                          double.parse(clockInLongitude))
-                  ? BitmapDescriptor.hueGreen
-                  : BitmapDescriptor.hueRed)),
-        );
-      },
-    );
+  addMarker(List<LatLng> currenPositions, clockInLatitude, clockInLongitude) {
+    for (int i = 0; i < currenPositions.length; i++) {
+      markers.add(
+        Marker(
+          markerId: MarkerId(currenPositions[i].toString()),
+          position: currenPositions[i],
+          draggable: true,
+          icon: BitmapDescriptor.defaultMarkerWithHue(currenPositions[i] ==
+                  LatLng(
+                    double.parse(clockInLatitude),
+                    double.parse(clockInLongitude),
+                  )
+              ? BitmapDescriptor.hueGreen
+              : BitmapDescriptor.hueRed),
+        ),
+      );
+    }
   }
 
   @override
@@ -83,6 +85,32 @@ class _TeamMemberTrackScreenState extends State<TeamMemberTrackScreen> {
                   );
                 }
                 if (state is TrackSuccessState) {
+                  markers.add(
+                    Marker(
+                        markerId:
+                            MarkerId(state.response.data[0].clockInLatitude),
+                        position: LatLng(
+                            double.parse(
+                                state.response.data[0].clockInLatitude),
+                            double.parse(
+                                state.response.data[0].clockInLongitude))),
+                  );
+
+                  Marker(
+                      markerId:
+                          MarkerId(state.response.data[0].clockOutLatitude),
+                      position: LatLng(
+                          double.parse(state.response.data[0].clockOutLatitude),
+                          double.parse(
+                              state.response.data[0].clockOutLongitude)));
+
+                  markerPosition.add(LatLng(
+                      double.parse(state.response.data[0].clockInLatitude),
+                      double.parse(state.response.data[0].clockInLongitude)));
+                  markerPosition.add(LatLng(
+                      double.parse(state.response.data[0].clockOutLatitude),
+                      double.parse(state.response.data[0].clockOutLongitude)));
+
                   if (state.response.data[0].inOutStatus == 1) {
                     currenPosition = LatLng(
                         double.parse(state.response.data[0].clockInLatitude),
@@ -107,7 +135,7 @@ class _TeamMemberTrackScreenState extends State<TeamMemberTrackScreen> {
                           zoomControlsEnabled: true,
                           scrollGesturesEnabled: true,
                           zoomGesturesEnabled: true,
-                          markers: Set.from(markers),
+                          markers: markers,
                           initialCameraPosition: CameraPosition(
                               target: currenPosition!, zoom: 14.0),
                           onMapCreated: (controller) {
@@ -115,7 +143,7 @@ class _TeamMemberTrackScreenState extends State<TeamMemberTrackScreen> {
                               () {
                                 googleMapController = controller;
                                 addMarker(
-                                    currenPosition,
+                                    markerPosition,
                                     state.response.data[0].clockInLatitude,
                                     state.response.data[0].clockInLongitude);
                               },

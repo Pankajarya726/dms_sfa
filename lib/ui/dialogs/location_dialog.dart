@@ -104,39 +104,39 @@ class _LocationAlertDialogState extends State<LocationAlertDialog> {
   }
 
   buidlLocationList(List<FilterData> listData) {
-    return ListView.separated(
-      shrinkWrap: false,
-      itemCount: listData.length,
-      primary: false,
-      itemBuilder: (context, index) {
-        return ListTile(
-          onTap: () {
-            widget.onLoctionSelect(listData[index]);
-            Navigator.pop(context);
-            // setState(() {
-            //   // locationNameController.text = listData[index].name;
-            //   selectedLocation = listData[index];
-            // });
-          },
-          contentPadding: const EdgeInsets.all(0),
-          minVerticalPadding: 0,
-          horizontalTitleGap: 0,
-          dense: true,
-          title: Text(
-            listData[index].name,
-            style: const TextStyle(
-              color: colorGrayDark,
-              fontWeight: FontWeight.bold,
-              fontSize: 17,
-            ),
-          ),
-        );
-      },
-      separatorBuilder: (context, int index) {
-        return const Divider(
-          color: colorGray,
-        );
-      },
-    );
+    return listData.isNotEmpty
+        ? ListView.separated(
+            shrinkWrap: false,
+            itemCount: listData.length,
+            primary: false,
+            itemBuilder: (context, index) {
+              return ListTile(
+                onTap: () {
+                  widget.onLoctionSelect(listData[index]);
+                  Navigator.pop(context);
+                },
+                contentPadding: const EdgeInsets.all(0),
+                minVerticalPadding: 0,
+                horizontalTitleGap: 0,
+                dense: true,
+                title: Text(
+                  listData[index].name,
+                  style: const TextStyle(
+                    color: colorGrayDark,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                  ),
+                ),
+              );
+            },
+            separatorBuilder: (context, int index) {
+              return const Divider(
+                color: colorGray,
+              );
+            },
+          )
+        : const Center(
+            child: Text("Data not found"),
+          );
   }
 }
