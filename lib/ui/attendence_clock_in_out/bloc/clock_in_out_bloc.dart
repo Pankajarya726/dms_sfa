@@ -11,7 +11,6 @@ import 'package:sfa/ui/attendence_clock_in_out/bloc/clock_in_out_states.dart';
 import 'package:sfa/ui/attendence_clock_in_out/model/clock_in_response.dart';
 import 'package:sfa/ui/attendence_clock_in_out/model/clock_out_response.dart';
 import 'package:sfa/ui/home_screen/home_screen_model/home_screen_model.dart';
-import 'package:sfa/ui/pjp_by_date/model/pjp_by_date_model.dart';
 import 'package:sfa/utility/network.dart';
 import 'package:sfa/utility/shared_prefrence.dart';
 
@@ -23,10 +22,6 @@ class ClockInOutBloc extends Bloc<ClockInOutEvents, ClockInOutStates> {
     if (event is ClockInOutInitialEvent) {
       yield ClockInOutLoadingState();
       yield* getInitialData(event);
-    }
-    if (event is PjpByDateEvent) {
-      yield ClockInOutLoadingState();
-      yield* getPjpData(event);
     }
     if (event is ClockInSuccessEvent) {
       yield ClockInOutLoadingState();
@@ -110,6 +105,8 @@ Stream<ClockInOutStates> clockOutSuccess(ClockOutSuccessEvent event) async* {
       format.format(_ntpTime).toString(),
       event.workingPlan,
       File(event.selfieImage),
+      event.latitude,
+      event.longitude,
     );
     if (response.success) {
       yield ClockOutSuccessState(successMessage: response.message);
@@ -119,17 +116,6 @@ Stream<ClockInOutStates> clockOutSuccess(ClockOutSuccessEvent event) async* {
   } else {
     yield ClockInOutFailureState(
         failureMessage: "Please check your internet connection!");
-  }
-}
-
-Stream<ClockInOutStates> getPjpData(PjpByDateEvent event) async* {
-  PjpByDateResponse response =
-      await repository.pjpByDate(event.userId, event.date);
-
-  if (response.success) {
-    yield PjpByDateSuccessState(pjp: response.data!);
-  } else {
-    yield PjpByDateFailureState(message: response.message);
   }
 }
 

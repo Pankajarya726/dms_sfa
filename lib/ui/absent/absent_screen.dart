@@ -15,7 +15,7 @@ class AbsentScreen extends StatefulWidget {
 }
 
 class _AbsentScreenState extends State<AbsentScreen> {
-  final absentReason = TextEditingController();
+  TextEditingController absentReason = TextEditingController();
   AbsentBloc absentBloc = AbsentBloc();
   bool clockInOutData = false;
   int clockInStatus = 0;
@@ -62,6 +62,12 @@ class _AbsentScreenState extends State<AbsentScreen> {
                   clockInOutData = true;
                   clockInStatus =
                       state.userData.data!.clockInOutData.first.inOutStatus;
+                  if (state.userData.data!.clockInOutData.first.absentReason
+                      .isNotEmpty) {
+                    absentReason = TextEditingController(
+                        text: state
+                            .userData.data!.clockInOutData.first.absentReason);
+                  }
                 } else {
                   clockInOutData = false;
                 }

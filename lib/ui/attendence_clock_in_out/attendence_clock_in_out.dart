@@ -29,16 +29,17 @@ class AttendenceClockInOut extends StatefulWidget {
 
 class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   bool gpsLocation = false;
-  Duration timerInterval = const Duration(seconds: 1);
-  var timerSubscription;
-  Timer? timer;
   LatLng? currenPosition;
   XFile? image;
   ClockInOutBloc clockInOutBloc = ClockInOutBloc();
   double latitude = 0.0;
   double longitude = 0.0;
   int time = 0;
+  var timerSubscription;
+  Timer? timer;
   Duration duration = const Duration(seconds: 0, hours: 0, minutes: 0);
+  StreamController<String> timerController = StreamController();
+  final stopWatch = PublishSubject<int>();
   TextEditingController workingPlanController = TextEditingController();
   TextEditingController pjpController = TextEditingController();
   TextEditingController commentController = TextEditingController();
@@ -54,8 +55,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   String timeDifference = "00:00:00";
   int checkSuccessHours = 0;
   String userId = "";
-  StreamController<String> timerController = StreamController();
-  final stopWatch = PublishSubject<int>();
   String city = "";
   String myState = "";
   String country = "";
@@ -65,6 +64,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   RefreshController refreshController =
       RefreshController(initialRefresh: false);
   int workingPlanConfirmation = 0;
+  int thumbConfirmation = 0;
 
   @override
   void initState() {
@@ -95,6 +95,8 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
             listener: (context, state) {
               if (state is ClockInSuccessState) {
                 clockInOutBloc.add(ClockInOutInitialEvent());
+                latitude = 0.0;
+                longitude = 0.0;
                 Fluttertoast.showToast(msg: state.successMessage);
               }
               if (state is ClockInFailureState) {
@@ -103,6 +105,8 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
               }
               if (state is ClockOutSuccessState) {
                 clockInOutBloc.add(ClockInOutInitialEvent());
+                latitude = 0.0;
+                longitude = 0.0;
                 Fluttertoast.showToast(msg: state.successMessage);
               }
               if (state is ClockOutFailureState) {
@@ -119,6 +123,11 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                 country = state.country;
               }
               if (state is ClockInOutInitialSuccessState) {
+                if (state.userData.data!.pjpDescription.isNotEmpty) {
+                  pjpText = state.userData.data!.pjpDescription;
+                } else {
+                  pjpText = "PJP not found";
+                }
                 if (state.userData.data!.clockInOutData.isNotEmpty) {
                   clockInStatus =
                       state.userData.data!.clockInOutData.first.inOutStatus;
@@ -161,13 +170,11 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                   child: CircularProgressIndicator(),
                 );
               }
-
               if (state is ClockInOutFailureState) {
                 return Center(
                   child: Text(state.failureMessage),
                 );
               }
-
               if (clockInStatus == 1) {
                 return clockInLayout(timeDifference, checkSuccessHours);
               } else if (clockInStatus == 2) {
@@ -302,11 +309,13 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
           const SizedBox(
             height: 20,
           ),
-          pjpTextField("PJP not found"),
+          pjpTextField(),
           const SizedBox(
             height: 20,
           ),
-          workingPlanTextField(""),
+          pjpText == "PJP not found"
+              ? workingPlanTextField("")
+              : workingPlanTextField(pjpText),
           const SizedBox(
             height: 20,
           ),
@@ -648,30 +657,34 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
           getCurrentTime();
           webtime = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
           await Future.delayed(const Duration(seconds: 1));
-          setState(() {
-            if (clockInStatus == 1) {
-              if (commentController.text.isNotEmpty) {
-                if (image != null) {
+          if (clockInStatus == 1) {
+            if (commentController.text.isNotEmpty) {
+              if (image != null) {
+                if (latitude != 0.0 && longitude != 0.0) {
                   clockInOutBloc.add(
                     ClockOutSuccessEvent(
                       inOutTime: webtime,
                       workingPlan: commentController.text,
                       selfieImage: image!.path,
+                      latitude: latitude.toString(),
+                      longitude: longitude.toString(),
                     ),
                   );
                   image = null;
                   stopAttendenceTimer();
                 } else {
-                  Fluttertoast.showToast(
-                      msg: "Please capture clock out selfie");
+                  Fluttertoast.showToast(msg: "Please turn on GPS location");
+                  getUserPosition();
                 }
               } else {
-                Fluttertoast.showToast(msg: "Please add comment");
+                Fluttertoast.showToast(msg: "Please capture clock out selfie");
               }
             } else {
-              Fluttertoast.showToast(msg: "You have clocked-out");
+              Fluttertoast.showToast(msg: "Please add comment");
             }
-          });
+          } else {
+            Fluttertoast.showToast(msg: "You have clocked-out");
+          }
         },
         style: ButtonStyle(
           fixedSize: MaterialStateProperty.all(const Size(180, 50)),
@@ -723,7 +736,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                       longitude: longitude.toString(),
                       workingPlanConfirmation: workingPlanConfirmation),
                 );
-
                 image = null;
               } else {
                 Fluttertoast.showToast(msg: "Please turn on GPS location");
@@ -735,7 +747,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
           } else {
             Fluttertoast.showToast(msg: "Please enter working plan");
           }
-          setState(() {});
         },
         style: ButtonStyle(
           fixedSize: MaterialStateProperty.all(const Size(180, 50)),
@@ -819,8 +830,14 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     );
   }
 
-  Widget pjpTextField(pjpText) {
+  Widget pjpTextField() {
     pjpController = TextEditingController(text: pjpText);
+    if (workingPlanTextcount == 0) {
+      if (pjpController.text != "PJP not found") {
+        workingPlanController = pjpController;
+      }
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -850,6 +867,124 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
               borderSide: BorderSide(
                 width: 1,
                 color: Color(0xff555555),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget workingPlanTextField(workingPlanText) {
+    if (workingPlanText != "") {
+      if (workingPlanTextcount == 0) {
+        workingPlanController = TextEditingController(text: workingPlanText);
+      }
+    }
+    workingPlanTextcount++;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Expanded(
+              child: Text(
+                "Working Plan",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17,
+                ),
+              ),
+            ),
+            pjpController.text != "PJP not found"
+                ? (workingPlanConfirmation != 1
+                    ? SizedBox(
+                        height: 30,
+                        child: IconButton(
+                          padding: const EdgeInsets.symmetric(horizontal: 7),
+                          onPressed: () {
+                            if (pjpController.text == "PJP not found") {
+                              if (workingPlanController.text.isEmpty) {
+                                Fluttertoast.showToast(
+                                    msg: "Please add working plan");
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: "Working plan added");
+                              }
+                            } else {
+                              if (workingPlanController.text.isNotEmpty) {
+                                if (workingPlanConfirmation != 1) {
+                                  thumbConfirmation++;
+                                  Fluttertoast.showToast(msg: "PJP confirmed");
+                                  setState(() {});
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: "You have already edited PJP");
+                                }
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg:
+                                        "PJP not found, please add working plan");
+                              }
+                            }
+                          },
+                          icon: Image.asset(
+                            "assets/confirm.png",
+                            width: 30,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      )
+                    : Container())
+                : Container(),
+            thumbConfirmation == 0
+                ? SizedBox(
+                    height: 30,
+                    child: IconButton(
+                      padding: const EdgeInsets.symmetric(horizontal: 7),
+                      onPressed: () {
+                        showUpdateAndConfirmBottomSheet();
+                      },
+                      icon: Image.asset(
+                        "assets/update.png",
+                        width: 30,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  )
+                : Container()
+          ],
+        ),
+        Form(
+          key: formKey3,
+          child: TextFormField(
+            maxLines: 3,
+            readOnly: true,
+            controller: workingPlanController,
+            keyboardType: TextInputType.text,
+            style: const TextStyle(
+              color: Color(0xff303030),
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+            validator: (text) {
+              if (text == null || text.isEmpty) {
+                return "Cannot be empty";
+              } else {
+                return null;
+              }
+            },
+            decoration: const InputDecoration(
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Color(0xff555555)),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  width: 1,
+                  color: Color(0xff555555),
+                ),
               ),
             ),
           ),
@@ -907,123 +1042,18 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     );
   }
 
-  Widget workingPlanTextField(workingPlanText) {
-    if (workingPlanText != "") {
-      if (workingPlanTextcount == 0) {
-        workingPlanController = TextEditingController(text: workingPlanText);
-      }
-    }
-    workingPlanTextcount++;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Expanded(
-              child: Text(
-                "Working Plan",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 17,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 30,
-              child: IconButton(
-                padding: const EdgeInsets.symmetric(horizontal: 7),
-                onPressed: () {
-                  if (pjpController.text == "PJP not found") {
-                    if (workingPlanController.text.isEmpty) {
-                      Fluttertoast.showToast(msg: "Please add working plan");
-                    } else {
-                      Fluttertoast.showToast(msg: "Working plan added");
-                    }
-                  } else {
-                    if (workingPlanController.text.isNotEmpty) {
-                      if (workingPlanConfirmation != 1) {
-                        Fluttertoast.showToast(msg: "PJP confirmed");
-                      } else {
-                        Fluttertoast.showToast(
-                            msg: "You have already edited PJP");
-                      }
-                    } else {
-                      Fluttertoast.showToast(
-                          msg: "PJP not found, please add working plan");
-                    }
-                  }
-                },
-                icon: Image.asset(
-                  "assets/confirm.png",
-                  width: 30,
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 30,
-              child: IconButton(
-                padding: const EdgeInsets.symmetric(horizontal: 7),
-                onPressed: () {
-                  showUpdateAndConfirmBottomSheet();
-                },
-                icon: Image.asset(
-                  "assets/update.png",
-                  width: 30,
-                  fit: BoxFit.contain,
-                ),
-              ),
-            )
-          ],
-        ),
-        Form(
-          key: formKey3,
-          child: TextFormField(
-            maxLines: 3,
-            readOnly: true,
-            controller: workingPlanController,
-            keyboardType: TextInputType.text,
-            style: const TextStyle(
-              color: Color(0xff303030),
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-            validator: (text) {
-              if (text == null || text.isEmpty) {
-                return "Cannot be empty";
-              } else {
-                return null;
-              }
-            },
-            decoration: const InputDecoration(
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xff555555)),
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  width: 1,
-                  color: Color(0xff555555),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget roundedButton() {
     return Center(
       child: ElevatedButton(
         onPressed: () {
           if (formKey.currentState!.validate()) {
             if (pjpController.text == "PJP not found") {
+              workingPlanConfirmation = 0;
               Fluttertoast.showToast(msg: "Working plan added");
             } else {
               workingPlanConfirmation = 1;
               Fluttertoast.showToast(msg: "PJP edited");
+              setState(() {});
             }
             Navigator.pop(context);
           }
@@ -1196,7 +1226,6 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
     longitude = position.longitude;
     List<Placemark> placemarks =
         await placemarkFromCoordinates(position.latitude, position.longitude);
-
     Placemark place = placemarks[0];
     city = place.locality!;
     myState = place.administrativeArea!;
@@ -1211,6 +1240,12 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
   }
 
   void onRefresh() {
+    workingPlanController = TextEditingController();
+    pjpController = TextEditingController();
+    workingPlanConfirmation = 0;
+    workingPlanTextcount = 0;
+    thumbConfirmation = 0;
+    pjpText = "";
     clockInOutBloc.add(ClockInOutInitialEvent());
     refreshController.refreshCompleted();
   }
