@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sfa/ui/team_member_track_screen/track_bloc/track_bloc.dart';
 import 'package:sfa/ui/team_member_track_screen/track_bloc/track_event.dart';
 import 'package:sfa/ui/team_member_track_screen/track_bloc/track_state.dart';
