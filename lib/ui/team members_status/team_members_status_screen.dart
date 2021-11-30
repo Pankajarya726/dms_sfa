@@ -393,10 +393,7 @@ class _StatusBottomSheetState extends State<StatusBottomSheet> {
                       ),
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-                        child: state.response.data!.first.clockOutTime
-                                    .isNotEmpty &&
-                                state
-                                    .response.data!.first.clockInTime.isNotEmpty
+                        child: state.response.data!.first.clockInTime.isNotEmpty
                             ? Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [

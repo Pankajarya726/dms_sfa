@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
@@ -65,6 +66,7 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
       RefreshController(initialRefresh: false);
   int workingPlanConfirmation = 0;
   int thumbConfirmation = 0;
+  String clockOutImage = "";
 
   @override
   void initState() {
@@ -131,6 +133,18 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                 if (state.userData.data!.clockInOutData.isNotEmpty) {
                   clockInStatus =
                       state.userData.data!.clockInOutData.first.inOutStatus;
+                  if (state
+                      .userData.data!.clockInOutData.first.comment.isNotEmpty) {
+                    commentController = TextEditingController(
+                        text:
+                            state.userData.data!.clockInOutData.first.comment);
+                  }
+
+                  if (state.userData.data!.clockInOutData.first.clockOutImage
+                      .isNotEmpty) {
+                    clockOutImage =
+                        state.userData.data!.clockInOutData.first.clockOutImage;
+                  }
 
                   if (clockInStatus == 1) {
                     clockInTime = DateFormat("HH:mm:ss").parse(
@@ -588,36 +602,65 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
           const SizedBox(
             height: 12,
           ),
-          GestureDetector(
-            onTap: () {
-              if (clockInStatus == 1) {
-                _imgFromCamera(context);
-              }
-            },
-            child: image == null
-                ? Container(
-                    width: 150,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                      border: Border.all(
-                        color: Colors.grey,
-                        style: BorderStyle.solid,
-                        width: 2,
-                      ),
-                    ),
-                    child: Align(
-                      child: Image.asset(
-                        "assets/camera.png",
-                        width: 50,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  )
-                : Container(
+          clockInStatus != 2
+              ? GestureDetector(
+                  onTap: () {
+                    if (clockInStatus == 1) {
+                      _imgFromCamera(context);
+                    }
+                  },
+                  child: image == null
+                      ? Container(
+                          width: 150,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                            border: Border.all(
+                              color: Colors.grey,
+                              style: BorderStyle.solid,
+                              width: 2,
+                            ),
+                          ),
+                          child: Align(
+                            child: Image.asset(
+                              "assets/camera.png",
+                              width: 50,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        )
+                      : Container(
+                          width: 150,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                            border: Border.all(
+                              color: Colors.grey,
+                              style: BorderStyle.solid,
+                              width: 2,
+                            ),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(8),
+                            ),
+                            child: Image.file(
+                              File(image!.path),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                )
+              : GestureDetector(
+                  onTap: () {
+                    Fluttertoast.showToast(msg: "You have clocked out");
+                  },
+                  child: Container(
                     width: 150,
                     height: 150,
                     decoration: BoxDecoration(
@@ -634,13 +677,17 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
                       borderRadius: const BorderRadius.all(
                         Radius.circular(8),
                       ),
-                      child: Image.file(
-                        File(image!.path),
+                      child: CachedNetworkImage(
+                        width: 90,
+                        height: 90,
                         fit: BoxFit.cover,
+                        imageUrl: clockOutImage,
+                        errorWidget: (context, url, error) =>
+                            Image.asset("assets/3x/placeholder.png"),
                       ),
                     ),
                   ),
-          ),
+                ),
           const SizedBox(
             height: 70,
           ),
@@ -1008,6 +1055,11 @@ class _AttendenceClockInOutState extends State<AttendenceClockInOut> {
         Form(
           key: formKey2,
           child: TextFormField(
+            onTap: () {
+              if (clockInStatus == 2) {
+                Fluttertoast.showToast(msg: "You have clocked out");
+              }
+            },
             readOnly: clockInStatus == 2 ? true : false,
             enableInteractiveSelection: clockInStatus == 2 ? false : true,
             maxLines: 3,
