@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -23,25 +25,26 @@ class _TeamMemberTrackScreenState extends State<TeamMemberTrackScreen> {
   late GoogleMapController googleMapController;
   LatLng? currenPosition;
   Location location = Location();
-  RefreshController refreshController =
-      RefreshController(initialRefresh: false);
+
   @override
   void initState() {
     getData();
     super.initState();
   }
 
-  addMarker(currenPosition) {
+  addMarker(currenPosition, clockInLatitude, clockInLongitude) {
     setState(
       () {
-        markers = [];
         markers.add(
           Marker(
-            markerId: MarkerId(currenPosition.toString()),
-            position: currenPosition,
-            draggable: true,
-            onDragEnd: (dragEndPosition) {},
-          ),
+              markerId: MarkerId(currenPosition.toString()),
+              position: currenPosition,
+              draggable: true,
+              icon: BitmapDescriptor.defaultMarkerWithHue(currenPosition ==
+                      LatLng(double.parse(clockInLatitude),
+                          double.parse(clockInLongitude))
+                  ? BitmapDescriptor.hueGreen
+                  : BitmapDescriptor.hueRed)),
         );
       },
     );
@@ -53,64 +56,77 @@ class _TeamMemberTrackScreenState extends State<TeamMemberTrackScreen> {
       create: (context) => trackBloc,
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: SmartRefresher(
-          primary: false,
-          controller: refreshController,
-          onRefresh: onRefresh,
-          enablePullDown: true,
-          child: Container(
-            decoration: const BoxDecoration(
-              color: reportBG,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
+        body: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          decoration: const BoxDecoration(
+            color: reportBG,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
             ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-              child: BlocBuilder<TrackBloc, TrackState>(
-                builder: (context, state) {
-                  if (state is TrackLoadingState) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  if (state is TrackFailureState) {
-                    return Center(
-                      child: Text(state.message),
-                    );
-                  }
-                  if (state is TrackSuccessState) {
+          ),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+            child: BlocBuilder<TrackBloc, TrackState>(
+              builder: (context, state) {
+                if (state is TrackLoadingState) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (state is TrackFailureState) {
+                  return Center(
+                    child: Text(state.message),
+                  );
+                }
+                if (state is TrackSuccessState) {
+                  if (state.response.data[0].inOutStatus == 1) {
                     currenPosition = LatLng(
-                        double.parse(state.response.data![0].latitude),
-                        double.parse(state.response.data![0].longitude));
-
-                    return GoogleMap(
-                      tiltGesturesEnabled: true,
-                      mapType: MapType.normal,
-                      compassEnabled: true,
-                      zoomControlsEnabled: true,
-                      scrollGesturesEnabled: true,
-                      zoomGesturesEnabled: true,
-                      markers: Set.from(markers),
-                      initialCameraPosition:
-                          CameraPosition(target: currenPosition!, zoom: 14.0),
-                      onMapCreated: (controller) {
-                        setState(
-                          () {
-                            googleMapController = controller;
-                            addMarker(currenPosition);
-                          },
-                        );
-                      },
+                        double.parse(state.response.data[0].clockInLatitude),
+                        double.parse(state.response.data[0].clockInLongitude));
+                  }
+                  if (state.response.data[0].inOutStatus == 2) {
+                    currenPosition = LatLng(
+                        double.parse(state.response.data[0].clockOutLatitude),
+                        double.parse(state.response.data[0].clockOutLongitude));
+                  }
+                  if (state.response.data[0].inOutStatus == 3) {
+                    return const Center(
+                      child: Text("Employee is absent"),
                     );
                   }
-                  return Container();
-                },
-              ),
+
+                  return currenPosition != null
+                      ? GoogleMap(
+                          tiltGesturesEnabled: true,
+                          mapType: MapType.normal,
+                          compassEnabled: true,
+                          zoomControlsEnabled: true,
+                          scrollGesturesEnabled: true,
+                          zoomGesturesEnabled: true,
+                          markers: Set.from(markers),
+                          initialCameraPosition: CameraPosition(
+                              target: currenPosition!, zoom: 14.0),
+                          onMapCreated: (controller) {
+                            setState(
+                              () {
+                                googleMapController = controller;
+                                addMarker(
+                                    currenPosition,
+                                    state.response.data[0].clockInLatitude,
+                                    state.response.data[0].clockInLongitude);
+                              },
+                            );
+                          },
+                        )
+                      : Container();
+                }
+                return Container();
+              },
             ),
           ),
         ),
@@ -122,10 +138,5 @@ class _TeamMemberTrackScreenState extends State<TeamMemberTrackScreen> {
     trackBloc.add(TrackEvent(
         id: widget.userId,
         date: DateFormat("yyyy-MM-dd").format(DateTime.now())));
-  }
-
-  onRefresh() {
-    getData();
-    refreshController.refreshCompleted();
   }
 }

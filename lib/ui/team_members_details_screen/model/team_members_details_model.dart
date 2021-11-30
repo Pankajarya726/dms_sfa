@@ -44,6 +44,7 @@ class Data {
     required this.inImage,
     required this.comments,
     required this.outImage,
+    required this.absentReason,
   });
 
   String clockInTime;
@@ -54,6 +55,7 @@ class Data {
   String inImage;
   String comments;
   String outImage;
+  String absentReason;
 
   factory Data.fromJson(String str) => Data.fromMap(json.decode(str));
 
@@ -78,6 +80,9 @@ class Data {
         inImage: json["in_image"] == null ? "" : json["in_image"].toString(),
         comments: json["comments"] == null ? "" : json["comments"].toString(),
         outImage: json["out_image"] == null ? "" : json["out_image"].toString(),
+        absentReason: json["absent_reason"] == null
+            ? ""
+            : json["absent_reason"].toString(),
       );
 
   Map<String, dynamic> toMap() => {
@@ -91,5 +96,6 @@ class Data {
         "in_image": inImage == null ? null : inImage,
         "comments": comments == null ? null : comments,
         "out_image": outImage == null ? null : outImage,
+        "absent_reason": absentReason == null ? null : absentReason
       };
 }
