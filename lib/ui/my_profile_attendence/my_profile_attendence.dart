@@ -579,6 +579,7 @@ class _StatusBottomSheetState extends State<StatusBottomSheet> {
   DateTime? clockInTime;
   DateTime? clockOutTime;
   String timeDifference = "00:00:00";
+  // data types
 
   @override
   void dispose() {
