@@ -32,14 +32,14 @@ class _TeamMemberTrackScreenState extends State<TeamMemberTrackScreen> {
     super.initState();
   }
 
-  addMarker(List<LatLng> currenPositions, clockInLatitude, clockInLongitude) {
-    for (int i = 0; i < currenPositions.length; i++) {
+  addMarker(List<LatLng> currentPositions, clockInLatitude, clockInLongitude) {
+    for (int i = 0; i < currentPositions.length; i++) {
       markers.add(
         Marker(
-          markerId: MarkerId(currenPositions[i].toString()),
-          position: currenPositions[i],
+          markerId: MarkerId(currentPositions[i].toString()),
+          position: currentPositions[i],
           draggable: true,
-          icon: BitmapDescriptor.defaultMarkerWithHue(currenPositions[i] ==
+          icon: BitmapDescriptor.defaultMarkerWithHue(currentPositions[i] ==
                   LatLng(
                     double.parse(clockInLatitude),
                     double.parse(clockInLongitude),
