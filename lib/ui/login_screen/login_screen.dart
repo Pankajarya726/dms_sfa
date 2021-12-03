@@ -156,7 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         password.text.toString());
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
-                        builder: (BuildContext context) => const DrawerScreen(),
+                        builder: (BuildContext context) => const HomeScreen(),
                       ),
                     );
                   },

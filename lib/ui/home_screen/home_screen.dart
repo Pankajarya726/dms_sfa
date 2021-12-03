@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:kf_drawer/kf_drawer.dart';
 
-class HomeScreen extends KFDrawerContent {
-  HomeScreen({Key? key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -13,7 +12,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      body: Column(),
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
     );
   }
 }
