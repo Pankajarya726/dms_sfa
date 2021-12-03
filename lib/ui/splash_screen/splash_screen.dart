@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:dms/ui/home_screen/home_screen.dart';
 import 'package:dms/ui/login_screen/login_screen.dart';
 import 'package:flutter/material.dart';
 
