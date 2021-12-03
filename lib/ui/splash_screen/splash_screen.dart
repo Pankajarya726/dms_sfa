@@ -70,7 +70,7 @@ class _SplashScreenState extends State<SplashScreen> {
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
-          contentPadding: const EdgeInsets.fromLTRB(25, 10, 25, 10),
+          contentPadding: const EdgeInsets.fromLTRB(25, 11, 25, 11),
           title: const Text("Something Wrong!",
               style: TextStyle(
                   color: Colors.black,
