@@ -1,3 +1,4 @@
+import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/ui/home_screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -155,7 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         password.text.toString());
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
-                        builder: (BuildContext context) => const HomeScreen(),
+                        builder: (BuildContext context) => const DrawerScreen(),
                       ),
                     );
                   },
