@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:dms/provider/repository.dart';
 import 'package:dms/provider/url.dart';
-import 'package:dms/ui/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
