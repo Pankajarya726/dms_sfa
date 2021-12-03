@@ -20,8 +20,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
       initialPage: HomeScreen(),
       items: [
         KFDrawerItem.initWithPage(
-          text: Text('Home', style: TextStyle(color: Colors.white)),
-          icon: Icon(Icons.home_outlined, color: Colors.white),
+          text: const Text('Home', style: TextStyle(color: Colors.white)),
+          icon: const Icon(Icons.home_outlined, color: Colors.white),
           page: HomeScreen(),
         ),
       ],
@@ -50,40 +50,50 @@ class _DrawerScreenState extends State<DrawerScreen> {
         ),
         header: Align(
           alignment: Alignment.centerLeft,
-          child: Container(
-            padding: const EdgeInsets.only(left: 10),
-            width: MediaQuery.of(context).size.width * 0.6,
-            height: 80,
-            child: Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: Image.network(
-                    "https://cdnb.artstation.com/p/assets/images/images/024/538/827/original/pixel-jeff-clipa-s.gif?1582740711",
-                    fit: BoxFit.cover,
-                    width: 65,
-                    height: 65,
-                  ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              IconButton(
+                onPressed: () {},
+                color: Colors.white,
+                icon: const Icon(Icons.close),
+              ),
+              Container(
+                padding: const EdgeInsets.only(left: 10),
+                width: MediaQuery.of(context).size.width * 0.6,
+                height: 80,
+                child: Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      child: Image.network(
+                        "https://cdnb.artstation.com/p/assets/images/images/024/538/827/original/pixel-jeff-clipa-s.gif?1582740711",
+                        fit: BoxFit.cover,
+                        width: 65,
+                        height: 65,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text(
+                            " Name",
+                            style: TextStyle(fontSize: 24, color: Colors.white),
+                          ),
+                          Text(
+                            " Designation",
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        " Name",
-                        style: TextStyle(fontSize: 24, color: Colors.white),
-                      ),
-                      Text(
-                        " Designation",
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
