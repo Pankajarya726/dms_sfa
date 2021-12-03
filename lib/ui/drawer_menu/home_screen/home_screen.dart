@@ -11,7 +11,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      backgroundColor: Colors.white,
+      appBar: AppBar(
+        leading: const Icon(
+          Icons.ac_unit,
+        ),
+        flexibleSpace: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [],
+        ),
+      ),
     );
   }
 }
