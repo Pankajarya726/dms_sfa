@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:dms/api_provider/repository.dart';
-import 'package:dms/api_provider/url.dart';
-import 'package:dms/home_screen/home_screen.dart';
+import 'package:dms/provider/repository.dart';
+import 'package:dms/provider/url.dart';
+import 'package:dms/ui/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -44,12 +44,12 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.pink,
+        primarySwatch: Colors.red,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         brightness: Brightness.light,
         appBarTheme: const AppBarTheme(),
       ),
-      home: const HomeScreen(),
+      home: const SplashScreen(),
     );
   }
 }
