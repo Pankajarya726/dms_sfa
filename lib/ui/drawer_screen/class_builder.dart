@@ -1,4 +1,4 @@
-import 'package:dms/ui/home_screen/home_screen.dart';
+import 'package:dms/ui/drawer_menu/home_screen/home_screen.dart';
 
 typedef Constructor<T> = T Function();
 
