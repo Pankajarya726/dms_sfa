@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:kf_drawer/kf_drawer.dart';
 
 class DrawerScreen extends StatefulWidget {
-  const DrawerScreen({Key? key}) : super(key: key);
+  const DrawerScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   _DrawerScreenState createState() => _DrawerScreenState();
@@ -22,8 +24,116 @@ class _DrawerScreenState extends State<DrawerScreen> {
       initialPage: HomeScreen(),
       items: [
         KFDrawerItem.initWithPage(
-          text: const Text('Home', style: TextStyle(color: Colors.white)),
-          icon: const Icon(Icons.home_outlined, color: Colors.white),
+          icon: Container(
+            height: 0.5,
+            width: 240,
+            color: Colors.white,
+            child: const Icon(
+              Icons.line_style,
+              color: Colors.white,
+              size: 1,
+            ),
+          ),
+        ),
+        //  Home
+        KFDrawerItem.initWithPage(
+          text: const Padding(
+            padding: EdgeInsets.only(top: 8),
+            child: Text('Home', style: TextStyle(color: Colors.white)),
+          ),
+          icon: const Padding(
+            padding: EdgeInsets.only(top: 8),
+            child: Icon(Icons.home_outlined, color: Colors.white),
+          ),
+          page: HomeScreen(),
+        ),
+        // Script
+        KFDrawerItem.initWithPage(
+          text: const Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Text('Script', style: TextStyle(color: Colors.white)),
+          ),
+          icon: const Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Icon(Icons.home_outlined, color: Colors.white),
+          ),
+          page: HomeScreen(),
+        ),
+        // message
+        KFDrawerItem.initWithPage(
+          text: const Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Text('Message', style: TextStyle(color: Colors.white)),
+          ),
+          icon: const Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Icon(Icons.home_outlined, color: Colors.white),
+          ),
+          page: HomeScreen(),
+        ),
+        // Start day
+        KFDrawerItem.initWithPage(
+          text: const Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Text('Start Day', style: TextStyle(color: Colors.white)),
+          ),
+          icon: const Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Icon(Icons.home_outlined, color: Colors.white),
+          ),
+          page: HomeScreen(),
+        ),
+        // sync
+        KFDrawerItem.initWithPage(
+          text: const Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Text('Sync', style: TextStyle(color: Colors.white)),
+          ),
+          icon: const Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Icon(Icons.home_outlined, color: Colors.white),
+          ),
+          page: HomeScreen(),
+        ),
+        // line
+        KFDrawerItem.initWithPage(
+          icon: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Container(
+              height: 0.5,
+              width: 240,
+              color: Colors.white,
+              child: const Icon(
+                Icons.line_style,
+                color: Colors.white,
+                size: 1,
+              ),
+            ),
+          ),
+        ),
+
+        // settings
+        KFDrawerItem.initWithPage(
+          text: const Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Text('Settings', style: TextStyle(color: Colors.white)),
+          ),
+          icon: const Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Icon(Icons.home_outlined, color: Colors.white),
+          ),
+          page: HomeScreen(),
+        ),
+        // logout
+        KFDrawerItem.initWithPage(
+          text: const Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Text('Logout', style: TextStyle(color: Colors.white)),
+          ),
+          icon: const Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Icon(Icons.home_outlined, color: Colors.white),
+          ),
           page: HomeScreen(),
         ),
       ],
@@ -36,9 +146,10 @@ class _DrawerScreenState extends State<DrawerScreen> {
       extendBody: true,
       backgroundColor: Colors.white,
       body: KFDrawer(
-        shadowOffset: 20,
         menuPadding: const EdgeInsets.only(top: 20),
+        shadowOffset: 20,
         controller: controller,
+        minScale: 0.80,
         scrollable: true,
         drawerWidth: 0.80,
         decoration: const BoxDecoration(
@@ -51,7 +162,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
             children: [
               IconButton(
                 onPressed: () {
-                  log("message");
+                  controller.close!.call();
                 },
                 icon: const Icon(Icons.close),
                 color: Colors.white,

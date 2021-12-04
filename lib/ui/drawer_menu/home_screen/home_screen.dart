@@ -17,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Flexible(
               child: IconButton(
-                onPressed: () {},
+                onPressed: widget.onMenuPressed,
                 icon: const Icon(Icons.menu),
               ),
             ),
