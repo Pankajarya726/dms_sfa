@@ -151,6 +151,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.fromLTRB(0, 50, 0, 30),
                 child: ElevatedButton(
                   onPressed: () {
+                    sendLoginData(context, mobileNumber.text.toString(),
+                        password.text.toString());
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
                         builder: (BuildContext context) => const DrawerScreen(),
@@ -181,5 +183,32 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  sendLoginData(
+    BuildContext context,
+    String mobileNumber,
+    String password,
+  ) {
+    RegExp regxMobile = RegExp(r'(^[0-9]{10}$)');
+    // RegExp regxPassword =
+    RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+    if (mobileNumber.isEmpty && password.isEmpty) {
+      // Fluttertoast.showToast(msg: "Field can't be Empty");
+    } else if (mobileNumber.isEmpty) {
+      // Fluttertoast.showToast(msg: "Please enter Mobile Number");
+    } else if (!regxMobile.hasMatch(mobileNumber)) {
+      // Fluttertoast.showToast(msg: "Mobile number must be 10 digits");
+    } else if (password.isEmpty) {
+      // Fluttertoast.showToast(msg: "Please enter Password");
+    }
+    // else if (!regxPassword.hasMatch(password)) {
+    //   Fluttertoast.showToast(msg: "Please enter Valid Password");
+    // }
+    else {
+      // BlocProvider.of<LoginBloc>(context).add(
+      //   LoginEvent(mobileNumber: mobileNumber, password: password),
+      // );
+    }
   }
 }

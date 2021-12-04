@@ -17,12 +17,13 @@ ApiRepository repository = ApiRepository();
 
 void main() {
   runApp(const MyApp());
+  dio.interceptors.add(LogInterceptor(
+      requestHeader: true, requestBody: true, responseBody: true));
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
