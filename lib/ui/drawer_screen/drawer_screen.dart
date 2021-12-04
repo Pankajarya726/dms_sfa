@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:dms/ui/drawer_menu/home_screen/home_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kf_drawer/kf_drawer.dart';
 
 class DrawerScreen extends StatefulWidget {
@@ -38,64 +39,104 @@ class _DrawerScreenState extends State<DrawerScreen> {
         //  Home
         KFDrawerItem.initWithPage(
           text: const Padding(
-            padding: EdgeInsets.only(top: 8),
-            child: Text('Home', style: TextStyle(color: Colors.white)),
+            padding: EdgeInsets.only(top: 18, left: 10),
+            child: Text('Home',
+                style: TextStyle(color: Colors.white, fontSize: 18)),
           ),
-          icon: const Padding(
-            padding: EdgeInsets.only(top: 8),
-            child: Icon(Icons.home_outlined, color: Colors.white),
+          icon: Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Align(
+              child: SvgPicture.asset(
+                "assets/Home.svg",
+                height: 28,
+                width: 28,
+                fit: BoxFit.contain,
+              ),
+            ),
           ),
           page: HomeScreen(),
         ),
         // Script
         KFDrawerItem.initWithPage(
           text: const Padding(
-            padding: EdgeInsets.only(top: 4),
-            child: Text('Script', style: TextStyle(color: Colors.white)),
+            padding: EdgeInsets.only(top: 16, left: 10),
+            child: Text('Script',
+                style: TextStyle(color: Colors.white, fontSize: 18)),
           ),
-          icon: const Padding(
-            padding: EdgeInsets.only(top: 4),
-            child: Icon(Icons.home_outlined, color: Colors.white),
+          icon: Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Align(
+              child: SvgPicture.asset(
+                "assets/Script.svg",
+                height: 28,
+                width: 28,
+                fit: BoxFit.contain,
+              ),
+            ),
           ),
           page: HomeScreen(),
         ),
         // message
         KFDrawerItem.initWithPage(
           text: const Padding(
-            padding: EdgeInsets.only(top: 4),
-            child: Text('Message', style: TextStyle(color: Colors.white)),
+            padding: EdgeInsets.only(top: 16, left: 10),
+            child: Text('Message',
+                style: TextStyle(color: Colors.white, fontSize: 18)),
           ),
-          icon: const Padding(
-            padding: EdgeInsets.only(top: 4),
-            child: Icon(Icons.home_outlined, color: Colors.white),
+          icon: Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Align(
+              child: SvgPicture.asset(
+                "assets/Message.svg",
+                height: 28,
+                width: 28,
+                fit: BoxFit.contain,
+              ),
+            ),
           ),
           page: HomeScreen(),
         ),
         // Start day
         KFDrawerItem.initWithPage(
           text: const Padding(
-            padding: EdgeInsets.only(top: 4),
-            child: Text('Start Day', style: TextStyle(color: Colors.white)),
+            padding: EdgeInsets.only(top: 16, left: 10),
+            child: Text('End Day',
+                style: TextStyle(color: Colors.white, fontSize: 18)),
           ),
-          icon: const Padding(
-            padding: EdgeInsets.only(top: 4),
-            child: Icon(Icons.home_outlined, color: Colors.white),
+          icon: Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Align(
+              child: SvgPicture.asset(
+                "assets/End-Day.svg",
+                height: 28,
+                width: 28,
+                fit: BoxFit.contain,
+              ),
+            ),
           ),
           page: HomeScreen(),
         ),
         // sync
         KFDrawerItem.initWithPage(
           text: const Padding(
-            padding: EdgeInsets.only(top: 4),
-            child: Text('Sync', style: TextStyle(color: Colors.white)),
+            padding: EdgeInsets.only(top: 16, left: 10),
+            child: Text('Sync',
+                style: TextStyle(color: Colors.white, fontSize: 18)),
           ),
-          icon: const Padding(
-            padding: EdgeInsets.only(top: 4),
-            child: Icon(Icons.home_outlined, color: Colors.white),
+          icon: Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Align(
+              child: SvgPicture.asset(
+                "assets/Sync.svg",
+                height: 28,
+                width: 28,
+                fit: BoxFit.contain,
+              ),
+            ),
           ),
           page: HomeScreen(),
-        ),
-        // line
+        ), // line
+        //line
         KFDrawerItem.initWithPage(
           icon: Padding(
             padding: const EdgeInsets.only(top: 8.0),
@@ -111,31 +152,46 @@ class _DrawerScreenState extends State<DrawerScreen> {
             ),
           ),
         ),
-
         // settings
         KFDrawerItem.initWithPage(
           text: const Padding(
-            padding: EdgeInsets.only(top: 4),
-            child: Text('Settings', style: TextStyle(color: Colors.white)),
+            padding: EdgeInsets.only(top: 16, left: 10),
+            child: Text('Settings',
+                style: TextStyle(color: Colors.white, fontSize: 18)),
           ),
-          icon: const Padding(
-            padding: EdgeInsets.only(top: 4),
-            child: Icon(Icons.home_outlined, color: Colors.white),
+          icon: Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Align(
+              child: SvgPicture.asset(
+                "assets/Settings.svg",
+                height: 28,
+                width: 28,
+                fit: BoxFit.contain,
+              ),
+            ),
           ),
           page: HomeScreen(),
         ),
         // logout
         KFDrawerItem.initWithPage(
           text: const Padding(
-            padding: EdgeInsets.only(top: 4),
-            child: Text('Logout', style: TextStyle(color: Colors.white)),
+            padding: EdgeInsets.only(top: 16, left: 10),
+            child: Text('Logout',
+                style: TextStyle(color: Colors.white, fontSize: 18)),
           ),
-          icon: const Padding(
-            padding: EdgeInsets.only(top: 4),
-            child: Icon(Icons.home_outlined, color: Colors.white),
+          icon: Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Align(
+              child: SvgPicture.asset(
+                "assets/Logout.svg",
+                height: 28,
+                width: 28,
+                fit: BoxFit.contain,
+              ),
+            ),
           ),
           page: HomeScreen(),
-        ),
+        ), // line
       ],
     );
   }
@@ -160,12 +216,19 @@ class _DrawerScreenState extends State<DrawerScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              IconButton(
-                onPressed: () {
-                  controller.close!.call();
-                },
-                icon: const Icon(Icons.close),
-                color: Colors.white,
+              Padding(
+                padding: const EdgeInsets.only(left: 10, bottom: 14),
+                child: InkWell(
+                  onTap: () {
+                    controller.close!.call();
+                  },
+                  child: SvgPicture.asset(
+                    "assets/Close.svg",
+                    height: 28,
+                    width: 28,
+                    fit: BoxFit.contain,
+                  ),
+                ),
               ),
               Container(
                 padding: const EdgeInsets.only(left: 10),
