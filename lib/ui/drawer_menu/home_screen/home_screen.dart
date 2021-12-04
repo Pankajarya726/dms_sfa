@@ -10,6 +10,8 @@ class HomeScreen extends KFDrawerContent {
 
 // home screen
 class _HomeScreenState extends State<HomeScreen> {
+  int currentBottomTabIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -88,7 +90,74 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
+        bottomNavigationBar: BottomNavigationBar(
+          selectedFontSize: 12,
+          unselectedFontSize: 12,
+          selectedItemColor: Colors.red,
+          showUnselectedLabels: true,
+          unselectedItemColor: Colors.grey[600],
+          currentIndex: currentBottomTabIndex,
+          type: BottomNavigationBarType.fixed,
+          onTap: ontemTaped,
+          elevation: 15,
+          items: [
+            BottomNavigationBarItem(
+              icon: Container(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: SvgPicture.asset(
+                  "assets/menu.svg",
+                  height: 25,
+                  width: 25,
+                  fit: BoxFit.contain,
+                ),
+              ),
+              label: "Tutorials",
+            ),
+            BottomNavigationBarItem(
+              icon: Container(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: SvgPicture.asset(
+                  "assets/menu.svg",
+                  height: 25,
+                  width: 25,
+                  fit: BoxFit.contain,
+                ),
+              ),
+              label: "Product",
+            ),
+            BottomNavigationBarItem(
+              icon: Container(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: SvgPicture.asset(
+                  "assets/menu.svg",
+                  height: 25,
+                  width: 25,
+                  fit: BoxFit.contain,
+                ),
+              ),
+              label: "Performance",
+            ),
+            BottomNavigationBarItem(
+              icon: Container(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: SvgPicture.asset(
+                  "assets/menu.svg",
+                  height: 25,
+                  width: 25,
+                  fit: BoxFit.contain,
+                ),
+              ),
+              label: "Plan",
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  void ontemTaped(int index) {
+    setState(() {
+      currentBottomTabIndex = index;
+    });
   }
 }
