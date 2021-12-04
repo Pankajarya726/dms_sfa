@@ -65,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(top: 7),
+                        margin: const EdgeInsets.only(top: 7),
                         padding: const EdgeInsets.symmetric(
                             vertical: 4, horizontal: 6),
                         decoration: BoxDecoration(
