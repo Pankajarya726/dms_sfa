@@ -8,6 +8,7 @@ class HomeScreen extends KFDrawerContent {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
+// home screen
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
