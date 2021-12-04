@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kf_drawer/kf_drawer.dart';
 
 class HomeScreen extends KFDrawerContent {
@@ -9,60 +11,81 @@ class HomeScreen extends KFDrawerContent {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Flexible(
-              child: IconButton(
-                onPressed: widget.onMenuPressed,
-                icon: const Icon(Icons.menu),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(67.0),
+          child: AppBar(
+            elevation: 3,
+            backgroundColor: Colors.white,
+            titleSpacing: 8,
+            leading: Align(
+              child: InkWell(
+                onTap: widget.onMenuPressed,
+                child: SvgPicture.asset(
+                  "assets/menu.svg",
+                  height: 30,
+                  width: 30,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
-            const SizedBox(
-              width: 18,
-            ),
-            const Flexible(
-              child: Icon(Icons.alarm, size: 50),
-            ),
-            const SizedBox(
-              width: 18,
-            ),
-            Flexible(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "employeeName",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+            title: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(50),
+                  child: CachedNetworkImage(
+                    width: 56,
+                    height: 56,
+                    fit: BoxFit.cover,
+                    imageUrl:
+                        "https://cdnaws.sharechat.com/a49913b5-024a-4ecd-9c86-4940a94f53d8-46107328-99c3-41f7-a542-74ce42eca32c_compressed_40.jpg",
+                    errorWidget: (context, url, error) =>
+                        Image.asset("assets/images/3x/placeholder.png"),
+                    placeholder: (context, url) =>
+                        const CircularProgressIndicator(),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white30,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Text(
-                        "subtitle",
+                ),
+                const SizedBox(
+                  width: 17,
+                ),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Employee Name",
                         style: TextStyle(
-                          fontWeight: FontWeight.w500,
                           color: Colors.black,
-                          fontSize: 15,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
+                      Container(
+                        margin: EdgeInsets.only(top: 7),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 4, horizontal: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.pink[100],
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: const Text(
+                          "Employee Designation",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )
-          ],
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );
