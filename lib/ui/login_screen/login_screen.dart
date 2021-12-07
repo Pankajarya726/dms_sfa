@@ -1,6 +1,7 @@
 import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -25,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
               alignment: Alignment.center,
               children: <Widget>[
                 Image.asset(
-                  "assets/3x/login-banner.png",
+                  "assets/login-banner1.png",
                   fit: BoxFit.contain,
                   width: MediaQuery.of(context).size.width,
                 ),

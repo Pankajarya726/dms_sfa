@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
         appBarTheme: const AppBarTheme(),
       ),
-      home: const DrawerScreen(),
+      home: const SplashScreen(),
     );
   }
 }
