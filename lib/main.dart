@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:dms/provider/repository.dart';
 import 'package:dms/provider/url.dart';
-import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/ui/splash_screen/splash_screen.dart';
+import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 BaseOptions options = BaseOptions(
   responseType: ResponseType.json,
@@ -17,9 +18,9 @@ Dio dio = Dio(options);
 ApiRepository repository = ApiRepository();
 
 void main() {
+  dio.interceptors.add(LogInterceptor(requestHeader: true, requestBody: true, responseBody: true));
+
   runApp(const MyApp());
-  dio.interceptors.add(LogInterceptor(
-      requestHeader: true, requestBody: true, responseBody: true));
 }
 
 class MyApp extends StatelessWidget {
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarBrightness: Brightness.light,
-        statusBarIconBrightness: Brightness.dark,
+        statusBarIconBrightness: Brightness.light,
       ),
     );
     SystemChrome.setPreferredOrientations(
@@ -42,14 +43,37 @@ class MyApp extends StatelessWidget {
     );
 
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'DMS',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.red,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        brightness: Brightness.light,
-        appBarTheme: const AppBarTheme(),
-      ),
+          primarySwatch: const MaterialColor(
+            0xFFF3505A,
+            <int, Color>{
+              50: Color(0xFFFFEBEE),
+              100: Color(0xFFFFCDD2),
+              200: Color(0xFFEF9A9A),
+              300: Color(0xFFE57373),
+              400: Color(0xFFEF5350),
+              500: Color(0xFFF3505A),
+              600: Color(0xFFE53935),
+              700: Color(0xFFD32F2F),
+              800: Color(0xFFC62828),
+              900: Color(0xFFB71C1C),
+            },
+          ),
+          primaryColor: MColor.colorPrimary,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          brightness: Brightness.light,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: MColor.appBar,
+            elevation: 0,
+            systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarBrightness: Brightness.light,
+              statusBarIconBrightness: Brightness.dark,
+            ),
+          ),
+          fontFamily: GoogleFonts.roboto().fontFamily),
       home: const SplashScreen(),
     );
   }

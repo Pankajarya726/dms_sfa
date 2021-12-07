@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dms/ui/drawer_menu/home_screen/home_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +14,7 @@ class DrawerScreen extends StatefulWidget {
 }
 
 class _DrawerScreenState extends State<DrawerScreen> {
-  KFDrawerController controller =
-      KFDrawerController(initialPage: KFDrawerContent());
+  KFDrawerController controller = KFDrawerController(initialPage: KFDrawerContent());
   @override
   void initState() {
     super.initState();
@@ -40,8 +37,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
         KFDrawerItem.initWithPage(
           text: const Padding(
             padding: EdgeInsets.only(top: 18, left: 10),
-            child: Text('Home',
-                style: TextStyle(color: Colors.white, fontSize: 18)),
+            child: Text('Home', style: TextStyle(color: Colors.white, fontSize: 18)),
           ),
           icon: Padding(
             padding: const EdgeInsets.only(top: 10),
@@ -60,8 +56,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
         KFDrawerItem.initWithPage(
           text: const Padding(
             padding: EdgeInsets.only(top: 16, left: 10),
-            child: Text('Script',
-                style: TextStyle(color: Colors.white, fontSize: 18)),
+            child: Text('Script', style: TextStyle(color: Colors.white, fontSize: 18)),
           ),
           icon: Padding(
             padding: const EdgeInsets.only(top: 8),
@@ -80,8 +75,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
         KFDrawerItem.initWithPage(
           text: const Padding(
             padding: EdgeInsets.only(top: 16, left: 10),
-            child: Text('Message',
-                style: TextStyle(color: Colors.white, fontSize: 18)),
+            child: Text('Message', style: TextStyle(color: Colors.white, fontSize: 18)),
           ),
           icon: Padding(
             padding: const EdgeInsets.only(top: 8),
@@ -100,8 +94,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
         KFDrawerItem.initWithPage(
           text: const Padding(
             padding: EdgeInsets.only(top: 16, left: 10),
-            child: Text('End Day',
-                style: TextStyle(color: Colors.white, fontSize: 18)),
+            child: Text('End Day', style: TextStyle(color: Colors.white, fontSize: 18)),
           ),
           icon: Padding(
             padding: const EdgeInsets.only(top: 8),
@@ -120,8 +113,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
         KFDrawerItem.initWithPage(
           text: const Padding(
             padding: EdgeInsets.only(top: 16, left: 10),
-            child: Text('Sync',
-                style: TextStyle(color: Colors.white, fontSize: 18)),
+            child: Text('Sync', style: TextStyle(color: Colors.white, fontSize: 18)),
           ),
           icon: Padding(
             padding: const EdgeInsets.only(top: 8),
@@ -156,8 +148,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
         KFDrawerItem.initWithPage(
           text: const Padding(
             padding: EdgeInsets.only(top: 16, left: 10),
-            child: Text('Settings',
-                style: TextStyle(color: Colors.white, fontSize: 18)),
+            child: Text('Settings', style: TextStyle(color: Colors.white, fontSize: 18)),
           ),
           icon: Padding(
             padding: const EdgeInsets.only(top: 8),
@@ -176,8 +167,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
         KFDrawerItem.initWithPage(
           text: const Padding(
             padding: EdgeInsets.only(top: 16, left: 10),
-            child: Text('Logout',
-                style: TextStyle(color: Colors.white, fontSize: 18)),
+            child: Text('Logout', style: TextStyle(color: Colors.white, fontSize: 18)),
           ),
           icon: Padding(
             padding: const EdgeInsets.only(top: 8),
@@ -253,15 +243,10 @@ class _DrawerScreenState extends State<DrawerScreen> {
                         children: [
                           const Text(
                             "Employee Name",
-                            style: TextStyle(
-                                fontSize: 21,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w400),
+                            style: TextStyle(fontSize: 21, color: Colors.white, fontWeight: FontWeight.w400),
                           ),
                           Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(4)),
+                            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4)),
                             child: const Padding(
                               padding: EdgeInsets.all(2),
                               child: Text(
