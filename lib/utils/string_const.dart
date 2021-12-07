@@ -1,6 +1,6 @@
 const login = "Login";
 const startMyDay = "Start My Day";
-const explore = "Explore";
+const explore = "EXPLORE";
 const myPlan = "My Plan";
 const january = "January";
 const february = "February";

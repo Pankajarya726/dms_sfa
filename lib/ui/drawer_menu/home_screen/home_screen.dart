@@ -37,9 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         toolbarHeight: 75,
         elevation: 3,
-
         shadowColor: Colors.black26,
-
         centerTitle: false,
         leading: Material(
           color: Colors.transparent,
@@ -61,7 +59,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-
         title: Row(
           children: [
             ClipRRect(
@@ -114,92 +111,6 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           ],
         ),
-
-        // flexibleSpace: Row(
-        //   crossAxisAlignment: CrossAxisAlignment.center,
-        //   children: [
-        //     const SizedBox(
-        //       width: 5,
-        //     ),
-        //     Material(
-        //       color: Colors.transparent,
-        //       borderRadius: BorderRadius.circular(30),
-        //       child: InkWell(
-        //         customBorder: RoundedRectangleBorder(
-        //           borderRadius: BorderRadius.circular(30),
-        //         ),
-        //         onTap: widget.onMenuPressed,
-        //         child: SizedBox(
-        //           width: 60,
-        //           height: 60,
-        //           child: Align(
-        //             child: SvgPicture.asset(
-        //               "assets/menu.svg",
-        //               height: 30,
-        //               width: 30,
-        //               fit: BoxFit.contain,
-        //             ),
-        //           ),
-        //         ),
-        //       ),
-        //     ),
-        //     const SizedBox(
-        //       width: 15,
-        //     ),
-        //     ClipRRect(
-        //       borderRadius: BorderRadius.circular(50),
-        //       child: CachedNetworkImage(
-        //         width: 50,
-        //         height: 50,
-        //         fit: BoxFit.cover,
-        //         imageUrl:
-        //         "https://cdnaws.sharechat.com/a49913b5-024a-4ecd-9c86-4940a94f53d8-46107328-99c3-41f7-a542-74ce42eca32c_compressed_40.jpg",
-        //         errorWidget: (context, url, error) => Image.asset("assets/images/3x/placeholder.png"),
-        //         placeholder: (context, url) => const CircularProgressIndicator(),
-        //       ),
-        //     ),
-        //     const SizedBox(
-        //       width: 17,
-        //     ),
-        //     Flexible(
-        //       child: Column(
-        //         mainAxisAlignment: MainAxisAlignment.center,
-        //         crossAxisAlignment: CrossAxisAlignment.start,
-        //         children: [
-        //           const Text(
-        //             "Smith Johnson",
-        //             style: TextStyle(
-        //               color: Colors.black,
-        //               fontSize: 20,
-        //               fontWeight: FontWeight.bold,
-        //               overflow: TextOverflow.ellipsis,
-        //             ),
-        //           ),
-        //           Container(
-        //             margin: const EdgeInsets.only(top: 4),
-        //             padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
-        //             decoration: BoxDecoration(
-        //               color: const Color(0xFFF3505A).withOpacity(0.3),
-        //               borderRadius: BorderRadius.circular(3),
-        //             ),
-        //             child: const Text(
-        //               "Employee Designation",
-        //               style: TextStyle(
-        //                 fontWeight: FontWeight.w500,
-        //                 color: Colors.black,
-        //                 fontSize: 15,
-        //                 overflow: TextOverflow.ellipsis,
-        //               ),
-        //             ),
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-        //     const SizedBox(
-        //       width: 15,
-        //     )
-        //   ],
-        // ),
       ),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(

@@ -46,8 +46,7 @@ class _SplashScreenState extends State<SplashScreen> {
             height: MediaQuery.of(context).size.height * 0.15,
             child: Center(
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(50),
@@ -71,23 +70,12 @@ class _SplashScreenState extends State<SplashScreen> {
       builder: (context) {
         return AlertDialog(
           contentPadding: const EdgeInsets.fromLTRB(25, 11, 25, 11),
-          title: const Text("Something Wrong!",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w600)),
+          title: const Text("Something Wrong!", style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.w600)),
           content: const Text("Please check your internet and try again.",
-              style: TextStyle(
-                  color: Color.fromRGBO(85, 85, 85, 1),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500)),
+              style: TextStyle(color: Color.fromRGBO(85, 85, 85, 1), fontSize: 16, fontWeight: FontWeight.w500)),
           actions: [
             MaterialButton(
-              child: const Text("Retry",
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Color(0xfff4511e),
-                      fontWeight: FontWeight.w600)),
+              child: const Text("Retry", style: TextStyle(fontSize: 16, color: Color(0xfff4511e), fontWeight: FontWeight.w600)),
               onPressed: () {},
             ),
           ],
