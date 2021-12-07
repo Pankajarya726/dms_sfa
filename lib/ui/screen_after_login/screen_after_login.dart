@@ -13,116 +13,43 @@ class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // boxLayout("assets/sun.png", "START MY DAY", 60, 25),
-                InkWell(
-                  borderRadius: BorderRadius.circular(15),
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const DrawerScreen()));
-                  },
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.70,
-                    padding: const EdgeInsets.fromLTRB(70, 40, 70, 40),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 20,
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          "assets/sun.png",
-                          width: 60,
-                        ),
-                        const SizedBox(
-                          height: 25,
-                        ),
-                        const Text(
-                          startMyDay,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17,
-                          ),
-                        ),
-                      ],
-                    ),
+      backgroundColor: const Color(0xFFFFFFFF),
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  boxLayout("assets/sun.png", startMyDay, 60.0, 25.0),
+                  const SizedBox(
+                    height: 50,
                   ),
-                ),
-                const SizedBox(
-                  height: 50,
-                ),
-
-                InkWell(
-                  borderRadius: BorderRadius.circular(15),
-                  // splashColor: Colors.red,
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const DrawerScreen()));
-                  },
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.70,
-                    padding: const EdgeInsets.fromLTRB(70, 40, 70, 40),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 20,
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          "assets/explore.png",
-                          width: 50,
-                        ),
-                        const SizedBox(
-                          height: 28,
-                        ),
-                        const Text(
-                          explore,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+                  boxLayout("assets/explore.png", explore, 50.0, 28.0),
+                ],
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset("assets/vypar_vistar_logo.png"),
-              ],
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset("assets/vypar_vistar_logo.png"),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget boxLayout(imageIconPath, imageLabel, imageWidth, sizedBoxWidth) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(70, 40, 70, 40),
+      width: MediaQuery.of(context).size.width * 0.70,
+      height: MediaQuery.of(context).size.height * 0.25,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
@@ -133,23 +60,41 @@ class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
           ),
         ],
       ),
-      child: Column(
-        children: [
-          Image.asset(
-            "assets/explore.png",
-            width: 50,
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        child: InkWell(
+          customBorder: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
           ),
-          const SizedBox(
-            height: 28,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const DrawerScreen(),
+              ),
+            );
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                imageIconPath,
+                width: imageWidth,
+              ),
+              SizedBox(
+                height: sizedBoxWidth,
+              ),
+              Text(
+                imageLabel,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17,
+                ),
+              ),
+            ],
           ),
-          const Text(
-            "START MY DAY",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 17,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
