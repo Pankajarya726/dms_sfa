@@ -36,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.85,
                 child: Image.asset(
-                  "assets/3x/splash-triangle.png",
+                  "assets/splash-triangle.png",
                   fit: BoxFit.cover,
                 ),
               ),
@@ -49,8 +49,9 @@ class _SplashScreenState extends State<SplashScreen> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(50)),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(50),
+                ),
                 child: const Text(
                   "Sales Force Automation",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
