@@ -1,4 +1,5 @@
 import 'package:dms/ui/drawer_screen/drawer_screen.dart';
+import 'package:dms/ui/start_my_day/start_day_screen.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 
@@ -25,7 +26,7 @@ class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
                 InkWell(
                   borderRadius: BorderRadius.circular(15),
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const DrawerScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const StartDayScreen()));
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.70,

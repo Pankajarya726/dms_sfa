@@ -38,6 +38,8 @@ dependencies:
   flutter_svg:
   shared_preferences:
   google_fonts:
+  flutter_tags_x:
+  image_picker:
 
 dev_dependencies:
   flutter_test:

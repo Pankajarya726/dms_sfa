@@ -6,6 +6,7 @@ import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 
 BaseOptions options = BaseOptions(
   responseType: ResponseType.json,
@@ -16,6 +17,7 @@ BaseOptions options = BaseOptions(
 );
 Dio dio = Dio(options);
 ApiRepository repository = ApiRepository();
+ImagePicker imagePicker = ImagePicker();
 
 void main() {
   dio.interceptors.add(LogInterceptor(requestHeader: true, requestBody: true, responseBody: true));
@@ -67,12 +69,16 @@ class MyApp extends StatelessWidget {
           appBarTheme: const AppBarTheme(
             backgroundColor: MColor.appBar,
             elevation: 0,
+            iconTheme: IconThemeData(color: Colors.black),
+            centerTitle: true,
+            titleTextStyle: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
             systemOverlayStyle: SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
               statusBarBrightness: Brightness.light,
               statusBarIconBrightness: Brightness.dark,
             ),
           ),
+          buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
           fontFamily: GoogleFonts.roboto().fontFamily),
       home: const SplashScreen(),
     );
