@@ -1,4 +1,5 @@
 import 'package:dms/ui/drawer_screen/drawer_screen.dart';
+import 'package:dms/ui/start_my_day/start_day_screen.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 
@@ -68,12 +69,21 @@ class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
             borderRadius: BorderRadius.circular(15),
           ),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const DrawerScreen(),
-              ),
-            );
+            if (imageLabel == startMyDay) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const StartDayScreen(),
+                ),
+              );
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const DrawerScreen(),
+                ),
+              );
+            }
           },
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
