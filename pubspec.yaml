@@ -41,6 +41,7 @@ dependencies:
   flutter_tags_x:
   image_picker:
   syncfusion_flutter_datepicker:
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:
