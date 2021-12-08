@@ -111,7 +111,20 @@ class _StartDayScreenState extends State<StartDayScreen> {
                     height: 15,
                   ),
                   selectedPrimaryTag == primaryTags[0]
-                      ? Container()
+                      ? TextFormField(
+                          scrollPadding: const EdgeInsets.all(0),
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.all(15),
+                            hintText: "Select Retailing",
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(25), borderSide: BorderSide.none),
+                            suffixIcon: const Icon(
+                              Icons.keyboard_arrow_down_outlined,
+                              color: Colors.black,
+                            ),
+                            // suffixIconConstraints: BoxConstraints(maxWidth: 20, maxHeight: 20)
+                          ),
+                        )
                       : Tags(
                           itemCount: secondaryTags[selectedPrimaryTag]!.length,
                           alignment: WrapAlignment.start,
