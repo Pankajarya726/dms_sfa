@@ -13,10 +13,10 @@ class ScreenAfterLogin extends StatefulWidget {
 class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
-      body: SafeArea(
-        child: Column(
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: const Color(0xFFFFFFFF),
+        body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

@@ -63,9 +63,15 @@ class MyApp extends StatelessWidget {
               900: Color(0xFFB71C1C),
             },
           ),
+          scaffoldBackgroundColor: Colors.white,
           primaryColor: MColor.colorPrimary,
           visualDensity: VisualDensity.adaptivePlatformDensity,
           brightness: Brightness.light,
+          inputDecorationTheme: InputDecorationTheme(
+            filled: true,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(25), borderSide: BorderSide.none),
+            fillColor: const Color(0xFFF2F2F2),
+          ),
           appBarTheme: const AppBarTheme(
             backgroundColor: MColor.appBar,
             elevation: 0,
@@ -78,7 +84,7 @@ class MyApp extends StatelessWidget {
               statusBarIconBrightness: Brightness.dark,
             ),
           ),
-          buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          buttonTheme: const ButtonThemeData(),
           fontFamily: GoogleFonts.roboto().fontFamily),
       home: const SplashScreen(),
     );

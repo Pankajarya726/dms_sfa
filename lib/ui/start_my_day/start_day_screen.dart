@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dms/main.dart';
+import 'package:dms/ui/add_plan/add_plan_screen.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
@@ -312,7 +313,9 @@ class _StartDayScreenState extends State<StartDayScreen> {
         minWidth: MediaQuery.of(context).size.width,
         color: MColor.colorSecondary,
         textColor: Colors.white,
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const AddPlanScreen()));
+        },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [

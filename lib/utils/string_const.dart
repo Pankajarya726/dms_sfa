@@ -23,3 +23,4 @@ const remark = "Remark";
 const writeYourRemark = "Write Your Remark";
 const getMeeting = "Get Meeting";
 const selfie = "Selfie";
+const confirm = "CONFIRM";
