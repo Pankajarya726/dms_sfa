@@ -1,3 +1,6 @@
+const addCaps = "ADD";
+const startMyDayCaps = "START MY DAY";
+
 const login = "Login";
 const startMyDay = "Start My Day";
 const explore = "EXPLORE";

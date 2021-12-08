@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dms/ui/my_plan/my_plan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kf_drawer/kf_drawer.dart';
@@ -69,8 +70,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 fit: BoxFit.cover,
                 imageUrl:
                     "https://cdnaws.sharechat.com/a49913b5-024a-4ecd-9c86-4940a94f53d8-46107328-99c3-41f7-a542-74ce42eca32c_compressed_40.jpg",
-                errorWidget: (context, url, error) => Image.asset("assets/images/3x/placeholder.png"),
-                placeholder: (context, url) => const CircularProgressIndicator(),
+                errorWidget: (context, url, error) =>
+                    Image.asset("assets/images/3x/placeholder.png"),
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
               ),
             ),
             const SizedBox(
@@ -92,7 +95,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Container(
                   margin: const EdgeInsets.only(top: 4),
-                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF3505A).withOpacity(0.3),
                     borderRadius: BorderRadius.circular(3),
@@ -248,9 +252,28 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void navigateToBottomBarItems() {
+    switch (currentBottomTabIndex) {
+      case 0:
+        debugPrint("tutorials was clicked");
+        break;
+      case 1:
+        debugPrint("product was clicked");
+        break;
+      case 2:
+        debugPrint("performance was clicked");
+        break;
+      case 3:
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const MyPlan()));
+        break;
+    }
+  }
+
   void ontemTaped(int index) {
     setState(() {
       currentBottomTabIndex = index;
     });
+    navigateToBottomBarItems();
   }
 }
