@@ -9,7 +9,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(LoginInitialState());
 
-  @override
   Stream<LoginState> mapEventToState(LoginEvent event) async* {
     if (event is LoginEvent) {
       yield LoginLoadingState();
@@ -19,11 +18,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   Stream<LoginState> login(LoginEvent event) async* {
     if (await Network.isConnected()) {
-      LoginResponse response =
-          await repository.login(event.mobileNumber, event.password);
+      LoginResponse response = await repository.login(event.mobileNumber, event.password);
       if (response.success) {
-        SharedPreference.setStringPreference(
-            SharedPreference.token, response.accessToken);
+        SharedPreference.setStringPreference(SharedPreference.token, response.accessToken);
         options.headers.addAll({
           "Authorization": "Bearer ${response.accessToken}",
         });
@@ -32,8 +29,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         yield LoginFailureState(message: response.message);
       }
     } else {
-      yield LoginFailureState(
-          message: "Please check your internet connection!");
+      yield LoginFailureState(message: "Please check your internet connection!");
     }
   }
 }

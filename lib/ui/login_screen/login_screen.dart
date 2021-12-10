@@ -26,20 +26,15 @@ class _LoginScreenState extends State<LoginScreen> {
       child: BlocListener<LoginBloc, LoginState>(
         listener: (context, state) async {
           if (state is LoginSuccessState) {
-            SharedPreference.setStringPreference(
-                "mobile_number", mobileNumber.toString());
+            SharedPreference.setStringPreference("mobile_number", mobileNumber.toString());
 
-            SharedPreference.setStringPreference(
-                "id", state.loginResponse.id.toString());
+            SharedPreference.setStringPreference("id", state.loginResponse.id.toString());
 
-            SharedPreference.setBooleanPreference(
-                "login", state.loginResponse.success);
+            SharedPreference.setBooleanPreference("login", state.loginResponse.success);
 
-            SharedPreference.setBooleanPreference(
-                "is_Leader", state.loginResponse.isLeader);
+            SharedPreference.setBooleanPreference("is_Leader", state.loginResponse.isLeader);
 
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (BuildContext context) => const ScreenAfterLogin()));
+            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => const ScreenAfterLogin()));
 
             Fluttertoast.showToast(msg: state.loginResponse.message.toString());
           }
@@ -65,10 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       bottom: -5,
                       child: Text(
                         "LOGIN",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24),
+                        style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24),
                       ),
                     ),
                   ],
@@ -79,9 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Container(
                       height: 2,
                       width: 40,
-                      decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(25)),
+                      decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(25)),
                     ),
                   ),
                 ),
@@ -90,10 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: EdgeInsets.only(top: 12),
                     child: Text(
                       "Please sign in to continue",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18),
+                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                   ),
                 ),
@@ -103,10 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: TextFormField(
                       maxLength: 12,
                       controller: mobileNumber,
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17),
+                      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),
                       autocorrect: true,
                       cursorColor: Colors.red,
                       enableSuggestions: true,
@@ -115,17 +99,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       keyboardType: TextInputType.number,
                       textAlign: TextAlign.left,
                       textAlignVertical: TextAlignVertical.center,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
+                      inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                       decoration: const InputDecoration(
                         counterText: "",
                         contentPadding: EdgeInsets.all(15),
                         hintText: "Mobile Number",
-                        hintStyle: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
+                        hintStyle: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black),
                       ),
                     ),
                   ),
@@ -135,10 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.fromLTRB(25, 30, 25, 0),
                     child: TextFormField(
                       controller: password,
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17),
+                      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),
                       obscureText: true,
                       enableSuggestions: false,
                       textAlign: TextAlign.left,
@@ -148,10 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       decoration: const InputDecoration(
                         hintText: "Password",
                         contentPadding: EdgeInsets.all(15),
-                        hintStyle: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
+                        hintStyle: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black),
                       ),
                     ),
                   ),
@@ -163,20 +136,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         padding: const EdgeInsets.fromLTRB(0, 50, 0, 30),
                         child: ElevatedButton(
                           onPressed: () {
-                            sendLoginData(context, mobileNumber.text.toString(),
-                                password.text.toString());
-                            // Navigator.of(context).pushReplacement(
-                            //   MaterialPageRoute(
-                            //     builder: (BuildContext context) =>
-                            //         const ScreenAfterLogin(),
-                            //   ),
-                            // );
+                            // sendLoginData(context, mobileNumber.text.toString(),
+                            //     password.text.toString());
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (BuildContext context) => const ScreenAfterLogin(),
+                              ),
+                            );
                           },
                           style: ButtonStyle(
-                            fixedSize:
-                                MaterialStateProperty.all(const Size(220, 60)),
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.red),
+                            fixedSize: MaterialStateProperty.all(const Size(220, 60)),
+                            backgroundColor: MaterialStateProperty.all(Colors.red),
                             elevation: MaterialStateProperty.all(0),
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
@@ -186,10 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           child: const Text(
                             "Log in",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold),
+                            style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),

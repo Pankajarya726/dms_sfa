@@ -130,7 +130,10 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                         textStyle: const TextStyle(fontSize: 16),
                         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                         index: index,
-                        border: Border.all(color: MColor.colorPrimary),
+                        border: Border.all(
+                            color: selectedPrimaryTag == primaryTags[index]
+                                ? MColor.colorPrimary
+                                : const Color.fromRGBO(197, 197, 197, 1)),
                         activeColor: const Color(0xFFFFC9CC),
                         color: const Color(0xffFAFAFA),
                       );
@@ -182,7 +185,10 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                               textStyle: const TextStyle(fontSize: 16),
                               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                               index: index,
-                              border: Border.all(color: MColor.colorPrimary),
+                              border: Border.all(
+                                  color: selectedSecondaryTag == secondaryTags[selectedPrimaryTag]![index]
+                                      ? MColor.colorPrimary
+                                      : const Color.fromRGBO(197, 197, 197, 1)),
                               activeColor: const Color(0xFFFFC9CC),
                               color: const Color(0xffFAFAFA),
                             );
