@@ -1,3 +1,4 @@
+import 'package:dms/ui/add_plan/add_plan_screen.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
@@ -12,20 +13,7 @@ class MyPlan extends StatefulWidget {
 }
 
 class _MyPlanState extends State<MyPlan> {
-  List<String> monthsName = [
-    january,
-    february,
-    march,
-    april,
-    may,
-    june,
-    july,
-    august,
-    september,
-    october,
-    november,
-    december
-  ];
+  List<String> monthsName = [january, february, march, april, may, june, july, august, september, october, november, december];
   List<String> montsName = [january, february, march, april, may, june, july, august, september, october, november, december];
   String selectedPrimaryTag = "week 1";
   String selectedSecondaryTag = "";
@@ -156,20 +144,15 @@ class _MyPlanState extends State<MyPlan> {
                       selectedPrimaryTag = item.title!;
                       setState(() {});
                     },
-                    active:
-                        selectedPrimaryTag == primaryTags[index] ? true : false,
+                    active: selectedPrimaryTag == primaryTags[index] ? true : false,
                     title: primaryTags[index],
                     textActiveColor: Colors.black,
                     textColor: const Color(0xff555555),
                     elevation: 0,
                     textStyle: const TextStyle(fontSize: 16),
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     index: index,
-                    border: Border.all(
-                        color: selectedPrimaryTag == primaryTags[index]
-                            ? MColor.colorPrimary
-                            : Colors.grey),
+                    border: Border.all(color: selectedPrimaryTag == primaryTags[index] ? MColor.colorPrimary : Colors.grey),
                     colorShowDuplicate: Colors.grey,
                     activeColor: const Color(0xFFFFC9CC),
                     color: const Color(0xffFAFAFA),
@@ -223,8 +206,7 @@ class _MyPlanState extends State<MyPlan> {
                               color: MColor.dateBoxColor,
                               height: 100,
                               child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Text(
                                     DateFormat('MMM').format(DateTime.now()),
@@ -262,8 +244,7 @@ class _MyPlanState extends State<MyPlan> {
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 10),
                                 child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: const [
                                     Text(
