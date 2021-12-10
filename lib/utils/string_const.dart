@@ -27,3 +27,5 @@ const writeYourRemark = "Write Your Remark";
 const getMeeting = "Get Meeting";
 const selfie = "Selfie";
 const confirm = "CONFIRM";
+const loremIpsum =
+    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text";
