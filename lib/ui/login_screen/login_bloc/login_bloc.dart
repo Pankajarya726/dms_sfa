@@ -6,11 +6,11 @@ import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class LoginBloc extends Bloc<LoginEvent, LoginState> {
+class LoginBloc extends Bloc<LoginEvents, LoginState> {
   LoginBloc() : super(LoginInitialState());
 
   @override
-  Stream<LoginState> mapEventToState(LoginEvent event) async* {
+  Stream<LoginState> mapEventToState(LoginEvents event) async* {
     if (event is LoginEvent) {
       yield LoginLoadingState();
       yield* login(event);

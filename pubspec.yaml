@@ -44,8 +44,12 @@ dependencies:
   intl: ^0.17.0
   connectivity:
   fluttertoast:
-  flutter_bloc:
+  flutter_bloc: 7.3.3
   equatable:
+  pull_to_refresh:
+  email_validator:
+  package_info:
+  flutter_device_type:
 
 dev_dependencies:
   flutter_test:
