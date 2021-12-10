@@ -13,8 +13,20 @@ class MyPlan extends StatefulWidget {
 }
 
 class _MyPlanState extends State<MyPlan> {
-  List<String> monthsName = [january, february, march, april, may, june, july, august, september, october, november, december];
-  List<String> montsName = [january, february, march, april, may, june, july, august, september, october, november, december];
+  List<String> monthsName = [
+    january,
+    february,
+    march,
+    april,
+    may,
+    june,
+    july,
+    august,
+    september,
+    october,
+    november,
+    december
+  ];
   String selectedPrimaryTag = "week 1";
   String selectedSecondaryTag = "";
   List<String> primaryTags = [
@@ -84,10 +96,16 @@ class _MyPlanState extends State<MyPlan> {
               padding: const EdgeInsets.fromLTRB(14, 13, 17, 14),
               child: ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(MColor.colorSecondary),
+                  backgroundColor:
+                      MaterialStateProperty.all(MColor.colorSecondary),
                 ),
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const AddPlanScreen()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AddPlanScreen(),
+                    ),
+                  );
                 },
                 child: const Text(
                   addCaps,
@@ -144,15 +162,20 @@ class _MyPlanState extends State<MyPlan> {
                       selectedPrimaryTag = item.title!;
                       setState(() {});
                     },
-                    active: selectedPrimaryTag == primaryTags[index] ? true : false,
+                    active:
+                        selectedPrimaryTag == primaryTags[index] ? true : false,
                     title: primaryTags[index],
                     textActiveColor: Colors.black,
                     textColor: const Color(0xff555555),
                     elevation: 0,
                     textStyle: const TextStyle(fontSize: 16),
-                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     index: index,
-                    border: Border.all(color: selectedPrimaryTag == primaryTags[index] ? MColor.colorPrimary : Colors.grey),
+                    border: Border.all(
+                        color: selectedPrimaryTag == primaryTags[index]
+                            ? MColor.colorPrimary
+                            : Colors.grey),
                     colorShowDuplicate: Colors.grey,
                     activeColor: const Color(0xFFFFC9CC),
                     color: const Color(0xffFAFAFA),
@@ -201,34 +224,38 @@ class _MyPlanState extends State<MyPlan> {
                       child: Row(
                         children: [
                           Expanded(
-                            flex: 1,
+                            flex: 2,
                             child: Container(
                               color: MColor.dateBoxColor,
                               height: 100,
                               child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Text(
                                     DateFormat('MMM').format(DateTime.now()),
                                     style: const TextStyle(
+                                      letterSpacing: 0.67,
                                       color: Colors.black,
-                                      fontSize: 18,
+                                      fontSize: 20,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   Text(
                                     DateFormat('dd').format(DateTime.now()),
                                     style: const TextStyle(
+                                      letterSpacing: 0.67,
                                       color: Colors.black,
-                                      fontSize: 17,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.w900,
                                     ),
                                   ),
                                   Text(
                                     DateFormat('E').format(DateTime.now()),
                                     style: const TextStyle(
+                                      letterSpacing: 0.67,
                                       color: Colors.black,
-                                      fontSize: 18,
+                                      fontSize: 15,
                                       fontWeight: FontWeight.w900,
                                     ),
                                   ),
@@ -237,40 +264,45 @@ class _MyPlanState extends State<MyPlan> {
                             ),
                           ),
                           Expanded(
-                            flex: 5,
+                            flex: 8,
                             child: Container(
                               height: 100,
                               color: Colors.white,
                               child: Padding(
-                                padding: const EdgeInsets.only(left: 10),
+                                padding: const EdgeInsets.only(left: 15),
                                 child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: const [
                                     Text(
                                       "Retailing",
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
+                                        letterSpacing: 0.67,
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
+                                        color: MColor.backButton,
                                       ),
                                     ),
                                     Text(
                                       "Vijay nagar",
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
+                                        letterSpacing: 0.67,
                                         overflow: TextOverflow.ellipsis,
-                                        color: Color(0xff303030),
+                                        color: Color(0xff555555),
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                     Text(
-                                      "Loream ipsum sample text to show",
+                                      loremIpsum,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
+                                        letterSpacing: 0.67,
                                         overflow: TextOverflow.ellipsis,
-                                        color: Color(0xff303030),
+                                        color: Color(0xff555555),
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -288,6 +320,107 @@ class _MyPlanState extends State<MyPlan> {
               }),
         ),
       ],
+    );
+  }
+
+  // void getDateAndTime() {
+  //   // (DateTime(dateTime!.year, dateTime!.month, dateTime!.day - 1))
+  //   int currentMonth = int.parse(DateFormat("M").format(DateTime.now()));
+  //   List<String> month = ["", "", "", "", "", "", "", ""];
+  //   for (int i = currentMonth - 1; i <= currentMonth; i++) {
+  //     month[i] = (DateFormat("M").format(DateTime.now())).toString();
+  //     print("months = $currentMonth");
+  //   }
+  // }
+}
+
+
+
+
+
+class MyPlanBottomSheet extends StatefulWidget {
+  const MyPlanBottomSheet({Key? key}) : super(key: key);
+
+  @override
+  _MyPlanBottomSheetState createState() => _MyPlanBottomSheetState();
+}
+
+class _MyPlanBottomSheetState extends State<MyPlanBottomSheet> {
+  @override
+  Widget build(BuildContext context) {
+    return IntrinsicHeight(
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.0),
+            topRight: Radius.circular(20.0),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                "Info",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 21,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Text(
+                "Retailing",
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  letterSpacing: 0.67,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: MColor.backButton,
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                "Vijay nagar",
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  letterSpacing: 0.67,
+                  overflow: TextOverflow.ellipsis,
+                  color: Color(0xff555555),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                loremIpsum,
+                style: TextStyle(
+                  letterSpacing: 0.67,
+                  color: Color(0xff555555),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
