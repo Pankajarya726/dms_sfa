@@ -42,6 +42,10 @@ dependencies:
   image_picker:
   syncfusion_flutter_datepicker:
   intl: ^0.17.0
+  connectivity:
+  fluttertoast:
+  flutter_bloc:
+  equatable:
 
 dev_dependencies:
   flutter_test:
