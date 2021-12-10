@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:dms/main.dart';
-import 'package:dms/ui/add_plan/add_plan_screen.dart';
+import 'package:dms/ui/custom_widget/beat_bootom_sheet.dart';
+import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
@@ -16,37 +17,24 @@ class StartDayScreen extends StatefulWidget {
 }
 
 class _StartDayScreenState extends State<StartDayScreen> {
-  List<String> primaryTags = [
-    "Retailing",
-    "Joint Working",
-    "Official Meeting",
-    "Dealer Meeting",
-    "Leave",
-    "Holiday"
-  ];
+  List<String> primaryTags = ["Retailing", "Joint Working", "Official Meeting", "Dealer Meeting", "Leave", "Holiday"];
   Map<String, List<String>> secondaryTags = {
-    "Retailing": [
-      "Vijay nagar",
-      "Palasiya",
-      "Regel square",
-    ],
+    "Retailing": ["Vijay nagar", "Palasiya", "Regel square", "Bangali square", "malwa meel square", "Pardesipura"],
     "Joint Working": ["Joint Working1", "Joint Working2", "Joint Working3"],
-    "Official Meeting": [
-      "Official Meeting1",
-      "Official Meeting2",
-      "Official Meeting3"
-    ],
-    "Dealer Meeting": ["Dealer Meeting1", "Dealer Meeting2", "Dealer Meeting3"],
-    "Leave": ["seek leave", "urgent leave", "planed leave"],
-    "Holiday": ["National Holiday", "Local holiday"]
+    "Official Meeting": [],
+    "Dealer Meeting": [],
+    "Leave": [],
+    "Holiday": []
   };
 
   String selectedPrimaryTag = "Retailing";
   String selectedSecondaryTag = "";
-  String address =
-      "Akshya Nagar 1st Block 1st Cross, Rammurthy nagar, Bangalore-560016";
+  String address = "Akshya Nagar 1st Block 1st Cross, Rammurthy nagar, Bangalore-560016";
   bool isMeeting = false;
   File? imageFile;
+
+  TextEditingController txtRemark = TextEditingController();
+  TextEditingController txtBeat = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -98,16 +86,13 @@ class _StartDayScreenState extends State<StartDayScreen> {
                           selectedPrimaryTag = item.title!;
                           setState(() {});
                         },
-                        active: selectedPrimaryTag == primaryTags[index]
-                            ? true
-                            : false,
+                        active: selectedPrimaryTag == primaryTags[index] ? true : false,
                         title: primaryTags[index],
                         textActiveColor: Colors.black,
                         textColor: const Color(0xff555555),
                         elevation: 0,
                         textStyle: const TextStyle(fontSize: 16),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 5, horizontal: 10),
+                        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                         index: index,
                         border: Border.all(color: MColor.colorPrimary),
                         activeColor: const Color(0xFFFFC9CC),
@@ -115,20 +100,23 @@ class _StartDayScreenState extends State<StartDayScreen> {
                       );
                     },
                   ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  const Text(
-                    secondaryTag,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
+                  secondaryTags[selectedPrimaryTag] != null || secondaryTags[selectedPrimaryTag]!.isNotEmpty
+                      ? const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          child: Text(
+                            secondaryTag,
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                        )
+                      : Container(),
                   selectedPrimaryTag == primaryTags[0]
                       ? TextFormField(
                           scrollPadding: const EdgeInsets.all(0),
                           readOnly: true,
+                          controller: txtBeat,
+                          onTap: () {
+                            selectBeat(context, secondaryTags[selectedPrimaryTag]!);
+                          },
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.all(15),
                             hintText: "Select Retailing",
@@ -140,34 +128,32 @@ class _StartDayScreenState extends State<StartDayScreen> {
                             // suffixIconConstraints: BoxConstraints(maxWidth: 20, maxHeight: 20)
                           ),
                         )
-                      : Tags(
-                          itemCount: secondaryTags[selectedPrimaryTag]!.length,
-                          alignment: WrapAlignment.start,
-                          itemBuilder: (index) {
-                            return ItemTags(
-                              singleItem: true,
-                              onPressed: (item) {
-                                selectedSecondaryTag = item.title!;
-                                setState(() {});
+                      : selectedPrimaryTag == primaryTags[1]
+                          ? Tags(
+                              itemCount: secondaryTags[selectedPrimaryTag]!.length,
+                              alignment: WrapAlignment.start,
+                              itemBuilder: (index) {
+                                return ItemTags(
+                                  singleItem: true,
+                                  onPressed: (item) {
+                                    selectedSecondaryTag = item.title!;
+                                    setState(() {});
+                                  },
+                                  active: selectedSecondaryTag == secondaryTags[selectedPrimaryTag]![index] ? true : false,
+                                  title: secondaryTags[selectedPrimaryTag]![index],
+                                  textActiveColor: Colors.black,
+                                  textColor: const Color(0xff555555),
+                                  elevation: 0,
+                                  textStyle: const TextStyle(fontSize: 16),
+                                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                  index: index,
+                                  border: Border.all(color: MColor.colorPrimary),
+                                  activeColor: const Color(0xFFFFC9CC),
+                                  color: const Color(0xffFAFAFA),
+                                );
                               },
-                              active: selectedSecondaryTag ==
-                                      secondaryTags[selectedPrimaryTag]![index]
-                                  ? true
-                                  : false,
-                              title: secondaryTags[selectedPrimaryTag]![index],
-                              textActiveColor: Colors.black,
-                              textColor: const Color(0xff555555),
-                              elevation: 0,
-                              textStyle: const TextStyle(fontSize: 16),
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 5, horizontal: 10),
-                              index: index,
-                              border: Border.all(color: MColor.colorPrimary),
-                              activeColor: const Color(0xFFFFC9CC),
-                              color: const Color(0xffFAFAFA),
-                            );
-                          },
-                        ),
+                            )
+                          : Container(),
                   const SizedBox(
                     height: 15,
                   ),
@@ -180,13 +166,12 @@ class _StartDayScreenState extends State<StartDayScreen> {
                   ),
                   TextFormField(
                     minLines: 3,
+                    controller: txtRemark,
                     maxLines: 5,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: const Color(0xffF2F2F2),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
                     ),
                   ),
                   const SizedBox(
@@ -207,8 +192,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                         child: Text(
                           address,
                           maxLines: 3,
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ],
@@ -225,8 +209,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                         children: [
                           const Text(
                             getMeeting,
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(
                             height: 15,
@@ -243,10 +226,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                   height: 60,
                                   decoration: BoxDecoration(
                                     color: isMeeting
-                                        ? const Color.fromRGBO(
-                                            255, 201, 204, 0.5)
-                                        : const Color.fromRGBO(
-                                            196, 196, 196, 0.5),
+                                        ? const Color.fromRGBO(255, 201, 204, 0.5)
+                                        : const Color.fromRGBO(196, 196, 196, 0.5),
                                     borderRadius: BorderRadius.circular(30),
                                   ),
                                   alignment: Alignment.center,
@@ -254,11 +235,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                     width: 48,
                                     height: 48,
                                     decoration: BoxDecoration(
-                                      color: isMeeting
-                                          ? const Color.fromRGBO(
-                                              255, 201, 204, 1)
-                                          : const Color.fromRGBO(
-                                              196, 196, 196, 1),
+                                      color:
+                                          isMeeting ? const Color.fromRGBO(255, 201, 204, 1) : const Color.fromRGBO(196, 196, 196, 1),
                                       borderRadius: BorderRadius.circular(30),
                                     ),
                                     child: const Center(child: Text("Yes")),
@@ -278,10 +256,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                   height: 60,
                                   decoration: BoxDecoration(
                                     color: isMeeting
-                                        ? const Color.fromRGBO(
-                                            196, 196, 196, 0.5)
-                                        : const Color.fromRGBO(
-                                            255, 201, 204, 0.5),
+                                        ? const Color.fromRGBO(196, 196, 196, 0.5)
+                                        : const Color.fromRGBO(255, 201, 204, 0.5),
                                     borderRadius: BorderRadius.circular(30),
                                   ),
                                   alignment: Alignment.center,
@@ -289,11 +265,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                     width: 48,
                                     height: 48,
                                     decoration: BoxDecoration(
-                                      color: isMeeting
-                                          ? const Color.fromRGBO(
-                                              196, 196, 196, 1)
-                                          : const Color.fromRGBO(
-                                              255, 201, 204, 1),
+                                      color:
+                                          isMeeting ? const Color.fromRGBO(196, 196, 196, 1) : const Color.fromRGBO(255, 201, 204, 1),
                                       borderRadius: BorderRadius.circular(30),
                                     ),
                                     child: const Center(child: Text("No")),
@@ -310,8 +283,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                         children: [
                           const Text(
                             selfie,
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(
                             height: 15,
@@ -326,21 +298,13 @@ class _StartDayScreenState extends State<StartDayScreen> {
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5),
                                   color: Colors.white,
-                                  border: Border.all(
-                                      color:
-                                          const Color.fromRGBO(85, 85, 85, 1),
-                                      width: 1)),
+                                  border: Border.all(color: const Color.fromRGBO(85, 85, 85, 1), width: 1)),
                               child: imageFile == null
                                   ? Center(
                                       child: Image(
-                                        image: const AssetImage(
-                                            "assets/camera_icon.png"),
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                6,
-                                        height:
-                                            MediaQuery.of(context).size.width /
-                                                6,
+                                        image: const AssetImage("assets/camera_icon.png"),
+                                        width: MediaQuery.of(context).size.width / 6,
+                                        height: MediaQuery.of(context).size.width / 6,
                                         fit: BoxFit.contain,
                                       ),
                                     )
@@ -369,7 +333,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
         color: MColor.colorSecondary,
         textColor: Colors.white,
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const AddPlanScreen()));
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const DrawerScreen()));
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -384,12 +348,24 @@ class _StartDayScreenState extends State<StartDayScreen> {
     );
   }
 
+  void selectBeat(BuildContext context, List<String> secondaryTag) async {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))),
+        builder: (context) {
+          return BeatBottomSheet(
+              beat: txtBeat.text,
+              beats: secondaryTag,
+              onBeatSelect: (String beat) {
+                txtBeat.text = beat;
+              });
+        });
+  }
+
   void selectImage() async {
     XFile? image = await imagePicker.pickImage(
-        source: ImageSource.camera,
-        maxHeight: 512,
-        maxWidth: 512,
-        preferredCameraDevice: CameraDevice.front);
+        source: ImageSource.camera, maxHeight: 512, maxWidth: 512, preferredCameraDevice: CameraDevice.front);
     if (image != null) {
       imageFile = File(image.path);
       setState(() {});

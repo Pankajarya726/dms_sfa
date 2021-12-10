@@ -1,3 +1,4 @@
+import 'package:dms/ui/custom_widget/beat_bootom_sheet.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +37,9 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
           icon: const Icon(Icons.arrow_back_ios_new),
         ),
         title: const Text(addPlan),
@@ -147,6 +150,9 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                       ? TextFormField(
                           scrollPadding: const EdgeInsets.all(0),
                           readOnly: true,
+                          onTap: () {
+                            selectBeat(context, secondaryTags[selectedSecondaryTag]!);
+                          },
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.all(15),
                             hintText: "Select Retailing",
@@ -216,7 +222,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
         color: MColor.colorSecondary,
         textColor: Colors.white,
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const AddPlanScreen()));
+          // Navigator.push(context, MaterialPageRoute(builder: (_) => const AddPlanScreen()));
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -242,5 +248,13 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
         ),
       ),
     );
+  }
+
+  void selectBeat(BuildContext context, List<String> secondaryTag) async {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return BeatBottomSheet(beat: "beat 1", beats: secondaryTag, onBeatSelect: (dynamic beat) {});
+        });
   }
 }
