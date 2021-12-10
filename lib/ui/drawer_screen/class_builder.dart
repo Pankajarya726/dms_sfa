@@ -1,4 +1,5 @@
 import 'package:dms/ui/drawer_menu/home_screen/home_screen.dart';
+import 'package:dms/ui/drawer_menu/settings_screen/settings_screen.dart';
 
 typedef Constructor<T> = T Function();
 
@@ -12,6 +13,7 @@ void register<T>(Constructor<T> constructor) {
 class ClassBuilder {
   static void registerClasses() {
     register<HomeScreen>(() => HomeScreen());
+    register<SettingsScreen>(() => SettingsScreen());
   }
 
   static dynamic fromString(String type) {
