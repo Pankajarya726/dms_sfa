@@ -6,7 +6,7 @@ import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class LoginBloc extends Bloc<LoginEvents, LoginState> {
+class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(LoginInitialState());
 
   @override

@@ -13,26 +13,15 @@ class MyPlan extends StatefulWidget {
 }
 
 class _MyPlanState extends State<MyPlan> {
-  List<String> monthsName = [
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-  ];
-  String selectedPrimaryTag = "week 1";
-  String selectedSecondaryTag = "";
-  List<String> primaryTags = [
+  List<DateTime> months = [];
+  String selectedWeek = "week 1";
+  List<String> weeks = [
     "week 1",
     "week 2",
     "week 3",
     "week 4",
     "week 5",
     "week 6",
-    "week 7",
   ];
   DateTime? dateTime;
   String shortMonth = "";
@@ -43,6 +32,7 @@ class _MyPlanState extends State<MyPlan> {
   @override
   void initState() {
     super.initState();
+    getTabs();
   }
 
   @override
@@ -58,23 +48,15 @@ class _MyPlanState extends State<MyPlan> {
         letterSpacing: 0.67,
         fontWeight: FontWeight.w500,
       ),
-      tabs: List.generate(8, (index) {
-        monthsName[0] = march;
-        monthsName[1] = april;
-        monthsName[2] = may;
-        monthsName[3] = june;
-        monthsName[4] = july;
-        monthsName[5] = august;
-        monthsName[6] = september;
-        monthsName[7] = october;
+      tabs: List.generate(months.length, (index) {
         return Tab(
-          text: monthsName[index],
+          text: DateFormat("MMMM").format(months[index]).toString(),
         );
       }),
     );
     return DefaultTabController(
-      length: 8,
-      initialIndex: 5,
+      length: months.length,
+      initialIndex: 1,
       child: Scaffold(
         backgroundColor: const Color(0xffFAFAFA),
         appBar: AppBar(
@@ -100,8 +82,7 @@ class _MyPlanState extends State<MyPlan> {
               padding: const EdgeInsets.fromLTRB(14, 13, 17, 14),
               child: ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(MColor.colorSecondary),
+                  backgroundColor: MaterialStateProperty.all(MColor.colorSecondary),
                 ),
                 onPressed: () {
                   Navigator.push(
@@ -131,7 +112,7 @@ class _MyPlanState extends State<MyPlan> {
           ),
         ),
         body: TabBarView(
-          children: List.generate(8, (index) {
+          children: List.generate(months.length, (index) {
             return tabsLayout();
           }),
         ),
@@ -150,36 +131,31 @@ class _MyPlanState extends State<MyPlan> {
             width: MediaQuery.of(context).size.width,
             child: Tags(
               spacing: 0,
-              itemCount: 7,
+              itemCount: weeks.length,
               alignment: WrapAlignment.spaceBetween,
               horizontalScroll: true,
               itemBuilder: (index) {
                 return Padding(
                   padding: index == 0
                       ? const EdgeInsets.fromLTRB(17, 0, 6, 0)
-                      : primaryTags.last == primaryTags[index]
+                      : weeks.last == weeks[index]
                           ? const EdgeInsets.fromLTRB(6, 0, 17, 0)
                           : const EdgeInsets.fromLTRB(6, 0, 6, 0),
                   child: ItemTags(
                     singleItem: true,
                     onPressed: (item) {
-                      selectedPrimaryTag = item.title!;
+                      selectedWeek = item.title!;
                       setState(() {});
                     },
-                    active:
-                        selectedPrimaryTag == primaryTags[index] ? true : false,
-                    title: primaryTags[index],
+                    active: selectedWeek == weeks[index] ? true : false,
+                    title: weeks[index],
                     textActiveColor: Colors.black,
                     textColor: const Color(0xff555555),
                     elevation: 0,
                     textStyle: const TextStyle(fontSize: 16),
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     index: index,
-                    border: Border.all(
-                        color: selectedPrimaryTag == primaryTags[index]
-                            ? MColor.colorPrimary
-                            : Colors.grey),
+                    border: Border.all(color: selectedWeek == weeks[index] ? MColor.colorPrimary : Colors.grey),
                     colorShowDuplicate: Colors.grey,
                     activeColor: const Color(0xFFFFC9CC),
                     color: const Color(0xffFAFAFA),
@@ -199,127 +175,122 @@ class _MyPlanState extends State<MyPlan> {
               },
               itemCount: 7,
               itemBuilder: (context, index) {
-                return Material(
-                  child: InkWell(
-                    onTap: () {
-                      showModalBottomSheet(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        context: context,
-                        builder: (context) {
-                          return const MyPlanBottomSheet();
-                        },
-                      );
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 10,
-                          ),
-                        ],
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 10,
                       ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Container(
-                                color: MColor.dateBoxColor,
-                                height: 100,
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: InkWell(
+                      onTap: () {
+                        showModalBottomSheet(
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          context: context,
+                          builder: (context) {
+                            return const MyPlanBottomSheet();
+                          },
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Container(
+                              color: MColor.dateBoxColor,
+                              height: 100,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text(
+                                    DateFormat('MMM').format(DateTime.now()),
+                                    style: const TextStyle(
+                                      letterSpacing: 0.67,
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    DateFormat('dd').format(DateTime.now()),
+                                    style: const TextStyle(
+                                      letterSpacing: 0.67,
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                  Text(
+                                    DateFormat('E').format(DateTime.now()),
+                                    style: const TextStyle(
+                                      letterSpacing: 0.67,
+                                      color: Colors.black,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 8,
+                            child: Container(
+                              height: 100,
+                              color: Colors.white,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 15),
                                 child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: const [
                                     Text(
-                                      DateFormat('MMM').format(DateTime.now()),
-                                      style: const TextStyle(
+                                      "Retailing",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
                                         letterSpacing: 0.67,
-                                        color: Colors.black,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      DateFormat('dd').format(DateTime.now()),
-                                      style: const TextStyle(
-                                        letterSpacing: 0.67,
-                                        color: Colors.black,
                                         fontSize: 18,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.bold,
+                                        color: MColor.backButton,
                                       ),
                                     ),
                                     Text(
-                                      DateFormat('E').format(DateTime.now()),
-                                      style: const TextStyle(
+                                      "Vijay nagar",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
                                         letterSpacing: 0.67,
-                                        color: Colors.black,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w900,
+                                        overflow: TextOverflow.ellipsis,
+                                        color: Color(0xff555555),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                      loremIpsum,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        letterSpacing: 0.67,
+                                        overflow: TextOverflow.ellipsis,
+                                        color: Color(0xff555555),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
                             ),
-                            Expanded(
-                              flex: 8,
-                              child: Container(
-                                height: 100,
-                                color: Colors.white,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 15),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: const [
-                                      Text(
-                                        "Retailing",
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          letterSpacing: 0.67,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: MColor.backButton,
-                                        ),
-                                      ),
-                                      Text(
-                                        "Vijay nagar",
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          letterSpacing: 0.67,
-                                          overflow: TextOverflow.ellipsis,
-                                          color: Color(0xff555555),
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      Text(
-                                        loremIpsum,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          letterSpacing: 0.67,
-                                          overflow: TextOverflow.ellipsis,
-                                          color: Color(0xff555555),
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
+                          )
+                        ],
                       ),
                     ),
                   ),
@@ -330,15 +301,34 @@ class _MyPlanState extends State<MyPlan> {
     );
   }
 
-  // void getDateAndTime() {
-  //   // (DateTime(dateTime!.year, dateTime!.month, dateTime!.day - 1))
-  //   int currentMonth = int.parse(DateFormat("M").format(DateTime.now()));
-  //   List<String> month = ["", "", "", "", "", "", "", ""];
-  //   for (int i = currentMonth - 1; i <= currentMonth; i++) {
-  //     month[i] = (DateFormat("M").format(DateTime.now())).toString();
-  //     print("months = $currentMonth");
-  //   }
-  // }
+  void getTabs() {
+    debugPrint((DateFormat("MMMM").format(DateTime(DateTime.now().year, DateTime.now().month - 6, DateTime.now().day))).toString());
+    DateTime now = DateTime.now();
+    DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+    debugPrint("${lastDayOfMonth.month}/${lastDayOfMonth.day}");
+
+    months.add(DateTime(now.year, now.month - 6, now.day));
+    months.add(DateTime(now.year, now.month - 5, now.day));
+    months.add(DateTime(now.year, now.month - 4, now.day));
+    months.add(DateTime(now.year, now.month - 3, now.day));
+    months.add(DateTime(now.year, now.month - 2, now.day));
+    months.add(DateTime(now.year, now.month - 1, now.day));
+    months.add(DateTime(now.year, now.month, now.day));
+    months.add(DateTime(now.year, now.month + 1, now.day));
+    setState(() {});
+
+    debugPrint("months -> $months");
+  }
+
+// void getDateAndTime() {
+//   // (DateTime(dateTime!.year, dateTime!.month, dateTime!.day - 1))
+//   int currentMonth = int.parse(DateFormat("M").format(DateTime.now()));
+//   List<String> month = ["", "", "", "", "", "", "", ""];
+//   for (int i = currentMonth - 1; i <= currentMonth; i++) {
+//     month[i] = (DateFormat("M").format(DateTime.now())).toString();
+//     print("months = $currentMonth");
+//   }
+// }
 }
 
 class MyPlanBottomSheet extends StatefulWidget {
