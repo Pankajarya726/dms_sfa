@@ -19,6 +19,38 @@ class ApiRepository {
 
   ApiRepository.internal();
 
+  Future<SplashResponse> validateAppVersion(
+      String version, String deviceType) async {
+    Map<String, dynamic> params = {
+      "app_version": version,
+      "device_type": deviceType,
+    };
+
+    try {
+      Response response = await dio.post(
+        Url.validateAppVer,
+        data: params,
+      );
+
+      if (response.statusCode == 200) {
+        SplashResponse result = SplashResponse.fromJson(response.toString());
+        return result;
+      } else {
+        return SplashResponse(
+          message: response.statusMessage.toString(),
+          success: false,
+          data: null,
+        );
+      }
+    } catch (exception) {
+      return SplashResponse(
+        message: "Something went Wrong!",
+        success: false,
+        data: null,
+      );
+    }
+  }
+
   Future<LoginResponse> login(String mobileNumber, String password) async {
     Map<String, dynamic> data = {
       "mobile_number": mobileNumber,
@@ -51,6 +83,30 @@ class ApiRepository {
           accessToken: "",
           tokenType: "",
           isLeader: false);
+    }
+  }
+
+  Future<UserDetails> getUserDetailsByUserId(String id) async {
+    Map<String, dynamic> userId = {"id": id};
+
+    try {
+      Response response = await dio.post(
+        Url.getUserDetailsByUserId,
+        data: userId,
+      );
+
+      if (response.statusCode == 200) {
+        UserDetails userData = UserDetails.fromJson(response.toString());
+        return userData;
+      } else {
+        return UserDetails(
+            success: false,
+            message: response.statusMessage.toString(),
+            data: null);
+      }
+    } catch (exception) {
+      return UserDetails(
+          success: false, message: "Something went wrong!", data: null);
     }
   }
 
@@ -91,30 +147,6 @@ class ApiRepository {
     }
   }
 
-  Future<UserDetails> getUserDetailsByUserId(String id) async {
-    Map<String, dynamic> userId = {"id": id};
-
-    try {
-      Response response = await dio.post(
-        Url.getUserDetailsByUserId,
-        data: userId,
-      );
-
-      if (response.statusCode == 200) {
-        UserDetails userData = UserDetails.fromJson(response.toString());
-        return userData;
-      } else {
-        return UserDetails(
-            success: false,
-            message: response.statusMessage.toString(),
-            data: null);
-      }
-    } catch (exception) {
-      return UserDetails(
-          success: false, message: "Something went wrong!", data: null);
-    }
-  }
-
   Future<ChangePassResponse> changePassword(String id, String currPassword,
       String newPassword, String confPassword) async {
     Map<String, dynamic> params = {
@@ -148,35 +180,30 @@ class ApiRepository {
     }
   }
 
-  Future<SplashResponse> validateAppVersion(
-      String version, String deviceType) async {
-    Map<String, dynamic> params = {
-      "app_version": version,
-      "device_type": deviceType,
-    };
+// Future<MpPlanResponse> myPlanData(String id, String date){
+//   Map<String dynamic> params = {
+//     "user_id": id,
+//     "date": date,
+//   };
 
-    try {
-      Response response = await dio.post(
-        Url.validateAppVer,
-        data: params,
-      );
+// try {
+//   Response response = dio.post(Url.myPlanData,params,);
 
-      if (response.statusCode == 200) {
-        SplashResponse result = SplashResponse.fromJson(response.toString());
-        return result;
-      } else {
-        return SplashResponse(
-          message: response.statusMessage.toString(),
-          success: false,
-          data: null,
-        );
-      }
-    } catch (exception) {
-      return SplashResponse(
-        message: "Something went Wrong!",
-        success: false,
-        data: null,
-      );
-    }
-  }
+//   if(response==200){
+//      MyPlanResponse result = MyPlanResponse.fromJson().toString();
+//      return result;
+//   }else{
+//     return MyPlanResponse(
+//           message: response.statusMessage.toString(),
+//           success: false,
+//         );
+//   }
+// }catch(exception){
+//   return MyPlanResponse(
+//         message: "Something went Wrong!",
+//         success: false,
+//       );
+// }
+// }
+
 }

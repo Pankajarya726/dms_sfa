@@ -14,18 +14,14 @@ class MyPlan extends StatefulWidget {
 
 class _MyPlanState extends State<MyPlan> {
   List<String> monthsName = [
-    january,
-    february,
-    march,
-    april,
-    may,
-    june,
-    july,
-    august,
-    september,
-    october,
-    november,
-    december
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
   ];
   String selectedPrimaryTag = "week 1";
   String selectedSecondaryTag = "";
@@ -63,6 +59,14 @@ class _MyPlanState extends State<MyPlan> {
         fontWeight: FontWeight.w500,
       ),
       tabs: List.generate(8, (index) {
+        monthsName[0] = march;
+        monthsName[1] = april;
+        monthsName[2] = may;
+        monthsName[3] = june;
+        monthsName[4] = july;
+        monthsName[5] = august;
+        monthsName[6] = september;
+        monthsName[7] = october;
         return Tab(
           text: monthsName[index],
         );
@@ -70,7 +74,7 @@ class _MyPlanState extends State<MyPlan> {
     );
     return DefaultTabController(
       length: 8,
-      initialIndex: 1,
+      initialIndex: 5,
       child: Scaffold(
         backgroundColor: const Color(0xffFAFAFA),
         appBar: AppBar(
@@ -195,124 +199,127 @@ class _MyPlanState extends State<MyPlan> {
               },
               itemCount: 7,
               itemBuilder: (context, index) {
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 10,
+                return Material(
+                  child: InkWell(
+                    onTap: () {
+                      showModalBottomSheet(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        context: context,
+                        builder: (context) {
+                          return const MyPlanBottomSheet();
+                        },
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 10,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: InkWell(
-                      onTap: () {
-                        showModalBottomSheet(
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          context: context,
-                          builder: (context) {
-                            return const MyPlanBottomSheet();
-                          },
-                        );
-                      },
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                              color: MColor.dateBoxColor,
-                              height: 100,
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text(
-                                    DateFormat('MMM').format(DateTime.now()),
-                                    style: const TextStyle(
-                                      letterSpacing: 0.67,
-                                      color: Colors.black,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    DateFormat('dd').format(DateTime.now()),
-                                    style: const TextStyle(
-                                      letterSpacing: 0.67,
-                                      color: Colors.black,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w900,
-                                    ),
-                                  ),
-                                  Text(
-                                    DateFormat('E').format(DateTime.now()),
-                                    style: const TextStyle(
-                                      letterSpacing: 0.67,
-                                      color: Colors.black,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w900,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 8,
-                            child: Container(
-                              height: 100,
-                              color: Colors.white,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 15),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Container(
+                                color: MColor.dateBoxColor,
+                                height: 100,
                                 child: Column(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: const [
+                                  children: [
                                     Text(
-                                      "Retailing",
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
+                                      DateFormat('MMM').format(DateTime.now()),
+                                      style: const TextStyle(
                                         letterSpacing: 0.67,
-                                        fontSize: 18,
+                                        color: Colors.black,
+                                        fontSize: 20,
                                         fontWeight: FontWeight.bold,
-                                        color: MColor.backButton,
                                       ),
                                     ),
                                     Text(
-                                      "Vijay nagar",
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
+                                      DateFormat('dd').format(DateTime.now()),
+                                      style: const TextStyle(
                                         letterSpacing: 0.67,
-                                        overflow: TextOverflow.ellipsis,
-                                        color: Color(0xff555555),
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w900,
                                       ),
                                     ),
                                     Text(
-                                      loremIpsum,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
+                                      DateFormat('E').format(DateTime.now()),
+                                      style: const TextStyle(
                                         letterSpacing: 0.67,
-                                        overflow: TextOverflow.ellipsis,
-                                        color: Color(0xff555555),
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w900,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
                             ),
-                          )
-                        ],
+                            Expanded(
+                              flex: 8,
+                              child: Container(
+                                height: 100,
+                                color: Colors.white,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 15),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: const [
+                                      Text(
+                                        "Retailing",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          letterSpacing: 0.67,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: MColor.backButton,
+                                        ),
+                                      ),
+                                      Text(
+                                        "Vijay nagar",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          letterSpacing: 0.67,
+                                          overflow: TextOverflow.ellipsis,
+                                          color: Color(0xff555555),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      Text(
+                                        loremIpsum,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          letterSpacing: 0.67,
+                                          overflow: TextOverflow.ellipsis,
+                                          color: Color(0xff555555),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -333,10 +340,6 @@ class _MyPlanState extends State<MyPlan> {
   //   }
   // }
 }
-
-
-
-
 
 class MyPlanBottomSheet extends StatefulWidget {
   const MyPlanBottomSheet({Key? key}) : super(key: key);
