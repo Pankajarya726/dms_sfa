@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dms/main.dart';
 import 'package:dms/provider/url.dart';
+import 'package:dms/ui/add_plan/model/AddPlanResponse.dart';
 import 'package:dms/ui/change_password/model/model.dart';
 import 'package:dms/ui/drawer_menu/home_screen/model/home_screen_model.dart';
 import 'package:dms/ui/edit_profile/model/edit_profile_model.dart';
@@ -180,30 +181,36 @@ class ApiRepository {
     }
   }
 
-// Future<MpPlanResponse> myPlanData(String id, String date){
-//   Map<String dynamic> params = {
-//     "user_id": id,
-//     "date": date,
-//   };
+  Future<AddPlanResponse> addPlan(String userId, String addPlanDate,
+      String primaryTag, String secondaryTag, String remark) async {
+    Map<String, dynamic> data = {
+      "user_id": userId,
+      "add_plan_date": addPlanDate,
+      "primary_tag": primaryTag,
+      "secondary_tag": secondaryTag,
+      "remark": remark,
+    };
 
-// try {
-//   Response response = dio.post(Url.myPlanData,params,);
-
-//   if(response==200){
-//      MyPlanResponse result = MyPlanResponse.fromJson().toString();
-//      return result;
-//   }else{
-//     return MyPlanResponse(
-//           message: response.statusMessage.toString(),
-//           success: false,
-//         );
-//   }
-// }catch(exception){
-//   return MyPlanResponse(
-//         message: "Something went Wrong!",
-//         success: false,
-//       );
-// }
-// }
-
+    try {
+      Response response = await dio.post(
+        Url.addPlan,
+        data: data,
+      );
+      if (response.statusCode == 200) {
+        AddPlanResponse loginDetails =
+            AddPlanResponse.fromJson(response.toString());
+        return loginDetails;
+      } else {
+        return AddPlanResponse(
+          success: false,
+          message: response.statusMessage.toString(),
+        );
+      }
+    } catch (exception) {
+      return AddPlanResponse(
+        success: false,
+        message: "Something went wrong!",
+      );
+    }
+  }
 }
