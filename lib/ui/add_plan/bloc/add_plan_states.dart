@@ -1,3 +1,4 @@
+import 'package:dms/ui/add_plan/model/GetAddPlanDataResponse.dart';
 import 'package:equatable/equatable.dart';
 
 class AddPlanStates extends Equatable {
@@ -29,4 +30,18 @@ class AddPlanGetDataState extends AddPlanStates {
   AddPlanGetDataState({required this.myPlanResponse});
   @override
   List<Object> get props => [myPlanResponse];
+}
+
+class GetAddPlanDataState extends AddPlanStates {
+  final GetAddPlanDataResponse getAddPlanDataResponse;
+  GetAddPlanDataState({required this.getAddPlanDataResponse});
+  @override
+  List<Object> get props => [getAddPlanDataResponse];
+}
+
+class GetAddPlanFailureState extends AddPlanStates {
+  final bool success;
+  GetAddPlanFailureState({required this.success});
+  @override
+  List<Object> get props => [success];
 }

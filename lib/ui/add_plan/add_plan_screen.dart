@@ -3,6 +3,7 @@ import 'package:dms/ui/add_plan/bloc/add_plan_events.dart';
 import 'package:dms/ui/add_plan/bloc/add_plan_states.dart';
 import 'package:dms/ui/custom_widget/beat_bootom_sheet.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,14 +40,6 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
       "Pardesipura"
     ],
     "Joint Working": ["Joint Working1", "Joint Working2", "Joint Working3"],
-    "Official Meeting": [
-      "Official Meeting1",
-      "Official Meeting2",
-      "Official Meeting3"
-    ],
-    "Dealer Meeting": ["Dealer Meeting1", "Dealer Meeting2", "Dealer Meeting3"],
-    "Leave": ["seek leave", "urgent leave", "planed leave"],
-    "Holiday": ["National Holiday", "Local holiday"]
   };
 
   String selectedPrimaryTag = "Retailing";
@@ -55,7 +48,11 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
 
   TextEditingController txtRemarkController = TextEditingController();
   TextEditingController txtBeatController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+
   DateTime? dateTime;
+  bool planAlreadyExists = false;
+  int updateAddPlanId = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -97,6 +94,11 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                 showTodayButton: false,
                 onSelectionChanged: (selectedDate) {
                   dateTime = selectedDate.value;
+                  addPlanBloc.add(
+                    GetAddPlanDataEvent(
+                        selectedDate:
+                            DateFormat("yyyy-MM-dd").format(dateTime!)),
+                  );
                 },
                 // cellBuilder: (context, detail) {
                 //   return Container(
@@ -132,141 +134,180 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    primaryTag,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Tags(
-                    itemCount: primaryTags.length,
-                    alignment: WrapAlignment.start,
-                    itemBuilder: (index) {
-                      return ItemTags(
-                        singleItem: true,
-                        onPressed: (item) {
-                          selectedPrimaryTag = item.title!;
-                          setState(() {});
-                        },
-                        active: selectedPrimaryTag == primaryTags[index]
-                            ? true
-                            : false,
-                        title: primaryTags[index],
-                        textActiveColor: Colors.black,
-                        textColor: const Color(0xff555555),
-                        elevation: 0,
-                        textStyle: const TextStyle(fontSize: 16),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 5, horizontal: 10),
-                        index: index,
-                        border: Border.all(
-                            color: selectedPrimaryTag == primaryTags[index]
-                                ? MColor.colorPrimary
-                                : const Color.fromRGBO(197, 197, 197, 1)),
-                        activeColor: const Color(0xFFFFC9CC),
-                        color: const Color(0xffFAFAFA),
-                      );
-                    },
-                  ),
-                  secondaryTags[selectedPrimaryTag] != null ||
-                          secondaryTags[selectedPrimaryTag]!.isNotEmpty
-                      ? const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 15),
-                          child: Text(
-                            secondaryTag,
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                        )
-                      : Container(),
-                  selectedPrimaryTag == primaryTags[0]
-                      ? TextFormField(
-                          scrollPadding: const EdgeInsets.all(0),
-                          readOnly: true,
-                          controller: txtBeatController,
-                          onTap: () {
-                            selectBeat(
-                                context, secondaryTags[selectedPrimaryTag]!);
-                          },
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.all(15),
-                            hintText: "Select Retailing",
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25),
-                                borderSide: BorderSide.none),
-                            suffixIcon: const Icon(
-                              Icons.keyboard_arrow_down_outlined,
-                              color: Colors.black,
-                            ),
-                            // suffixIconConstraints: BoxConstraints(maxWidth: 20, maxHeight: 20)
-                          ),
-                        )
-                      : selectedPrimaryTag == primaryTags[1]
-                          ? Tags(
-                              itemCount:
-                                  secondaryTags[selectedPrimaryTag]!.length,
-                              alignment: WrapAlignment.start,
-                              itemBuilder: (index) {
-                                return ItemTags(
-                                  singleItem: true,
-                                  onPressed: (item) {
-                                    selectedSecondaryTag = item.title!;
-                                    setState(() {});
-                                  },
-                                  active: selectedSecondaryTag ==
-                                          secondaryTags[selectedPrimaryTag]![
-                                              index]
-                                      ? true
-                                      : false,
-                                  title:
-                                      secondaryTags[selectedPrimaryTag]![index],
-                                  textActiveColor: Colors.black,
-                                  textColor: const Color(0xff555555),
-                                  elevation: 0,
-                                  textStyle: const TextStyle(fontSize: 16),
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 5, horizontal: 10),
-                                  index: index,
-                                  border:
-                                      Border.all(color: MColor.colorPrimary),
-                                  activeColor: const Color(0xFFFFC9CC),
-                                  color: const Color(0xffFAFAFA),
-                                );
+            BlocProvider(
+              create: (context) => addPlanBloc,
+              child: BlocBuilder<AddPlanBloc, AddPlanStates>(
+                builder: (context, state) {
+                  if (state is AddPlanLoadingState) {
+                    return const Padding(
+                      padding: EdgeInsets.only(top: 15),
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+                  if (state is GetAddPlanDataState) {
+                    selectedPrimaryTag =
+                        state.getAddPlanDataResponse.data!.first.primaryTag;
+                    // selectedSecondaryTag =
+                    //     state.getAddPlanDataResponse.data!.first.secondaryTag;
+
+                    txtRemarkController = TextEditingController(
+                        text: state.getAddPlanDataResponse.data!.first.remark);
+                    planAlreadyExists = state.getAddPlanDataResponse.success;
+                    updateAddPlanId =
+                        state.getAddPlanDataResponse.data!.first.id;
+                  }
+                  if (state is GetAddPlanFailureState) {
+                    txtRemarkController = TextEditingController(text: "");
+                    planAlreadyExists = state.success;
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          primaryTag,
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Tags(
+                          itemCount: primaryTags.length,
+                          alignment: WrapAlignment.start,
+                          itemBuilder: (index) {
+                            return ItemTags(
+                              singleItem: true,
+                              onPressed: (item) {
+                                selectedPrimaryTag = item.title!;
+                                setState(() {});
                               },
-                            )
-                          : Container(),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  const Text(
-                    remark,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  TextFormField(
-                    minLines: 3,
-                    maxLines: 5,
-                    controller: txtRemarkController,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: const Color(0xffF2F2F2),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none),
+                              active: selectedPrimaryTag == primaryTags[index]
+                                  ? true
+                                  : false,
+                              title: primaryTags[index],
+                              textActiveColor: Colors.black,
+                              textColor: const Color(0xff555555),
+                              elevation: 0,
+                              textStyle: const TextStyle(fontSize: 16),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10),
+                              index: index,
+                              border: Border.all(
+                                  color: selectedPrimaryTag ==
+                                          primaryTags[index]
+                                      ? MColor.colorPrimary
+                                      : const Color.fromRGBO(197, 197, 197, 1)),
+                              activeColor: const Color(0xFFFFC9CC),
+                              color: const Color(0xffFAFAFA),
+                            );
+                          },
+                        ),
+                        selectedPrimaryTag == "Retailing" ||
+                                selectedPrimaryTag == "Joint Working"
+                            ? const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 15),
+                                child: Text(
+                                  secondaryTag,
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              )
+                            : Container(),
+                        selectedPrimaryTag == primaryTags[0]
+                            ? TextFormField(
+                                scrollPadding: const EdgeInsets.all(0),
+                                readOnly: true,
+                                controller: txtBeatController,
+                                onTap: () {
+                                  selectBeat(context,
+                                      secondaryTags[selectedPrimaryTag]!);
+                                },
+                                decoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.all(15),
+                                  hintText: "Select Retailing",
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(25),
+                                      borderSide: BorderSide.none),
+                                  suffixIcon: const Icon(
+                                    Icons.keyboard_arrow_down_outlined,
+                                    color: Colors.black,
+                                  ),
+                                  // suffixIconConstraints: BoxConstraints(maxWidth: 20, maxHeight: 20)
+                                ),
+                              )
+                            : selectedPrimaryTag == primaryTags[1]
+                                ? Tags(
+                                    itemCount:
+                                        secondaryTags[selectedPrimaryTag]!
+                                            .length,
+                                    alignment: WrapAlignment.start,
+                                    itemBuilder: (index) {
+                                      return ItemTags(
+                                        singleItem: true,
+                                        onPressed: (item) {
+                                          selectedSecondaryTag = item.title!;
+                                          setState(() {});
+                                        },
+                                        active: selectedSecondaryTag ==
+                                                secondaryTags[
+                                                    selectedPrimaryTag]![index]
+                                            ? true
+                                            : false,
+                                        title: secondaryTags[
+                                            selectedPrimaryTag]![index],
+                                        textActiveColor: Colors.black,
+                                        textColor: const Color(0xff555555),
+                                        elevation: 0,
+                                        textStyle:
+                                            const TextStyle(fontSize: 16),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 5, horizontal: 10),
+                                        index: index,
+                                        border: selectedPrimaryTag ==
+                                                primaryTags[index]
+                                            ? Border.all(
+                                                color: MColor.colorPrimary)
+                                            : Border.all(
+                                                color: MColor.colorPrimary),
+                                        activeColor: const Color(0xFFFFC9CC),
+                                        color: const Color(0xffFAFAFA),
+                                      );
+                                    },
+                                  )
+                                : Container(),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        const Text(
+                          remark,
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        TextFormField(
+                          minLines: 3,
+                          maxLines: 5,
+                          controller: txtRemarkController,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: const Color(0xffF2F2F2),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                ],
+                  );
+                },
               ),
             ),
           ],
@@ -290,15 +331,28 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             textColor: Colors.white,
             onPressed: () {
               // Navigator.push(context, MaterialPageRoute(builder: (_) => const AddPlanScreen()));
-              addPlanBloc.add(
-                AddPlanEvent(
-                    addPlanDate: dateTime == null
-                        ? ""
-                        : DateFormat("yyyy-MM-dd").format(dateTime!),
-                    primaryTag: selectedPrimaryTag,
-                    secondaryTag: selectedSecondaryTag,
-                    remark: txtRemarkController.text),
-              );
+              if (planAlreadyExists) {
+                addPlanBloc.add(
+                  AddPlanUpdateEvent(
+                      id: updateAddPlanId.toString(),
+                      addPlanDate: dateTime == null
+                          ? ""
+                          : DateFormat("yyyy-MM-dd").format(dateTime!),
+                      primaryTag: selectedPrimaryTag,
+                      secondaryTag: selectedSecondaryTag,
+                      remark: txtRemarkController.text),
+                );
+              } else {
+                addPlanBloc.add(
+                  AddPlanEvent(
+                      addPlanDate: dateTime == null
+                          ? ""
+                          : DateFormat("yyyy-MM-dd").format(dateTime!),
+                      primaryTag: selectedPrimaryTag,
+                      secondaryTag: selectedSecondaryTag,
+                      remark: txtRemarkController.text),
+                );
+              }
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,

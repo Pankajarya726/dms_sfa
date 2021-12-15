@@ -165,12 +165,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: () {
                             sendLoginData(context, mobileNumber.text.toString(),
                                 password.text.toString());
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    const ScreenAfterLogin(),
-                              ),
-                            );
+                            // Navigator.of(context).pushReplacement(
+                            //   MaterialPageRoute(
+                            //     builder: (BuildContext context) =>
+                            //         const ScreenAfterLogin(),
+                            //   ),
+                            // );
                           },
                           style: ButtonStyle(
                             fixedSize:

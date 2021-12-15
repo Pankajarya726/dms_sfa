@@ -5,6 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:dms/main.dart';
 import 'package:dms/provider/url.dart';
 import 'package:dms/ui/add_plan/model/AddPlanResponse.dart';
+import 'package:dms/ui/add_plan/model/AddPlanUpdateData.dart';
+import 'package:dms/ui/add_plan/model/GetAddPlanDataResponse.dart';
 import 'package:dms/ui/change_password/model/model.dart';
 import 'package:dms/ui/drawer_menu/home_screen/model/home_screen_model.dart';
 import 'package:dms/ui/edit_profile/model/edit_profile_model.dart';
@@ -197,9 +199,9 @@ class ApiRepository {
         data: data,
       );
       if (response.statusCode == 200) {
-        AddPlanResponse loginDetails =
+        AddPlanResponse addPlanResponse =
             AddPlanResponse.fromJson(response.toString());
-        return loginDetails;
+        return addPlanResponse;
       } else {
         return AddPlanResponse(
           success: false,
@@ -208,6 +210,75 @@ class ApiRepository {
       }
     } catch (exception) {
       return AddPlanResponse(
+        success: false,
+        message: "Something went wrong!",
+      );
+    }
+  }
+
+  Future<GetAddPlanDataResponse> getAddPlanData(
+    String userId,
+    String addPlanDate,
+  ) async {
+    Map<String, dynamic> data = {
+      "user_id": userId,
+      "add_plan_date": addPlanDate,
+    };
+
+    try {
+      Response response = await dio.post(
+        Url.getAddPlan,
+        data: data,
+      );
+      if (response.statusCode == 200) {
+        GetAddPlanDataResponse getAddPlanDataResponse =
+            GetAddPlanDataResponse.fromJson(response.toString());
+        return getAddPlanDataResponse;
+      } else {
+        return GetAddPlanDataResponse(
+          success: false,
+          message: response.statusMessage.toString(),
+        );
+      }
+    } catch (exception) {
+      return GetAddPlanDataResponse(
+        success: false,
+        message: "Something went wrong!",
+      );
+    }
+  }
+
+  Future<AddPlanUpdateDataResponse> addPlanUpdateData(
+      String id,
+      String addPlanDate,
+      String primaryTag,
+      String secondaryTag,
+      String remark) async {
+    Map<String, dynamic> data = {
+      "id": id,
+      "add_plan_date": addPlanDate,
+      "primary_tag": primaryTag,
+      "secondary_tag": secondaryTag,
+      "remark": remark,
+    };
+
+    try {
+      Response response = await dio.post(
+        Url.updateAddPlan,
+        data: data,
+      );
+      if (response.statusCode == 200) {
+        AddPlanUpdateDataResponse getAddPlanDataResponse =
+            AddPlanUpdateDataResponse.fromJson(response.toString());
+        return getAddPlanDataResponse;
+      } else {
+        return AddPlanUpdateDataResponse(
+          success: false,
+          message: response.statusMessage.toString(),
+        );
+      }
+    } catch (exception) {
+      return AddPlanUpdateDataResponse(
         success: false,
         message: "Something went wrong!",
       );
