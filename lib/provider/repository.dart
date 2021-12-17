@@ -1,6 +1,6 @@
 import 'dart:collection';
+import 'dart:developer';
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:dms/main.dart';
 import 'package:dms/provider/url.dart';
@@ -8,10 +8,12 @@ import 'package:dms/ui/add_plan/model/AddPlanResponse.dart';
 import 'package:dms/ui/add_plan/model/AddPlanUpdateData.dart';
 import 'package:dms/ui/add_plan/model/GetAddPlanDataResponse.dart';
 import 'package:dms/ui/change_password/model/model.dart';
-import 'package:dms/ui/drawer_menu/home_screen/model/home_screen_model.dart';
+import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart';
 import 'package:dms/ui/edit_profile/model/edit_profile_model.dart';
 import 'package:dms/ui/login_screen/login_model/login_response.dart';
 import 'package:dms/ui/splash_screen/model/splash_model.dart';
+import 'package:dms/ui/start_my_day/model/quotes_and_images_response.dart';
+import 'package:dms/ui/start_my_day/model/start_my_day_response.dart.dart';
 
 class ApiRepository {
   static final ApiRepository repository = ApiRepository.internal();
@@ -76,7 +78,8 @@ class ApiRepository {
             id: 0,
             accessToken: "",
             tokenType: "",
-            isLeader: false);
+            isLeader: false,
+            startMyDay: "");
       }
     } catch (exception) {
       return LoginResponse(
@@ -85,7 +88,79 @@ class ApiRepository {
           id: 0,
           accessToken: "",
           tokenType: "",
-          isLeader: false);
+          isLeader: false,
+          startMyDay: "");
+    }
+  }
+
+  Future<QuotesAndImagesResponse> getQuotesAndImages() async {
+    try {
+      Response response = await dio.get(Url.getQuotesAndImages);
+
+      if (response.statusCode == 200) {
+        QuotesAndImagesResponse quotesAndImagesResponse =
+            QuotesAndImagesResponse.fromJson(response.toString());
+        return quotesAndImagesResponse;
+      } else {
+        return QuotesAndImagesResponse(
+          success: false,
+          message: response.statusMessage.toString(),
+        );
+      }
+    } catch (exception) {
+      return QuotesAndImagesResponse(
+        success: false,
+        message: "Something went wrong!",
+      );
+    }
+  }
+
+  Future<StartMyDayResponse> startMyDay(
+      String userId,
+      String startDayDate,
+      String primaryTag,
+      String secondaryTag,
+      String remark,
+      String latitude,
+      String longitude,
+      int getMeeting,
+      File startDayImage) async {
+    Map<String, dynamic> data = {
+      "user_id": userId,
+      "start_day_date": startDayDate,
+      "primary_tag": primaryTag,
+      "secondary_tag": secondaryTag,
+      "remark": remark,
+      "latitude": latitude,
+      "longitude": longitude,
+      "get_meeting": getMeeting,
+      "start_day_image": startDayImage.path.isNotEmpty
+          ? await MultipartFile.fromFile(startDayImage.path,
+              filename:
+                  DateTime.now().millisecondsSinceEpoch.toString() + ".jpg")
+          : "",
+    };
+
+    FormData formData = FormData.fromMap(data);
+
+    try {
+      Response response = await dio.post(Url.startMyDay, data: formData);
+
+      if (response.statusCode == 200) {
+        StartMyDayResponse startMyDayResponse =
+            StartMyDayResponse.fromJson(response.toString());
+        return startMyDayResponse;
+      } else {
+        return StartMyDayResponse(
+          success: false,
+          message: response.statusMessage.toString(),
+        );
+      }
+    } catch (exception) {
+      return StartMyDayResponse(
+        success: false,
+        message: "Something went wrong!",
+      );
     }
   }
 
@@ -230,6 +305,7 @@ class ApiRepository {
         Url.getAddPlan,
         data: data,
       );
+
       if (response.statusCode == 200) {
         GetAddPlanDataResponse getAddPlanDataResponse =
             GetAddPlanDataResponse.fromJson(response.toString());

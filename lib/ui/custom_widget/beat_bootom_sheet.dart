@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class BeatBottomSheet extends StatefulWidget {
@@ -7,7 +8,12 @@ class BeatBottomSheet extends StatefulWidget {
   final Function(String beat) onBeatSelect;
   final List<String> beats;
 
-  const BeatBottomSheet({Key? key, required this.beat, required this.beats, required this.onBeatSelect}) : super(key: key);
+  const BeatBottomSheet(
+      {Key? key,
+      required this.beat,
+      required this.beats,
+      required this.onBeatSelect})
+      : super(key: key);
 
   @override
   _BeatBottomSheetState createState() => _BeatBottomSheetState();
@@ -31,13 +37,19 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom),
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom),
       child: IntrinsicHeight(
           child: Container(
         margin: const EdgeInsets.only(left: 15, right: 15, top: 15),
         width: MediaQuery.of(context).size.width,
         decoration: const BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.only(topRight: Radius.circular(25), topLeft: Radius.circular(25))),
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(25),
+            topLeft: Radius.circular(25),
+          ),
+        ),
         child: Column(
           // shrinkWrap: false,
           children: <Widget>[
@@ -46,6 +58,9 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
               autofocus: false,
               decoration: InputDecoration(
                   hintText: "search",
+                  hintStyle: const TextStyle(
+                    color: MColor.backButton,
+                  ),
                   suffixIcon: StreamBuilder<bool>(
                     stream: editController.stream,
                     initialData: false,
@@ -63,7 +78,7 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
                                 FocusScope.of(context).unfocus();
                                 editController.add(false);
                               },
-                              icon: Icon(Icons.clear),
+                              icon: const Icon(Icons.clear),
                             )
                           : Container(
                               width: 0,
@@ -75,7 +90,9 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
                   List<String> searchList = [];
 
                   for (var element in beats) {
-                    if (element.toLowerCase().contains(text.trim().toLowerCase())) {
+                    if (element
+                        .toLowerCase()
+                        .contains(text.trim().toLowerCase())) {
                       searchList.add(element);
                     }
                   }
@@ -88,7 +105,7 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
                 }
               },
             ),
-            Container(
+            SizedBox(
               width: width - 30,
               height: width * 0.6,
               // constraints: BoxConstraints(maxHeight: width, minHeight: 100),
@@ -119,9 +136,13 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
                                 widget.onBeatSelect(snapshpt.data![index]);
                                 Navigator.pop(context);
                               },
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                              leading: Text(snapshpt.data![index].toString().toUpperCase()),
-                              trailing: snapshpt.data![index].toString() == widget.beat.toString()
+                              contentPadding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              leading: Text(snapshpt.data![index]
+                                  .toString()
+                                  .toUpperCase()),
+                              trailing: snapshpt.data![index].toString() ==
+                                      widget.beat.toString()
                                   ? const Icon(Icons.check)
                                   : const SizedBox(
                                       width: 0,
@@ -135,12 +156,18 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
                         itemCount: snapshpt.data!.length);
                   }
 
-                  return const Text("data not found!");
+                  return const Text(
+                    "data not found!",
+                    style: TextStyle(
+                      color: MColor.backButton,
+                    ),
+                  );
                 },
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
               child: MaterialButton(
                 onPressed: () {
                   Navigator.pop(context);
@@ -161,9 +188,9 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
   }
 
   void getBeats() async {
-    print(widget.beats);
+    // print(widget.beats);
     beats = widget.beats;
-    print(beats);
+    // print(beats);
     controller.add(beats);
   }
 }

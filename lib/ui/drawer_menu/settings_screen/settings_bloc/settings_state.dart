@@ -1,4 +1,4 @@
-import 'package:dms/ui/drawer_menu/home_screen/model/home_screen_model.dart';
+import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart';
 import 'package:equatable/equatable.dart';
 
 class SettingsState extends Equatable {

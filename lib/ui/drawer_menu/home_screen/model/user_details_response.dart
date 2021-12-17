@@ -40,6 +40,7 @@ class Data {
     required this.clockInOutData,
     required this.pjpDescription,
     required this.pjpButton,
+    required this.startMyDay,
   });
 
   int id;
@@ -51,6 +52,7 @@ class Data {
   List<ClockInOutData> clockInOutData;
   String pjpDescription;
   String pjpButton;
+  String startMyDay;
 
   factory Data.fromJson(String str) => Data.fromMap(json.decode(str));
 
@@ -71,6 +73,7 @@ class Data {
         pjpDescription:
             json["pjp_description"] == null ? null : json["pjp_description"],
         pjpButton: json["pjp_button"] == null ? null : json["pjp_button"],
+        startMyDay: json["startMyday"] == null ? null : json["startMyday"],
       );
 
   Map<String, dynamic> toMap() => {
@@ -85,6 +88,7 @@ class Data {
             : List<dynamic>.from(clockInOutData.map((x) => x.toMap())),
         "pjp_description": pjpDescription == null ? null : pjpDescription,
         "pjp_button": pjpButton == null ? null : pjpButton,
+        "startMyday": startMyDay == null ? null : startMyDay,
       };
 }
 

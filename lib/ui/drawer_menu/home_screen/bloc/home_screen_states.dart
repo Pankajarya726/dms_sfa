@@ -1,0 +1,25 @@
+import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart';
+import 'package:equatable/equatable.dart';
+
+class HomeScreenStates extends Equatable {
+  @override
+  List<Object> get props => [];
+}
+
+class HomeScreenInitialState extends HomeScreenStates {}
+
+class HomeScreenlodaingState extends HomeScreenStates {}
+
+class HomeScreenFailureState extends HomeScreenStates {
+  final String failureMessage;
+  HomeScreenFailureState({required this.failureMessage});
+  @override
+  List<Object> get props => [failureMessage];
+}
+
+class GetUserDetailsState extends HomeScreenStates {
+  final UserDetails userDetails;
+  GetUserDetailsState({required this.userDetails});
+  @override
+  List<Object> get props => [userDetails];
+}

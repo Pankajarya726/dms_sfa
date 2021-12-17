@@ -1,3 +1,4 @@
+import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/ui/login_screen/login_bloc/login_bloc.dart';
 import 'package:dms/ui/login_screen/login_bloc/login_event.dart';
 import 'package:dms/ui/login_screen/login_bloc/login_state.dart';
@@ -38,8 +39,13 @@ class _LoginScreenState extends State<LoginScreen> {
             SharedPreference.setBooleanPreference(
                 "is_Leader", state.loginResponse.isLeader);
 
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (BuildContext context) => const ScreenAfterLogin()));
+            if (state.loginResponse.startMyDay == "hide") {
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (BuildContext context) => const DrawerScreen()));
+            } else {
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (BuildContext context) => const ScreenAfterLogin()));
+            }
 
             Fluttertoast.showToast(msg: state.loginResponse.message.toString());
           }
