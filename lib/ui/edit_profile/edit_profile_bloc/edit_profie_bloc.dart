@@ -1,5 +1,5 @@
 import 'dart:developer';
-import 'package:dms/ui/drawer_menu/home_screen/model/home_screen_model.dart';
+import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart';
 import 'package:dms/ui/edit_profile/edit_profile_bloc/edit_profile_state.dart';
 import 'package:dms/ui/edit_profile/model/edit_profile_model.dart';
 import 'package:dms/utils/network.dart';

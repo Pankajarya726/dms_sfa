@@ -8,6 +8,7 @@ class LoginResponse {
     required this.accessToken,
     required this.tokenType,
     required this.isLeader,
+    required this.startMyDay,
   });
 
   bool success;
@@ -16,6 +17,7 @@ class LoginResponse {
   String accessToken;
   String tokenType;
   bool isLeader;
+  String startMyDay;
 
   factory LoginResponse.fromJson(String str) =>
       LoginResponse.fromMap(json.decode(str));
@@ -31,6 +33,7 @@ class LoginResponse {
         tokenType:
             json["token_type"] == null ? "" : json["token_type"].toString(),
         isLeader: json["is_leader"] == null ? false : json["is_leader"],
+        startMyDay: json["startMyDay"] == null ? false : json["startMyDay"],
       );
 
   Map<String, dynamic> toMap() => {
@@ -40,5 +43,6 @@ class LoginResponse {
         "access_token": accessToken == null ? null : accessToken,
         "token_type": tokenType == null ? null : tokenType,
         "is_leader": isLeader == null ? null : isLeader,
+        "startMyDay": startMyDay == null ? null : startMyDay,
       };
 }

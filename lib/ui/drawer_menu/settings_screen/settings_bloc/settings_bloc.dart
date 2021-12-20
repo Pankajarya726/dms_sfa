@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:dms/ui/drawer_menu/home_screen/model/home_screen_model.dart';
+import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart';
 import 'package:dms/ui/drawer_menu/settings_screen/settings_bloc/settings_event.dart';
 import 'package:dms/ui/drawer_menu/settings_screen/settings_bloc/settings_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

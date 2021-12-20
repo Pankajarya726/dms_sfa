@@ -82,7 +82,8 @@ class _MyPlanState extends State<MyPlan> {
               padding: const EdgeInsets.fromLTRB(14, 13, 17, 14),
               child: ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(MColor.colorSecondary),
+                  backgroundColor:
+                      MaterialStateProperty.all(MColor.colorSecondary),
                 ),
                 onPressed: () {
                   Navigator.push(
@@ -153,9 +154,13 @@ class _MyPlanState extends State<MyPlan> {
                     textColor: const Color(0xff555555),
                     elevation: 0,
                     textStyle: const TextStyle(fontSize: 16),
-                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     index: index,
-                    border: Border.all(color: selectedWeek == weeks[index] ? MColor.colorPrimary : Colors.grey),
+                    border: Border.all(
+                        color: selectedWeek == weeks[index]
+                            ? MColor.colorPrimary
+                            : Colors.grey),
                     colorShowDuplicate: Colors.grey,
                     activeColor: const Color(0xFFFFC9CC),
                     color: const Color(0xffFAFAFA),
@@ -209,7 +214,8 @@ class _MyPlanState extends State<MyPlan> {
                               color: MColor.dateBoxColor,
                               height: 100,
                               child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Text(
                                     DateFormat('MMM').format(DateTime.now()),
@@ -250,7 +256,8 @@ class _MyPlanState extends State<MyPlan> {
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 15),
                                 child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: const [
                                     Text(
@@ -302,7 +309,9 @@ class _MyPlanState extends State<MyPlan> {
   }
 
   void getTabs() {
-    debugPrint((DateFormat("MMMM").format(DateTime(DateTime.now().year, DateTime.now().month - 6, DateTime.now().day))).toString());
+    debugPrint((DateFormat("MMMM").format(DateTime(
+            DateTime.now().year, DateTime.now().month - 6, DateTime.now().day)))
+        .toString());
     DateTime now = DateTime.now();
     DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
     debugPrint("${lastDayOfMonth.month}/${lastDayOfMonth.day}");
