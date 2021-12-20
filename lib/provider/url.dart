@@ -1,4 +1,5 @@
 class Url {
+  // static const String baseUrl = "http://dmsapp.tekzee.in/api/";
   static const String baseUrl = "http://sfa.vyapaar-vistaar.in/api/";
   static const String validateAppVer = "validateAppVersion";
   static const String login = "login";
