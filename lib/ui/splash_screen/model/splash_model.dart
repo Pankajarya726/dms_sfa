@@ -5,11 +5,13 @@ class SplashResponse {
     required this.success,
     required this.message,
     required this.data,
+    required this.startMyDay,
   });
 
   bool success;
   String message;
   Data? data;
+  String startMyDay;
 
   factory SplashResponse.fromJson(String str) =>
       SplashResponse.fromMap(json.decode(str));
@@ -20,12 +22,14 @@ class SplashResponse {
         success: json["success"] == null ? null : json["success"],
         message: json["message"] == null ? null : json["message"],
         data: json["data"] == null ? null : Data.fromMap(json["data"]),
+        startMyDay: json["StartMyDay"] == null ? null : json["StartMyDay"],
       );
 
   Map<String, dynamic> toMap() => {
         "success": success == null ? null : success,
         "message": message == null ? null : message,
         "data": data == null ? null : data!.toMap(),
+        "StartMyDay": startMyDay == null ? null : startMyDay,
       };
 }
 

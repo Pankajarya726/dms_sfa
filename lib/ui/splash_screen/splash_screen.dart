@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/ui/login_screen/login_screen.dart';
 import 'package:dms/ui/screen_after_login/screen_after_login.dart';
 import 'package:dms/ui/splash_screen/splash_bloc/splash_bloc.dart';
@@ -35,7 +36,8 @@ class _SplashScreenState extends State<SplashScreen> {
       child: BlocListener<SplashBloc, SplashState>(
         listener: (context, state) {
           if (state is SplashSuccessState) {
-            getLogin(state.response.data!.appVersion);
+            getLogin(
+                state.response.data!.appVersion, state.response.startMyDay);
           }
           if (state is SplashFailureState) {
             Fluttertoast.showToast(msg: "Something went wrong!");
@@ -84,20 +86,31 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  getLogin(String appVersio) async {
+  getLogin(String appVersio, String startMyDay) async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     bool login =
         await SharedPreference.getBooleanPreference(SharedPreference.login);
     if (appVersio == packageInfo.version) {
       if (login == true) {
-        Timer(
-          const Duration(seconds: 3),
-          () => Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (BuildContext context) => const ScreenAfterLogin(),
+        if (startMyDay == "show") {
+          Timer(
+            const Duration(seconds: 3),
+            () => Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (BuildContext context) => const ScreenAfterLogin(),
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          Timer(
+            const Duration(seconds: 3),
+            () => Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (BuildContext context) => const DrawerScreen(),
+              ),
+            ),
+          );
+        }
       } else {
         Timer(
           const Duration(seconds: 3),
@@ -160,3 +173,12 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
+
+
+// Positioned(
+//                           child: Container(
+//                             width: MediaQuery.of(context).size.width,
+//                             height: 90,
+//                             color: const Color(0xff000000).withOpacity(0.2),
+//                           ),
+//                         ),

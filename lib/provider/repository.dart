@@ -45,6 +45,7 @@ class ApiRepository {
           message: response.statusMessage.toString(),
           success: false,
           data: null,
+          startMyDay: "",
         );
       }
     } catch (exception) {
@@ -52,6 +53,7 @@ class ApiRepository {
         message: "Something went Wrong!",
         success: false,
         data: null,
+        startMyDay: "",
       );
     }
   }
