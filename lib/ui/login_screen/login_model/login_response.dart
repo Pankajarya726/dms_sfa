@@ -19,8 +19,7 @@ class LoginResponse {
   bool isLeader;
   String startMyDay;
 
-  factory LoginResponse.fromJson(String str) =>
-      LoginResponse.fromMap(json.decode(str));
+  factory LoginResponse.fromJson(String str) => LoginResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
@@ -28,12 +27,10 @@ class LoginResponse {
         success: json["success"] == null ? "null" : json["success"],
         message: json["message"] == null ? "" : json["message"].toString(),
         id: json["id"] == null ? 0 : json["id"],
-        accessToken:
-            json["access_token"] == null ? "" : json["access_token"].toString(),
-        tokenType:
-            json["token_type"] == null ? "" : json["token_type"].toString(),
+        accessToken: json["access_token"] == null ? "" : json["access_token"].toString(),
+        tokenType: json["token_type"] == null ? "" : json["token_type"].toString(),
         isLeader: json["is_leader"] == null ? false : json["is_leader"],
-        startMyDay: json["startMyDay"] == null ? false : json["startMyDay"],
+        startMyDay: json["startMyDay"] == null ? "" : json["startMyDay"],
       );
 
   Map<String, dynamic> toMap() => {

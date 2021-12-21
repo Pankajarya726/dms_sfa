@@ -12,3 +12,10 @@ class LoginEvent extends LoginEvents {
   @override
   List<Object?> get props => [mobileNumber, password];
 }
+
+class GetUserEvent extends LoginEvents {
+  GetUserEvent();
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}

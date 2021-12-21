@@ -1,9 +1,16 @@
 import 'package:dms/ui/add_plan/add_plan_screen.dart';
+import 'package:dms/ui/my_plan/bloc/my_plan_bloc.dart';
+import 'package:dms/ui/my_plan/bloc/my_plan_events.dart';
+import 'package:dms/ui/my_plan/bloc/my_plan_states.dart';
+import 'package:dms/ui/my_plan/model/get_plan_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:intl/intl.dart';
+
+import 'my_plan_tab_screen.dart';
 
 class MyPlan extends StatefulWidget {
   const MyPlan({Key? key}) : super(key: key);
@@ -29,94 +36,118 @@ class _MyPlanState extends State<MyPlan> {
   String day = "";
   String week = "";
 
+  MyPlanBloc myPlanBloc = MyPlanBloc();
+  List<MyPlanModel> myplan = [];
+
   @override
   void initState() {
     super.initState();
-    getTabs();
+    // getTabs();
   }
 
   @override
   Widget build(BuildContext context) {
-    var _tabBar = TabBar(
-      indicatorWeight: 3,
-      isScrollable: true,
-      indicatorColor: MColor.tabIndicatorColor,
-      unselectedLabelColor: MColor.backButton,
-      labelColor: MColor.backButton,
-      labelStyle: const TextStyle(
-        fontSize: 18,
-        letterSpacing: 0.67,
-        fontWeight: FontWeight.w500,
-      ),
-      tabs: List.generate(months.length, (index) {
-        return Tab(
-          text: DateFormat("MMMM").format(months[index]).toString(),
-        );
-      }),
-    );
-    return DefaultTabController(
-      length: months.length,
-      initialIndex: 1,
-      child: Scaffold(
-        backgroundColor: const Color(0xffFAFAFA),
-        appBar: AppBar(
-          title: const Text(
-            myPlan,
-            style: TextStyle(
-              color: MColor.backButton,
-            ),
-          ),
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: MColor.backButton,
-            ),
-          ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 13, 17, 14),
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(MColor.colorSecondary),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AddPlanScreen(),
-                    ),
-                  );
-                },
-                child: const Text(
-                  addCaps,
+    return BlocProvider<MyPlanBloc>(
+      create: (context) => myPlanBloc,
+      child: BlocBuilder<MyPlanBloc, MyPlanStates>(
+        builder: (context, state) {
+          if (state is MyPlanInitialState) {
+            myPlanBloc.add(GetMonthsEvent());
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state is GetMonthState) {
+            months = state.months;
+            myPlanBloc.add(GetMyPlansEvent(date: DateFormat("yyyy-MM").format(months[0])));
+          }
+
+          if (state is GetPlanSuccessState) {
+            debugPrint(state.myPlan.toString());
+            myplan = state.myPlan;
+          }
+
+          return DefaultTabController(
+            length: months.length,
+            initialIndex: 0,
+            child: Scaffold(
+              backgroundColor: const Color(0xffFAFAFA),
+              appBar: AppBar(
+                title: const Text(
+                  myPlan,
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w500,
+                    color: MColor.backButton,
                   ),
                 ),
+                centerTitle: true,
+                automaticallyImplyLeading: false,
+                leading: IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back_ios,
+                    color: MColor.backButton,
+                  ),
+                ),
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 13, 17, 14),
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(MColor.colorSecondary),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AddPlanScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        addCaps,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+                bottom: PreferredSize(
+                  child: Container(
+                    color: const Color(0xFFEDEDED),
+                    child: TabBar(
+                      indicatorWeight: 3,
+                      isScrollable: true,
+                      indicatorColor: MColor.tabIndicatorColor,
+                      unselectedLabelColor: MColor.backButton,
+                      labelColor: MColor.backButton,
+                      labelStyle: const TextStyle(
+                        fontSize: 18,
+                        letterSpacing: 0.67,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      tabs: List.generate(months.length, (index) {
+                        return Tab(
+                          text: DateFormat("MMMM").format(months[index]).toString(),
+                        );
+                      }),
+                    ),
+                  ),
+                  preferredSize: const Size.fromHeight(50),
+                ),
+              ),
+              body: TabBarView(
+                children: List.generate(months.length, (index) {
+                  return MyPlanTabScreen(
+                    plans: myplan,
+                  );
+                }),
               ),
             ),
-          ],
-          bottom: PreferredSize(
-            child: Container(
-              color: const Color(0xFFEDEDED),
-              child: _tabBar,
-            ),
-            preferredSize: const Size.fromHeight(50),
-          ),
-        ),
-        body: TabBarView(
-          children: List.generate(months.length, (index) {
-            return tabsLayout();
-          }),
-        ),
+          );
+        },
       ),
     );
   }
@@ -154,13 +185,9 @@ class _MyPlanState extends State<MyPlan> {
                     textColor: const Color(0xff555555),
                     elevation: 0,
                     textStyle: const TextStyle(fontSize: 16),
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     index: index,
-                    border: Border.all(
-                        color: selectedWeek == weeks[index]
-                            ? MColor.colorPrimary
-                            : Colors.grey),
+                    border: Border.all(color: selectedWeek == weeks[index] ? MColor.colorPrimary : Colors.grey),
                     colorShowDuplicate: Colors.grey,
                     activeColor: const Color(0xFFFFC9CC),
                     color: const Color(0xffFAFAFA),
@@ -214,8 +241,7 @@ class _MyPlanState extends State<MyPlan> {
                               color: MColor.dateBoxColor,
                               height: 100,
                               child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Text(
                                     DateFormat('MMM').format(DateTime.now()),
@@ -256,8 +282,7 @@ class _MyPlanState extends State<MyPlan> {
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 15),
                                 child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: const [
                                     Text(
@@ -309,9 +334,7 @@ class _MyPlanState extends State<MyPlan> {
   }
 
   void getTabs() {
-    debugPrint((DateFormat("MMMM").format(DateTime(
-            DateTime.now().year, DateTime.now().month - 6, DateTime.now().day)))
-        .toString());
+    debugPrint((DateFormat("MMMM").format(DateTime(DateTime.now().year, DateTime.now().month - 6, DateTime.now().day))).toString());
     DateTime now = DateTime.now();
     DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
     debugPrint("${lastDayOfMonth.month}/${lastDayOfMonth.day}");

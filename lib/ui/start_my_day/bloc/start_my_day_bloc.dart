@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:dms/ui/start_my_day/bloc/start_my_day_events.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_states.dart';
 import 'package:dms/ui/start_my_day/model/quotes_and_images_response.dart';
@@ -8,6 +9,7 @@ import 'package:dms/utils/shared_preference.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
+
 import '../../../main.dart';
 
 class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
@@ -24,8 +26,7 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
     }
   }
 
-  Stream<StartMyDayStates> getQuotesAndImages(
-      GetQuotesAndImagesEvent event) async* {
+  Stream<StartMyDayStates> getQuotesAndImages(GetQuotesAndImagesEvent event) async* {
     if (await Network.isConnected()) {
       DateTime _ntpTime;
       _ntpTime = await NTP.now();
@@ -33,21 +34,18 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
       QuotesAndImagesResponse response = await repository.getQuotesAndImages();
 
       if (response.success) {
-        yield GetQuotesAndImagesState(
-            quotesAndImagesResponse: response,
-            currentDate: DateFormat("yyyy-MM-dd").format(_ntpTime));
+        yield GetQuotesAndImagesState(quotesAndImagesResponse: response, currentDate: DateFormat("yyyy-MM-dd").format(_ntpTime));
       } else {
         yield StartMyDayFailureState(failureMessage: response.message);
       }
     } else {
-      yield StartMyDayFailureState(
-          failureMessage: "Please check your internet connection!");
+      yield StartMyDayFailureState(failureMessage: "Please check your internet connection!");
     }
   }
 
   Stream<StartMyDayStates> startMyDay(StartMyDayEvent event) async* {
     if (await Network.isConnected()) {
-      String userId = await SharedPreference.getStringPreference("id");
+      String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
       DateTime _ntpTime;
       _ntpTime = await NTP.now();
       var format = DateFormat("yyyy-MM-dd");
@@ -69,8 +67,7 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
         yield StartMyDayFailureState(failureMessage: response.message);
       }
     } else {
-      yield StartMyDayFailureState(
-          failureMessage: "Please check your internet connection!");
+      yield StartMyDayFailureState(failureMessage: "Please check your internet connection!");
     }
   }
 }

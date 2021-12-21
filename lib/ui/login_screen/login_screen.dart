@@ -3,11 +3,14 @@ import 'package:dms/ui/login_screen/login_bloc/login_bloc.dart';
 import 'package:dms/ui/login_screen/login_bloc/login_event.dart';
 import 'package:dms/ui/login_screen/login_bloc/login_state.dart';
 import 'package:dms/ui/screen_after_login/screen_after_login.dart';
+import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import '../../main.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -19,35 +22,53 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final mobileNumber = TextEditingController();
   final password = TextEditingController();
+  String startMyDay = "";
+  LoginBloc loginBloc = LoginBloc();
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoginBloc(),
+      create: (context) => loginBloc,
       child: BlocListener<LoginBloc, LoginState>(
+        bloc: loginBloc,
         listener: (context, state) async {
           if (state is LoginSuccessState) {
-            SharedPreference.setStringPreference(
-                "mobile_number", mobileNumber.toString());
+            SharedPreference.setStringPreference(SharedPreference.mobileNumber, mobileNumber.toString());
 
-            SharedPreference.setStringPreference(
-                "id", state.loginResponse.id.toString());
+            SharedPreference.setStringPreference(SharedPreference.userId, state.loginResponse.id.toString());
 
-            SharedPreference.setBooleanPreference(
-                "login", state.loginResponse.success);
+            SharedPreference.setBooleanPreference(SharedPreference.isLogin, state.loginResponse.success);
 
-            SharedPreference.setBooleanPreference(
-                "is_Leader", state.loginResponse.isLeader);
+            SharedPreference.setBooleanPreference(SharedPreference.isLeader, state.loginResponse.isLeader);
 
-            if (state.loginResponse.startMyDay == "hide") {
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (BuildContext context) => const DrawerScreen()));
+            SharedPreference.setStringPreference(SharedPreference.accessToken, state.loginResponse.accessToken);
+            Constants.token = "Bearer " + state.loginResponse.accessToken;
+            dio.options.headers.addAll({"Authorization": Constants.token});
+
+            Constants.leader = state.loginResponse.isLeader;
+            startMyDay = state.loginResponse.startMyDay;
+
+            loginBloc.add(GetUserEvent());
+          }
+
+          if (state is GetUserDetailsState) {
+            SharedPreference.setStringPreference(SharedPreference.name, state.userDetails.data!.name);
+            SharedPreference.setStringPreference(SharedPreference.mobileNumber, state.userDetails.data!.mobileNumber);
+            SharedPreference.setStringPreference(SharedPreference.email, state.userDetails.data!.email);
+            SharedPreference.setStringPreference(SharedPreference.userDesignation, state.userDetails.data!.designation);
+            SharedPreference.setStringPreference(SharedPreference.userImage, state.userDetails.data!.image);
+
+            Constants.name = state.userDetails.data!.name;
+            Constants.mobile = state.userDetails.data!.mobileNumber;
+            Constants.designation = state.userDetails.data!.designation;
+            Constants.email = state.userDetails.data!.email;
+            Constants.image = state.userDetails.data!.image;
+
+            if (startMyDay == "hide") {
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => const DrawerScreen()));
             } else {
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (BuildContext context) => const ScreenAfterLogin()));
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => const ScreenAfterLogin()));
             }
-
-            Fluttertoast.showToast(msg: state.loginResponse.message.toString());
           }
           if (state is LoginFailureState) {
             Fluttertoast.showToast(msg: state.message);
@@ -71,10 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       bottom: -5,
                       child: Text(
                         "LOGIN",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24),
+                        style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24),
                       ),
                     ),
                   ],
@@ -85,9 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Container(
                       height: 2,
                       width: 40,
-                      decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(25)),
+                      decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(25)),
                     ),
                   ),
                 ),
@@ -96,10 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: EdgeInsets.only(top: 12),
                     child: Text(
                       "Please sign in to continue",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18),
+                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                   ),
                 ),
@@ -109,10 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: TextFormField(
                       maxLength: 12,
                       controller: mobileNumber,
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17),
+                      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),
                       autocorrect: true,
                       cursorColor: Colors.red,
                       enableSuggestions: true,
@@ -121,17 +131,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       keyboardType: TextInputType.number,
                       textAlign: TextAlign.left,
                       textAlignVertical: TextAlignVertical.center,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
+                      inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                       decoration: const InputDecoration(
                         counterText: "",
                         contentPadding: EdgeInsets.all(15),
                         hintText: "Mobile Number",
-                        hintStyle: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
+                        hintStyle: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black),
                       ),
                     ),
                   ),
@@ -141,10 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.fromLTRB(25, 30, 25, 0),
                     child: TextFormField(
                       controller: password,
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17),
+                      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),
                       obscureText: true,
                       enableSuggestions: false,
                       textAlign: TextAlign.left,
@@ -154,10 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       decoration: const InputDecoration(
                         hintText: "Password",
                         contentPadding: EdgeInsets.all(15),
-                        hintStyle: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
+                        hintStyle: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black),
                       ),
                     ),
                   ),
@@ -169,8 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         padding: const EdgeInsets.fromLTRB(0, 50, 0, 30),
                         child: ElevatedButton(
                           onPressed: () {
-                            sendLoginData(context, mobileNumber.text.toString(),
-                                password.text.toString());
+                            sendLoginData(context, mobileNumber.text.toString(), password.text.toString());
                             // Navigator.of(context).pushReplacement(
                             //   MaterialPageRoute(
                             //     builder: (BuildContext context) =>
@@ -179,10 +177,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             // );
                           },
                           style: ButtonStyle(
-                            fixedSize:
-                                MaterialStateProperty.all(const Size(220, 60)),
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.red),
+                            fixedSize: MaterialStateProperty.all(const Size(220, 60)),
+                            backgroundColor: MaterialStateProperty.all(Colors.red),
                             elevation: MaterialStateProperty.all(0),
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
@@ -192,10 +188,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           child: const Text(
                             "Log in",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold),
+                            style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),

@@ -1,3 +1,4 @@
+import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart';
 import 'package:dms/ui/login_screen/login_model/login_response.dart';
 import 'package:equatable/equatable.dart';
 
@@ -21,4 +22,11 @@ class LoginSuccessState extends LoginState {
 class LoginFailureState extends LoginState {
   final String message;
   LoginFailureState({required this.message});
+}
+
+class GetUserDetailsState extends LoginState {
+  final UserDetails userDetails;
+  GetUserDetailsState({required this.userDetails});
+  @override
+  List<Object> get props => [userDetails];
 }

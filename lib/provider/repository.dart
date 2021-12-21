@@ -1,6 +1,6 @@
 import 'dart:collection';
-import 'dart:developer';
 import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:dms/main.dart';
 import 'package:dms/provider/url.dart';
@@ -11,6 +11,7 @@ import 'package:dms/ui/change_password/model/model.dart';
 import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart';
 import 'package:dms/ui/edit_profile/model/edit_profile_model.dart';
 import 'package:dms/ui/login_screen/login_model/login_response.dart';
+import 'package:dms/ui/my_plan/model/get_plan_response.dart';
 import 'package:dms/ui/splash_screen/model/splash_model.dart';
 import 'package:dms/ui/start_my_day/model/quotes_and_images_response.dart';
 import 'package:dms/ui/start_my_day/model/start_my_day_response.dart.dart';
@@ -24,8 +25,7 @@ class ApiRepository {
 
   ApiRepository.internal();
 
-  Future<SplashResponse> validateAppVersion(
-      String version, String deviceType) async {
+  Future<SplashResponse> validateAppVersion(String version, String deviceType) async {
     Map<String, dynamic> params = {
       "app_version": version,
       "device_type": deviceType,
@@ -57,10 +57,7 @@ class ApiRepository {
   }
 
   Future<LoginResponse> login(String mobileNumber, String password) async {
-    Map<String, dynamic> data = {
-      "mobile_number": mobileNumber,
-      "password": password
-    };
+    Map<String, dynamic> data = {"mobile_number": mobileNumber, "password": password};
 
     try {
       Response response = await dio.post(
@@ -68,8 +65,7 @@ class ApiRepository {
         data: data,
       );
       if (response.statusCode == 200) {
-        LoginResponse loginDetails =
-            LoginResponse.fromJson(response.toString());
+        LoginResponse loginDetails = LoginResponse.fromJson(response.toString());
         return loginDetails;
       } else {
         return LoginResponse(
@@ -83,13 +79,7 @@ class ApiRepository {
       }
     } catch (exception) {
       return LoginResponse(
-          success: false,
-          message: "Something went wrong!",
-          id: 0,
-          accessToken: "",
-          tokenType: "",
-          isLeader: false,
-          startMyDay: "");
+          success: false, message: "Something went wrong!", id: 0, accessToken: "", tokenType: "", isLeader: false, startMyDay: "");
     }
   }
 
@@ -98,8 +88,7 @@ class ApiRepository {
       Response response = await dio.get(Url.getQuotesAndImages);
 
       if (response.statusCode == 200) {
-        QuotesAndImagesResponse quotesAndImagesResponse =
-            QuotesAndImagesResponse.fromJson(response.toString());
+        QuotesAndImagesResponse quotesAndImagesResponse = QuotesAndImagesResponse.fromJson(response.toString());
         return quotesAndImagesResponse;
       } else {
         return QuotesAndImagesResponse(
@@ -115,16 +104,8 @@ class ApiRepository {
     }
   }
 
-  Future<StartMyDayResponse> startMyDay(
-      String userId,
-      String startDayDate,
-      String primaryTag,
-      String secondaryTag,
-      String remark,
-      String latitude,
-      String longitude,
-      int getMeeting,
-      File startDayImage) async {
+  Future<StartMyDayResponse> startMyDay(String userId, String startDayDate, String primaryTag, String secondaryTag, String remark,
+      String latitude, String longitude, int getMeeting, File startDayImage) async {
     Map<String, dynamic> data = {
       "user_id": userId,
       "start_day_date": startDayDate,
@@ -135,9 +116,7 @@ class ApiRepository {
       "longitude": longitude,
       "get_meeting": getMeeting,
       "start_day_image": startDayImage.path.isNotEmpty
-          ? await MultipartFile.fromFile(startDayImage.path,
-              filename:
-                  DateTime.now().millisecondsSinceEpoch.toString() + ".jpg")
+          ? await MultipartFile.fromFile(startDayImage.path, filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg")
           : "",
     };
 
@@ -147,8 +126,7 @@ class ApiRepository {
       Response response = await dio.post(Url.startMyDay, data: formData);
 
       if (response.statusCode == 200) {
-        StartMyDayResponse startMyDayResponse =
-            StartMyDayResponse.fromJson(response.toString());
+        StartMyDayResponse startMyDayResponse = StartMyDayResponse.fromJson(response.toString());
         return startMyDayResponse;
       } else {
         return StartMyDayResponse(
@@ -177,27 +155,22 @@ class ApiRepository {
         UserDetails userData = UserDetails.fromJson(response.toString());
         return userData;
       } else {
-        return UserDetails(
-            success: false,
-            message: response.statusMessage.toString(),
-            data: null);
+        return UserDetails(success: false, message: response.statusMessage.toString(), data: null);
       }
     } catch (exception) {
-      return UserDetails(
-          success: false, message: "Something went wrong!", data: null);
+      return UserDetails(success: false, message: "Something went wrong!", data: null);
     }
   }
 
-  Future<EditProfileResponse> editProfile(
-      String name, String email, File? imgFile) async {
+  Future<EditProfileResponse> editProfile(String name, String email, File? imgFile) async {
     Map<String, dynamic> params = HashMap<String, dynamic>();
 
     params["name"] = name;
     params["email"] = email;
 
     if (imgFile != null) {
-      params["profile_picture"] = await MultipartFile.fromFile(imgFile.path,
-          filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
+      params["profile_picture"] =
+          await MultipartFile.fromFile(imgFile.path, filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
     }
 
     FormData data = FormData.fromMap(params);
@@ -208,8 +181,7 @@ class ApiRepository {
       );
 
       if (response.statusCode == 200) {
-        EditProfileResponse result =
-            EditProfileResponse.fromJson(response.toString());
+        EditProfileResponse result = EditProfileResponse.fromJson(response.toString());
         return result;
       } else {
         return EditProfileResponse(
@@ -225,8 +197,7 @@ class ApiRepository {
     }
   }
 
-  Future<ChangePassResponse> changePassword(String id, String currPassword,
-      String newPassword, String confPassword) async {
+  Future<ChangePassResponse> changePassword(String id, String currPassword, String newPassword, String confPassword) async {
     Map<String, dynamic> params = {
       "current_password": currPassword,
       "new_password": newPassword,
@@ -241,8 +212,7 @@ class ApiRepository {
       );
 
       if (response.statusCode == 200) {
-        ChangePassResponse result =
-            ChangePassResponse.fromJson(response.toString());
+        ChangePassResponse result = ChangePassResponse.fromJson(response.toString());
         return result;
       } else {
         return ChangePassResponse(
@@ -258,8 +228,7 @@ class ApiRepository {
     }
   }
 
-  Future<AddPlanResponse> addPlan(String userId, String addPlanDate,
-      String primaryTag, String secondaryTag, String remark) async {
+  Future<AddPlanResponse> addPlan(String userId, String addPlanDate, String primaryTag, String secondaryTag, String remark) async {
     Map<String, dynamic> data = {
       "user_id": userId,
       "add_plan_date": addPlanDate,
@@ -274,8 +243,7 @@ class ApiRepository {
         data: data,
       );
       if (response.statusCode == 200) {
-        AddPlanResponse addPlanResponse =
-            AddPlanResponse.fromJson(response.toString());
+        AddPlanResponse addPlanResponse = AddPlanResponse.fromJson(response.toString());
         return addPlanResponse;
       } else {
         return AddPlanResponse(
@@ -307,8 +275,7 @@ class ApiRepository {
       );
 
       if (response.statusCode == 200) {
-        GetAddPlanDataResponse getAddPlanDataResponse =
-            GetAddPlanDataResponse.fromJson(response.toString());
+        GetAddPlanDataResponse getAddPlanDataResponse = GetAddPlanDataResponse.fromJson(response.toString());
         return getAddPlanDataResponse;
       } else {
         return GetAddPlanDataResponse(
@@ -324,12 +291,33 @@ class ApiRepository {
     }
   }
 
+  Future<GetPlanResponse> getPlanByMonth(
+    String userId,
+    String addPlanDate,
+  ) async {
+    Map<String, dynamic> data = {
+      "user_id": userId,
+      "month": addPlanDate,
+    };
+
+    try {
+      Response response = await dio.post(
+        Url.getMyPlanByMonth,
+        data: data,
+      );
+      GetPlanResponse getAddPlanDataResponse = GetPlanResponse.fromJson(response.toString());
+      return getAddPlanDataResponse;
+    } catch (exception) {
+      return GetPlanResponse(
+        success: false,
+        message: "Something went wrong!",
+        data: [],
+      );
+    }
+  }
+
   Future<AddPlanUpdateDataResponse> addPlanUpdateData(
-      String id,
-      String addPlanDate,
-      String primaryTag,
-      String secondaryTag,
-      String remark) async {
+      String id, String addPlanDate, String primaryTag, String secondaryTag, String remark) async {
     Map<String, dynamic> data = {
       "id": id,
       "add_plan_date": addPlanDate,
@@ -344,8 +332,7 @@ class ApiRepository {
         data: data,
       );
       if (response.statusCode == 200) {
-        AddPlanUpdateDataResponse getAddPlanDataResponse =
-            AddPlanUpdateDataResponse.fromJson(response.toString());
+        AddPlanUpdateDataResponse getAddPlanDataResponse = AddPlanUpdateDataResponse.fromJson(response.toString());
         return getAddPlanDataResponse;
       } else {
         return AddPlanUpdateDataResponse(

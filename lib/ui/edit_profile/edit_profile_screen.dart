@@ -1,9 +1,9 @@
 import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/ui/edit_profile/edit_profile_bloc/edit_profie_bloc.dart';
 import 'package:dms/ui/edit_profile/edit_profile_bloc/edit_profile_event.dart';
 import 'package:dms/ui/edit_profile/edit_profile_bloc/edit_profile_state.dart';
-import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
@@ -24,8 +24,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   TextEditingController name = TextEditingController();
   TextEditingController emailId = TextEditingController();
   EditProfileBloc editProfileBloc = EditProfileBloc();
-  RefreshController refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController refreshController = RefreshController(initialRefresh: false);
   XFile? image;
 
   @override
@@ -111,14 +110,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                               width: 90,
                                               height: 90,
                                               fit: BoxFit.cover,
-                                              imageUrl:
-                                                  state.response.data!.image,
-                                              errorWidget: (context, url,
-                                                      error) =>
-                                                  Image.asset(
-                                                      "assets/3x/placeholder.png"),
-                                              placeholder: (context, url) =>
-                                                  const CircularProgressIndicator(
+                                              imageUrl: state.response.data!.image,
+                                              errorWidget: (context, url, error) => Image.asset("assets/3x/placeholder.png"),
+                                              placeholder: (context, url) => const CircularProgressIndicator(
                                                 color: Colors.red,
                                               ),
                                             ),
@@ -126,19 +120,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         : SizedBox(
                                             width: 120,
                                             height: 120,
-                                            child: Image.asset(
-                                                "assets/3x/placeholder.png",
-                                                width: 90,
-                                                height: 90,
-                                                fit: BoxFit.cover),
+                                            child: Image.asset("assets/3x/placeholder.png", width: 90, height: 90, fit: BoxFit.cover),
                                           )
                                     : SizedBox(
                                         width: 120,
                                         height: 120,
-                                        child: Image.file(File(image!.path),
-                                            width: 90,
-                                            height: 90,
-                                            fit: BoxFit.cover)),
+                                        child: Image.file(File(image!.path), width: 90, height: 90, fit: BoxFit.cover)),
                               ),
                               Positioned(
                                 top: 14,
@@ -169,15 +156,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             child: Column(
                               children: [
                                 Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(20, 10, 20, 20),
+                                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
                                   child: TextFormField(
                                     maxLength: 30,
                                     controller: name,
-                                    style: const TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 17),
+                                    style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),
                                     autocorrect: true,
                                     enableSuggestions: true,
                                     maxLines: 1,
@@ -187,10 +170,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       fillColor: Colors.white,
                                       border: InputBorder.none,
                                       hintText: "Name",
-                                      hintStyle: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
+                                      hintStyle: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black),
                                       focusedBorder: UnderlineInputBorder(),
                                       enabledBorder: UnderlineInputBorder(),
                                     ),
@@ -200,30 +180,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   ),
                                 ),
                                 Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(20, 10, 20, 50),
+                                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 50),
                                   child: TextFormField(
                                     controller: emailId,
-                                    style: const TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 17),
+                                    style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),
                                     autocorrect: true,
                                     enableSuggestions: true,
                                     maxLines: 1,
                                     textInputAction: TextInputAction.done,
                                     inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                          RegExp(r"[a-zA-Z.@0-9]")),
+                                      FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z.@0-9]")),
                                     ],
                                     decoration: const InputDecoration(
                                       fillColor: Colors.white,
                                       border: InputBorder.none,
                                       hintText: "Email ID",
-                                      hintStyle: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
+                                      hintStyle: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black),
                                       focusedBorder: UnderlineInputBorder(),
                                       enabledBorder: UnderlineInputBorder(),
                                     ),
@@ -234,17 +206,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 ),
                                 ElevatedButton(
                                   onPressed: () {
-                                    if (name.text.isNotEmpty &&
-                                        emailId.text.isNotEmpty) {
-                                      if (EmailValidator.validate(
-                                              emailId.text) ==
-                                          true) {
+                                    if (name.text.isNotEmpty && emailId.text.isNotEmpty) {
+                                      if (EmailValidator.validate(emailId.text) == true) {
                                         if (image != null) {
                                           editProfileBloc.add(
-                                            EditProfileEvent(
-                                                name: name.text,
-                                                emailId: emailId.text,
-                                                imgFile: File(image!.path)),
+                                            EditProfileEvent(name: name.text, emailId: emailId.text, imgFile: File(image!.path)),
                                           );
                                         } else {
                                           editProfileBloc.add(
@@ -255,19 +221,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           );
                                         }
                                       } else {
-                                        Fluttertoast.showToast(
-                                            msg: "Enter valid email format");
+                                        Fluttertoast.showToast(msg: "Enter valid email format");
                                       }
                                     } else {
-                                      Fluttertoast.showToast(
-                                          msg: "Fields cant't be empty");
+                                      Fluttertoast.showToast(msg: "Fields cant't be empty");
                                     }
                                   },
                                   style: ButtonStyle(
-                                    fixedSize: MaterialStateProperty.all(
-                                        const Size(220, 60)),
-                                    backgroundColor:
-                                        MaterialStateProperty.all(Colors.red),
+                                    fixedSize: MaterialStateProperty.all(const Size(220, 60)),
+                                    backgroundColor: MaterialStateProperty.all(Colors.red),
                                     elevation: MaterialStateProperty.all(0),
                                     shape: MaterialStateProperty.all(
                                       RoundedRectangleBorder(
@@ -277,10 +239,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   ),
                                   child: const Text(
                                     "Update",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.bold),
+                                    style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ],
@@ -379,8 +338,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   imageFromCamera() async {
-    XFile? image = await ImagePicker.platform
-        .getImage(source: ImageSource.camera, imageQuality: 50);
+    XFile? image = await ImagePicker.platform.getImage(source: ImageSource.camera, imageQuality: 50);
 
     setState(() {
       this.image = image;
@@ -388,8 +346,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   imgFromGallery() async {
-    XFile? image = await ImagePicker.platform
-        .getImage(source: ImageSource.gallery, imageQuality: 50);
+    XFile? image = await ImagePicker.platform.getImage(source: ImageSource.gallery, imageQuality: 50);
 
     setState(() {
       this.image = image;
@@ -397,8 +354,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   loadUserDetails() async {
-    var userId =
-        await SharedPreference.getStringPreference(SharedPreference.id);
+    var userId = await SharedPreference.getStringPreference(SharedPreference.userId);
     editProfileBloc.add(GetUserDetailsEvent(userId: userId));
   }
 

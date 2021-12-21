@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/ui/my_plan/my_plan.dart';
+import 'package:dms/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kf_drawer/kf_drawer.dart';
@@ -63,17 +64,19 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Row(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(50),
+              borderRadius: BorderRadius.circular(25),
               child: CachedNetworkImage(
                 width: 50,
                 height: 50,
-                fit: BoxFit.cover,
-                imageUrl:
-                    "https://cdnaws.sharechat.com/a49913b5-024a-4ecd-9c86-4940a94f53d8-46107328-99c3-41f7-a542-74ce42eca32c_compressed_40.jpg",
-                errorWidget: (context, url, error) =>
-                    Image.asset("assets/images/3x/placeholder.png"),
-                placeholder: (context, url) =>
-                    const CircularProgressIndicator(),
+                fit: BoxFit.contain,
+                imageUrl: Constants.image,
+                imageBuilder: (context, imageProvider) {
+                  return Image(
+                    image: imageProvider,
+                  );
+                },
+                errorWidget: (context, url, error) => Image.asset("assets/placeholder.png"),
+                placeholder: (context, url) => Image.asset("assets/placeholder.png"),
               ),
             ),
             const SizedBox(
@@ -84,9 +87,9 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Smith Johnson",
-                  style: TextStyle(
+                Text(
+                  Constants.name,
+                  style: const TextStyle(
                     color: Colors.black,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -95,15 +98,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Container(
                   margin: const EdgeInsets.only(top: 4),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF3505A).withOpacity(0.3),
                     borderRadius: BorderRadius.circular(3),
                   ),
-                  child: const Text(
-                    "Employee Designation",
-                    style: TextStyle(
+                  child: Text(
+                    Constants.designation,
+                    style: const TextStyle(
                       fontWeight: FontWeight.w500,
                       color: Colors.black,
                       fontSize: 15,
@@ -264,8 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
         debugPrint("performance was clicked");
         break;
       case 3:
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const MyPlan()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const MyPlan()));
         break;
     }
   }

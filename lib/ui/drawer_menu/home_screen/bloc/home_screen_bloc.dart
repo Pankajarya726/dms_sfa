@@ -1,7 +1,6 @@
 import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_events.dart';
 import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_states.dart';
 import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart';
-import 'package:dms/ui/start_my_day/model/start_my_day_response.dart.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,7 +20,7 @@ class HomeScreenBloc extends Bloc<HomeScreenEvents, HomeScreenStates> {
 
   Stream<HomeScreenStates> getUserDetails(GetUserDetailsEvent event) async* {
     if (await Network.isConnected()) {
-      String userId = await SharedPreference.getStringPreference("id");
+      String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
 
       UserDetails response = await repository.getUserDetailsByUserId(userId);
 
@@ -31,8 +30,7 @@ class HomeScreenBloc extends Bloc<HomeScreenEvents, HomeScreenStates> {
         yield HomeScreenFailureState(failureMessage: response.message);
       }
     } else {
-      yield HomeScreenFailureState(
-          failureMessage: "Please check your internet connection!");
+      yield HomeScreenFailureState(failureMessage: "Please check your internet connection!");
     }
   }
 }

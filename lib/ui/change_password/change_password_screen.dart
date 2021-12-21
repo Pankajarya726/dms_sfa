@@ -52,10 +52,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     padding: const EdgeInsets.fromLTRB(20, 30, 20, 10),
                     child: TextFormField(
                       controller: currPassword,
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17),
+                      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),
                       autocorrect: true,
                       enableSuggestions: true,
                       maxLines: 1,
@@ -65,10 +62,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         fillColor: Colors.white,
                         border: InputBorder.none,
                         hintText: "Current Password",
-                        hintStyle: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
+                        hintStyle: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black),
                         focusedBorder: UnderlineInputBorder(),
                         enabledBorder: UnderlineInputBorder(),
                       ),
@@ -78,10 +72,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                     child: TextFormField(
                       controller: newPassword,
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17),
+                      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),
                       autocorrect: true,
                       enableSuggestions: true,
                       maxLines: 1,
@@ -91,10 +82,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         fillColor: Colors.white,
                         border: InputBorder.none,
                         hintText: "New Password",
-                        hintStyle: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
+                        hintStyle: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black),
                         focusedBorder: UnderlineInputBorder(),
                         enabledBorder: UnderlineInputBorder(),
                       ),
@@ -104,10 +92,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     padding: const EdgeInsets.fromLTRB(20, 10, 20, 60),
                     child: TextFormField(
                       controller: confPassword,
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17),
+                      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),
                       autocorrect: true,
                       enableSuggestions: true,
                       maxLines: 1,
@@ -117,10 +102,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         fillColor: Colors.white,
                         border: InputBorder.none,
                         hintText: "Confirm Password",
-                        hintStyle: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
+                        hintStyle: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black),
                         focusedBorder: UnderlineInputBorder(),
                         enabledBorder: UnderlineInputBorder(),
                       ),
@@ -128,12 +110,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      if (currPassword.text.isNotEmpty &&
-                          newPassword.text.isNotEmpty &&
-                          confPassword.text.isNotEmpty) {
+                      if (currPassword.text.isNotEmpty && newPassword.text.isNotEmpty && confPassword.text.isNotEmpty) {
                         if (newPassword.text == confPassword.text) {
-                          addEvent(currPassword.text, newPassword.text,
-                              confPassword.text);
+                          addEvent(currPassword.text, newPassword.text, confPassword.text);
                         } else {
                           Fluttertoast.showToast(msg: "Password can't match");
                         }
@@ -153,10 +132,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     ),
                     child: const Text(
                       "Update",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
@@ -168,13 +144,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     );
   }
 
-  addEvent(
-      String currentPassword, String newPassword, String confPassword) async {
-    var id = await SharedPreference.getStringPreference(SharedPreference.id);
-    changePasswordBloc.add(ChangePasswordEvent(
-        id: id,
-        currentPassword: currentPassword,
-        newPassword: newPassword,
-        confPassword: confPassword));
+  addEvent(String currentPassword, String newPassword, String confPassword) async {
+    var id = await SharedPreference.getStringPreference(SharedPreference.userId);
+    changePasswordBloc
+        .add(ChangePasswordEvent(id: id, currentPassword: currentPassword, newPassword: newPassword, confPassword: confPassword));
   }
 }
