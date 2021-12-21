@@ -18,6 +18,8 @@ class StartMyDayEvent extends StartMyDayEvents {
   final String longitude;
   final int getMeeting;
   final String startDayImage;
+  final String primaryTagId;
+  final String secondaryTagId;
   StartMyDayEvent({
     required this.primaryTag,
     required this.secondaryTag,
@@ -26,6 +28,8 @@ class StartMyDayEvent extends StartMyDayEvents {
     required this.longitude,
     required this.getMeeting,
     required this.startDayImage,
+    required this.primaryTagId,
+    required this.secondaryTagId,
   });
   @override
   List<Object> get props => [
@@ -36,5 +40,7 @@ class StartMyDayEvent extends StartMyDayEvents {
         longitude,
         getMeeting,
         startDayImage,
+        primaryTagId,
+        secondaryTagId,
       ];
 }

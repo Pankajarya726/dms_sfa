@@ -9,6 +9,9 @@ import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_bloc.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_events.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_states.dart';
+import 'package:dms/ui/userlocation_bloc/userlocation_bloc.dart';
+import 'package:dms/ui/userlocation_bloc/userlocation_events.dart';
+import 'package:dms/ui/userlocation_bloc/userlocation_states.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
@@ -56,8 +59,6 @@ class _StartDayScreenState extends State<StartDayScreen> {
 
   String selectedPrimaryTag = "Retailing";
   String selectedSecondaryTag = "";
-  String address =
-      "Akshya Nagar 1st Block 1st Cross, Rammurthy nagar, Bangalore-560016";
   bool isMeeting = false;
   File? imageFile;
 
@@ -66,11 +67,15 @@ class _StartDayScreenState extends State<StartDayScreen> {
   TextEditingController txtBeatController = TextEditingController();
   StartMyDayBloc startMyDayBloc = StartMyDayBloc();
   AddPlanBloc addPlanBloc = AddPlanBloc();
-  double latitude = 22.637668;
-  double longitude = 75.804425;
+  UserLocationBloc userLocationBloc = UserLocationBloc();
+  double latitude = 0.0;
+  double longitude = 0.0;
   DateTime? dateTime;
   String quoteImage = "";
   String quoteText = "";
+  String currentAddress = "";
+  String primarytagId = "";
+  String secondaryTagId = "";
 
   @override
   Widget build(BuildContext context) {
@@ -99,6 +104,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
         providers: [
           BlocProvider(create: (context) => startMyDayBloc),
           BlocProvider(create: (context) => addPlanBloc),
+          BlocProvider(create: (context) => userLocationBloc),
         ],
         child: SingleChildScrollView(
           child: Column(
@@ -346,31 +352,46 @@ class _StartDayScreenState extends State<StartDayScreen> {
                         );
                       },
                     ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Image(
-                          image: AssetImage("assets/location.png"),
-                          height: 20,
-                          width: 20,
-                          fit: BoxFit.contain,
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                          child: Text(
-                            address,
-                            maxLines: 3,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: MColor.backButton,
-                              letterSpacing: 0.67,
+                    BlocBuilder<UserLocationBloc, UserLocationStates>(
+                      builder: (context, state) {
+                        if (state is UserLocationInitialState) {
+                          userLocationBloc.add(GetUserLocationEvent());
+                        }
+                        if (state is GetUserLocationState) {
+                          currentAddress = state.currentAddress;
+                          latitude = state.latitude;
+                          longitude = state.longitude;
+                        }
+                        if (state is UserLocationFailureState) {
+                          currentAddress = state.failureMessage;
+                        }
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Image(
+                              image: AssetImage("assets/location.png"),
+                              height: 20,
+                              width: 20,
+                              fit: BoxFit.contain,
                             ),
-                          ),
-                        ),
-                      ],
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
+                              child: Text(
+                                currentAddress,
+                                maxLines: 3,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: MColor.backButton,
+                                  letterSpacing: 0.67,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                     const SizedBox(
                       height: 15,
@@ -584,6 +605,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
                       longitude: longitude.toString(),
                       getMeeting: isMeeting ? 1 : 2,
                       startDayImage: imageFile == null ? "" : imageFile!.path,
+                      primaryTagId: primarytagId,
+                      secondaryTagId: secondaryTagId,
                     ));
                   } else {
                     Fluttertoast.showToast(msg: "Please turn on GPS location");
@@ -688,4 +711,5 @@ class _StartDayScreenState extends State<StartDayScreen> {
   //   //     country +
   //   //     " (GMT+5:30)";
   // }
+
 }
