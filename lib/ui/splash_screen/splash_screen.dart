@@ -1,7 +1,4 @@
 import 'dart:async';
-
-import 'package:dms/main.dart';
-import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/ui/login_screen/login_screen.dart';
 import 'package:dms/ui/screen_after_login/screen_after_login.dart';
 import 'package:dms/ui/splash_screen/splash_bloc/splash_bloc.dart';
@@ -15,6 +12,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
+
+import '../../main.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -39,7 +38,8 @@ class _SplashScreenState extends State<SplashScreen> {
       child: BlocListener<SplashBloc, SplashState>(
         listener: (context, state) {
           if (state is SplashSuccessState) {
-            getLogin(state.response.data!.appVersion, state.response.startMyDay);
+            getLogin(
+                state.response.data!.appVersion, state.response.startMyDay);
           }
           if (state is SplashFailureState) {
             Fluttertoast.showToast(msg: "Something went wrong!");
@@ -68,11 +68,15 @@ class _SplashScreenState extends State<SplashScreen> {
                 height: MediaQuery.of(context).size.height * 0.15,
                 child: Center(
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(color: MColor.colorTabBG, borderRadius: BorderRadius.circular(50)),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                        color: MColor.colorTabBG,
+                        borderRadius: BorderRadius.circular(50)),
                     child: const Text(
                       "Sales Force Automation",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                     ),
                   ),
                 ),
@@ -154,10 +158,12 @@ class _SplashScreenState extends State<SplashScreen> {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
     if (Device.get().isAndroid) {
-      splashBloc.add(SplashEvent(appVersion: packageInfo.version, deviceType: "1"));
+      splashBloc
+          .add(SplashEvent(appVersion: packageInfo.version, deviceType: "1"));
     }
     if (Device.get().isIos) {
-      splashBloc.add(SplashEvent(appVersion: packageInfo.version, deviceType: "2"));
+      splashBloc
+          .add(SplashEvent(appVersion: packageInfo.version, deviceType: "2"));
     }
   }
 
@@ -168,12 +174,23 @@ class _SplashScreenState extends State<SplashScreen> {
       builder: (context) {
         return AlertDialog(
           contentPadding: const EdgeInsets.fromLTRB(25, 10, 25, 10),
-          title: const Text("Something Wrong!", style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.w600)),
+          title: const Text("Something Wrong!",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600)),
           content: const Text("Please check your internet and try again.",
-              style: TextStyle(color: Color.fromRGBO(85, 85, 85, 1), fontSize: 16, fontWeight: FontWeight.w500)),
+              style: TextStyle(
+                  color: Color.fromRGBO(85, 85, 85, 1),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500)),
           actions: [
             MaterialButton(
-              child: const Text("Retry", style: TextStyle(fontSize: 16, color: Color(0xfff4511e), fontWeight: FontWeight.w600)),
+              child: const Text("Retry",
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: Color(0xfff4511e),
+                      fontWeight: FontWeight.w600)),
               onPressed: () {
                 addEvent();
               },
