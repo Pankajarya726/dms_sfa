@@ -142,6 +142,7 @@ class _MyPlanState extends State<MyPlan> {
                 children: List.generate(months.length, (index) {
                   return MyPlanTabScreen(
                     plans: myplan,
+                    dateTime: months[index],
                   );
                 }),
               ),

@@ -1,5 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/ui/drawer_menu/home_screen/home_screen.dart';
 import 'package:dms/ui/drawer_menu/settings_screen/settings_screen.dart';
+import 'package:dms/ui/login_screen/login_screen.dart';
+import 'package:dms/utils/constants.dart';
+import 'package:dms/utils/shared_preference.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,183 +19,13 @@ class DrawerScreen extends StatefulWidget {
 }
 
 class _DrawerScreenState extends State<DrawerScreen> {
-  KFDrawerController controller =
-      KFDrawerController(initialPage: KFDrawerContent());
+  KFDrawerController controller = KFDrawerController(initialPage: KFDrawerContent());
+
   @override
   void initState() {
     super.initState();
     controller = KFDrawerController(
       initialPage: HomeScreen(),
-      items: [
-        KFDrawerItem.initWithPage(
-          icon: Container(
-            height: 0.5,
-            width: 240,
-            color: Colors.white,
-            child: const Icon(
-              Icons.line_style,
-              color: Colors.white,
-              size: 1,
-            ),
-          ),
-        ),
-        //  Home
-        KFDrawerItem.initWithPage(
-          text: const Padding(
-            padding: EdgeInsets.only(top: 18, left: 10),
-            child: Text('Home',
-                style: TextStyle(color: Colors.white, fontSize: 18)),
-          ),
-          icon: Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Align(
-              child: SvgPicture.asset(
-                "assets/Home.svg",
-                height: 28,
-                width: 28,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-          page: HomeScreen(),
-        ),
-        // Script
-        KFDrawerItem.initWithPage(
-          text: const Padding(
-            padding: EdgeInsets.only(top: 16, left: 10),
-            child: Text('Script',
-                style: TextStyle(color: Colors.white, fontSize: 18)),
-          ),
-          icon: Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Align(
-              child: SvgPicture.asset(
-                "assets/Script.svg",
-                height: 28,
-                width: 28,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-          page: HomeScreen(),
-        ),
-        // message
-        KFDrawerItem.initWithPage(
-          text: const Padding(
-            padding: EdgeInsets.only(top: 16, left: 10),
-            child: Text('Message',
-                style: TextStyle(color: Colors.white, fontSize: 18)),
-          ),
-          icon: Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Align(
-              child: SvgPicture.asset(
-                "assets/Message.svg",
-                height: 28,
-                width: 28,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-          page: HomeScreen(),
-        ),
-        // Start day
-        KFDrawerItem.initWithPage(
-          text: const Padding(
-            padding: EdgeInsets.only(top: 16, left: 10),
-            child: Text('End Day',
-                style: TextStyle(color: Colors.white, fontSize: 18)),
-          ),
-          icon: Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Align(
-              child: SvgPicture.asset(
-                "assets/End-Day.svg",
-                height: 28,
-                width: 28,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-          page: HomeScreen(),
-        ),
-        // sync
-        KFDrawerItem.initWithPage(
-          text: const Padding(
-            padding: EdgeInsets.only(top: 16, left: 10),
-            child: Text('Sync',
-                style: TextStyle(color: Colors.white, fontSize: 18)),
-          ),
-          icon: Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Align(
-              child: SvgPicture.asset(
-                "assets/Sync.svg",
-                height: 28,
-                width: 28,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-          page: HomeScreen(),
-        ), // line
-        //line
-        KFDrawerItem.initWithPage(
-          icon: Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Container(
-              height: 0.5,
-              width: 240,
-              color: Colors.white,
-              child: const Icon(
-                Icons.line_style,
-                color: Colors.white,
-                size: 1,
-              ),
-            ),
-          ),
-        ),
-        // settings
-        KFDrawerItem.initWithPage(
-          text: const Padding(
-            padding: EdgeInsets.only(top: 16, left: 10),
-            child: Text('Settings',
-                style: TextStyle(color: Colors.white, fontSize: 18)),
-          ),
-          icon: Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Align(
-              child: SvgPicture.asset(
-                "assets/Settings.svg",
-                height: 28,
-                width: 28,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-          page: SettingsScreen(),
-        ),
-        // logout
-        KFDrawerItem.initWithPage(
-          text: const Padding(
-            padding: EdgeInsets.only(top: 16, left: 10),
-            child: Text('Logout',
-                style: TextStyle(color: Colors.white, fontSize: 18)),
-          ),
-          icon: Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Align(
-              child: SvgPicture.asset(
-                "assets/Logout.svg",
-                height: 28,
-                width: 28,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-          page: HomeScreen(),
-        ), // line
-      ],
     );
   }
 
@@ -202,11 +36,12 @@ class _DrawerScreenState extends State<DrawerScreen> {
       backgroundColor: Colors.white,
       body: KFDrawer(
         menuPadding: const EdgeInsets.only(top: 20),
-        shadowOffset: 20,
+        shadowOffset: 10,
         controller: controller,
         minScale: 0.80,
         scrollable: true,
         drawerWidth: 0.80,
+        disableContentTap: true,
         decoration: const BoxDecoration(
           color: Colors.black87,
         ),
@@ -236,12 +71,19 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 child: Row(
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(100),
-                      child: Image.network(
-                        "https://cdnb.artstation.com/p/assets/images/images/024/538/827/original/pixel-jeff-clipa-s.gif?1582740711",
-                        fit: BoxFit.cover,
+                      borderRadius: BorderRadius.circular(30),
+                      child: CachedNetworkImage(
                         width: 60,
                         height: 60,
+                        fit: BoxFit.contain,
+                        imageUrl: Constants.image,
+                        imageBuilder: (context, imageProvider) {
+                          return Image(
+                            image: imageProvider,
+                          );
+                        },
+                        errorWidget: (context, url, error) => Image.asset("assets/placeholder.png"),
+                        placeholder: (context, url) => Image.asset("assets/placeholder.png"),
                       ),
                     ),
                     Padding(
@@ -250,22 +92,17 @@ class _DrawerScreenState extends State<DrawerScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            "Employee Name",
-                            style: TextStyle(
-                                fontSize: 21,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w400),
+                          Text(
+                            Constants.name,
+                            style: const TextStyle(fontSize: 21, color: Colors.white, fontWeight: FontWeight.w400),
                           ),
                           Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(4)),
-                            child: const Padding(
-                              padding: EdgeInsets.all(2),
+                            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(2),
                               child: Text(
-                                " Designation ",
-                                style: TextStyle(
+                                " ${Constants.designation} ",
+                                style: const TextStyle(
                                   fontWeight: FontWeight.w400,
                                   color: Colors.red,
                                   fontSize: 15,
@@ -282,7 +119,145 @@ class _DrawerScreenState extends State<DrawerScreen> {
             ],
           ),
         ),
+        footer: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Container(
+                color: Colors.white,
+                width: MediaQuery.of(context).size.width * 0.65,
+                height: 0.5,
+              ),
+            ),
+            ListTile(
+              onTap: () {
+                controller.close!.call();
+              },
+              title: const Text("Home", style: TextStyle(color: Colors.white, fontSize: 18)),
+              leading: SvgPicture.asset(
+                "assets/Home.svg",
+                height: 28,
+                width: 28,
+                fit: BoxFit.contain,
+              ),
+            ),
+            ListTile(
+              onTap: () {
+                controller.close!.call();
+              },
+              title: const Text("Script", style: TextStyle(color: Colors.white, fontSize: 18)),
+              leading: SvgPicture.asset(
+                "assets/Script.svg",
+                height: 28,
+                width: 28,
+                fit: BoxFit.contain,
+              ),
+            ),
+            ListTile(
+              onTap: () {
+                controller.close!.call();
+              },
+              title: const Text("Message", style: TextStyle(color: Colors.white, fontSize: 18)),
+              leading: SvgPicture.asset(
+                "assets/Message.svg",
+                height: 28,
+                width: 28,
+                fit: BoxFit.contain,
+              ),
+            ),
+            ListTile(
+              onTap: () {
+                controller.close!.call();
+              },
+              title: const Text("End Day", style: TextStyle(color: Colors.white, fontSize: 18)),
+              leading: SvgPicture.asset(
+                "assets/End-Day.svg",
+                height: 28,
+                width: 28,
+                fit: BoxFit.contain,
+              ),
+            ),
+            ListTile(
+              onTap: () {
+                controller.close!.call();
+              },
+              title: const Text("Sync", style: TextStyle(color: Colors.white, fontSize: 18)),
+              leading: SvgPicture.asset(
+                "assets/Sync.svg",
+                height: 28,
+                width: 28,
+                fit: BoxFit.contain,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Container(
+                color: Colors.white,
+                width: MediaQuery.of(context).size.width * 0.65,
+                height: 0.5,
+              ),
+            ),
+            ListTile(
+              onTap: () {
+                controller.close!.call();
+                Navigator.push(context, MaterialPageRoute(builder: (_) => SettingsScreen()));
+              },
+              title: const Text("Setting", style: TextStyle(color: Colors.white, fontSize: 18)),
+              leading: SvgPicture.asset(
+                "assets/Settings.svg",
+                height: 28,
+                width: 28,
+                fit: BoxFit.contain,
+              ),
+            ),
+            ListTile(
+              onTap: () {
+                // controller.close!.call();
+                logoutDialog(context);
+              },
+              title: const Text("Logout", style: TextStyle(color: Colors.white, fontSize: 18)),
+              leading: SvgPicture.asset(
+                "assets/Logout.svg",
+                height: 28,
+                width: 28,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  logoutDialog(context) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.fromLTRB(25, 10, 0, 0),
+          title: const Text("Logout", style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w600)),
+          content: const Text("Are you sure you want to logout?",
+              style: TextStyle(color: Color.fromRGBO(85, 85, 85, 1), fontSize: 15, fontWeight: FontWeight.w500)),
+          actions: [
+            MaterialButton(
+              child: const Text("Cancel", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600)),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            MaterialButton(
+              child: const Text("Logout", style: TextStyle(color: Color(0xfff4511e), fontWeight: FontWeight.w600)),
+              onPressed: () async {
+                await SharedPreference.clearSharedPreference(context);
+                Navigator.pushAndRemoveUntil(
+                    context, MaterialPageRoute(builder: (context) => const LoginScreen()), ModalRoute.withName("/"));
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
