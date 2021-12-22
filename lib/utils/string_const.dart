@@ -1,9 +1,10 @@
 const addCaps = "ADD";
 const startMyDayCaps = "START MY DAY";
+const exploreCaps = "EXPLORE";
 
 const login = "Login";
 const startMyDay = "Start My Day";
-const explore = "EXPLORE";
+const explore = "Explore";
 const myPlan = "My Plan";
 const january = "January";
 const february = "February";

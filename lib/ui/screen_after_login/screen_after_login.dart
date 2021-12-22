@@ -24,11 +24,11 @@ class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  boxLayout("assets/sun.png", startMyDay, 60.0, 25.0),
+                  boxLayout("assets/sun.png", startMyDayCaps, 60.0, 25.0),
                   const SizedBox(
                     height: 50,
                   ),
-                  boxLayout("assets/explore.png", explore, 50.0, 28.0),
+                  boxLayout("assets/explore.png", exploreCaps, 50.0, 28.0),
                 ],
               ),
             ),
@@ -69,7 +69,7 @@ class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
             borderRadius: BorderRadius.circular(15),
           ),
           onTap: () {
-            if (imageLabel == startMyDay) {
+            if (imageLabel == startMyDayCaps) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
