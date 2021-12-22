@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dms/ui/start_my_day/bloc/start_my_day_events.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_states.dart';
+import 'package:dms/ui/start_my_day/model/end_my_day_response.dart';
 import 'package:dms/ui/start_my_day/model/quotes_and_images_response.dart';
 import 'package:dms/ui/start_my_day/model/start_my_day_response.dart.dart';
 import 'package:dms/utils/network.dart';
@@ -23,6 +24,9 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
     }
     if (event is StartMyDayEvent) {
       yield* startMyDay(event);
+    }
+    if (event is EndMyDayEvent) {
+      yield* endMyDay(event);
     }
   }
 
@@ -54,6 +58,7 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
       DateTime _ntpTime;
       _ntpTime = await NTP.now();
       var format = DateFormat("yyyy-MM-dd");
+      String webtime = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
       StartMyDayResponse response = await repository.startMyDay(
         userId,
         format.format(_ntpTime).toString(),
@@ -66,6 +71,8 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
         File(event.startDayImage),
         event.primaryTagId,
         event.secondaryTagId,
+        event.address,
+        webtime,
       );
 
       if (response.success) {
@@ -75,6 +82,30 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
       }
     } else {
       yield StartMyDayFailureState(
+          failureMessage: "Please check your internet connection!");
+    }
+  }
+
+  Stream<StartMyDayStates> endMyDay(EndMyDayEvent event) async* {
+    if (await Network.isConnected()) {
+      String userId =
+          await SharedPreference.getStringPreference(SharedPreference.userId);
+      DateTime _ntpTime;
+      _ntpTime = await NTP.now();
+      String webtime = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
+      EndMyDayResponse response = await repository.endMyDay(
+        userId,
+        DateFormat("yyyy-MM-dd").format(_ntpTime),
+        webtime,
+      );
+
+      if (response.success) {
+        yield EndMyDaySuccessState(endMyDayResponse: response);
+      } else {
+        yield EndMyDayFailureState(failureMessage: response.message);
+      }
+    } else {
+      yield EndMyDayFailureState(
           failureMessage: "Please check your internet connection!");
     }
   }

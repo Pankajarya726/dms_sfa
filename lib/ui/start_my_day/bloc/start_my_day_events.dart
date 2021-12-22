@@ -20,6 +20,7 @@ class StartMyDayEvent extends StartMyDayEvents {
   final String startDayImage;
   final String primaryTagId;
   final String secondaryTagId;
+  final String address;
   StartMyDayEvent({
     required this.primaryTag,
     required this.secondaryTag,
@@ -30,6 +31,7 @@ class StartMyDayEvent extends StartMyDayEvents {
     required this.startDayImage,
     required this.primaryTagId,
     required this.secondaryTagId,
+    required this.address,
   });
   @override
   List<Object> get props => [
@@ -42,5 +44,11 @@ class StartMyDayEvent extends StartMyDayEvents {
         startDayImage,
         primaryTagId,
         secondaryTagId,
+        address,
       ];
+}
+
+class EndMyDayEvent extends StartMyDayEvents {
+  @override
+  List<Object> get props => [];
 }
