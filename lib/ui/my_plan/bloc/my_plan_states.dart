@@ -20,7 +20,7 @@ class MyPlanFailureState extends MyPlanStates {
 }
 
 class GetPlanSuccessState extends MyPlanStates {
-  final List<PlanDateModel> myPlan;
+  final List<PlanDataModel> myPlan;
 
   GetPlanSuccessState({required this.myPlan});
 

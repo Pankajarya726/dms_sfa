@@ -38,7 +38,7 @@ class _MyPlanState extends State<MyPlan> {
   String week = "";
 
   MyPlanBloc myPlanBloc = MyPlanBloc();
-  List<PlanDateModel> myplan = [];
+  List<PlanDataModel> myplan = [];
 
   @override
   void initState() {

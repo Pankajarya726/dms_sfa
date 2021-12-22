@@ -9,7 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
 class MyPlanTabScreen extends StatefulWidget {
-  final List<PlanDateModel> plans;
+  final List<PlanDataModel> plans;
   final DateTime dateTime;
 
   const MyPlanTabScreen({Key? key, required this.plans, required this.dateTime}) : super(key: key);
@@ -20,10 +20,10 @@ class MyPlanTabScreen extends StatefulWidget {
 
 class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderStateMixin {
   List<int> week = [];
-  List<PlanDateModel> myPlan = [];
+  List<PlanDataModel> myPlan = [];
   TabController? tabController;
 
-  Map<String, List<PlanDateModel>> myPlanMap = {};
+  Map<String, List<PlanDataModel>> myPlanMap = {};
 
   @override
   void initState() {
@@ -75,7 +75,7 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderSt
                   );
                 },
                 itemBuilder: (context, index) {
-                  PlanDateModel model = myPlanMap["${week[tabController!.index]}"]![index];
+                  PlanDataModel model = myPlanMap["${week[tabController!.index]}"]![index];
 
                   return Container(
                     decoration: BoxDecoration(
@@ -205,7 +205,7 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderSt
 
   void getWeek() {
     List<Map<String, dynamic>> plans = [];
-    for (PlanDateModel plan in widget.plans) {
+    for (PlanDataModel plan in widget.plans) {
       plans.add(plan.toMap());
     }
     List res = plans
@@ -244,7 +244,7 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderSt
         debugPrint("weeks in data $week");
 
         for (var w in week) {
-          List<PlanDateModel> pm = myPlan.where((element) => element.week == w).toList();
+          List<PlanDataModel> pm = myPlan.where((element) => element.week == w).toList();
           myPlanMap.addAll({"$w": pm});
         }
 

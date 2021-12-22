@@ -1,10 +1,15 @@
 import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/main.dart';
+import 'package:dms/model/get_plan_response.dart';
+import 'package:dms/model/primary_tag_response.dart';
+import 'package:dms/model/secondary_tag_response.dart';
 import 'package:dms/ui/add_plan/bloc/add_plan_bloc.dart';
 import 'package:dms/ui/add_plan/bloc/add_plan_events.dart';
 import 'package:dms/ui/add_plan/bloc/add_plan_states.dart';
-import 'package:dms/ui/custom_widget/beat_bootom_sheet.dart';
+import 'package:dms/ui/custom_widget/primary_tag_widget.dart';
+import 'package:dms/ui/custom_widget/secondary_tag_widget.dart';
 import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_bloc.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_events.dart';
@@ -16,7 +21,6 @@ import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -30,36 +34,6 @@ class StartDayScreen extends StatefulWidget {
 }
 
 class _StartDayScreenState extends State<StartDayScreen> {
-  List<String> primaryTags = [
-    "Retailing",
-    "Joint Working",
-    "Official Meeting",
-    "Dealer Meeting",
-    "Leave",
-    "Holiday"
-  ];
-  Map<String, List<String>> secondaryTags = {
-    "Retailing": [
-      "Vijay nagar",
-      "Palasiya",
-      "Regel square",
-      "Bangali square",
-      "malwa meel square",
-      "Pardesipura"
-    ],
-    "Joint Working": ["Joint Working1", "Joint Working2", "Joint Working3"],
-    "Official Meeting": [
-      "Official Meeting1",
-      "Official Meeting2",
-      "Official Meeting3"
-    ],
-    "Dealer Meeting": ["Dealer Meeting1", "Dealer Meeting2", "Dealer Meeting3"],
-    "Leave": ["seek leave", "urgent leave", "planed leave"],
-    "Holiday": ["National Holiday", "Local holiday"]
-  };
-
-  String selectedPrimaryTag = "Retailing";
-  String selectedSecondaryTag = "";
   bool isMeeting = false;
   File? imageFile;
   TextEditingController txtRemarkController = TextEditingController();
@@ -73,8 +47,13 @@ class _StartDayScreenState extends State<StartDayScreen> {
   String quoteImage = "";
   String quoteText = "";
   String currentAddress = "";
-  RefreshController refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController refreshController = RefreshController(initialRefresh: false);
+
+  PlanDataModel? planDateModel;
+  PrimaryTagListener? primaryTagListener;
+  SecondaryTagListener? secondaryTagListener;
+  PrimaryTag? primaryTag;
+  SecondaryTag? secondaryTag;
 
   @override
   Widget build(BuildContext context) {
@@ -154,10 +133,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                   bottom: 0,
                                   child: Container(
                                     width: MediaQuery.of(context).size.width,
-                                    height:
-                                        MediaQuery.of(context).size.width * 0.5,
-                                    color: const Color(0xff000000)
-                                        .withOpacity(0.4),
+                                    height: MediaQuery.of(context).size.width * 0.5,
+                                    color: const Color(0xff000000).withOpacity(0.4),
                                   ),
                                 )
                               : Container(),
@@ -191,9 +168,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                       BlocBuilder<AddPlanBloc, AddPlanStates>(
                         builder: (context, state) {
                           if (state is AddPlanInitialState) {
-                            addPlanBloc.add(GetAddPlanDataEvent(
-                                selectedDate: DateFormat("yyyy-MM-dd")
-                                    .format(DateTime.now())));
+                            addPlanBloc.add(GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(DateTime.now())));
                           }
                           if (state is AddPlanLoadingState) {
                             return const Padding(
@@ -201,18 +176,19 @@ class _StartDayScreenState extends State<StartDayScreen> {
                               child: Center(child: CircularProgressIndicator()),
                             );
                           }
-                          if (state is GetAddPlanDataState) {
-                            // txtRemarkController.text =
-                            //     state.getAddPlanDataResponse.data!.first.remark;
-                            debugPrint(
-                                "add plan data = ${state.getAddPlanDataResponse.data!.first.remark}");
+                          if (state is GetSavedPlanState) {
+                            planDateModel = state.planDateModel;
+                            txtRemarkController.text = planDateModel!.remark;
+                            primaryTag = PrimaryTag(id: planDateModel!.primaryTagId, name: planDateModel!.primaryTag);
+                            secondaryTag = SecondaryTag(id: planDateModel!.secondaryTagId, name: planDateModel!.secondaryTag);
+                            debugPrint("add plan data = ${state.planDateModel}");
                           }
 
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                primaryTag,
+                                "Primary Tag",
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -222,121 +198,12 @@ class _StartDayScreenState extends State<StartDayScreen> {
                               const SizedBox(
                                 height: 15,
                               ),
-                              Tags(
-                                itemCount: primaryTags.length,
-                                alignment: WrapAlignment.start,
-                                itemBuilder: (index) {
-                                  return ItemTags(
-                                    singleItem: true,
-                                    onPressed: (item) {
-                                      selectedPrimaryTag = item.title!;
-                                      setState(() {});
-                                    },
-                                    active:
-                                        selectedPrimaryTag == primaryTags[index]
-                                            ? true
-                                            : false,
-                                    title: primaryTags[index],
-                                    textActiveColor: Colors.black,
-                                    textColor: const Color(0xff555555),
-                                    elevation: 0,
-                                    textStyle: const TextStyle(
-                                      fontSize: 16,
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 5, horizontal: 10),
-                                    index: index,
-                                    border:
-                                        Border.all(color: MColor.colorPrimary),
-                                    activeColor: const Color(0xFFFFC9CC),
-                                    color: const Color(0xffFAFAFA),
-                                  );
-                                },
-                              ),
-                              selectedPrimaryTag == "Retailing" ||
-                                      selectedPrimaryTag == "Joint Working"
-                                  ? const Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 15),
-                                      child: Text(
-                                        secondaryTag,
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 0.67,
-                                        ),
-                                      ),
-                                    )
-                                  : Container(),
-                              selectedPrimaryTag == primaryTags[0]
-                                  ? TextFormField(
-                                      scrollPadding: const EdgeInsets.all(0),
-                                      readOnly: true,
-                                      controller: txtBeatController,
-                                      onTap: () {
-                                        selectBeat(context,
-                                            secondaryTags[selectedPrimaryTag]!);
-                                      },
-                                      decoration: InputDecoration(
-                                        contentPadding:
-                                            const EdgeInsets.all(15),
-                                        hintText: "Select Retailing",
-                                        hintStyle: const TextStyle(
-                                          color: MColor.backButton,
-                                        ),
-                                        border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(25),
-                                            borderSide: BorderSide.none),
-                                        suffixIcon: const Icon(
-                                          Icons.keyboard_arrow_down_outlined,
-                                          color: Colors.black,
-                                        ),
-                                        // suffixIconConstraints: BoxConstraints(maxWidth: 20, maxHeight: 20)
-                                      ),
-                                    )
-                                  : selectedPrimaryTag == primaryTags[1]
-                                      ? Tags(
-                                          itemCount:
-                                              secondaryTags[selectedPrimaryTag]!
-                                                  .length,
-                                          alignment: WrapAlignment.start,
-                                          itemBuilder: (index) {
-                                            return ItemTags(
-                                              singleItem: true,
-                                              onPressed: (item) {
-                                                selectedSecondaryTag =
-                                                    item.title!;
-                                                setState(() {});
-                                              },
-                                              active: selectedSecondaryTag ==
-                                                      secondaryTags[
-                                                              selectedPrimaryTag]![
-                                                          index]
-                                                  ? true
-                                                  : false,
-                                              title: secondaryTags[
-                                                  selectedPrimaryTag]![index],
-                                              textActiveColor: Colors.black,
-                                              textColor:
-                                                  const Color(0xff555555),
-                                              elevation: 0,
-                                              textStyle:
-                                                  const TextStyle(fontSize: 16),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 5,
-                                                      horizontal: 10),
-                                              index: index,
-                                              border: Border.all(
-                                                  color: MColor.colorPrimary),
-                                              activeColor:
-                                                  const Color(0xFFFFC9CC),
-                                              color: const Color(0xffFAFAFA),
-                                            );
-                                          },
-                                        )
-                                      : Container(),
+                              PrimaryTagWidget(
+                                  onSelect: (tag) {
+                                    primaryTag = tag;
+                                  },
+                                  onInit: (PrimaryTagListener listener) {}),
+                              SecondaryTagWidget(onSelect: (tag) {}, onInit: (SecondaryTagListener listener) {}),
                               const SizedBox(
                                 height: 15,
                               ),
@@ -362,9 +229,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                   ),
                                   filled: true,
                                   fillColor: const Color(0xffF2F2F2),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: BorderSide.none),
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
                                 ),
                               ),
                               const SizedBox(
@@ -452,10 +317,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                       height: 60,
                                       decoration: BoxDecoration(
                                         color: isMeeting
-                                            ? const Color.fromRGBO(
-                                                255, 201, 204, 0.5)
-                                            : const Color.fromRGBO(
-                                                196, 196, 196, 0.5),
+                                            ? const Color.fromRGBO(255, 201, 204, 0.5)
+                                            : const Color.fromRGBO(196, 196, 196, 0.5),
                                         borderRadius: BorderRadius.circular(30),
                                       ),
                                       alignment: Alignment.center,
@@ -464,12 +327,9 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                         height: 48,
                                         decoration: BoxDecoration(
                                           color: isMeeting
-                                              ? const Color.fromRGBO(
-                                                  255, 201, 204, 1)
-                                              : const Color.fromRGBO(
-                                                  196, 196, 196, 1),
-                                          borderRadius:
-                                              BorderRadius.circular(30),
+                                              ? const Color.fromRGBO(255, 201, 204, 1)
+                                              : const Color.fromRGBO(196, 196, 196, 1),
+                                          borderRadius: BorderRadius.circular(30),
                                         ),
                                         child: const Center(
                                           child: Text(
@@ -499,10 +359,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                       height: 60,
                                       decoration: BoxDecoration(
                                         color: isMeeting
-                                            ? const Color.fromRGBO(
-                                                196, 196, 196, 0.5)
-                                            : const Color.fromRGBO(
-                                                255, 201, 204, 0.5),
+                                            ? const Color.fromRGBO(196, 196, 196, 0.5)
+                                            : const Color.fromRGBO(255, 201, 204, 0.5),
                                         borderRadius: BorderRadius.circular(30),
                                       ),
                                       alignment: Alignment.center,
@@ -511,12 +369,9 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                         height: 48,
                                         decoration: BoxDecoration(
                                           color: isMeeting
-                                              ? const Color.fromRGBO(
-                                                  196, 196, 196, 1)
-                                              : const Color.fromRGBO(
-                                                  255, 201, 204, 1),
-                                          borderRadius:
-                                              BorderRadius.circular(30),
+                                              ? const Color.fromRGBO(196, 196, 196, 1)
+                                              : const Color.fromRGBO(255, 201, 204, 1),
+                                          borderRadius: BorderRadius.circular(30),
                                         ),
                                         child: const Center(
                                           child: Text(
@@ -561,30 +416,21 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                     borderRadius: BorderRadius.circular(8),
                                     color: Colors.white,
                                     border: Border.all(
-                                      color:
-                                          const Color.fromRGBO(85, 85, 85, 1),
+                                      color: const Color.fromRGBO(85, 85, 85, 1),
                                       width: 1,
                                     ),
                                   ),
                                   child: imageFile == null
                                       ? Center(
                                           child: Image(
-                                            image: const AssetImage(
-                                                "assets/camera_icon.png"),
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                7,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                7,
+                                            image: const AssetImage("assets/camera_icon.png"),
+                                            width: MediaQuery.of(context).size.width / 7,
+                                            height: MediaQuery.of(context).size.width / 7,
                                             fit: BoxFit.contain,
                                           ),
                                         )
                                       : ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(7),
+                                          borderRadius: BorderRadius.circular(7),
                                           child: Image(
                                             image: FileImage(imageFile!),
                                             fit: BoxFit.cover,
@@ -610,10 +456,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
           listener: (context, state) {
             if (state is StartMyDaySuccessState) {
               Fluttertoast.showToast(msg: state.successMessage);
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const DrawerScreen()),
-                  (route) => false);
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const DrawerScreen()), (route) => false);
             }
             if (state is StartMyDayFailureState) {
               Fluttertoast.showToast(msg: state.failureMessage);
@@ -625,30 +468,30 @@ class _StartDayScreenState extends State<StartDayScreen> {
             color: MColor.colorSecondary,
             textColor: Colors.white,
             onPressed: () async {
-              if (selectedSecondaryTag.isNotEmpty) {
-                if (txtRemarkController.text.isNotEmpty) {
-                  if (latitude != 0.0 && longitude != 0.0) {
-                    startMyDayBloc.add(StartMyDayEvent(
-                      primaryTag: selectedPrimaryTag,
-                      secondaryTag: selectedSecondaryTag,
-                      remark: txtRemarkController.text,
-                      latitude: latitude.toString(),
-                      longitude: longitude.toString(),
-                      getMeeting: isMeeting ? 1 : 2,
-                      startDayImage: imageFile == null ? "" : imageFile!.path,
-                      primaryTagId: "1",
-                      secondaryTagId: "1",
-                    ));
-                  } else {
-                    Fluttertoast.showToast(msg: "Please turn on GPS location");
-                    userLocationBloc.add(GetUserLocationEvent());
-                  }
-                } else {
-                  Fluttertoast.showToast(msg: "Please add remark");
-                }
-              } else {
-                Fluttertoast.showToast(msg: "Please select secondary tag");
-              }
+              // if (selectedSecondaryTag.isNotEmpty) {
+              //   if (txtRemarkController.text.isNotEmpty) {
+              //     if (latitude != 0.0 && longitude != 0.0) {
+              //       startMyDayBloc.add(StartMyDayEvent(
+              //         primaryTag: selectedPrimaryTag,
+              //         secondaryTag: selectedSecondaryTag,
+              //         remark: txtRemarkController.text,
+              //         latitude: latitude.toString(),
+              //         longitude: longitude.toString(),
+              //         getMeeting: isMeeting ? 1 : 2,
+              //         startDayImage: imageFile == null ? "" : imageFile!.path,
+              //         primaryTagId: "1",
+              //         secondaryTagId: "1",
+              //       ));
+              //     } else {
+              //       Fluttertoast.showToast(msg: "Please turn on GPS location");
+              //       userLocationBloc.add(GetUserLocationEvent());
+              //     }
+              //   } else {
+              //     Fluttertoast.showToast(msg: "Please add remark");
+              //   }
+              // } else {
+              //   Fluttertoast.showToast(msg: "Please select secondary tag");
+              // }
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -674,28 +517,24 @@ class _StartDayScreenState extends State<StartDayScreen> {
   }
 
   void selectBeat(BuildContext context, List<String> secondaryTag) async {
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))),
-        builder: (context) {
-          return BeatBottomSheet(
-              beat: txtBeatController.text,
-              beats: secondaryTag,
-              onBeatSelect: (String beat) {
-                txtBeatController.text = beat;
-                selectedSecondaryTag = txtBeatController.text;
-              });
-        });
+    // showModalBottomSheet(
+    //     context: context,
+    //     isScrollControlled: true,
+    //     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))),
+    //     builder: (context) {
+    //       return BeatBottomSheet(
+    //           beat: txtBeatController.text,
+    //           beats: secondaryTag,
+    //           onBeatSelect: (String beat) {
+    //             txtBeatController.text = beat;
+    //             selectedSecondaryTag = txtBeatController.text;
+    //           });
+    //     });
   }
 
   void selectImage() async {
     XFile? image = await imagePicker.pickImage(
-        source: ImageSource.camera,
-        maxHeight: 512,
-        maxWidth: 512,
-        preferredCameraDevice: CameraDevice.front);
+        source: ImageSource.camera, maxHeight: 512, maxWidth: 512, preferredCameraDevice: CameraDevice.front);
     if (image != null) {
       imageFile = File(image.path);
       setState(() {});
@@ -704,8 +543,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
 
   void onRefresh() async {
     setState(() {});
-    selectedPrimaryTag = "Retailing";
-    selectedSecondaryTag = "";
+    primaryTag = null;
+    secondaryTag = null;
     isMeeting = false;
     latitude = 0.0;
     longitude = 0.0;
@@ -717,8 +556,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
     txtRemarkController = TextEditingController();
     txtBeatController = TextEditingController();
     startMyDayBloc.add(GetQuotesAndImagesEvent());
-    addPlanBloc.add(GetAddPlanDataEvent(
-        selectedDate: DateFormat("yyyy-MM-dd").format(DateTime.now())));
+    addPlanBloc.add(GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(DateTime.now())));
     userLocationBloc.add(GetUserLocationEvent());
     refreshController.refreshCompleted();
   }

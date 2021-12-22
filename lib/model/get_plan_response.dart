@@ -13,7 +13,7 @@ class GetPlanResponse {
 
   bool success;
   String message;
-  List<PlanDateModel> data;
+  List<PlanDataModel> data;
 
   factory GetPlanResponse.fromJson(String str) => GetPlanResponse.fromMap(json.decode(str));
 
@@ -22,7 +22,7 @@ class GetPlanResponse {
   factory GetPlanResponse.fromMap(Map<String, dynamic> json) => GetPlanResponse(
         success: json["success"] == null ? null : json["success"],
         message: json["message"] == null ? null : json["message"],
-        data: json["data"] == null ? [] : List<PlanDateModel>.from(json["data"].map((x) => PlanDateModel.fromMap(x))),
+        data: json["data"] == null ? [] : List<PlanDataModel>.from(json["data"].map((x) => PlanDataModel.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -32,8 +32,8 @@ class GetPlanResponse {
       };
 }
 
-class PlanDateModel {
-  PlanDateModel({
+class PlanDataModel {
+  PlanDataModel({
     required this.id,
     required this.userId,
     required this.addPlanDate,
@@ -55,11 +55,11 @@ class PlanDateModel {
   String remark;
   int week;
 
-  factory PlanDateModel.fromJson(String str) => PlanDateModel.fromMap(json.decode(str));
+  factory PlanDataModel.fromJson(String str) => PlanDataModel.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory PlanDateModel.fromMap(Map<String, dynamic> json) => PlanDateModel(
+  factory PlanDataModel.fromMap(Map<String, dynamic> json) => PlanDataModel(
         id: json["id"] == null ? 0 : json["id"],
         userId: json["user_id"] == null ? 0 : json["user_id"],
         addPlanDate: json["add_plan_date"] == DateTime.now() ? DateTime.now() : DateTime.parse(json["add_plan_date"]),

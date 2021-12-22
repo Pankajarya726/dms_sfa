@@ -47,7 +47,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
   SecondaryTag? secondaryTag;
   PrimaryTagListener? primaryTagListener;
   SecondaryTagListener? secondaryTagListener;
-  PlanDateModel? planDateModel;
+  PlanDataModel? planDateModel;
 
   @override
   void initState() {

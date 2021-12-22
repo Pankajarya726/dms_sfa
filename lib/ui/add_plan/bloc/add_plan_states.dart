@@ -35,7 +35,7 @@ class AddPlanGetDataState extends AddPlanStates {
 }
 
 class GetSavedPlanState extends AddPlanStates {
-  final PlanDateModel planDateModel;
+  final PlanDataModel planDateModel;
   GetSavedPlanState({required this.planDateModel});
   @override
   List<Object> get props => [planDateModel];
