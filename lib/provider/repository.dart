@@ -25,11 +25,13 @@ class ApiRepository {
 
   ApiRepository.internal();
 
-  Future<SplashResponse> validateAppVersion(
-      String version, String deviceType) async {
+  Future<SplashResponse> validateAppVersion(String version, String deviceType,
+      String userId, String currentDate) async {
     Map<String, dynamic> params = {
       "app_version": version,
       "device_type": deviceType,
+      "user_id": userId,
+      "date": currentDate,
     };
 
     try {
@@ -144,7 +146,7 @@ class ApiRepository {
           ? await MultipartFile.fromFile(startDayImage.path,
               filename:
                   DateTime.now().millisecondsSinceEpoch.toString() + ".jpg")
-          : "",
+          : null,
       "primary_tag_id": primaryTagId,
       "secondary_tag_id": secondaryTagId,
     };

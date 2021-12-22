@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/ui/login_screen/login_screen.dart';
 import 'package:dms/ui/screen_after_login/screen_after_login.dart';
 import 'package:dms/ui/splash_screen/splash_bloc/splash_bloc.dart';
@@ -90,7 +91,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
   getLogin(String appVersio, String startMyDay) async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    bool login = await SharedPreference.getBooleanPreference(SharedPreference.isLogin);
+    bool login =
+        await SharedPreference.getBooleanPreference(SharedPreference.isLogin);
     if (appVersio == packageInfo.version) {
       if (login == true) {
         if (startMyDay == "show") {
@@ -112,7 +114,8 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           );
         }
-        Constants.name = await SharedPreference.getStringPreference(SharedPreference.name);
+        Constants.name =
+            await SharedPreference.getStringPreference(SharedPreference.name);
         Constants.mobile = await SharedPreference.getStringPreference(
           SharedPreference.mobileNumber,
         );
@@ -126,19 +129,13 @@ class _SplashScreenState extends State<SplashScreen> {
           SharedPreference.userImage,
         );
 
-        Constants.leader = await SharedPreference.getBooleanPreference(SharedPreference.isLeader);
-        Constants.token = "Bearer " + await SharedPreference.getStringPreference(SharedPreference.accessToken);
+        Constants.leader = await SharedPreference.getBooleanPreference(
+            SharedPreference.isLeader);
+        Constants.token = "Bearer " +
+            await SharedPreference.getStringPreference(
+                SharedPreference.accessToken);
 
         dio.options.headers.addAll({"Authorization": Constants.token});
-
-        Timer(
-          const Duration(seconds: 3),
-          () => Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (BuildContext context) => const ScreenAfterLogin(),
-            ),
-          ),
-        );
       } else {
         Timer(
           const Duration(seconds: 3),
