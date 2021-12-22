@@ -1,7 +1,7 @@
 import 'package:dms/main.dart';
+import 'package:dms/model/get_plan_response.dart';
 import 'package:dms/ui/my_plan/bloc/my_plan_events.dart';
 import 'package:dms/ui/my_plan/bloc/my_plan_states.dart';
-import 'package:dms/ui/my_plan/model/get_plan_response.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:flutter/material.dart';

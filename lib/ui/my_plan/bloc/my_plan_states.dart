@@ -1,4 +1,4 @@
-import 'package:dms/ui/my_plan/model/get_plan_response.dart';
+import 'package:dms/model/get_plan_response.dart';
 import 'package:equatable/equatable.dart';
 
 class MyPlanStates extends Equatable {
@@ -20,7 +20,7 @@ class MyPlanFailureState extends MyPlanStates {
 }
 
 class GetPlanSuccessState extends MyPlanStates {
-  final List<MyPlanModel> myPlan;
+  final List<PlanDateModel> myPlan;
 
   GetPlanSuccessState({required this.myPlan});
 

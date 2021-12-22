@@ -1,14 +1,15 @@
+import 'package:dms/model/get_plan_response.dart';
 import 'package:dms/ui/add_plan/add_plan_screen.dart';
 import 'package:dms/ui/my_plan/bloc/my_plan_bloc.dart';
 import 'package:dms/ui/my_plan/bloc/my_plan_events.dart';
 import 'package:dms/ui/my_plan/bloc/my_plan_states.dart';
-import 'package:dms/ui/my_plan/model/get_plan_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:intl/intl.dart';
+import 'package:ntp/ntp.dart';
 
 import 'my_plan_tab_screen.dart';
 
@@ -37,7 +38,7 @@ class _MyPlanState extends State<MyPlan> {
   String week = "";
 
   MyPlanBloc myPlanBloc = MyPlanBloc();
-  List<MyPlanModel> myplan = [];
+  List<PlanDateModel> myplan = [];
 
   @override
   void initState() {
@@ -95,11 +96,16 @@ class _MyPlanState extends State<MyPlan> {
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(MColor.colorSecondary),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
+                        DateTime dateTime = await NTP.now();
+
+                        DateTime next = DateTime(dateTime.year, dateTime.month + 1);
+                        debugPrint("next-->$next");
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const AddPlanScreen(),
+                            builder: (context) => AddPlanScreen(month: next),
                           ),
                         );
                       },

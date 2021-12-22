@@ -8,7 +8,7 @@ class Url {
   static const String changePassword = "resetPassword";
   static const String getUserDetailsByUserId = "getUserDetailsByUserId";
   static const String addPlan = "addPlan";
-  static const String getAddPlan = "getAddPlan";
+  static const String getSavedPlan = "getAddPlan";
   static const String startMyDay = "addStartMyDay";
   static const String updateAddPlan = "addPlanUpdate";
   static const String getPrimaryTag = "getPrimaryTag";

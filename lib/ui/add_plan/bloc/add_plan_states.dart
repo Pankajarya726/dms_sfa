@@ -1,4 +1,6 @@
-import 'package:dms/ui/add_plan/model/GetAddPlanDataResponse.dart';
+import 'package:dms/model/get_plan_response.dart';
+import 'package:dms/model/primary_tag_response.dart';
+import 'package:dms/model/secondary_tag_response.dart';
 import 'package:equatable/equatable.dart';
 
 class AddPlanStates extends Equatable {
@@ -32,16 +34,34 @@ class AddPlanGetDataState extends AddPlanStates {
   List<Object> get props => [myPlanResponse];
 }
 
-class GetAddPlanDataState extends AddPlanStates {
-  final GetAddPlanDataResponse getAddPlanDataResponse;
-  GetAddPlanDataState({required this.getAddPlanDataResponse});
+class GetSavedPlanState extends AddPlanStates {
+  final PlanDateModel planDateModel;
+  GetSavedPlanState({required this.planDateModel});
   @override
-  List<Object> get props => [getAddPlanDataResponse];
+  List<Object> get props => [planDateModel];
 }
 
 class GetAddPlanFailureState extends AddPlanStates {
-  final bool success;
-  GetAddPlanFailureState({required this.success});
+  final String message;
+  GetAddPlanFailureState({required this.message});
   @override
-  List<Object> get props => [success];
+  List<Object> get props => [message];
+}
+
+class SelectPrimaryState extends AddPlanStates {
+  final PrimaryTag primaryTag;
+
+  SelectPrimaryState({required this.primaryTag});
+
+  @override
+  List<Object> get props => [primaryTag];
+}
+
+class SelectSecondaryState extends AddPlanStates {
+  final SecondaryTag secondaryTag;
+
+  SelectSecondaryState({required this.secondaryTag});
+
+  @override
+  List<Object> get props => [secondaryTag];
 }

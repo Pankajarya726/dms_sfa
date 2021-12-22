@@ -1,8 +1,8 @@
 import 'package:dms/main.dart';
+import 'package:dms/model/get_plan_response.dart';
 import 'package:dms/ui/add_plan/bloc/add_plan_states.dart';
 import 'package:dms/ui/add_plan/model/AddPlanResponse.dart';
 import 'package:dms/ui/add_plan/model/AddPlanUpdateData.dart';
-import 'package:dms/ui/add_plan/model/GetAddPlanDataResponse.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,25 +15,34 @@ class AddPlanBloc extends Bloc<AddPlanEvents, AddPlanStates> {
   @override
   Stream<AddPlanStates> mapEventToState(AddPlanEvents event) async* {
     if (event is AddPlanEvent) {
-      yield AddPlanLoadingState();
       yield* addPlan(event);
     }
-    if (event is GetAddPlanDataEvent) {
+    if (event is GetSavedPlanEvent) {
       yield AddPlanLoadingState();
-      yield* addPlanGetData(event);
+      yield* getSavedPlan(event);
     }
-    if (event is AddPlanUpdateEvent) {
+    if (event is SelectPrimaryEvent) {
       yield AddPlanLoadingState();
-      yield* addPlanUpdate(event);
+      yield SelectPrimaryState(primaryTag: event.primaryTag);
+    }
+    if (event is SelectSecondaryEvent) {
+      yield AddPlanLoadingState();
+      yield SelectSecondaryState(secondaryTag: event.secondaryTag);
+    }
+    if (event is GetSavedPlanEvent) {
+      yield AddPlanLoadingState();
+      yield* getSavedPlan(event);
+    }
+    if (event is UpdatePlanEvent) {
+      yield* updatePlan(event);
     }
   }
 
   Stream<AddPlanStates> addPlan(AddPlanEvent event) async* {
     if (await Network.isConnected()) {
-      String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
-
-      AddPlanResponse response =
-          await repository.addPlan(userId, event.addPlanDate, event.primaryTag, event.secondaryTag, event.remark);
+      AddPlanResponse response = await repository.addPlan(
+        event.input,
+      );
 
       if (response.success) {
         yield AddPlanSuccessState(successMessage: response.message);
@@ -45,25 +54,28 @@ class AddPlanBloc extends Bloc<AddPlanEvents, AddPlanStates> {
     }
   }
 
-  Stream<AddPlanStates> addPlanGetData(GetAddPlanDataEvent event) async* {
+  Stream<AddPlanStates> getSavedPlan(GetSavedPlanEvent event) async* {
     if (await Network.isConnected()) {
       String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
-      GetAddPlanDataResponse response = await repository.getAddPlanData(userId, event.selectedDate);
+      Map input = {
+        "user_id": userId,
+        "add_plan_date": event.selectedDate,
+      };
+      GetPlanResponse response = await repository.getSavedPlan(input);
 
       if (response.success) {
-        yield GetAddPlanDataState(getAddPlanDataResponse: response);
+        yield GetSavedPlanState(planDateModel: response.data[0]);
       } else {
-        yield GetAddPlanFailureState(success: response.success);
+        yield GetAddPlanFailureState(message: response.message);
       }
     } else {
       yield AddPlanFailureState(failureMessage: "Please check your internet connection!");
     }
   }
 
-  Stream<AddPlanStates> addPlanUpdate(AddPlanUpdateEvent event) async* {
+  Stream<AddPlanStates> updatePlan(UpdatePlanEvent event) async* {
     if (await Network.isConnected()) {
-      AddPlanUpdateDataResponse response =
-          await repository.addPlanUpdateData(event.id, event.addPlanDate, event.primaryTag, event.secondaryTag, event.remark);
+      AddPlanUpdateDataResponse response = await repository.addPlanUpdateData(event.input);
 
       if (response.success) {
         yield AddPlanSuccessState(successMessage: response.message);

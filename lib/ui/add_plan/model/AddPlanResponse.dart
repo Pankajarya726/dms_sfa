@@ -13,8 +13,7 @@ class AddPlanResponse {
   bool success;
   String message;
 
-  factory AddPlanResponse.fromJson(String str) =>
-      AddPlanResponse.fromMap(json.decode(str));
+  factory AddPlanResponse.fromJson(String str) => AddPlanResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 

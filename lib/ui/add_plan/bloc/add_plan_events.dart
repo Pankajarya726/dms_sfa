@@ -1,3 +1,5 @@
+import 'package:dms/model/primary_tag_response.dart';
+import 'package:dms/model/secondary_tag_response.dart';
 import 'package:equatable/equatable.dart';
 
 class AddPlanEvents extends Equatable {
@@ -6,38 +8,48 @@ class AddPlanEvents extends Equatable {
 }
 
 class AddPlanEvent extends AddPlanEvents {
-  final String addPlanDate;
-  final String primaryTag;
-  final String secondaryTag;
-  final String remark;
-  AddPlanEvent(
-      {required this.addPlanDate,
-      required this.primaryTag,
-      required this.secondaryTag,
-      required this.remark});
+  final Map input;
+
+  AddPlanEvent({
+    required this.input,
+  });
+
   @override
-  List<Object> get props => [addPlanDate, primaryTag, secondaryTag, remark];
+  List<Object> get props => [input];
 }
 
-class AddPlanUpdateEvent extends AddPlanEvents {
-  final String id;
-  final String addPlanDate;
-  final String primaryTag;
-  final String secondaryTag;
-  final String remark;
-  AddPlanUpdateEvent(
-      {required this.id,
-      required this.addPlanDate,
-      required this.primaryTag,
-      required this.secondaryTag,
-      required this.remark});
+class UpdatePlanEvent extends AddPlanEvents {
+  final Map input;
+
+  UpdatePlanEvent({required this.input});
+
   @override
-  List<Object> get props => [id, addPlanDate, primaryTag, secondaryTag, remark];
+  List<Object> get props => [input];
 }
 
-class GetAddPlanDataEvent extends AddPlanEvents {
+class SelectPrimaryEvent extends AddPlanEvents {
+  final PrimaryTag primaryTag;
+
+  SelectPrimaryEvent({required this.primaryTag});
+
+  @override
+  List<Object> get props => [primaryTag];
+}
+
+class SelectSecondaryEvent extends AddPlanEvents {
+  final SecondaryTag secondaryTag;
+
+  SelectSecondaryEvent({required this.secondaryTag});
+
+  @override
+  List<Object> get props => [secondaryTag];
+}
+
+class GetSavedPlanEvent extends AddPlanEvents {
   final String selectedDate;
-  GetAddPlanDataEvent({required this.selectedDate});
+
+  GetSavedPlanEvent({required this.selectedDate});
+
   @override
   List<Object> get props => [];
 }
