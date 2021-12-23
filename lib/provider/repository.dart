@@ -14,6 +14,7 @@ import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart'
 import 'package:dms/ui/edit_profile/model/edit_profile_model.dart';
 import 'package:dms/ui/login_screen/login_model/login_response.dart';
 import 'package:dms/ui/splash_screen/model/splash_model.dart';
+import 'package:dms/ui/start_my_day/model/end_my_day_response.dart';
 import 'package:dms/ui/start_my_day/model/quotes_and_images_response.dart';
 import 'package:dms/ui/start_my_day/model/start_my_day_response.dart.dart';
 
@@ -121,6 +122,8 @@ class ApiRepository {
     File startDayImage,
     String primaryTagId,
     String secondaryTagId,
+    String address,
+    String startDayTime,
   ) async {
     Map<String, dynamic> data = {
       "user_id": userId,
@@ -136,6 +139,8 @@ class ApiRepository {
           : null,
       "primary_tag_id": primaryTagId,
       "secondary_tag_id": secondaryTagId,
+      "address": address.isNotEmpty ? address : null,
+      "start_day_time": startDayTime,
     };
 
     FormData formData = FormData.fromMap(data);
@@ -154,6 +159,37 @@ class ApiRepository {
       }
     } catch (exception) {
       return StartMyDayResponse(
+        success: false,
+        message: "Something went wrong!",
+      );
+    }
+  }
+
+  Future<EndMyDayResponse> endMyDay(
+    String userId,
+    String endDayDate,
+    String endDayTime,
+  ) async {
+    Map<String, dynamic> data = {
+      "user_id": userId,
+      "start_day_date": endDayDate,
+      "end_day_time": endDayTime,
+    };
+
+    try {
+      Response response = await dio.post(Url.endMyDay, data: data);
+      if (response.statusCode == 200) {
+        EndMyDayResponse endMyDayResponse =
+            EndMyDayResponse.fromJson(response.toString());
+        return endMyDayResponse;
+      } else {
+        return EndMyDayResponse(
+          success: false,
+          message: response.statusMessage.toString(),
+        );
+      }
+    } catch (exception) {
+      return EndMyDayResponse(
         success: false,
         message: "Something went wrong!",
       );

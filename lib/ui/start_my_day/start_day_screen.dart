@@ -499,6 +499,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
               //         startDayImage: imageFile == null ? "" : imageFile!.path,
               //         primaryTagId: "1",
               //         secondaryTagId: "1",
+              //         address: currentAddress,
               //       ));
               //     } else {
               //       Fluttertoast.showToast(msg: "Please turn on GPS location");
