@@ -24,6 +24,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:ntp/ntp.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class StartDayScreen extends StatefulWidget {
@@ -168,19 +169,28 @@ class _StartDayScreenState extends State<StartDayScreen> {
                       BlocBuilder<AddPlanBloc, AddPlanStates>(
                         builder: (context, state) {
                           if (state is AddPlanInitialState) {
-                            addPlanBloc.add(GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(DateTime.now())));
+                            getCurrentDate();
+                            return Container();
                           }
                           if (state is AddPlanLoadingState) {
-                            return const Padding(
-                              padding: EdgeInsets.only(top: 15, bottom: 15),
-                              child: Center(child: CircularProgressIndicator()),
-                            );
+                            // return const Padding(
+                            //   padding: EdgeInsets.only(top: 15, bottom: 15),
+                            //   child: Center(child: CircularProgressIndicator()),
+                            // );
                           }
                           if (state is GetSavedPlanState) {
                             planDateModel = state.planDateModel;
                             txtRemarkController.text = planDateModel!.remark;
                             primaryTag = PrimaryTag(id: planDateModel!.primaryTagId, name: planDateModel!.primaryTag);
                             secondaryTag = SecondaryTag(id: planDateModel!.secondaryTagId, name: planDateModel!.secondaryTag);
+
+                            if (primaryTagListener != null) {
+                              primaryTagListener!.onPrimaryTagSelect(primaryTag!);
+                            }
+                            if (secondaryTagListener != null) {
+                              secondaryTagListener!.onPrimaryTagChange(primaryTag!, secondaryTag!);
+                              secondaryTagListener!.onSecondaryTagSelect(secondaryTag!);
+                            }
                             debugPrint("add plan data = ${state.planDateModel}");
                           }
 
@@ -198,12 +208,20 @@ class _StartDayScreenState extends State<StartDayScreen> {
                               const SizedBox(
                                 height: 15,
                               ),
-                              PrimaryTagWidget(
-                                  onSelect: (tag) {
-                                    primaryTag = tag;
-                                  },
-                                  onInit: (PrimaryTagListener listener) {}),
-                              SecondaryTagWidget(onSelect: (tag) {}, onInit: (SecondaryTagListener listener) {}),
+                              PrimaryTagWidget(onSelect: (tag) {
+                                primaryTag = tag;
+
+                                if (secondaryTagListener != null) {
+                                  secondaryTagListener!.onPrimaryTagChange(primaryTag!, secondaryTag);
+                                }
+                              }, onInit: (PrimaryTagListener listener) {
+                                primaryTagListener = listener;
+                              }),
+                              SecondaryTagWidget(onSelect: (tag) {
+                                secondaryTag = tag;
+                              }, onInit: (SecondaryTagListener listener) {
+                                secondaryTagListener = listener;
+                              }),
                               const SizedBox(
                                 height: 15,
                               ),
@@ -559,5 +577,9 @@ class _StartDayScreenState extends State<StartDayScreen> {
     addPlanBloc.add(GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(DateTime.now())));
     userLocationBloc.add(GetUserLocationEvent());
     refreshController.refreshCompleted();
+  }
+
+  void getCurrentDate() async {
+    addPlanBloc.add(GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(await NTP.now())));
   }
 }

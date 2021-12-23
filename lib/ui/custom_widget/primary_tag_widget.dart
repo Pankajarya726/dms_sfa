@@ -35,7 +35,7 @@ class _PrimaryTagWidgetState extends State<PrimaryTagWidget> implements PrimaryT
 
   @override
   Widget build(BuildContext context) {
-    return primaryTags.isEmpty
+    return primaryTags.isEmpty || selectedTag == null
         ? const SizedBox(
             width: 0,
             height: 0,
@@ -53,8 +53,9 @@ class _PrimaryTagWidgetState extends State<PrimaryTagWidget> implements PrimaryT
                 onPressed: (item) {
                   selectedTag = item.customData;
                   widget.onSelect(selectedTag!);
+                  setState(() {});
                 },
-                active: selectedTag!.id == primaryTags[index].id ? true : false,
+                active: selectedTag!.id == primaryTags[index].id,
                 title: primaryTags[index].name,
                 textActiveColor: Colors.black,
                 textColor: const Color(0xff555555),
@@ -80,6 +81,7 @@ class _PrimaryTagWidgetState extends State<PrimaryTagWidget> implements PrimaryT
 
         selectedTag = primaryTags[0];
         widget.onSelect(selectedTag!);
+        setState(() {});
       } else {
         Fluttertoast.showToast(msg: response.message);
       }
