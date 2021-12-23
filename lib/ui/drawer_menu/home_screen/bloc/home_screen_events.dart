@@ -10,3 +10,8 @@ class GetUserDetailsEvent extends HomeScreenEvents {
   @override
   List<Object> get props => [];
 }
+
+class GetMenusEvent extends HomeScreenEvents {
+  @override
+  List<Object> get props => [];
+}

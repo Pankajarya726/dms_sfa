@@ -68,6 +68,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 state.userDetails.data!.designation);
             SharedPreference.setStringPreference(
                 SharedPreference.userImage, state.userDetails.data!.image);
+            if (state.userDetails.data!.pjpButton == "hide") {
+              SharedPreference.setBooleanPreference(
+                  SharedPreference.pjpButton, false);
+            } else {
+              SharedPreference.setBooleanPreference(
+                  SharedPreference.pjpButton, true);
+            }
 
             Constants.name = state.userDetails.data!.name;
             Constants.mobile = state.userDetails.data!.mobileNumber;

@@ -25,8 +25,10 @@ class MyPlanBloc extends Bloc<MyPlanEvents, MyPlanStates> {
 
   Stream<MyPlanStates> myPlanGetData(GetMyPlansEvent event) async* {
     if (await Network.isConnected()) {
-      String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
-      GetPlanResponse response = await repository.getPlanByMonth(userId, event.date);
+      String userId =
+          await SharedPreference.getStringPreference(SharedPreference.userId);
+      GetPlanResponse response =
+          await repository.getPlanByMonth(userId, event.date);
 
       if (response.success) {
         yield GetPlanSuccessState(myPlan: response.data);
@@ -34,13 +36,18 @@ class MyPlanBloc extends Bloc<MyPlanEvents, MyPlanStates> {
         yield MyPlanFailureState(failureMessage: response.message);
       }
     } else {
-      yield MyPlanFailureState(failureMessage: "Please check your internet connection!");
+      yield MyPlanFailureState(
+          failureMessage: "Please check your internet connection!");
     }
   }
 
   Stream<MyPlanStates> getMonths() async* {
+    bool pjpButton =
+        await SharedPreference.getBooleanPreference(SharedPreference.pjpButton);
     List<DateTime> months = [];
-    debugPrint((DateFormat("MMMM").format(DateTime(DateTime.now().year, DateTime.now().month - 6, DateTime.now().day))).toString());
+    debugPrint((DateFormat("MMMM").format(DateTime(
+            DateTime.now().year, DateTime.now().month - 6, DateTime.now().day)))
+        .toString());
     DateTime now = DateTime.now();
     DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
     debugPrint("${lastDayOfMonth.month}/${lastDayOfMonth.day}");
@@ -55,6 +62,6 @@ class MyPlanBloc extends Bloc<MyPlanEvents, MyPlanStates> {
     months.add(DateTime(now.year, now.month + 1, now.day));
 
     debugPrint("months -> $months");
-    yield GetMonthState(months: months);
+    yield GetMonthState(months: months, pjpButton: pjpButton);
   }
 }

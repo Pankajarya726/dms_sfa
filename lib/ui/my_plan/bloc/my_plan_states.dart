@@ -29,10 +29,11 @@ class GetPlanSuccessState extends MyPlanStates {
 }
 
 class GetMonthState extends MyPlanStates {
+  final bool pjpButton;
   final List<DateTime> months;
 
-  GetMonthState({required this.months});
+  GetMonthState({required this.months, required this.pjpButton});
 
   @override
-  List<Object> get props => [months];
+  List<Object> get props => [months, pjpButton];
 }
