@@ -21,8 +21,16 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingsScreen> {
   SettingsBloc settingsBloc = SettingsBloc();
-  RefreshController refreshController = RefreshController(initialRefresh: false);
-  List<String> textList = ["Edit Profile", "Change Password", "About Us", "Rate App", "Share App", "Logout"];
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
+  List<String> textList = [
+    "Edit Profile",
+    "Change Password",
+    "About Us",
+    "Rate App",
+    "Share App",
+    "Logout"
+  ];
 
   @override
   void initState() {
@@ -72,15 +80,22 @@ class _SettingScreenState extends State<SettingsScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 IconButton(
-                                  icon: const Icon(Icons.arrow_back),
-                                  color: Colors.white,
                                   onPressed: () {
-                                    Navigator.pop(context, true);
+                                    Navigator.pop(context);
                                   },
+                                  icon: const Icon(
+                                    Icons.arrow_back_ios,
+                                    color: Colors.white,
+                                  ),
                                 ),
                                 const Text("Settings",
-                                    style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500)),
-                                const Text("Opacity", style: TextStyle(color: Colors.transparent)),
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w500)),
+                                const Text("Opacity",
+                                    style:
+                                        TextStyle(color: Colors.transparent)),
                               ],
                             ),
                           ),
@@ -93,42 +108,67 @@ class _SettingScreenState extends State<SettingsScreen> {
                                 padding: const EdgeInsets.only(top: 60),
                                 decoration: const BoxDecoration(
                                   image: DecorationImage(
-                                    image: AssetImage("assets/3x/rounded-bg.png"),
+                                    image:
+                                        AssetImage("assets/3x/rounded-bg.png"),
                                     fit: BoxFit.cover,
                                   ),
                                 ),
                                 child: Column(
                                   children: [
-                                    BlocBuilder<SettingsBloc, SettingsState>(builder: (context, state) {
+                                    BlocBuilder<SettingsBloc, SettingsState>(
+                                        builder: (context, state) {
                                       if (state is DetailsSucessState) {
-                                        return state.response.data!.name.isNotEmpty
+                                        return state
+                                                .response.data!.name.isNotEmpty
                                             ? Text(state.response.data!.name,
                                                 style: const TextStyle(
-                                                    color: Color(0xfff24b55), fontSize: 20, fontWeight: FontWeight.w600))
+                                                    color: Color(0xfff24b55),
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.w600))
                                             : Text(
                                                 Constants.name,
                                                 style: const TextStyle(
-                                                    color: Color(0xfff24b55), fontSize: 20, fontWeight: FontWeight.w600),
+                                                    color: Color(0xfff24b55),
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.w600),
                                               );
                                       }
                                       return Text(Constants.name,
-                                          style: const TextStyle(color: Color(0xfff24b55), fontSize: 20, fontWeight: FontWeight.w600));
+                                          style: const TextStyle(
+                                              color: Color(0xfff24b55),
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w600));
                                     }),
                                     const SizedBox(
                                       height: 10,
                                     ),
-                                    BlocBuilder<SettingsBloc, SettingsState>(builder: (context, state) {
+                                    BlocBuilder<SettingsBloc, SettingsState>(
+                                        builder: (context, state) {
                                       if (state is DetailsSucessState) {
-                                        return state.response.data!.designation.isNotEmpty
-                                            ? Text(state.response.data!.designation,
+                                        return state.response.data!.designation
+                                                .isNotEmpty
+                                            ? Text(
+                                                state
+                                                    .response.data!.designation,
                                                 style: const TextStyle(
-                                                    color: Color(0xff303030), fontSize: 14, fontWeight: FontWeight.w600))
+                                                    color: Color(0xff303030),
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w600))
                                             : Text(Constants.designation,
                                                 style: const TextStyle(
-                                                    color: Color(0xff303030), fontSize: 14, fontWeight: FontWeight.w600));
+                                                    color: Color(0xff303030),
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w600));
                                       }
                                       return Text(Constants.designation,
-                                          style: const TextStyle(color: Color(0xff303030), fontSize: 14, fontWeight: FontWeight.w600));
+                                          style: const TextStyle(
+                                              color: Color(0xff303030),
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600));
                                     }),
                                   ],
                                 ),
@@ -151,7 +191,9 @@ class _SettingScreenState extends State<SettingsScreen> {
                                   ),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(100),
-                                    child: BlocBuilder<SettingsBloc, SettingsState>(builder: (context, state) {
+                                    child: BlocBuilder<SettingsBloc,
+                                            SettingsState>(
+                                        builder: (context, state) {
                                       String url = Constants.image;
                                       if (state is DetailsSucessState) {
                                         url = state.response.data!.image;
@@ -161,8 +203,11 @@ class _SettingScreenState extends State<SettingsScreen> {
                                         height: 90,
                                         fit: BoxFit.cover,
                                         imageUrl: url,
-                                        errorWidget: (context, url, error) => Image.asset("assets/3x/placeholder.png"),
-                                        placeholder: (context, url) => const CircularProgressIndicator(
+                                        errorWidget: (context, url, error) =>
+                                            Image.asset(
+                                                "assets/3x/placeholder.png"),
+                                        placeholder: (context, url) =>
+                                            const CircularProgressIndicator(
                                           color: Colors.red,
                                         ),
                                       );
@@ -184,34 +229,51 @@ class _SettingScreenState extends State<SettingsScreen> {
                               child: Container(
                                 padding: const EdgeInsets.all(15),
                                 decoration: const BoxDecoration(
-                                  border: Border(bottom: BorderSide(width: 1, color: Color(0xffbdbdbd))),
+                                  border: Border(
+                                      bottom: BorderSide(
+                                          width: 1, color: Color(0xffbdbdbd))),
                                 ),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Image.asset("assets/s${index + 1}.png", width: 24),
+                                    Image.asset("assets/s${index + 1}.png",
+                                        width: 24),
                                     const SizedBox(width: 17),
                                     Expanded(
                                         child: index < 5
                                             ? Text(textList[index],
-                                                style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w600))
+                                                style: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w600))
                                             : Text(textList[index],
                                                 style: const TextStyle(
-                                                    color: Color(0xfff24b55), fontSize: 14, fontWeight: FontWeight.w600))),
-                                    const Icon(Icons.arrow_forward_ios, color: Colors.black, size: 15),
+                                                    color: Color(0xfff24b55),
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w600))),
+                                    const Icon(Icons.arrow_forward_ios,
+                                        color: Colors.black, size: 15),
                                   ],
                                 ),
                               ),
                               onTap: () {
                                 if (index == 0) {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfileScreen()))
+                                  Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const EditProfileScreen()))
                                       .then((value) => addEvent());
                                 }
                                 if (index == 1) {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const ChangePasswordScreen(),
+                                      builder: (context) =>
+                                          const ChangePasswordScreen(),
                                     ),
                                   );
                                 }
@@ -219,7 +281,8 @@ class _SettingScreenState extends State<SettingsScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const AboutUsScreen(),
+                                      builder: (context) =>
+                                          const AboutUsScreen(),
                                     ),
                                   );
                                 }
@@ -248,21 +311,35 @@ class _SettingScreenState extends State<SettingsScreen> {
       builder: (context) {
         return AlertDialog(
           contentPadding: const EdgeInsets.fromLTRB(25, 10, 0, 0),
-          title: const Text("Logout", style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w600)),
+          title: const Text("Logout",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600)),
           content: const Text("Are you sure you want to logout?",
-              style: TextStyle(color: Color.fromRGBO(85, 85, 85, 1), fontSize: 15, fontWeight: FontWeight.w500)),
+              style: TextStyle(
+                  color: Color.fromRGBO(85, 85, 85, 1),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500)),
           actions: [
             MaterialButton(
-              child: const Text("Cancel", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600)),
+              child: const Text("Cancel",
+                  style: TextStyle(
+                      color: Colors.grey, fontWeight: FontWeight.w600)),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
             MaterialButton(
-              child: const Text("Logout", style: TextStyle(color: Color(0xfff4511e), fontWeight: FontWeight.w600)),
+              child: const Text("Logout",
+                  style: TextStyle(
+                      color: Color(0xfff4511e), fontWeight: FontWeight.w600)),
               onPressed: () {
                 Navigator.pushAndRemoveUntil(
-                    context, MaterialPageRoute(builder: (context) => const LoginScreen()), ModalRoute.withName("/"));
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen()),
+                    ModalRoute.withName("/"));
                 SharedPreference.clearSharedPreference(context);
               },
             ),
@@ -273,7 +350,8 @@ class _SettingScreenState extends State<SettingsScreen> {
   }
 
   addEvent() async {
-    var usrId = await SharedPreference.getStringPreference(SharedPreference.userId);
+    var usrId =
+        await SharedPreference.getStringPreference(SharedPreference.userId);
     settingsBloc.add(SettingsEvent(userId: usrId));
   }
 

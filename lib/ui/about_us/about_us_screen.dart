@@ -1,3 +1,4 @@
+import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class AboutUsScreen extends StatefulWidget {
@@ -13,9 +14,23 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.red,
-        title: const Text("About Us"),
+        backgroundColor: MColor.colorPrimary,
+        title: const Text(
+          "About Us",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         centerTitle: true,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: Colors.white,
+          ),
+        ),
       ),
       body: const Padding(
         padding: EdgeInsets.all(14),
