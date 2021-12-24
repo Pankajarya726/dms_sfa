@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dms/ui/start_my_day/bloc/start_my_day_events.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_states.dart';
 import 'package:dms/ui/start_my_day/model/end_my_day_response.dart';
@@ -19,10 +17,11 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
   @override
   Stream<StartMyDayStates> mapEventToState(StartMyDayEvents event) async* {
     if (event is GetQuotesAndImagesEvent) {
-      yield StartMyDayLoadingState();
+
       yield* getQuotesAndImages(event);
     }
     if (event is StartMyDayEvent) {
+      yield StartMyDayLoadingState();
       yield* startMyDay(event);
     }
     if (event is EndMyDayEvent) {
@@ -30,8 +29,7 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
     }
   }
 
-  Stream<StartMyDayStates> getQuotesAndImages(
-      GetQuotesAndImagesEvent event) async* {
+  Stream<StartMyDayStates> getQuotesAndImages(GetQuotesAndImagesEvent event) async* {
     if (await Network.isConnected()) {
       DateTime _ntpTime;
       _ntpTime = await NTP.now();
@@ -39,41 +37,18 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
       QuotesAndImagesResponse response = await repository.getQuotesAndImages();
 
       if (response.success) {
-        yield GetQuotesAndImagesState(
-            quotesAndImagesResponse: response,
-            currentDate: DateFormat("yyyy-MM-dd").format(_ntpTime));
+        yield GetQuotesAndImagesState(quotesAndImagesResponse: response, currentDate: DateFormat("yyyy-MM-dd").format(_ntpTime));
       } else {
         yield StartMyDayFailureState(failureMessage: response.message);
       }
     } else {
-      yield StartMyDayFailureState(
-          failureMessage: "Please check your internet connection!");
+      yield StartMyDayFailureState(failureMessage: "Please check your internet connection!");
     }
   }
 
   Stream<StartMyDayStates> startMyDay(StartMyDayEvent event) async* {
     if (await Network.isConnected()) {
-      String userId =
-          await SharedPreference.getStringPreference(SharedPreference.userId);
-      DateTime _ntpTime;
-      _ntpTime = await NTP.now();
-      var format = DateFormat("yyyy-MM-dd");
-      String webtime = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
-      StartMyDayResponse response = await repository.startMyDay(
-        userId,
-        format.format(_ntpTime).toString(),
-        event.primaryTag,
-        event.secondaryTag,
-        event.remark,
-        event.latitude,
-        event.longitude,
-        event.getMeeting,
-        File(event.startDayImage),
-        event.primaryTagId,
-        event.secondaryTagId,
-        event.address,
-        webtime,
-      );
+      StartMyDayResponse response = await repository.startMyDayApi(event.input);
 
       if (response.success) {
         yield StartMyDaySuccessState(successMessage: response.message);
@@ -81,15 +56,13 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
         yield StartMyDayFailureState(failureMessage: response.message);
       }
     } else {
-      yield StartMyDayFailureState(
-          failureMessage: "Please check your internet connection!");
+      yield StartMyDayFailureState(failureMessage: "Please check your internet connection!");
     }
   }
 
   Stream<StartMyDayStates> endMyDay(EndMyDayEvent event) async* {
     if (await Network.isConnected()) {
-      String userId =
-          await SharedPreference.getStringPreference(SharedPreference.userId);
+      String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
       DateTime _ntpTime;
       _ntpTime = await NTP.now();
       String webtime = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
@@ -105,8 +78,7 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
         yield EndMyDayFailureState(failureMessage: response.message);
       }
     } else {
-      yield EndMyDayFailureState(
-          failureMessage: "Please check your internet connection!");
+      yield EndMyDayFailureState(failureMessage: "Please check your internet connection!");
     }
   }
 }

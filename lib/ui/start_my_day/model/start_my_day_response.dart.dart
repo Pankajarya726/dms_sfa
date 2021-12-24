@@ -13,19 +13,17 @@ class StartMyDayResponse {
   bool success;
   String message;
 
-  factory StartMyDayResponse.fromJson(String str) =>
-      StartMyDayResponse.fromMap(json.decode(str));
+  factory StartMyDayResponse.fromJson(String str) => StartMyDayResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory StartMyDayResponse.fromMap(Map<String, dynamic> json) =>
-      StartMyDayResponse(
-        success: json["success"] == null ? null : json["success"],
-        message: json["message"] == null ? null : json["message"],
+  factory StartMyDayResponse.fromMap(Map<String, dynamic> json) => StartMyDayResponse(
+        success: json["success"],
+        message: json["message"],
       );
 
   Map<String, dynamic> toMap() => {
-        "success": success == null ? null : success,
-        "message": message == null ? null : message,
+        "success": success,
+        "message": message,
       };
 }

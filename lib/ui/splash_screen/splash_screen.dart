@@ -59,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.85,
                     child: Image.asset(
-                      "assets/splash-triangle.png",
+                      "assets/splash-triangle.webp",
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -89,7 +89,24 @@ class _SplashScreenState extends State<SplashScreen> {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     bool login = await SharedPreference.getBooleanPreference(SharedPreference.isLogin);
     if (appVersio == packageInfo.version) {
-      if (login == true) {
+      if (login) {
+        Constants.name = await SharedPreference.getStringPreference(SharedPreference.name);
+        Constants.mobile = await SharedPreference.getStringPreference(
+          SharedPreference.mobileNumber,
+        );
+        Constants.designation = await SharedPreference.getStringPreference(
+          SharedPreference.userDesignation,
+        );
+        Constants.email = await SharedPreference.getStringPreference(
+          SharedPreference.email,
+        );
+        Constants.image = await SharedPreference.getStringPreference(
+          SharedPreference.userImage,
+        );
+        Constants.leader = await SharedPreference.getBooleanPreference(SharedPreference.isLeader);
+        Constants.token = "Bearer " + await SharedPreference.getStringPreference(SharedPreference.accessToken);
+        dio.options.headers.addAll({"Authorization": Constants.token});
+
         if (startMyDay == "show") {
           Timer(
             const Duration(seconds: 3),
@@ -109,33 +126,6 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           );
         }
-        Constants.name = await SharedPreference.getStringPreference(SharedPreference.name);
-        Constants.mobile = await SharedPreference.getStringPreference(
-          SharedPreference.mobileNumber,
-        );
-        Constants.designation = await SharedPreference.getStringPreference(
-          SharedPreference.userDesignation,
-        );
-        Constants.email = await SharedPreference.getStringPreference(
-          SharedPreference.email,
-        );
-        Constants.image = await SharedPreference.getStringPreference(
-          SharedPreference.userImage,
-        );
-
-        Constants.leader = await SharedPreference.getBooleanPreference(SharedPreference.isLeader);
-        Constants.token = "Bearer " + await SharedPreference.getStringPreference(SharedPreference.accessToken);
-
-        dio.options.headers.addAll({"Authorization": Constants.token});
-
-        Timer(
-          const Duration(seconds: 3),
-          () => Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (BuildContext context) => const ScreenAfterLogin(),
-            ),
-          ),
-        );
       } else {
         Timer(
           const Duration(seconds: 3),

@@ -110,40 +110,8 @@ class ApiRepository {
     }
   }
 
-  Future<StartMyDayResponse> startMyDay(
-    String userId,
-    String startDayDate,
-    String primaryTag,
-    String secondaryTag,
-    String remark,
-    String latitude,
-    String longitude,
-    int getMeeting,
-    File startDayImage,
-    String primaryTagId,
-    String secondaryTagId,
-    String address,
-    String startDayTime,
-  ) async {
-    Map<String, dynamic> data = {
-      "user_id": userId,
-      "start_day_date": startDayDate,
-      "primary_tag": primaryTag,
-      "secondary_tag": secondaryTag,
-      "remark": remark,
-      "latitude": latitude,
-      "longitude": longitude,
-      "get_meeting": getMeeting,
-      "start_day_image": startDayImage.path.isNotEmpty
-          ? await MultipartFile.fromFile(startDayImage.path, filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg")
-          : null,
-      "primary_tag_id": primaryTagId,
-      "secondary_tag_id": secondaryTagId,
-      "address": address.isNotEmpty ? address : null,
-      "start_day_time": startDayTime,
-    };
-
-    FormData formData = FormData.fromMap(data);
+  Future<StartMyDayResponse> startMyDayApi(Map<String, dynamic> input) async {
+    FormData formData = FormData.fromMap(input);
 
     try {
       Response response = await dio.post(Url.startMyDay, data: formData);
@@ -179,8 +147,7 @@ class ApiRepository {
     try {
       Response response = await dio.post(Url.endMyDay, data: data);
       if (response.statusCode == 200) {
-        EndMyDayResponse endMyDayResponse =
-            EndMyDayResponse.fromJson(response.toString());
+        EndMyDayResponse endMyDayResponse = EndMyDayResponse.fromJson(response.toString());
         return endMyDayResponse;
       } else {
         return EndMyDayResponse(

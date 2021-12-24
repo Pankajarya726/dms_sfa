@@ -1,6 +1,8 @@
+import 'dart:collection';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:dms/main.dart';
 import 'package:dms/model/get_plan_response.dart';
 import 'package:dms/model/primary_tag_response.dart';
@@ -18,6 +20,7 @@ import 'package:dms/ui/userlocation_bloc/userlocation_bloc.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_events.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_states.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,6 +40,7 @@ class StartDayScreen extends StatefulWidget {
 class _StartDayScreenState extends State<StartDayScreen> {
   bool isMeeting = false;
   File? imageFile;
+  String fileName = "test.jpg";
   TextEditingController txtRemarkController = TextEditingController();
   TextEditingController txtBeatController = TextEditingController();
   StartMyDayBloc startMyDayBloc = StartMyDayBloc();
@@ -172,12 +176,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                             getCurrentDate();
                             return Container();
                           }
-                          if (state is AddPlanLoadingState) {
-                            // return const Padding(
-                            //   padding: EdgeInsets.only(top: 15, bottom: 15),
-                            //   child: Center(child: CircularProgressIndicator()),
-                            // );
-                          }
+                          if (state is AddPlanLoadingState) {}
                           if (state is GetSavedPlanState) {
                             planDateModel = state.planDateModel;
                             txtRemarkController.text = planDateModel!.remark;
@@ -217,11 +216,15 @@ class _StartDayScreenState extends State<StartDayScreen> {
                               }, onInit: (PrimaryTagListener listener) {
                                 primaryTagListener = listener;
                               }),
-                              SecondaryTagWidget(onSelect: (tag) {
-                                secondaryTag = tag;
-                              }, onInit: (SecondaryTagListener listener) {
-                                secondaryTagListener = listener;
-                              }),
+                              SecondaryTagWidget(
+                                onSelect: (tag) {
+                                  secondaryTag = tag;
+                                },
+                                onInit: (SecondaryTagListener listener) {
+                                  secondaryTagListener = listener;
+                                },
+                                primaryTag: primaryTag,
+                              ),
                               const SizedBox(
                                 height: 15,
                               ),
@@ -486,6 +489,58 @@ class _StartDayScreenState extends State<StartDayScreen> {
             color: MColor.colorSecondary,
             textColor: Colors.white,
             onPressed: () async {
+              if (primaryTag == null) {
+                Fluttertoast.showToast(msg: "Please select primary tag");
+                return;
+              }
+              if ((primaryTag!.id == 1 || primaryTag!.id == 2) && secondaryTag == null) {
+                Fluttertoast.showToast(msg: "Please select secondary tag");
+                return;
+              }
+              if (txtRemarkController.text.trim().isEmpty) {
+                Fluttertoast.showToast(msg: "Please enter remark");
+                return;
+              }
+              if (latitude == 0.0 && longitude == 0.0) {
+                Fluttertoast.showToast(msg: "Could not fetch your location, Please try again later");
+                return;
+              }
+              if (currentAddress.isEmpty) {
+                Fluttertoast.showToast(
+                    msg:
+                        "Could not proceed, because we are not able to fetch your area detail. Please allow location permission to continue");
+                return;
+              }
+
+              Map<String, dynamic> input = HashMap<String, dynamic>();
+
+              DateTime _ntpTime = await NTP.now();
+              input["user_id"] = await SharedPreference.getStringPreference(SharedPreference.userId);
+              input["start_day_date"] = DateFormat("yyyy-MM-dd").format(_ntpTime);
+              input["primary_tag"] = primaryTag!.name;
+              input["primary_tag_id"] = primaryTag!.id;
+              if (secondaryTag != null) {
+                input["secondary_tag"] = secondaryTag!.name;
+                input["secondary_tag_id"] = secondaryTag!.id;
+              }
+
+              input["remark"] = txtRemarkController.text.trim();
+              input["latitude"] = latitude.toString();
+              input["longitude"] = longitude.toString();
+              input["get_meeting"] = isMeeting ? 1 : 2;
+              input["address"] = currentAddress;
+              input["start_day_time"] = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
+
+              if (imageFile != null) {
+                input["start_day_image"] = await MultipartFile.fromFile(
+                  imageFile!.path,
+                  filename: fileName,
+                );
+              }
+
+              debugPrint("start_my_day_input-->$input");
+              startMyDayBloc.add(StartMyDayEvent(input: input));
+
               // if (selectedSecondaryTag.isNotEmpty) {
               //   if (txtRemarkController.text.isNotEmpty) {
               //     if (latitude != 0.0 && longitude != 0.0) {
@@ -556,6 +611,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
         source: ImageSource.camera, maxHeight: 512, maxWidth: 512, preferredCameraDevice: CameraDevice.front);
     if (image != null) {
       imageFile = File(image.path);
+      fileName = image.name;
       setState(() {});
     }
   }

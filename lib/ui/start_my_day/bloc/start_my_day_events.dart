@@ -11,41 +11,14 @@ class GetQuotesAndImagesEvent extends StartMyDayEvents {
 }
 
 class StartMyDayEvent extends StartMyDayEvents {
-  final String primaryTag;
-  final String secondaryTag;
-  final String remark;
-  final String latitude;
-  final String longitude;
-  final int getMeeting;
-  final String startDayImage;
-  final String primaryTagId;
-  final String secondaryTagId;
-  final String address;
+  final Map<String, dynamic> input;
+
   StartMyDayEvent({
-    required this.primaryTag,
-    required this.secondaryTag,
-    required this.remark,
-    required this.latitude,
-    required this.longitude,
-    required this.getMeeting,
-    required this.startDayImage,
-    required this.primaryTagId,
-    required this.secondaryTagId,
-    required this.address,
+    required this.input,
   });
+
   @override
-  List<Object> get props => [
-        primaryTag,
-        secondaryTag,
-        remark,
-        latitude,
-        longitude,
-        getMeeting,
-        startDayImage,
-        primaryTagId,
-        secondaryTagId,
-        address,
-      ];
+  List<Object> get props => [input];
 }
 
 class EndMyDayEvent extends StartMyDayEvents {

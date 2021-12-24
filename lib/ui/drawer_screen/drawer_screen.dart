@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/ui/drawer_menu/home_screen/home_screen.dart';
-import 'package:dms/ui/drawer_menu/settings_screen/settings_screen.dart';
 import 'package:dms/ui/login_screen/login_screen.dart';
+import 'package:dms/ui/settings_screen/settings_screen.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_bloc.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_events.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_states.dart';
@@ -23,8 +23,7 @@ class DrawerScreen extends StatefulWidget {
 }
 
 class _DrawerScreenState extends State<DrawerScreen> {
-  KFDrawerController controller =
-      KFDrawerController(initialPage: KFDrawerContent());
+  KFDrawerController controller = KFDrawerController(initialPage: KFDrawerContent());
 
   StartMyDayBloc startMyDayBloc = StartMyDayBloc();
 
@@ -89,10 +88,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
                             image: imageProvider,
                           );
                         },
-                        errorWidget: (context, url, error) =>
-                            Image.asset("assets/placeholder.png"),
-                        placeholder: (context, url) =>
-                            Image.asset("assets/placeholder.png"),
+                        errorWidget: (context, url, error) => Image.asset("assets/placeholder.png"),
+                        placeholder: (context, url) => Image.asset("assets/placeholder.png"),
                       ),
                     ),
                     Padding(
@@ -103,15 +100,10 @@ class _DrawerScreenState extends State<DrawerScreen> {
                         children: [
                           Text(
                             Constants.name,
-                            style: const TextStyle(
-                                fontSize: 21,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w400),
+                            style: const TextStyle(fontSize: 21, color: Colors.white, fontWeight: FontWeight.w400),
                           ),
                           Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(4)),
+                            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4)),
                             child: Padding(
                               padding: const EdgeInsets.all(2),
                               child: Text(
@@ -148,8 +140,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
               onTap: () {
                 controller.close!.call();
               },
-              title: const Text("Home",
-                  style: TextStyle(color: Colors.white, fontSize: 18)),
+              title: const Text("Home", style: TextStyle(color: Colors.white, fontSize: 18)),
               leading: SvgPicture.asset(
                 "assets/Home.svg",
                 height: 28,
@@ -161,8 +152,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
               onTap: () {
                 controller.close!.call();
               },
-              title: const Text("Script",
-                  style: TextStyle(color: Colors.white, fontSize: 18)),
+              title: const Text("Script", style: TextStyle(color: Colors.white, fontSize: 18)),
               leading: SvgPicture.asset(
                 "assets/Script.svg",
                 height: 28,
@@ -174,8 +164,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
               onTap: () {
                 controller.close!.call();
               },
-              title: const Text("Message",
-                  style: TextStyle(color: Colors.white, fontSize: 18)),
+              title: const Text("Message", style: TextStyle(color: Colors.white, fontSize: 18)),
               leading: SvgPicture.asset(
                 "assets/Message.svg",
                 height: 28,
@@ -200,8 +189,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                     startMyDayBloc.add(EndMyDayEvent());
                     // controller.close!.call();
                   },
-                  title: const Text("End Day",
-                      style: TextStyle(color: Colors.white, fontSize: 18)),
+                  title: const Text("End Day", style: TextStyle(color: Colors.white, fontSize: 18)),
                   leading: SvgPicture.asset(
                     "assets/End-Day.svg",
                     height: 28,
@@ -215,8 +203,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
               onTap: () {
                 controller.close!.call();
               },
-              title: const Text("Sync",
-                  style: TextStyle(color: Colors.white, fontSize: 18)),
+              title: const Text("Sync", style: TextStyle(color: Colors.white, fontSize: 18)),
               leading: SvgPicture.asset(
                 "assets/Sync.svg",
                 height: 28,
@@ -235,11 +222,9 @@ class _DrawerScreenState extends State<DrawerScreen> {
             ListTile(
               onTap: () {
                 controller.close!.call();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => SettingsScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen()));
               },
-              title: const Text("Setting",
-                  style: TextStyle(color: Colors.white, fontSize: 18)),
+              title: const Text("Setting", style: TextStyle(color: Colors.white, fontSize: 18)),
               leading: SvgPicture.asset(
                 "assets/Settings.svg",
                 height: 28,
@@ -252,8 +237,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 // controller.close!.call();
                 logoutDialog(context);
               },
-              title: const Text("Logout",
-                  style: TextStyle(color: Colors.white, fontSize: 18)),
+              title: const Text("Logout", style: TextStyle(color: Colors.white, fontSize: 18)),
               leading: SvgPicture.asset(
                 "assets/Logout.svg",
                 height: 28,
@@ -267,6 +251,12 @@ class _DrawerScreenState extends State<DrawerScreen> {
     );
   }
 
+  @override
+  void didUpdateWidget(DrawerScreen oldWidget) {
+    setState(() {});
+    super.didUpdateWidget(oldWidget);
+  }
+
   logoutDialog(context) {
     return showDialog(
       context: context,
@@ -274,36 +264,22 @@ class _DrawerScreenState extends State<DrawerScreen> {
       builder: (context) {
         return AlertDialog(
           contentPadding: const EdgeInsets.fromLTRB(25, 10, 0, 0),
-          title: const Text("Logout",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600)),
+          title: const Text("Logout", style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w600)),
           content: const Text("Are you sure you want to logout?",
-              style: TextStyle(
-                  color: Color.fromRGBO(85, 85, 85, 1),
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500)),
+              style: TextStyle(color: Color.fromRGBO(85, 85, 85, 1), fontSize: 15, fontWeight: FontWeight.w500)),
           actions: [
             MaterialButton(
-              child: const Text("Cancel",
-                  style: TextStyle(
-                      color: Colors.grey, fontWeight: FontWeight.w600)),
+              child: const Text("Cancel", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600)),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
             MaterialButton(
-              child: const Text("Logout",
-                  style: TextStyle(
-                      color: Color(0xfff4511e), fontWeight: FontWeight.w600)),
+              child: const Text("Logout", style: TextStyle(color: Color(0xfff4511e), fontWeight: FontWeight.w600)),
               onPressed: () async {
                 await SharedPreference.clearSharedPreference(context);
                 Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginScreen()),
-                    ModalRoute.withName("/"));
+                    context, MaterialPageRoute(builder: (context) => const LoginScreen()), ModalRoute.withName("/"));
               },
             ),
           ],

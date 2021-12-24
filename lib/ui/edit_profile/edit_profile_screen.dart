@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/ui/edit_profile/edit_profile_bloc/edit_profie_bloc.dart';
 import 'package:dms/ui/edit_profile/edit_profile_bloc/edit_profile_event.dart';
 import 'package:dms/ui/edit_profile/edit_profile_bloc/edit_profile_state.dart';
+import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
@@ -69,6 +70,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 }
                 if (state is EditProfileFailureState) {
                   Fluttertoast.showToast(msg: state.message);
+                }
+                if (state is GetUserDetailsSucessState) {
+                  name.text = state.response.data!.name;
+                  emailId.text = state.response.data!.email;
+
+                  SharedPreference.setStringPreference(SharedPreference.name, state.response.data!.name);
+                  SharedPreference.setStringPreference(SharedPreference.email, state.response.data!.email);
+                  SharedPreference.setStringPreference(SharedPreference.userImage, state.response.data!.image);
+                  Constants.name = state.response.data!.name;
+                  Constants.email = state.response.data!.email;
+                  Constants.image = state.response.data!.image;
                 }
               },
               child: BlocBuilder<EditProfileBloc, EditProfileState>(
