@@ -16,10 +16,10 @@ class SplashSuccessState extends SplashState {
 }
 
 class SplashFailureState extends SplashState {
-  final String message;
-  SplashFailureState({required this.message});
+  final SplashResponse response;
+  SplashFailureState({required this.response});
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [response];
 }
 
 class SplashNetworkState extends SplashState {

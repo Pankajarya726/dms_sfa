@@ -10,6 +10,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kf_drawer/kf_drawer.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+import 'model/get_menus_response.dart';
+
 class HomeScreen extends KFDrawerContent {
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -19,27 +21,9 @@ class HomeScreen extends KFDrawerContent {
 class _HomeScreenState extends State<HomeScreen> {
   int currentBottomTabIndex = 0;
 
-  // List<String> itemLabels = [
-  //   "Team Perform",
-  //   "Market Visit",
-  //   "Task",
-  //   "Enrollment",
-  //   "Order Booking",
-  //   "Dealer Info",
-  // ];
-
-  // List<String> itemIcons = [
-  //   "assets/team_perform.png",
-  //   "assets/market_visit.png",
-  //   "assets/task.png",
-  //   "assets/enrollment.png",
-  //   "assets/order_booking.png",
-  //   "assets/dealer_info.png",
-  // ];
-
   HomeScreenBloc homeScreenBloc = HomeScreenBloc();
-  RefreshController refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController refreshController = RefreshController(initialRefresh: false);
+  List<MenuData> menu = [];
 
   @override
   Widget build(BuildContext context) {
@@ -84,10 +68,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     image: imageProvider,
                   );
                 },
-                errorWidget: (context, url, error) =>
-                    Image.asset("assets/placeholder.png"),
-                placeholder: (context, url) =>
-                    Image.asset("assets/placeholder.png"),
+                errorWidget: (context, url, error) => Image.asset("assets/placeholder.png"),
+                placeholder: (context, url) => Image.asset("assets/placeholder.png"),
               ),
             ),
             const SizedBox(
@@ -109,8 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Container(
                   margin: const EdgeInsets.only(top: 4),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF3505A).withOpacity(0.3),
                     borderRadius: BorderRadius.circular(3),
@@ -225,73 +206,76 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
               if (state is GetMenusState) {
-                return GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20,
-                  childAspectRatio: 1,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
-                  children: List.generate(state.getMenusResponse.data!.length,
-                      (index) {
-                    return Container(
-                      height: MediaQuery.of(context).size.height / 4,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: const [
-                          BoxShadow(
-                            offset: Offset(0, 0),
-                            blurRadius: 8,
-                            color: Color.fromRGBO(181, 181, 181, 0.25),
-                          )
-                        ],
-                      ),
-                      child: Material(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15),
-                        child: InkWell(
-                          customBorder: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          onTap: () {},
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Image(
-                                  fit: BoxFit.cover,
-                                  width: MediaQuery.of(context).size.width / 8,
-                                  height: MediaQuery.of(context).size.width / 8,
-                                  image: NetworkImage(
-                                    state.getMenusResponse.data![index]
-                                        .menuImage,
-                                  ),
-                                ),
-                                Text(
-                                  state.getMenusResponse.data![index].menuName,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 17,
-                                    letterSpacing: 0.67,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
-                );
+                menu = state.menu;
               }
+
               if (state is HomeScreenFailureState) {
                 return Center(
                   child: Text(state.failureMessage),
                 );
               }
-              return Container();
+              return GridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 20,
+                mainAxisSpacing: 20,
+                childAspectRatio: 1,
+                padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
+                children: List.generate(menu.length, (index) {
+                  return Container(
+                    height: MediaQuery.of(context).size.height / 4,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: const [
+                        BoxShadow(
+                          offset: Offset(0, 0),
+                          blurRadius: 8,
+                          color: Color.fromRGBO(181, 181, 181, 0.25),
+                        )
+                      ],
+                    ),
+                    child: Material(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      child: InkWell(
+                        customBorder: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        onTap: () {},
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              CachedNetworkImage(
+                                imageUrl: menu[index].menuImage,
+                                imageBuilder: (context, imageProvider) {
+                                  return Image(
+                                      fit: BoxFit.cover,
+                                      width: MediaQuery.of(context).size.width / 8,
+                                      height: MediaQuery.of(context).size.width / 8,
+                                      image: imageProvider);
+                                },
+                                errorWidget: (context, url, error) {
+                                  return Container();
+                                },
+                              ),
+                              Text(
+                                menu[index].menuName,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 17,
+                                  letterSpacing: 0.67,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              );
             },
           ),
         ),
@@ -311,8 +295,7 @@ class _HomeScreenState extends State<HomeScreen> {
         debugPrint("performance was clicked");
         break;
       case 3:
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const MyPlan()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const MyPlan()));
         break;
     }
   }

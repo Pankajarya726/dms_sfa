@@ -5,6 +5,7 @@ import 'package:dms/ui/splash_screen/splash_screen.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -19,10 +20,25 @@ Dio dio = Dio(options);
 ApiRepository repository = ApiRepository();
 ImagePicker imagePicker = ImagePicker();
 
-void main() {
-  dio.interceptors.add(LogInterceptor(
-      requestHeader: true, requestBody: true, responseBody: true));
+configLoading() {
+  EasyLoading.instance
+    ..displayDuration = const Duration(milliseconds: 2000)
+    ..indicatorType = EasyLoadingIndicatorType.fadingCircle
+    ..loadingStyle = EasyLoadingStyle.dark
+    ..indicatorSize = 45.0
+    ..radius = 10.0
+    ..progressColor = Colors.yellow
+    ..backgroundColor = Colors.green
+    ..indicatorColor = Colors.yellow
+    ..textColor = Colors.yellow
+    ..maskColor = Colors.blue.withOpacity(0.5)
+    ..userInteractions = true
+    ..dismissOnTap = false;
+}
 
+void main() {
+  dio.interceptors.add(LogInterceptor(requestHeader: true, requestBody: true, responseBody: true));
+  configLoading();
   runApp(const MyApp());
 }
 
@@ -48,6 +64,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'DMS',
       debugShowCheckedModeBanner: false,
+      builder: EasyLoading.init(),
       theme: ThemeData(
           primarySwatch: const MaterialColor(
             0xFFF3505A,
@@ -70,9 +87,7 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.light,
           inputDecorationTheme: InputDecorationTheme(
             filled: true,
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(25),
-                borderSide: BorderSide.none),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(25), borderSide: BorderSide.none),
             fillColor: const Color(0xFFF2F2F2),
           ),
           appBarTheme: const AppBarTheme(
@@ -80,8 +95,7 @@ class MyApp extends StatelessWidget {
             elevation: 0,
             iconTheme: IconThemeData(color: Colors.black),
             centerTitle: true,
-            titleTextStyle: TextStyle(
-                color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+            titleTextStyle: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
             systemOverlayStyle: SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
               statusBarBrightness: Brightness.light,

@@ -25,8 +25,7 @@ class HomeScreenBloc extends Bloc<HomeScreenEvents, HomeScreenStates> {
 
   Stream<HomeScreenStates> getUserDetails(GetUserDetailsEvent event) async* {
     if (await Network.isConnected()) {
-      String userId =
-          await SharedPreference.getStringPreference(SharedPreference.userId);
+      String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
 
       UserDetails response = await repository.getUserDetailsByUserId(userId);
 
@@ -36,8 +35,7 @@ class HomeScreenBloc extends Bloc<HomeScreenEvents, HomeScreenStates> {
         yield HomeScreenFailureState(failureMessage: response.message);
       }
     } else {
-      yield HomeScreenFailureState(
-          failureMessage: "Please check your internet connection!");
+      yield HomeScreenFailureState(failureMessage: "Please check your internet connection!");
     }
   }
 
@@ -46,13 +44,12 @@ class HomeScreenBloc extends Bloc<HomeScreenEvents, HomeScreenStates> {
       GetMenusResponse response = await repository.getMenus();
 
       if (response.success) {
-        yield GetMenusState(getMenusResponse: response);
+        yield GetMenusState(menu: response.data!);
       } else {
         yield HomeScreenFailureState(failureMessage: response.message);
       }
     } else {
-      yield HomeScreenFailureState(
-          failureMessage: "Please check your internet connection!");
+      yield HomeScreenFailureState(failureMessage: "Please check your internet connection!");
     }
   }
 }

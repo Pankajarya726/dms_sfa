@@ -42,18 +42,12 @@ class ApiRepository {
         return SplashResponse(
           message: response.statusMessage.toString(),
           success: false,
-          data: null,
-          startMyDay: "",
-          pjpButton: '',
         );
       }
     } catch (exception) {
       return SplashResponse(
         message: "Something went Wrong!",
         success: false,
-        data: null,
-        startMyDay: "",
-        pjpButton: '',
       );
     }
   }

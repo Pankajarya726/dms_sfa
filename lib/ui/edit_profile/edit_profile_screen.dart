@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dms/main.dart';
 import 'package:dms/ui/edit_profile/edit_profile_bloc/edit_profie_bloc.dart';
 import 'package:dms/ui/edit_profile/edit_profile_bloc/edit_profile_event.dart';
 import 'package:dms/ui/edit_profile/edit_profile_bloc/edit_profile_state.dart';
@@ -24,6 +25,7 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   TextEditingController name = TextEditingController();
   TextEditingController emailId = TextEditingController();
+  String imageUrl = "";
   EditProfileBloc editProfileBloc = EditProfileBloc();
   RefreshController refreshController = RefreshController(initialRefresh: false);
   XFile? image;
@@ -101,8 +103,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   if (state is GetUserDetailsSucessState) {
                     name.text = state.response.data!.name;
                     emailId.text = state.response.data!.email;
-
-                    return Column(
+                    imageUrl = state.response.data!.image;
+                  }
+                  return SingleChildScrollView(
+                    child: Column(
                       children: [
                         Container(
                           alignment: Alignment.center,
@@ -114,7 +118,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(100),
                                 child: image == null
-                                    ? state.response.data!.image.isNotEmpty
+                                    ? imageUrl.isNotEmpty
                                         ? SizedBox(
                                             width: 120,
                                             height: 120,
@@ -122,7 +126,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                               width: 90,
                                               height: 90,
                                               fit: BoxFit.cover,
-                                              imageUrl: state.response.data!.image,
+                                              imageUrl: imageUrl,
                                               errorWidget: (context, url, error) => Image.asset("assets/3x/placeholder.png"),
                                               placeholder: (context, url) => const CircularProgressIndicator(
                                                 color: Colors.red,
@@ -163,105 +167,100 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             ],
                           ),
                         ),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
-                                  child: TextFormField(
-                                    maxLength: 30,
-                                    controller: name,
-                                    style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),
-                                    autocorrect: true,
-                                    enableSuggestions: true,
-                                    maxLines: 1,
-                                    textInputAction: TextInputAction.next,
-                                    decoration: const InputDecoration(
-                                      counterText: "",
-                                      fillColor: Colors.white,
-                                      border: InputBorder.none,
-                                      hintText: "Name",
-                                      hintStyle: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black),
-                                      focusedBorder: UnderlineInputBorder(),
-                                      enabledBorder: UnderlineInputBorder(),
-                                    ),
-                                    onSaved: (value) {
-                                      name.text = value!;
-                                    },
-                                  ),
+                        Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+                              child: TextFormField(
+                                maxLength: 30,
+                                controller: name,
+                                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),
+                                autocorrect: true,
+                                enableSuggestions: true,
+                                maxLines: 1,
+                                textInputAction: TextInputAction.next,
+                                decoration: const InputDecoration(
+                                  counterText: "",
+                                  fillColor: Colors.white,
+                                  border: InputBorder.none,
+                                  hintText: "Name",
+                                  hintStyle: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black),
+                                  focusedBorder: UnderlineInputBorder(),
+                                  enabledBorder: UnderlineInputBorder(),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 50),
-                                  child: TextFormField(
-                                    controller: emailId,
-                                    style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),
-                                    autocorrect: true,
-                                    enableSuggestions: true,
-                                    maxLines: 1,
-                                    textInputAction: TextInputAction.done,
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z.@0-9]")),
-                                    ],
-                                    decoration: const InputDecoration(
-                                      fillColor: Colors.white,
-                                      border: InputBorder.none,
-                                      hintText: "Email ID",
-                                      hintStyle: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black),
-                                      focusedBorder: UnderlineInputBorder(),
-                                      enabledBorder: UnderlineInputBorder(),
-                                    ),
-                                    onSaved: (value) {
-                                      emailId.text = value!;
-                                    },
-                                  ),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    if (name.text.isNotEmpty && emailId.text.isNotEmpty) {
-                                      if (EmailValidator.validate(emailId.text) == true) {
-                                        if (image != null) {
-                                          editProfileBloc.add(
-                                            EditProfileEvent(name: name.text, emailId: emailId.text, imgFile: File(image!.path)),
-                                          );
-                                        } else {
-                                          editProfileBloc.add(
-                                            EditProfileEvent(
-                                              name: name.text,
-                                              emailId: emailId.text,
-                                            ),
-                                          );
-                                        }
-                                      } else {
-                                        Fluttertoast.showToast(msg: "Enter valid email format");
-                                      }
-                                    } else {
-                                      Fluttertoast.showToast(msg: "Fields cant't be empty");
-                                    }
-                                  },
-                                  style: ButtonStyle(
-                                    fixedSize: MaterialStateProperty.all(const Size(220, 60)),
-                                    backgroundColor: MaterialStateProperty.all(Colors.red),
-                                    elevation: MaterialStateProperty.all(0),
-                                    shape: MaterialStateProperty.all(
-                                      RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    "Update",
-                                    style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ],
+                                onSaved: (value) {
+                                  name.text = value!;
+                                },
+                              ),
                             ),
-                          ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(20, 10, 20, 50),
+                              child: TextFormField(
+                                controller: emailId,
+                                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),
+                                autocorrect: true,
+                                enableSuggestions: true,
+                                maxLines: 1,
+                                textInputAction: TextInputAction.done,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z.@0-9]")),
+                                ],
+                                decoration: const InputDecoration(
+                                  fillColor: Colors.white,
+                                  border: InputBorder.none,
+                                  hintText: "Email ID",
+                                  hintStyle: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black),
+                                  focusedBorder: UnderlineInputBorder(),
+                                  enabledBorder: UnderlineInputBorder(),
+                                ),
+                                onSaved: (value) {
+                                  emailId.text = value!;
+                                },
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                if (name.text.isNotEmpty && emailId.text.isNotEmpty) {
+                                  if (EmailValidator.validate(emailId.text) == true) {
+                                    if (image != null) {
+                                      editProfileBloc.add(
+                                        EditProfileEvent(name: name.text, emailId: emailId.text, imgFile: File(image!.path)),
+                                      );
+                                    } else {
+                                      editProfileBloc.add(
+                                        EditProfileEvent(
+                                          name: name.text,
+                                          emailId: emailId.text,
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    Fluttertoast.showToast(msg: "Enter valid email format");
+                                  }
+                                } else {
+                                  Fluttertoast.showToast(msg: "Fields cant't be empty");
+                                }
+                              },
+                              style: ButtonStyle(
+                                fixedSize: MaterialStateProperty.all(const Size(220, 60)),
+                                backgroundColor: MaterialStateProperty.all(Colors.red),
+                                elevation: MaterialStateProperty.all(0),
+                                shape: MaterialStateProperty.all(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                              ),
+                              child: const Text(
+                                "Update",
+                                style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
                         )
                       ],
-                    );
-                  }
-                  return Container();
+                    ),
+                  );
                 },
               ),
             ),
@@ -350,7 +349,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   imageFromCamera() async {
-    XFile? image = await ImagePicker.platform.getImage(source: ImageSource.camera, imageQuality: 50);
+    XFile? image = await imagePicker.pickImage(source: ImageSource.camera, imageQuality: 50);
 
     setState(() {
       this.image = image;
@@ -358,7 +357,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   imgFromGallery() async {
-    XFile? image = await ImagePicker.platform.getImage(source: ImageSource.gallery, imageQuality: 50);
+    XFile? image = await imagePicker.pickImage(source: ImageSource.gallery, imageQuality: 50);
 
     setState(() {
       this.image = image;

@@ -39,7 +39,7 @@ dependencies:
   shared_preferences:
   google_fonts:
   flutter_tags_x:
-  image_picker: ^0.8.4+3
+  image_picker:
   syncfusion_flutter_datepicker:
   intl: ^0.17.0
   connectivity:

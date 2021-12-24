@@ -43,7 +43,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       if (response.success) {
         yield SplashSuccessState(response: response);
       } else {
-        yield SplashFailureState(message: response.message);
+        yield SplashFailureState(response: response);
       }
     } else {
       yield SplashNetworkState(message: "Network not connected");

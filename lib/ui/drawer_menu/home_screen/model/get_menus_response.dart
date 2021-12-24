@@ -13,33 +13,27 @@ class GetMenusResponse {
 
   bool success;
   String message;
-  List<Datum>? data;
+  List<MenuData>? data;
 
-  factory GetMenusResponse.fromJson(String str) =>
-      GetMenusResponse.fromMap(json.decode(str));
+  factory GetMenusResponse.fromJson(String str) => GetMenusResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory GetMenusResponse.fromMap(Map<String, dynamic> json) =>
-      GetMenusResponse(
+  factory GetMenusResponse.fromMap(Map<String, dynamic> json) => GetMenusResponse(
         success: json["success"] == null ? null : json["success"],
         message: json["message"] == null ? null : json["message"],
-        data: json["data"] == null
-            ? null
-            : List<Datum>.from(json["data"].map((x) => Datum.fromMap(x))),
+        data: json["data"] == null ? null : List<MenuData>.from(json["data"].map((x) => MenuData.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
         "success": success == null ? null : success,
         "message": message == null ? null : message,
-        "data": data == null
-            ? null
-            : List<dynamic>.from(data!.map((x) => x.toMap())),
+        "data": data == null ? null : List<dynamic>.from(data!.map((x) => x.toMap())),
       };
 }
 
-class Datum {
-  Datum({
+class MenuData {
+  MenuData({
     required this.id,
     required this.menuName,
     required this.menuDescription,
@@ -59,15 +53,14 @@ class Datum {
   String createdAt;
   String updatedAt;
 
-  factory Datum.fromJson(String str) => Datum.fromMap(json.decode(str));
+  factory MenuData.fromJson(String str) => MenuData.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory Datum.fromMap(Map<String, dynamic> json) => Datum(
+  factory MenuData.fromMap(Map<String, dynamic> json) => MenuData(
         id: json["id"] == null ? null : json["id"],
         menuName: json["menu_name"] == null ? null : json["menu_name"],
-        menuDescription:
-            json["menu_description"] == null ? null : json["menu_description"],
+        menuDescription: json["menu_description"] == null ? null : json["menu_description"],
         menuImage: json["menu_image"] == null ? null : json["menu_image"],
         isActive: json["is_active"] == null ? null : json["is_active"],
         sort: json["sort"] == null ? null : json["sort"],

@@ -11,8 +11,6 @@ import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:package_info/package_info.dart';
 import 'package:store_redirect/store_redirect.dart';
 
 import '../../main.dart';
@@ -40,15 +38,24 @@ class _SplashScreenState extends State<SplashScreen> {
       child: BlocListener<SplashBloc, SplashState>(
         listener: (context, state) {
           if (state is SplashSuccessState) {
-            if (state.response.pjpButton == "hide") {
+            if (state.response.data!.pjpButton == "hide") {
               SharedPreference.setBooleanPreference(SharedPreference.pjpButton, false);
             } else {
               SharedPreference.setBooleanPreference(SharedPreference.pjpButton, true);
             }
-            getLogin(state.response.data!.appVersion, state.response.startMyDay, state.response.data!.isMandatory, context);
+            nextPage(state.response.data!.startMyDay, context);
           }
           if (state is SplashFailureState) {
-            Fluttertoast.showToast(msg: "Something went wrong!");
+            if (state.response.data!.pjpButton == "hide") {
+              SharedPreference.setBooleanPreference(SharedPreference.pjpButton, false);
+            } else {
+              SharedPreference.setBooleanPreference(SharedPreference.pjpButton, true);
+            }
+            showUpdateAlert(
+              context,
+              state.response.data!.isMandatory,
+              state.response.data!.startMyDay,
+            );
           }
           if (state is SplashNetworkState) {
             logoutDialog(context);
@@ -90,16 +97,6 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  getLogin(String appVersio, String startMyDay, int isMandatory, BuildContext context) async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-    if (appVersio == packageInfo.version) {
-      nextPage(startMyDay, context);
-    } else {
-      showUpdateAlert(context, isMandatory, startMyDay);
-    }
-  }
-
   addEvent() async {
     splashBloc.add(ValidateAppEvent());
   }
@@ -128,12 +125,12 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void showUpdateAlert(
-    BuildContext context,
+    BuildContext mcontext,
     int isMandatory,
     String startMyDay,
   ) async {
     return showDialog(
-      context: context,
+      context: mcontext,
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
@@ -142,12 +139,12 @@ class _SplashScreenState extends State<SplashScreen> {
           content: const Text("You are using older version of this app. Please update the app for batter experience.",
               style: TextStyle(color: Color.fromRGBO(85, 85, 85, 1), fontSize: 15, fontWeight: FontWeight.w500)),
           actions: [
-            isMandatory == 1
+            isMandatory != 1
                 ? MaterialButton(
-                    child: const Text("Later", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600)),
+                    child: const Text("Later", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)),
                     onPressed: () {
                       Navigator.pop(context);
-                      nextPage(startMyDay, context);
+                      nextPage(startMyDay, mcontext);
                     },
                   )
                 : Container(),
@@ -156,7 +153,7 @@ class _SplashScreenState extends State<SplashScreen> {
               onPressed: () async {
                 Navigator.pop(context);
                 StoreRedirect.redirect(androidAppId: "com.vvapps.dms").then((value) {
-                  nextPage(startMyDay, context);
+                  nextPage(startMyDay, mcontext);
                 });
               },
             ),

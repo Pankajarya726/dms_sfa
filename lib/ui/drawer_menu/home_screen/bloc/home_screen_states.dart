@@ -26,8 +26,8 @@ class GetUserDetailsState extends HomeScreenStates {
 }
 
 class GetMenusState extends HomeScreenStates {
-  final GetMenusResponse getMenusResponse;
-  GetMenusState({required this.getMenusResponse});
+  final List<MenuData> menu;
+  GetMenusState({required this.menu});
   @override
-  List<Object> get props => [getMenusResponse];
+  List<Object> get props => [menu];
 }
