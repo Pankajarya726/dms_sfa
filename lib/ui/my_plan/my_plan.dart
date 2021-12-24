@@ -35,6 +35,7 @@ class _MyPlanState extends State<MyPlan> with TickerProviderStateMixin {
   String date = "";
   String day = "";
   String week = "";
+  bool pjpButton = false;
 
   MyPlanBloc myPlanBloc = MyPlanBloc();
   List<PlanDataModel> myplan = [];
@@ -57,6 +58,7 @@ class _MyPlanState extends State<MyPlan> with TickerProviderStateMixin {
             return const Center(child: CircularProgressIndicator());
           }
           if (state is GetMonthState) {
+            pjpButton = state.pjpButton;
             months = state.months;
             _tabController = TabController(vsync: this, length: months.length);
             myPlanBloc.add(GetMyPlansEvent(date: DateFormat("yyyy-MM").format(months[0])));
@@ -93,39 +95,41 @@ class _MyPlanState extends State<MyPlan> with TickerProviderStateMixin {
                 actions: [
                   Padding(
                     padding: const EdgeInsets.fromLTRB(14, 13, 17, 14),
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(MColor.colorSecondary),
-                      ),
-                      onPressed: () async {
-                        DateTime dateTime = await NTP.now();
-
-                        DateTime next = DateTime(dateTime.year, dateTime.month + 1);
-                        debugPrint("next-->$next");
-
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AddPlanScreen(month: next),
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        addCaps,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
+                    child: pjpButton
+                        ? ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  MColor.colorSecondary),
+                            ),
+                            onPressed: () async {
+                              DateTime dateTime = await NTP.now();
+                              DateTime next =
+                                  DateTime(dateTime.year, dateTime.month + 1);
+                              debugPrint("next-->$next");
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      AddPlanScreen(month: next),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              addCaps,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          )
+                        : Container(),
                   ),
                 ],
                 bottom: PreferredSize(
                   child: Container(
                     color: const Color(0xFFEDEDED),
                     child: TabBar(
-                      controller: _tabController,
                       indicatorWeight: 3,
                       isScrollable: true,
                       indicatorColor: MColor.tabIndicatorColor,
@@ -147,7 +151,6 @@ class _MyPlanState extends State<MyPlan> with TickerProviderStateMixin {
                 ),
               ),
               body: TabBarView(
-                controller: _tabController,
                 children: List.generate(months.length, (index) {
                   return MyPlanTabScreen(
                     plans: myplan,

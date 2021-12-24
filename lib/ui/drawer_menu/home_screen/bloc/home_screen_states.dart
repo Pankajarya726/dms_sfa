@@ -1,3 +1,4 @@
+import 'package:dms/ui/drawer_menu/home_screen/model/get_menus_response.dart';
 import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart';
 import 'package:equatable/equatable.dart';
 
@@ -22,4 +23,11 @@ class GetUserDetailsState extends HomeScreenStates {
   GetUserDetailsState({required this.userDetails});
   @override
   List<Object> get props => [userDetails];
+}
+
+class GetMenusState extends HomeScreenStates {
+  final GetMenusResponse getMenusResponse;
+  GetMenusState({required this.getMenusResponse});
+  @override
+  List<Object> get props => [getMenusResponse];
 }

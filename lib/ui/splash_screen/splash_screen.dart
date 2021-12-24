@@ -40,7 +40,15 @@ class _SplashScreenState extends State<SplashScreen> {
       child: BlocListener<SplashBloc, SplashState>(
         listener: (context, state) {
           if (state is SplashSuccessState) {
-            getLogin(state.response.data!.appVersion, state.response.startMyDay);
+            if (state.response.pjpButton == "hide") {
+              SharedPreference.setBooleanPreference(
+                  SharedPreference.pjpButton, false);
+            } else {
+              SharedPreference.setBooleanPreference(
+                  SharedPreference.pjpButton, true);
+            }
+            getLogin(
+                state.response.data!.appVersion, state.response.startMyDay);
           }
           if (state is SplashFailureState) {
             Fluttertoast.showToast(msg: "Something went wrong!");

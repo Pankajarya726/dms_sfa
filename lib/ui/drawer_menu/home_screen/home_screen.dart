@@ -1,9 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_bloc.dart';
+import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_events.dart';
+import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_states.dart';
 import 'package:dms/ui/my_plan/my_plan.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kf_drawer/kf_drawer.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class HomeScreen extends KFDrawerContent {
   @override
@@ -14,23 +19,27 @@ class HomeScreen extends KFDrawerContent {
 class _HomeScreenState extends State<HomeScreen> {
   int currentBottomTabIndex = 0;
 
-  List<String> itemLabels = [
-    "Team Perform",
-    "Market Visit",
-    "Task",
-    "Enrollment",
-    "Order Booking",
-    "Dealer Info",
-  ];
+  // List<String> itemLabels = [
+  //   "Team Perform",
+  //   "Market Visit",
+  //   "Task",
+  //   "Enrollment",
+  //   "Order Booking",
+  //   "Dealer Info",
+  // ];
 
-  List<String> itemIcons = [
-    "assets/team_perform.png",
-    "assets/market_visit.png",
-    "assets/task.png",
-    "assets/enrollment.png",
-    "assets/order_booking.png",
-    "assets/dealer_info.png",
-  ];
+  // List<String> itemIcons = [
+  //   "assets/team_perform.png",
+  //   "assets/market_visit.png",
+  //   "assets/task.png",
+  //   "assets/enrollment.png",
+  //   "assets/order_booking.png",
+  //   "assets/dealer_info.png",
+  // ];
+
+  HomeScreenBloc homeScreenBloc = HomeScreenBloc();
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   Widget build(BuildContext context) {
@@ -198,61 +207,94 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      body: GridView.count(
-        crossAxisCount: 2,
-        crossAxisSpacing: 20,
-        mainAxisSpacing: 20,
-        childAspectRatio: 1,
-        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
-        children: List.generate(itemLabels.length, (index) {
-          return Container(
-            height: MediaQuery.of(context).size.height / 4,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: const [
-                BoxShadow(
-                  offset: Offset(0, 0),
-                  blurRadius: 8,
-                  color: Color.fromRGBO(181, 181, 181, 0.25),
-                )
-              ],
-            ),
-            child: Material(
-              color: Colors.white,
-              // elevation: 3,
-              borderRadius: BorderRadius.circular(15),
-              child: InkWell(
-                customBorder: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                onTap: () {},
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        itemIcons[index],
-                        fit: BoxFit.contain,
-                        width: MediaQuery.of(context).size.width / 8,
-                        height: MediaQuery.of(context).size.width / 8,
+      body: SmartRefresher(
+        primary: false,
+        controller: refreshController,
+        onRefresh: onRefresh,
+        enablePullDown: true,
+        child: BlocProvider(
+          create: (context) => homeScreenBloc,
+          child: BlocBuilder<HomeScreenBloc, HomeScreenStates>(
+            builder: (context, state) {
+              if (state is HomeScreenInitialState) {
+                homeScreenBloc.add(GetMenusEvent());
+              }
+              if (state is HomeScreenlodaingState) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (state is GetMenusState) {
+                return GridView.count(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 20,
+                  childAspectRatio: 1,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
+                  children: List.generate(state.getMenusResponse.data!.length,
+                      (index) {
+                    return Container(
+                      height: MediaQuery.of(context).size.height / 4,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: const [
+                          BoxShadow(
+                            offset: Offset(0, 0),
+                            blurRadius: 8,
+                            color: Color.fromRGBO(181, 181, 181, 0.25),
+                          )
+                        ],
                       ),
-                      Text(
-                        itemLabels[index],
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17,
-                          letterSpacing: 0.67,
+                      child: Material(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                        child: InkWell(
+                          customBorder: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          onTap: () {},
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image(
+                                  fit: BoxFit.cover,
+                                  width: MediaQuery.of(context).size.width / 8,
+                                  height: MediaQuery.of(context).size.width / 8,
+                                  image: NetworkImage(
+                                    state.getMenusResponse.data![index]
+                                        .menuImage,
+                                  ),
+                                ),
+                                Text(
+                                  state.getMenusResponse.data![index].menuName,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17,
+                                    letterSpacing: 0.67,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          );
-        }),
+                    );
+                  }),
+                );
+              }
+              if (state is HomeScreenFailureState) {
+                return Center(
+                  child: Text(state.failureMessage),
+                );
+              }
+              return Container();
+            },
+          ),
+        ),
       ),
     );
   }
@@ -280,5 +322,10 @@ class _HomeScreenState extends State<HomeScreen> {
       currentBottomTabIndex = index;
     });
     navigateToBottomBarItems();
+  }
+
+  void onRefresh() async {
+    homeScreenBloc.add(GetMenusEvent());
+    refreshController.refreshCompleted();
   }
 }

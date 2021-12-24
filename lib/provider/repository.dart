@@ -10,6 +10,7 @@ import 'package:dms/provider/url.dart';
 import 'package:dms/ui/add_plan/model/AddPlanResponse.dart';
 import 'package:dms/ui/add_plan/model/AddPlanUpdateData.dart';
 import 'package:dms/ui/change_password/model/model.dart';
+import 'package:dms/ui/drawer_menu/home_screen/model/get_menus_response.dart';
 import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart';
 import 'package:dms/ui/edit_profile/model/edit_profile_model.dart';
 import 'package:dms/ui/login_screen/login_model/login_response.dart';
@@ -133,6 +134,32 @@ class ApiRepository {
     }
   }
 
+  Future<GetMenusResponse> getMenus() async {
+    try {
+      Response response = await dio.get(
+        Url.getMenus,
+      );
+
+      if (response.statusCode == 200) {
+        GetMenusResponse result =
+            GetMenusResponse.fromJson(response.toString());
+        return result;
+      } else {
+        return GetMenusResponse(
+          message: response.statusMessage.toString(),
+          success: false,
+          data: [],
+        );
+      }
+    } catch (exception) {
+      return GetMenusResponse(
+        message: "Something went Wrong!",
+        success: false,
+        data: [],
+      );
+    }
+  }
+
   Future<EndMyDayResponse> endMyDay(
     String userId,
     String endDayDate,
@@ -147,7 +174,8 @@ class ApiRepository {
     try {
       Response response = await dio.post(Url.endMyDay, data: data);
       if (response.statusCode == 200) {
-        EndMyDayResponse endMyDayResponse = EndMyDayResponse.fromJson(response.toString());
+        EndMyDayResponse endMyDayResponse =
+            EndMyDayResponse.fromJson(response.toString());
         return endMyDayResponse;
       } else {
         return EndMyDayResponse(
