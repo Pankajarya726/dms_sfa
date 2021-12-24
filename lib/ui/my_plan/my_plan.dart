@@ -98,19 +98,16 @@ class _MyPlanState extends State<MyPlan> with TickerProviderStateMixin {
                     child: pjpButton
                         ? ElevatedButton(
                             style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  MColor.colorSecondary),
+                              backgroundColor: MaterialStateProperty.all(MColor.colorSecondary),
                             ),
                             onPressed: () async {
                               DateTime dateTime = await NTP.now();
-                              DateTime next =
-                                  DateTime(dateTime.year, dateTime.month + 1);
+                              DateTime next = DateTime(dateTime.year, dateTime.month + 1);
                               debugPrint("next-->$next");
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      AddPlanScreen(month: next),
+                                  builder: (context) => AddPlanScreen(month: next),
                                 ),
                               );
                             },

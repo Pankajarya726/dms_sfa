@@ -54,6 +54,7 @@ dependencies:
   geocoding:
   geolocator:
   flutter_easyloading:
+  store_redirect:
 
 
 dev_dependencies:

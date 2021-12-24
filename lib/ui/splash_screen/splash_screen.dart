@@ -11,9 +11,9 @@ import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
+import 'package:store_redirect/store_redirect.dart';
 
 import '../../main.dart';
 
@@ -41,14 +41,11 @@ class _SplashScreenState extends State<SplashScreen> {
         listener: (context, state) {
           if (state is SplashSuccessState) {
             if (state.response.pjpButton == "hide") {
-              SharedPreference.setBooleanPreference(
-                  SharedPreference.pjpButton, false);
+              SharedPreference.setBooleanPreference(SharedPreference.pjpButton, false);
             } else {
-              SharedPreference.setBooleanPreference(
-                  SharedPreference.pjpButton, true);
+              SharedPreference.setBooleanPreference(SharedPreference.pjpButton, true);
             }
-            getLogin(
-                state.response.data!.appVersion, state.response.startMyDay);
+            getLogin(state.response.data!.appVersion, state.response.startMyDay, state.response.data!.isMandatory, context);
           }
           if (state is SplashFailureState) {
             Fluttertoast.showToast(msg: "Something went wrong!");
@@ -93,71 +90,18 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  getLogin(String appVersio, String startMyDay) async {
+  getLogin(String appVersio, String startMyDay, int isMandatory, BuildContext context) async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    bool login = await SharedPreference.getBooleanPreference(SharedPreference.isLogin);
-    if (appVersio == packageInfo.version) {
-      if (login) {
-        Constants.name = await SharedPreference.getStringPreference(SharedPreference.name);
-        Constants.mobile = await SharedPreference.getStringPreference(
-          SharedPreference.mobileNumber,
-        );
-        Constants.designation = await SharedPreference.getStringPreference(
-          SharedPreference.userDesignation,
-        );
-        Constants.email = await SharedPreference.getStringPreference(
-          SharedPreference.email,
-        );
-        Constants.image = await SharedPreference.getStringPreference(
-          SharedPreference.userImage,
-        );
-        Constants.leader = await SharedPreference.getBooleanPreference(SharedPreference.isLeader);
-        Constants.token = "Bearer " + await SharedPreference.getStringPreference(SharedPreference.accessToken);
-        dio.options.headers.addAll({"Authorization": Constants.token});
 
-        if (startMyDay == "show") {
-          Timer(
-            const Duration(seconds: 3),
-            () => Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (BuildContext context) => const ScreenAfterLogin(),
-              ),
-            ),
-          );
-        } else {
-          Timer(
-            const Duration(seconds: 3),
-            () => Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (BuildContext context) => const DrawerScreen(),
-              ),
-            ),
-          );
-        }
-      } else {
-        Timer(
-          const Duration(seconds: 3),
-          () => Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (BuildContext context) => const LoginScreen(),
-            ),
-          ),
-        );
-      }
+    if (appVersio == packageInfo.version) {
+      nextPage(startMyDay, context);
     } else {
-      Fluttertoast.showToast(msg: "Please update the application");
+      showUpdateAlert(context, isMandatory, startMyDay);
     }
   }
 
   addEvent() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-    if (Device.get().isAndroid) {
-      splashBloc.add(SplashEvent(appVersion: packageInfo.version, deviceType: "1"));
-    }
-    if (Device.get().isIos) {
-      splashBloc.add(SplashEvent(appVersion: packageInfo.version, deviceType: "2"));
-    }
+    splashBloc.add(ValidateAppEvent());
   }
 
   logoutDialog(context) {
@@ -181,5 +125,95 @@ class _SplashScreenState extends State<SplashScreen> {
         );
       },
     );
+  }
+
+  void showUpdateAlert(
+    BuildContext context,
+    int isMandatory,
+    String startMyDay,
+  ) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.fromLTRB(25, 10, 0, 0),
+          title: const Text("SFA", style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w600)),
+          content: const Text("You are using older version of this app. Please update the app for batter experience.",
+              style: TextStyle(color: Color.fromRGBO(85, 85, 85, 1), fontSize: 15, fontWeight: FontWeight.w500)),
+          actions: [
+            isMandatory == 1
+                ? MaterialButton(
+                    child: const Text("Later", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600)),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      nextPage(startMyDay, context);
+                    },
+                  )
+                : Container(),
+            MaterialButton(
+              child: const Text("Update", style: TextStyle(color: Color(0xfff4511e), fontWeight: FontWeight.w600)),
+              onPressed: () async {
+                Navigator.pop(context);
+                StoreRedirect.redirect(androidAppId: "com.vvapps.dms").then((value) {
+                  nextPage(startMyDay, context);
+                });
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  nextPage(String startMyDay, BuildContext context) async {
+    bool login = await SharedPreference.getBooleanPreference(SharedPreference.isLogin);
+    if (login) {
+      Constants.name = await SharedPreference.getStringPreference(SharedPreference.name);
+      Constants.mobile = await SharedPreference.getStringPreference(
+        SharedPreference.mobileNumber,
+      );
+      Constants.designation = await SharedPreference.getStringPreference(
+        SharedPreference.userDesignation,
+      );
+      Constants.email = await SharedPreference.getStringPreference(
+        SharedPreference.email,
+      );
+      Constants.image = await SharedPreference.getStringPreference(
+        SharedPreference.userImage,
+      );
+      Constants.leader = await SharedPreference.getBooleanPreference(SharedPreference.isLeader);
+      Constants.token = "Bearer " + await SharedPreference.getStringPreference(SharedPreference.accessToken);
+      dio.options.headers.addAll({"Authorization": Constants.token});
+
+      if (startMyDay == "show") {
+        Timer(
+          const Duration(seconds: 3),
+          () => Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (BuildContext context) => const ScreenAfterLogin(),
+            ),
+          ),
+        );
+      } else {
+        Timer(
+          const Duration(seconds: 3),
+          () => Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (BuildContext context) => const DrawerScreen(),
+            ),
+          ),
+        );
+      }
+    } else {
+      Timer(
+        const Duration(seconds: 3),
+        () => Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (BuildContext context) => const LoginScreen(),
+          ),
+        ),
+      );
+    }
   }
 }

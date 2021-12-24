@@ -28,18 +28,11 @@ class ApiRepository {
 
   ApiRepository.internal();
 
-  Future<SplashResponse> validateAppVersion(String version, String deviceType, String userId, String currentDate) async {
-    Map<String, dynamic> params = {
-      "app_version": version,
-      "device_type": deviceType,
-      "user_id": userId,
-      "date": currentDate,
-    };
-
+  Future<SplashResponse> validateAppVersion(Map input) async {
     try {
       Response response = await dio.post(
         Url.validateAppVer,
-        data: params,
+        data: input,
       );
 
       if (response.statusCode == 200) {
@@ -51,6 +44,7 @@ class ApiRepository {
           success: false,
           data: null,
           startMyDay: "",
+          pjpButton: '',
         );
       }
     } catch (exception) {
@@ -59,6 +53,7 @@ class ApiRepository {
         success: false,
         data: null,
         startMyDay: "",
+        pjpButton: '',
       );
     }
   }
@@ -141,8 +136,7 @@ class ApiRepository {
       );
 
       if (response.statusCode == 200) {
-        GetMenusResponse result =
-            GetMenusResponse.fromJson(response.toString());
+        GetMenusResponse result = GetMenusResponse.fromJson(response.toString());
         return result;
       } else {
         return GetMenusResponse(
@@ -174,8 +168,7 @@ class ApiRepository {
     try {
       Response response = await dio.post(Url.endMyDay, data: data);
       if (response.statusCode == 200) {
-        EndMyDayResponse endMyDayResponse =
-            EndMyDayResponse.fromJson(response.toString());
+        EndMyDayResponse endMyDayResponse = EndMyDayResponse.fromJson(response.toString());
         return endMyDayResponse;
       } else {
         return EndMyDayResponse(
