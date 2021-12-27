@@ -5,16 +5,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../main.dart';
 
-class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
+class SettingsBloc extends Bloc<SettingEvent, SettingsState> {
   SettingsBloc() : super(SettingsInitialState());
   @override
-  Stream<SettingsState> mapEventToState(SettingsEvent event) async* {
-    if (event is SettingsEvent) {
+  Stream<SettingsState> mapEventToState(SettingEvent event) async* {
+    if (event is GetSettingEvent) {
       yield* loadUserDetails(event);
     }
   }
 
-  Stream<SettingsState> loadUserDetails(SettingsEvent event) async* {
+  Stream<SettingsState> loadUserDetails(GetSettingEvent event) async* {
     UserDetails response = await repository.getUserDetailsByUserId(event.userId);
     if (response.success) {
       yield DetailsSucessState(response: response);

@@ -76,7 +76,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 if (state is GetUserDetailsSucessState) {
                   name.text = state.response.data!.name;
                   emailId.text = state.response.data!.email;
-
+                  imageUrl = state.response.data!.image;
                   SharedPreference.setStringPreference(SharedPreference.name, state.response.data!.name);
                   SharedPreference.setStringPreference(SharedPreference.email, state.response.data!.email);
                   SharedPreference.setStringPreference(SharedPreference.userImage, state.response.data!.image);
@@ -100,11 +100,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   if (state is EditProfileLoadingState) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  if (state is GetUserDetailsSucessState) {
-                    name.text = state.response.data!.name;
-                    emailId.text = state.response.data!.email;
-                    imageUrl = state.response.data!.image;
-                  }
+
                   return SingleChildScrollView(
                     child: Column(
                       children: [
