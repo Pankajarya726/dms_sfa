@@ -3,6 +3,7 @@ import 'package:dms/ui/login_screen/login_bloc/login_bloc.dart';
 import 'package:dms/ui/login_screen/login_bloc/login_event.dart';
 import 'package:dms/ui/login_screen/login_bloc/login_state.dart';
 import 'package:dms/ui/screen_after_login/screen_after_login.dart';
+import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:flutter/material.dart';
@@ -227,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             fixedSize:
                                 MaterialStateProperty.all(const Size(220, 60)),
                             backgroundColor:
-                                MaterialStateProperty.all(Colors.red),
+                                MaterialStateProperty.all(MColor.colorPrimary),
                             elevation: MaterialStateProperty.all(0),
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
@@ -238,9 +239,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: const Text(
                             "Log in",
                             style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold),
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
