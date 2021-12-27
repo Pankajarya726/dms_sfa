@@ -6,6 +6,7 @@ import 'package:dms/ui/login_screen/login_model/login_response.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class LoginBloc extends Bloc<LoginEvents, LoginState> {
   LoginBloc() : super(LoginInitialState());
@@ -24,9 +25,13 @@ class LoginBloc extends Bloc<LoginEvents, LoginState> {
 
   Stream<LoginState> login(LoginEvent event) async* {
     if (await Network.isConnected()) {
-      LoginResponse response = await repository.login(event.mobileNumber, event.password);
+      EasyLoading.show();
+      LoginResponse response =
+          await repository.login(event.mobileNumber, event.password);
+      EasyLoading.dismiss();
       if (response.success) {
-        SharedPreference.setStringPreference(SharedPreference.accessToken, response.accessToken);
+        SharedPreference.setStringPreference(
+            SharedPreference.accessToken, response.accessToken);
         options.headers.addAll({
           "Authorization": "Bearer ${response.accessToken}",
         });
@@ -35,13 +40,15 @@ class LoginBloc extends Bloc<LoginEvents, LoginState> {
         yield LoginFailureState(message: response.message);
       }
     } else {
-      yield LoginFailureState(message: "Please check your internet connection!");
+      yield LoginFailureState(
+          message: "Please check your internet connection!");
     }
   }
 
   Stream<LoginState> getUserDetails(GetUserEvent event) async* {
     if (await Network.isConnected()) {
-      String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
+      String userId =
+          await SharedPreference.getStringPreference(SharedPreference.userId);
 
       UserDetails response = await repository.getUserDetailsByUserId(userId);
 
@@ -51,7 +58,8 @@ class LoginBloc extends Bloc<LoginEvents, LoginState> {
         yield LoginFailureState(message: response.message);
       }
     } else {
-      yield LoginFailureState(message: "Please check your internet connection!");
+      yield LoginFailureState(
+          message: "Please check your internet connection!");
     }
   }
 }

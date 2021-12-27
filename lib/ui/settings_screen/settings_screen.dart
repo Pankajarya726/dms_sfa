@@ -238,15 +238,14 @@ class _SettingScreenState extends State<SettingsScreen> {
                                     );
                                   }
 
-                                  if (index == 5) {
-                                    logoutDialog(context);
-                                  }
-                                });
-                          }),
-                        ),
+                                if (index == 5) {
+                                  logoutDialog(context);
+                                }
+                              });
+                        }),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -289,7 +288,7 @@ class _SettingScreenState extends State<SettingsScreen> {
 
   addEvent() async {
     var usrId = await SharedPreference.getStringPreference(SharedPreference.userId);
-    settingsBloc.add(GetSettingEvent(userId: usrId));
+    settingsBloc.add(SettingsEvent(userId: usrId));
   }
 
   void onRefresh() {

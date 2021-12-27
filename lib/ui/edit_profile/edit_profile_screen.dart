@@ -50,12 +50,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         child: Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
-            title: const Text("Edit Profile"),
+            title: const Text(
+              "Edit Profile",
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
             centerTitle: true,
-            backgroundColor: Colors.red,
+            backgroundColor: MColor.colorPrimary,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.pop(context, true),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+              ),
             ),
           ),
           body: SmartRefresher(

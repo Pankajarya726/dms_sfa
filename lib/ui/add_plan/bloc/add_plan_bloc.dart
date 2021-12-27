@@ -6,6 +6,7 @@ import 'package:dms/ui/add_plan/model/AddPlanUpdateData.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import 'add_plan_events.dart';
 
@@ -15,6 +16,7 @@ class AddPlanBloc extends Bloc<AddPlanEvents, AddPlanStates> {
   @override
   Stream<AddPlanStates> mapEventToState(AddPlanEvents event) async* {
     if (event is AddPlanEvent) {
+      yield AddPlanLoadingState();
       yield* addPlan(event);
     }
     if (event is GetSavedPlanEvent) {
@@ -34,29 +36,33 @@ class AddPlanBloc extends Bloc<AddPlanEvents, AddPlanStates> {
       yield* getSavedPlan(event);
     }
     if (event is UpdatePlanEvent) {
+      yield AddPlanLoadingState();
       yield* updatePlan(event);
     }
   }
 
   Stream<AddPlanStates> addPlan(AddPlanEvent event) async* {
     if (await Network.isConnected()) {
+      EasyLoading.show();
       AddPlanResponse response = await repository.addPlan(
         event.input,
       );
-
+      EasyLoading.dismiss();
       if (response.success) {
         yield AddPlanSuccessState(successMessage: response.message);
       } else {
         yield AddPlanFailureState(failureMessage: response.message);
       }
     } else {
-      yield AddPlanFailureState(failureMessage: "Please check your internet connection!");
+      yield AddPlanFailureState(
+          failureMessage: "Please check your internet connection!");
     }
   }
 
   Stream<AddPlanStates> getSavedPlan(GetSavedPlanEvent event) async* {
     if (await Network.isConnected()) {
-      String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
+      String userId =
+          await SharedPreference.getStringPreference(SharedPreference.userId);
       Map input = {
         "user_id": userId,
         "add_plan_date": event.selectedDate,
@@ -69,21 +75,25 @@ class AddPlanBloc extends Bloc<AddPlanEvents, AddPlanStates> {
         yield GetAddPlanFailureState(message: response.message);
       }
     } else {
-      yield AddPlanFailureState(failureMessage: "Please check your internet connection!");
+      yield AddPlanFailureState(
+          failureMessage: "Please check your internet connection!");
     }
   }
 
   Stream<AddPlanStates> updatePlan(UpdatePlanEvent event) async* {
     if (await Network.isConnected()) {
-      AddPlanUpdateDataResponse response = await repository.addPlanUpdateData(event.input);
-
+      EasyLoading.show();
+      AddPlanUpdateDataResponse response =
+          await repository.addPlanUpdateData(event.input);
+      EasyLoading.dismiss();
       if (response.success) {
         yield AddPlanSuccessState(successMessage: response.message);
       } else {
         yield AddPlanFailureState(failureMessage: response.message);
       }
     } else {
-      yield AddPlanFailureState(failureMessage: "Please check your internet connection!");
+      yield AddPlanFailureState(
+          failureMessage: "Please check your internet connection!");
     }
   }
 }

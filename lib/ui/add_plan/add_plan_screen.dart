@@ -36,7 +36,8 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
 
   TextEditingController txtRemarkController = TextEditingController();
   TextEditingController txtBeatController = TextEditingController();
-  DateRangePickerController dateRangePickerController = DateRangePickerController();
+  DateRangePickerController dateRangePickerController =
+      DateRangePickerController();
   final formKey = GlobalKey<FormState>();
 
   DateTime? dateTime;
@@ -65,14 +66,19 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             planDateModel = state.planDateModel;
             planAlreadyExists = true;
             txtRemarkController.text = state.planDateModel.remark;
-            primaryTag = PrimaryTag(id: state.planDateModel.primaryTagId, name: state.planDateModel.primaryTag);
-            secondaryTag = SecondaryTag(id: state.planDateModel.secondaryTagId, name: state.planDateModel.secondaryTag);
+            primaryTag = PrimaryTag(
+                id: state.planDateModel.primaryTagId,
+                name: state.planDateModel.primaryTag);
+            secondaryTag = SecondaryTag(
+                id: state.planDateModel.secondaryTagId,
+                name: state.planDateModel.secondaryTag);
 
             if (primaryTagListener != null) {
               primaryTagListener!.onPrimaryTagSelect(primaryTag!);
             }
             if (secondaryTagListener != null) {
-              secondaryTagListener!.onPrimaryTagChange(primaryTag!, secondaryTag!);
+              secondaryTagListener!
+                  .onPrimaryTagChange(primaryTag!, secondaryTag!);
               secondaryTagListener!.onSecondaryTagSelect(secondaryTag!);
             }
           }
@@ -94,7 +100,10 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: const Icon(Icons.arrow_back_ios_new),
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: MColor.backButton,
+              ),
             ),
             title: const Text(addPlan),
             elevation: 1,
@@ -102,7 +111,10 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
               Center(
                 child: Text(
                   DateFormat("MMM yyyy").format(widget.month) + "\t\t",
-                  style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               )
             ],
@@ -132,7 +144,9 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                       week = (w / 7).toInt() + 1;
 
                       addPlanBloc.add(
-                        GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(dateTime!)),
+                        GetSavedPlanEvent(
+                            selectedDate:
+                                DateFormat("yyyy-MM-dd").format(dateTime!)),
                       );
                     },
                     // cellBuilder: (context, detail) {
@@ -142,12 +156,15 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                     //     child: Text(detail.date.day.toString()),
                     //   );
                     // },
-                    minDate: DateTime(DateTime.now().year, DateTime.now().month + 1, 1),
-                    initialDisplayDate: DateTime(DateTime.now().year, DateTime.now().month + 1, 1),
+                    minDate: DateTime(
+                        DateTime.now().year, DateTime.now().month + 1, 1),
+                    initialDisplayDate: DateTime(
+                        DateTime.now().year, DateTime.now().month + 1, 1),
                     selectionMode: DateRangePickerSelectionMode.single,
                     navigationMode: DateRangePickerNavigationMode.none,
                     monthCellStyle: DateRangePickerMonthCellStyle(
-                      textStyle: const TextStyle(fontWeight: FontWeight.w600, color: Colors.black),
+                      textStyle: const TextStyle(
+                          fontWeight: FontWeight.w600, color: Colors.black),
                       leadingDatesTextStyle: TextStyle(
                         color: Colors.grey.shade400,
                         fontWeight: FontWeight.w600,
@@ -173,7 +190,8 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                     children: [
                       const Text(
                         "Primary Tag",
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(
                         height: 15,
@@ -187,10 +205,13 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                             onSelect: (tag) {
                               primaryTag = tag;
 
-                              addPlanBloc.add(SelectPrimaryEvent(primaryTag: primaryTag!));
+                              addPlanBloc.add(
+                                  SelectPrimaryEvent(primaryTag: primaryTag!));
 
-                              if (secondaryTagListener != null && primaryTag != null) {
-                                secondaryTagListener!.onPrimaryTagChange(primaryTag!, secondaryTag);
+                              if (secondaryTagListener != null &&
+                                  primaryTag != null) {
+                                secondaryTagListener!.onPrimaryTagChange(
+                                    primaryTag!, secondaryTag);
                               }
                             },
                             onInit: (PrimaryTagListener listener) {
@@ -226,7 +247,8 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                       ),
                       const Text(
                         remark,
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(
                         height: 15,
@@ -238,7 +260,9 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: const Color(0xffF2F2F2),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none),
                         ),
                       ),
                       const SizedBox(
@@ -268,8 +292,11 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                 textColor: Colors.white,
                 onPressed: () async {
                   Map<String, dynamic> input = {
-                    "user_id": await SharedPreference.getStringPreference(SharedPreference.userId),
-                    "add_plan_date": dateTime == null ? "" : DateFormat("yyyy-MM-dd").format(dateTime!),
+                    "user_id": await SharedPreference.getStringPreference(
+                        SharedPreference.userId),
+                    "add_plan_date": dateTime == null
+                        ? ""
+                        : DateFormat("yyyy-MM-dd").format(dateTime!),
                     "primary_tag": primaryTag!.name,
                     "primary_tag_id": primaryTag!.id,
                     "secondary_tag": secondaryTag!.name,
@@ -320,7 +347,8 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
 
   void getInitialDate() async {
     dateTime = await NTP.now();
-    dateRangePickerController.selectedDate = DateTime(dateTime!.year, dateTime!.month + 1, 1);
+    dateRangePickerController.selectedDate =
+        DateTime(dateTime!.year, dateTime!.month + 1, 1);
     // addPlanBloc.add(
     //   GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(dateTime!)),
     // );
