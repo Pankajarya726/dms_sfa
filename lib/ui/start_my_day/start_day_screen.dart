@@ -23,7 +23,9 @@ import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -255,6 +257,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                 minLines: 3,
                                 controller: txtRemarkController,
                                 maxLines: 5,
+                                maxLengthEnforcement: MaxLengthEnforcement.none,
                                 decoration: InputDecoration(
                                   hintText: "Write your remark",
                                   hintStyle: const TextStyle(
@@ -279,39 +282,55 @@ class _StartDayScreenState extends State<StartDayScreen> {
                           if (state is UserLocationInitialState) {
                             userLocationBloc.add(GetUserLocationEvent());
                           }
+
+                          if (state is UserLocationLoadingState) {
+                            EasyLoading.show();
+                          }
+
                           if (state is GetUserLocationState) {
+                            EasyLoading.dismiss();
                             currentAddress = state.currentAddress;
                             latitude = state.latitude;
                             longitude = state.longitude;
                           }
                           if (state is UserLocationFailureState) {
+                            EasyLoading.dismiss();
                             currentAddress = state.failureMessage;
                           }
-                          return Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Image(
-                                image: AssetImage("assets/location.png"),
-                                height: 20,
-                                width: 20,
-                                fit: BoxFit.contain,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: Text(
-                                  currentAddress,
-                                  maxLines: 3,
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: MColor.backButton,
-                                    letterSpacing: 0.67,
+
+                          return InkWell(
+                            customBorder: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            onTap: () {
+                              userLocationBloc.add(GetUserLocationEvent());
+                            },
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Image(
+                                  image: AssetImage("assets/location.png"),
+                                  height: 20,
+                                  width: 20,
+                                  fit: BoxFit.contain,
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    currentAddress,
+                                    maxLines: 3,
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      color: MColor.backButton,
+                                      letterSpacing: 0.67,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           );
                         },
                       ),
@@ -538,16 +557,22 @@ class _StartDayScreenState extends State<StartDayScreen> {
                 Fluttertoast.showToast(msg: "Please enter remark");
                 return;
               }
+              if (txtRemarkController.text.trim().length > 255) {
+                Fluttertoast.showToast(msg: "Word limit-250 characters");
+                return;
+              }
               if (latitude == 0.0 && longitude == 0.0) {
                 Fluttertoast.showToast(
                     msg:
                         "Could not fetch your location, Please try again later");
+                userLocationBloc.add(GetUserLocationEvent());
                 return;
               }
               if (currentAddress.isEmpty) {
                 Fluttertoast.showToast(
                     msg:
                         "Could not proceed, because we are not able to fetch your area detail. Please allow location permission to continue");
+                userLocationBloc.add(GetUserLocationEvent());
                 return;
               }
 

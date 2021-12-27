@@ -11,6 +11,7 @@ class UserLocationBloc extends Bloc<UserLocationEvents, UserLocationStates> {
   @override
   Stream<UserLocationStates> mapEventToState(UserLocationEvents event) async* {
     if (event is GetUserLocationEvent) {
+      yield UserLocationLoadingState();
       yield* getUserLocation(event);
     }
   }
@@ -30,22 +31,29 @@ class UserLocationBloc extends Bloc<UserLocationEvents, UserLocationStates> {
       String postalCode = place.postalCode!;
       String street = place.street!;
       String subLocality = place.subLocality!;
+      String address;
 
-      String address = street +
-          " " +
-          name +
-          " " +
-          subLocality +
-          " " +
-          locality +
-          " " +
-          postalCode;
+      // In some cases, street and name are same, to handle this situation we applied this condition
+      if (street == name) {
+        address =
+            street + " " + subLocality + " " + locality + " " + postalCode;
+      } else {
+        address = street +
+            " " +
+            name +
+            " " +
+            subLocality +
+            " " +
+            locality +
+            " " +
+            postalCode;
+      }
 
       yield GetUserLocationState(
           currentAddress: address, latitude: latitude, longitude: longitude);
     } catch (exception) {
       yield UserLocationFailureState(
-          failureMessage: "Unable to get current location");
+          failureMessage: "Click here to get current location!");
     }
   }
 

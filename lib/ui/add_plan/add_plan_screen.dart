@@ -191,7 +191,10 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                       const Text(
                         "Primary Tag",
                         style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.67,
+                        ),
                       ),
                       const SizedBox(
                         height: 15,
@@ -248,7 +251,10 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                       const Text(
                         remark,
                         style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.67,
+                        ),
                       ),
                       const SizedBox(
                         height: 15,

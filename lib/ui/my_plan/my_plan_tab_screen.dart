@@ -12,13 +12,15 @@ class MyPlanTabScreen extends StatefulWidget {
   final List<PlanDataModel> plans;
   final DateTime dateTime;
 
-  const MyPlanTabScreen({Key? key, required this.plans, required this.dateTime}) : super(key: key);
+  const MyPlanTabScreen({Key? key, required this.plans, required this.dateTime})
+      : super(key: key);
 
   @override
   _MyPlanTabScreenState createState() => _MyPlanTabScreenState();
 }
 
-class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderStateMixin {
+class _MyPlanTabScreenState extends State<MyPlanTabScreen>
+    with TickerProviderStateMixin {
   List<int> week = [];
   List<WeeklyPlanModel> weeklyPlan = [];
   TabController? tabController;
@@ -48,6 +50,7 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderSt
                 child: Column(
                   children: [
                     TabBar(
+                      labelStyle: const TextStyle(fontWeight: FontWeight.w500),
                       controller: tabController,
                       isScrollable: true,
                       unselectedLabelColor: Colors.black54,
@@ -55,15 +58,19 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderSt
                       indicator: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           color: const Color(0xffFFC9CC),
-                          border: Border.all(width: 1, color: const Color(0xffF3505A))),
+                          border: Border.all(
+                              width: 1, color: const Color(0xffF3505A))),
 
                       onTap: (index) {
                         tabController!.index = index;
                       },
 
-                      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                      indicatorPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
-                      labelPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 15),
+                      indicatorPadding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 0),
+                      labelPadding: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 15),
                       indicatorSize: TabBarIndicatorSize.tab,
                       tabs: List.generate(
                           weeklyPlan.length,
@@ -72,7 +79,8 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderSt
                                   alignment: Alignment.center,
                                   child: Text(
                                     "Week ${weeklyPlan[i].week}",
-                                    style: const TextStyle(color: Colors.black, fontSize: 16),
+                                    style: const TextStyle(
+                                        color: Colors.black, fontSize: 16),
                                   ),
                                 ),
                               )),
@@ -97,8 +105,10 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderSt
 
   Future<List<WeeklyPlanModel>> getPlans() async {
     if (await Network.isConnected()) {
-      String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
-      GetPlanResponse response = await repository.getPlanByMonth(userId, DateFormat("yyyy-MM").format(widget.dateTime));
+      String userId =
+          await SharedPreference.getStringPreference(SharedPreference.userId);
+      GetPlanResponse response = await repository.getPlanByMonth(
+          userId, DateFormat("yyyy-MM").format(widget.dateTime));
 
       if (response.success) {
         week.clear();
@@ -110,7 +120,8 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderSt
         debugPrint("weeks in data $week");
         weeklyPlan.clear();
         for (var w in week) {
-          List<PlanDataModel> pm = response.data.where((element) => element.week == w).toList();
+          List<PlanDataModel> pm =
+              response.data.where((element) => element.week == w).toList();
           weeklyPlan.add(WeeklyPlanModel(week: w, planList: pm));
         }
 

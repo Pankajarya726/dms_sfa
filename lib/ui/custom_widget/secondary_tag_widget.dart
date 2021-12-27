@@ -16,13 +16,16 @@ class SecondaryTagWidget extends StatefulWidget {
   final Function(SecondaryTag secondaryTag) onSelect;
   final Function(SecondaryTagListener secondaryTagListerner) onInit;
 
-  const SecondaryTagWidget({Key? key, this.primaryTag, required this.onSelect, required this.onInit}) : super(key: key);
+  const SecondaryTagWidget(
+      {Key? key, this.primaryTag, required this.onSelect, required this.onInit})
+      : super(key: key);
 
   @override
   _SecondaryTagWidgetState createState() => _SecondaryTagWidgetState();
 }
 
-class _SecondaryTagWidgetState extends State<SecondaryTagWidget> implements SecondaryTagListener {
+class _SecondaryTagWidgetState extends State<SecondaryTagWidget>
+    implements SecondaryTagListener {
   List<SecondaryTag> secondaryTagList = [];
   SecondaryTag? selectedSecondaryTag;
   PrimaryTag? primaryTag;
@@ -51,7 +54,11 @@ class _SecondaryTagWidgetState extends State<SecondaryTagWidget> implements Seco
                       padding: EdgeInsets.symmetric(vertical: 15),
                       child: Text(
                         secondaryTag,
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.67,
+                        ),
                       ),
                     )
                   : Container(),
@@ -66,7 +73,9 @@ class _SecondaryTagWidgetState extends State<SecondaryTagWidget> implements Seco
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.all(15),
                         hintText: "Select Retailing",
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(25), borderSide: BorderSide.none),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25),
+                            borderSide: BorderSide.none),
                         suffixIcon: const Icon(
                           Icons.keyboard_arrow_down_outlined,
                           color: Colors.black,
@@ -88,7 +97,8 @@ class _SecondaryTagWidgetState extends State<SecondaryTagWidget> implements Seco
                                 setState(() {});
                               },
                               active: selectedSecondaryTag != null
-                                  ? selectedSecondaryTag!.id == secondaryTagList[index].id
+                                  ? selectedSecondaryTag!.id ==
+                                          secondaryTagList[index].id
                                       ? true
                                       : false
                                   : false,
@@ -97,17 +107,21 @@ class _SecondaryTagWidgetState extends State<SecondaryTagWidget> implements Seco
                               textColor: const Color(0xff555555),
                               elevation: 0,
                               textStyle: const TextStyle(fontSize: 16),
-                              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10),
                               index: index,
                               border: Border.all(
                                   color: selectedSecondaryTag != null
-                                      ? selectedSecondaryTag!.id == secondaryTagList[index].id
+                                      ? selectedSecondaryTag!.id ==
+                                              secondaryTagList[index].id
                                           ? MColor.colorPrimary
-                                          : const Color.fromRGBO(197, 197, 197, 1)
+                                          : const Color.fromRGBO(
+                                              197, 197, 197, 1)
                                       : const Color.fromRGBO(197, 197, 197, 1)),
                               activeColor: const Color(0xFFFFC9CC),
                               color: selectedSecondaryTag != null
-                                  ? selectedSecondaryTag!.id == secondaryTagList[index].id
+                                  ? selectedSecondaryTag!.id ==
+                                          secondaryTagList[index].id
                                       ? const Color(0xFFFFC9CC)
                                       : const Color(0xffFAFAFA)
                                   : const Color(0xffFAFAFA),
@@ -122,7 +136,8 @@ class _SecondaryTagWidgetState extends State<SecondaryTagWidget> implements Seco
 
   void getSecondaryTag() async {
     if (await Network.isConnected()) {
-      SecondaryTagResponse response = await repository.getSecondaryTag(primaryTag!.id.toString());
+      SecondaryTagResponse response =
+          await repository.getSecondaryTag(primaryTag!.id.toString());
 
       if (response.success) {
         if (primaryTag!.id == 1) {
@@ -144,7 +159,8 @@ class _SecondaryTagWidgetState extends State<SecondaryTagWidget> implements Seco
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))),
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))),
         builder: (context) {
           return BeatBottomSheet(
               beat: txtBeatController.text,

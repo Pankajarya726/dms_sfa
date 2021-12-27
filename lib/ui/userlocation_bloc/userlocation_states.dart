@@ -7,6 +7,8 @@ class UserLocationStates extends Equatable {
 
 class UserLocationInitialState extends UserLocationStates {}
 
+class UserLocationLoadingState extends UserLocationStates {}
+
 class GetUserLocationState extends UserLocationStates {
   final String currentAddress;
   final double latitude;
