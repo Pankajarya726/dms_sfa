@@ -91,13 +91,20 @@ class _PrimaryTagWidgetState extends State<PrimaryTagWidget> implements PrimaryT
   }
 
   @override
-  void onPrimaryTagSelect(PrimaryTag primaryTag) {
-    selectedTag = primaryTag;
-
-    debugPrint("onPrimaryTagSelect->$selectedTag");
+  void onPrimaryTagSelect(PrimaryTag? primaryTag) {
+    if (primaryTag == null) {
+      selectedTag = primaryTags.first;
+      widget.onSelect(selectedTag!);
+    } else {
+      selectedTag = primaryTag;
+    }
+    if (mounted) {
+      setState(() {});
+      debugPrint("onPrimaryTagSelect->$selectedTag");
+    }
   }
 }
 
 abstract class PrimaryTagListener {
-  void onPrimaryTagSelect(PrimaryTag primaryTag);
+  void onPrimaryTagSelect(PrimaryTag? primaryTag);
 }

@@ -62,7 +62,12 @@ class MyApp extends StatelessWidget {
     );
 
     return MaterialApp(
-      title: 'DMS',
+      title: 'VV Sales Mitra'
+          ''
+          ''
+          ''
+          ''
+          '',
       debugShowCheckedModeBanner: false,
       builder: EasyLoading.init(),
       theme: ThemeData(

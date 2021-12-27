@@ -1,5 +1,4 @@
-import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart';
-import 'package:dms/ui/edit_profile/model/edit_profile_model.dart';
+import 'package:dms/ui/edit_profile/model/update_profile_response.dart';
 import 'package:equatable/equatable.dart';
 
 class EditProfileState extends Equatable {
@@ -12,10 +11,10 @@ class EditProfileInitialState extends EditProfileState {}
 class EditProfileLoadingState extends EditProfileState {}
 
 class EditProfileSuccessState extends EditProfileState {
-  final EditProfileResponse response;
-  EditProfileSuccessState({required this.response});
+  final User user;
+  EditProfileSuccessState({required this.user});
   @override
-  List<Object?> get props => [response];
+  List<Object?> get props => [user];
 }
 
 class EditProfileFailureState extends EditProfileState {
@@ -32,11 +31,11 @@ class EditProfileNetworkState extends EditProfileState {
   List<Object?> get props => [message];
 }
 
-class GetUserDetailsSucessState extends EditProfileState {
-  final UserDetails response;
-  GetUserDetailsSucessState({required this.response});
+class GetUserDetailsSuccessState extends EditProfileState {
+  final User user;
+  GetUserDetailsSuccessState({required this.user});
   @override
-  List<Object?> get props => [response];
+  List<Object?> get props => [user];
 }
 
 class GetUserDetailsFailureState extends EditProfileState {

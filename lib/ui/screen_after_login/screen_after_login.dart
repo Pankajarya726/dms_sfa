@@ -1,7 +1,14 @@
+import 'package:dms/main.dart';
+import 'package:dms/model/get_plan_response.dart';
 import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/ui/start_my_day/start_day_screen.dart';
+import 'package:dms/utils/network.dart';
+import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
+import 'package:ntp/ntp.dart';
 
 class ScreenAfterLogin extends StatefulWidget {
   const ScreenAfterLogin({Key? key}) : super(key: key);
@@ -11,6 +18,14 @@ class ScreenAfterLogin extends StatefulWidget {
 }
 
 class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
+  PlanDataModel? myPlan;
+
+  @override
+  void initState() {
+    getMyPlan();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -70,12 +85,16 @@ class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
           ),
           onTap: () {
             if (imageLabel == startMyDayCaps) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const StartDayScreen(),
-                ),
-              );
+              if (myPlan == null) {
+                Fluttertoast.showToast(msg: "You don't have any plan for today, Please connect to admin");
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const StartDayScreen(),
+                  ),
+                );
+              }
             } else {
               Navigator.push(
                 context,
@@ -107,5 +126,26 @@ class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
         ),
       ),
     );
+  }
+
+  void getMyPlan() async {
+    if (await Network.isConnected()) {
+      String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
+      Map input = {
+        "user_id": userId,
+        "add_plan_date": DateFormat("yyyy-MM-dd").format(await NTP.now()),
+      };
+      GetPlanResponse response = await repository.getSavedPlan(input);
+
+      if (response.success) {
+        if (response.data.isNotEmpty) {
+          myPlan = response.data.first;
+        }
+      } else {
+        Fluttertoast.showToast(msg: response.message);
+      }
+    } else {
+      Fluttertoast.showToast(msg: "Please check your internet connection!");
+    }
   }
 }

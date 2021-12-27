@@ -79,13 +79,15 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderSt
                     ),
                     Expanded(
                         child: TabBarView(
-                            physics: NeverScrollableScrollPhysics(),
+                            physics: const NeverScrollableScrollPhysics(),
                             controller: tabController,
-                            children: List.generate(
-                                weeklyPlan.length,
-                                (index) => PlanListWidget(
-                                      planList: weeklyPlan[index].planList,
-                                    ))))
+                            children: List.generate(weeklyPlan.length, (index) {
+                              weeklyPlan[index].planList.sort((a, b) => a.addPlanDate.compareTo(b.addPlanDate));
+
+                              return PlanListWidget(
+                                planList: weeklyPlan[index].planList,
+                              );
+                            })))
                   ],
                 ));
           }
@@ -124,13 +126,6 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderSt
       return [];
     }
   }
-}
-
-class WeeklyPlanModel {
-  int week;
-  List<PlanDataModel> planList;
-
-  WeeklyPlanModel({required this.week, required this.planList});
 }
 
 class PlanListWidget extends StatefulWidget {
@@ -279,4 +274,11 @@ class _PlanListWidgetState extends State<PlanListWidget> {
       },
     );
   }
+}
+
+class WeeklyPlanModel {
+  int week;
+  List<PlanDataModel> planList;
+
+  WeeklyPlanModel({required this.week, required this.planList});
 }

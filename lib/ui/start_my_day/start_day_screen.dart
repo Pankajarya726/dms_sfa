@@ -52,8 +52,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
   String quoteImage = "";
   String quoteText = "";
   String currentAddress = "";
-  RefreshController refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController refreshController = RefreshController(initialRefresh: false);
 
   PlanDataModel? planDateModel;
   PrimaryTagListener? primaryTagListener;
@@ -139,10 +138,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                   bottom: 0,
                                   child: Container(
                                     width: MediaQuery.of(context).size.width,
-                                    height:
-                                        MediaQuery.of(context).size.width * 0.5,
-                                    color: const Color(0xff000000)
-                                        .withOpacity(0.4),
+                                    height: MediaQuery.of(context).size.width * 0.5,
+                                    color: const Color(0xff000000).withOpacity(0.4),
                                   ),
                                 )
                               : Container(),
@@ -183,25 +180,17 @@ class _StartDayScreenState extends State<StartDayScreen> {
                           if (state is GetSavedPlanState) {
                             planDateModel = state.planDateModel;
                             txtRemarkController.text = planDateModel!.remark;
-                            primaryTag = PrimaryTag(
-                                id: planDateModel!.primaryTagId,
-                                name: planDateModel!.primaryTag);
-                            secondaryTag = SecondaryTag(
-                                id: planDateModel!.secondaryTagId,
-                                name: planDateModel!.secondaryTag);
+                            primaryTag = PrimaryTag(id: planDateModel!.primaryTagId, name: planDateModel!.primaryTag);
+                            secondaryTag = SecondaryTag(id: planDateModel!.secondaryTagId, name: planDateModel!.secondaryTag);
 
                             if (primaryTagListener != null) {
-                              primaryTagListener!
-                                  .onPrimaryTagSelect(primaryTag!);
+                              primaryTagListener!.onPrimaryTagSelect(primaryTag!);
                             }
                             if (secondaryTagListener != null) {
-                              secondaryTagListener!.onPrimaryTagChange(
-                                  primaryTag!, secondaryTag!);
-                              secondaryTagListener!
-                                  .onSecondaryTagSelect(secondaryTag!);
+                              secondaryTagListener!.onPrimaryTagChange(primaryTag!, secondaryTag!);
+                              secondaryTagListener!.onSecondaryTagSelect(secondaryTag!);
                             }
-                            debugPrint(
-                                "add plan data = ${state.planDateModel}");
+                            debugPrint("add plan data = ${state.planDateModel}");
                           }
 
                           return Column(
@@ -222,8 +211,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                 primaryTag = tag;
 
                                 if (secondaryTagListener != null) {
-                                  secondaryTagListener!.onPrimaryTagChange(
-                                      primaryTag!, secondaryTag);
+                                  secondaryTagListener!.onPrimaryTagChange(primaryTag!, secondaryTag);
                                 }
                               }, onInit: (PrimaryTagListener listener) {
                                 primaryTagListener = listener;
@@ -232,10 +220,10 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                 onSelect: (tag) {
                                   secondaryTag = tag;
                                 },
-                                onInit: (SecondaryTagListener listener) {
-                                  secondaryTagListener = listener;
-                                },
-                                primaryTag: primaryTag,
+                                // onInit: (SecondaryTagListener listener) {
+                                //   secondaryTagListener = listener;
+                                // },
+                                primaryTag: primaryTag!, secondaryTagList: [],
                               ),
                               const SizedBox(
                                 height: 15,
@@ -262,9 +250,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                   ),
                                   filled: true,
                                   fillColor: const Color(0xffF2F2F2),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: BorderSide.none),
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
                                 ),
                               ),
                               const SizedBox(
@@ -352,10 +338,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                       height: 60,
                                       decoration: BoxDecoration(
                                         color: isMeeting
-                                            ? const Color.fromRGBO(
-                                                255, 201, 204, 0.5)
-                                            : const Color.fromRGBO(
-                                                196, 196, 196, 0.5),
+                                            ? const Color.fromRGBO(255, 201, 204, 0.5)
+                                            : const Color.fromRGBO(196, 196, 196, 0.5),
                                         borderRadius: BorderRadius.circular(30),
                                       ),
                                       alignment: Alignment.center,
@@ -364,12 +348,9 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                         height: 48,
                                         decoration: BoxDecoration(
                                           color: isMeeting
-                                              ? const Color.fromRGBO(
-                                                  255, 201, 204, 1)
-                                              : const Color.fromRGBO(
-                                                  196, 196, 196, 1),
-                                          borderRadius:
-                                              BorderRadius.circular(30),
+                                              ? const Color.fromRGBO(255, 201, 204, 1)
+                                              : const Color.fromRGBO(196, 196, 196, 1),
+                                          borderRadius: BorderRadius.circular(30),
                                         ),
                                         child: const Center(
                                           child: Text(
@@ -399,10 +380,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                       height: 60,
                                       decoration: BoxDecoration(
                                         color: isMeeting
-                                            ? const Color.fromRGBO(
-                                                196, 196, 196, 0.5)
-                                            : const Color.fromRGBO(
-                                                255, 201, 204, 0.5),
+                                            ? const Color.fromRGBO(196, 196, 196, 0.5)
+                                            : const Color.fromRGBO(255, 201, 204, 0.5),
                                         borderRadius: BorderRadius.circular(30),
                                       ),
                                       alignment: Alignment.center,
@@ -411,12 +390,9 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                         height: 48,
                                         decoration: BoxDecoration(
                                           color: isMeeting
-                                              ? const Color.fromRGBO(
-                                                  196, 196, 196, 1)
-                                              : const Color.fromRGBO(
-                                                  255, 201, 204, 1),
-                                          borderRadius:
-                                              BorderRadius.circular(30),
+                                              ? const Color.fromRGBO(196, 196, 196, 1)
+                                              : const Color.fromRGBO(255, 201, 204, 1),
+                                          borderRadius: BorderRadius.circular(30),
                                         ),
                                         child: const Center(
                                           child: Text(
@@ -461,30 +437,21 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                     borderRadius: BorderRadius.circular(8),
                                     color: Colors.white,
                                     border: Border.all(
-                                      color:
-                                          const Color.fromRGBO(85, 85, 85, 1),
+                                      color: const Color.fromRGBO(85, 85, 85, 1),
                                       width: 1,
                                     ),
                                   ),
                                   child: imageFile == null
                                       ? Center(
                                           child: Image(
-                                            image: const AssetImage(
-                                                "assets/camera_icon.png"),
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                7,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                7,
+                                            image: const AssetImage("assets/camera_icon.png"),
+                                            width: MediaQuery.of(context).size.width / 7,
+                                            height: MediaQuery.of(context).size.width / 7,
                                             fit: BoxFit.contain,
                                           ),
                                         )
                                       : ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(7),
+                                          borderRadius: BorderRadius.circular(7),
                                           child: Image(
                                             image: FileImage(imageFile!),
                                             fit: BoxFit.cover,
@@ -510,10 +477,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
           listener: (context, state) {
             if (state is StartMyDaySuccessState) {
               Fluttertoast.showToast(msg: state.successMessage);
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const DrawerScreen()),
-                  (route) => false);
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const DrawerScreen()), (route) => false);
             }
             if (state is StartMyDayFailureState) {
               Fluttertoast.showToast(msg: state.failureMessage);
@@ -529,8 +493,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                 Fluttertoast.showToast(msg: "Please select primary tag");
                 return;
               }
-              if ((primaryTag!.id == 1 || primaryTag!.id == 2) &&
-                  secondaryTag == null) {
+              if ((primaryTag!.id == 1 || primaryTag!.id == 2) && secondaryTag == null) {
                 Fluttertoast.showToast(msg: "Please select secondary tag");
                 return;
               }
@@ -539,9 +502,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                 return;
               }
               if (latitude == 0.0 && longitude == 0.0) {
-                Fluttertoast.showToast(
-                    msg:
-                        "Could not fetch your location, Please try again later");
+                Fluttertoast.showToast(msg: "Could not fetch your location, Please try again later");
                 return;
               }
               if (currentAddress.isEmpty) {
@@ -554,10 +515,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
               Map<String, dynamic> input = HashMap<String, dynamic>();
 
               DateTime _ntpTime = await NTP.now();
-              input["user_id"] = await SharedPreference.getStringPreference(
-                  SharedPreference.userId);
-              input["start_day_date"] =
-                  DateFormat("yyyy-MM-dd").format(_ntpTime);
+              input["user_id"] = await SharedPreference.getStringPreference(SharedPreference.userId);
+              input["start_day_date"] = DateFormat("yyyy-MM-dd").format(_ntpTime);
               input["primary_tag"] = primaryTag!.name;
               input["primary_tag_id"] = primaryTag!.id;
               if (secondaryTag != null) {
@@ -570,8 +529,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
               input["longitude"] = longitude.toString();
               input["get_meeting"] = isMeeting ? 1 : 2;
               input["address"] = currentAddress;
-              input["start_day_time"] =
-                  "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
+              input["start_day_time"] = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
 
               if (imageFile != null) {
                 input["start_day_image"] = await MultipartFile.fromFile(
@@ -650,10 +608,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
 
   void selectImage() async {
     XFile? image = await imagePicker.pickImage(
-        source: ImageSource.camera,
-        maxHeight: 512,
-        maxWidth: 512,
-        preferredCameraDevice: CameraDevice.front);
+        source: ImageSource.camera, maxHeight: 512, maxWidth: 512, preferredCameraDevice: CameraDevice.front);
     if (image != null) {
       imageFile = File(image.path);
       fileName = image.name;
@@ -676,14 +631,12 @@ class _StartDayScreenState extends State<StartDayScreen> {
     txtRemarkController = TextEditingController();
     txtBeatController = TextEditingController();
     startMyDayBloc.add(GetQuotesAndImagesEvent());
-    addPlanBloc.add(GetSavedPlanEvent(
-        selectedDate: DateFormat("yyyy-MM-dd").format(DateTime.now())));
+    addPlanBloc.add(GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(DateTime.now())));
     userLocationBloc.add(GetUserLocationEvent());
     refreshController.refreshCompleted();
   }
 
   void getCurrentDate() async {
-    addPlanBloc.add(GetSavedPlanEvent(
-        selectedDate: DateFormat("yyyy-MM-dd").format(await NTP.now())));
+    addPlanBloc.add(GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(await NTP.now())));
   }
 }

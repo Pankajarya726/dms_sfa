@@ -36,6 +36,20 @@ class SelectPrimaryEvent extends AddPlanEvents {
   List<Object> get props => [primaryTag];
 }
 
+class GetPrimaryTagEvent extends AddPlanEvents {
+  GetPrimaryTagEvent();
+  @override
+  List<Object> get props => [];
+}
+
+class GetSecondaryTagEvent extends AddPlanEvents {
+  final int primaryTagId;
+
+  GetSecondaryTagEvent({required this.primaryTagId});
+  @override
+  List<Object> get props => [primaryTagId];
+}
+
 class SelectSecondaryEvent extends AddPlanEvents {
   final SecondaryTag secondaryTag;
 

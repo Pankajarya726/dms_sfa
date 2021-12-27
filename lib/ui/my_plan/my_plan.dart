@@ -4,7 +4,10 @@ import 'package:dms/ui/my_plan/bloc/my_plan_bloc.dart';
 import 'package:dms/ui/my_plan/bloc/my_plan_events.dart';
 import 'package:dms/ui/my_plan/bloc/my_plan_states.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/constants.dart';
+import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -22,14 +25,7 @@ class MyPlan extends StatefulWidget {
 class _MyPlanState extends State<MyPlan> with TickerProviderStateMixin {
   List<DateTime> months = [];
   String selectedWeek = "week 1";
-  List<String> weeks = [
-    "week 1",
-    "week 2",
-    "week 3",
-    "week 4",
-    "week 5",
-    "week 6",
-  ];
+
   DateTime? dateTime;
   String shortMonth = "";
   String date = "";
@@ -44,7 +40,11 @@ class _MyPlanState extends State<MyPlan> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    // getTabs();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -60,13 +60,17 @@ class _MyPlanState extends State<MyPlan> with TickerProviderStateMixin {
           if (state is GetMonthState) {
             pjpButton = state.pjpButton;
             months = state.months;
-            _tabController = TabController(vsync: this, length: months.length);
+            _tabController = TabController(vsync: this, length: months.length, initialIndex: months.length - 2);
             myPlanBloc.add(GetMyPlansEvent(date: DateFormat("yyyy-MM").format(months[0])));
           }
 
           if (state is GetPlanSuccessState) {
             debugPrint(state.myPlan.toString());
             myplan = state.myPlan;
+          }
+
+          if (_tabController == null) {
+            return const Center(child: CircularProgressIndicator());
           }
 
           return DefaultTabController(
@@ -101,15 +105,19 @@ class _MyPlanState extends State<MyPlan> with TickerProviderStateMixin {
                               backgroundColor: MaterialStateProperty.all(MColor.colorSecondary),
                             ),
                             onPressed: () async {
-                              DateTime dateTime = await NTP.now();
-                              DateTime next = DateTime(dateTime.year, dateTime.month + 1);
-                              debugPrint("next-->$next");
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AddPlanScreen(month: next),
-                                ),
-                              );
+                              if (await Network.isConnected()) {
+                                DateTime dateTime = await NTP.now();
+                                DateTime next = DateTime(dateTime.year, dateTime.month + 1);
+                                debugPrint("next-->$next");
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddPlanScreen(month: next),
+                                  ),
+                                );
+                              } else {
+                                Utility.showToast(Constants.internetAlert);
+                              }
                             },
                             child: const Text(
                               addCaps,
@@ -129,6 +137,7 @@ class _MyPlanState extends State<MyPlan> with TickerProviderStateMixin {
                     child: TabBar(
                       indicatorWeight: 3,
                       isScrollable: true,
+                      controller: _tabController,
                       indicatorColor: MColor.tabIndicatorColor,
                       unselectedLabelColor: MColor.backButton,
                       labelColor: MColor.backButton,
@@ -148,6 +157,7 @@ class _MyPlanState extends State<MyPlan> with TickerProviderStateMixin {
                 ),
               ),
               body: TabBarView(
+                controller: _tabController,
                 children: List.generate(months.length, (index) {
                   return MyPlanTabScreen(
                     plans: myplan,

@@ -1,20 +1,23 @@
+import 'dart:collection';
+
 import 'package:dms/model/get_plan_response.dart';
 import 'package:dms/model/primary_tag_response.dart';
 import 'package:dms/model/secondary_tag_response.dart';
 import 'package:dms/ui/add_plan/bloc/add_plan_bloc.dart';
 import 'package:dms/ui/add_plan/bloc/add_plan_events.dart';
 import 'package:dms/ui/add_plan/bloc/add_plan_states.dart';
-import 'package:dms/ui/custom_widget/primary_tag_widget.dart';
-import 'package:dms/ui/custom_widget/secondary_tag_widget.dart';
+import 'package:dms/ui/custom_widget/beat_bootom_sheet.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class AddPlanScreen extends StatefulWidget {
@@ -36,18 +39,17 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
 
   TextEditingController txtRemarkController = TextEditingController();
   TextEditingController txtBeatController = TextEditingController();
-  DateRangePickerController dateRangePickerController =
-      DateRangePickerController();
+  DateRangePickerController dateRangePickerController = DateRangePickerController();
   final formKey = GlobalKey<FormState>();
-
+  final RefreshController _refreshController = RefreshController();
   DateTime? dateTime;
   bool planAlreadyExists = false;
   int updateAddPlanId = 0;
+  List<PrimaryTag> primaryTagList = [];
+  List<SecondaryTag> secondaryTagList = [];
 
   PrimaryTag? primaryTag;
   SecondaryTag? secondaryTag;
-  PrimaryTagListener? primaryTagListener;
-  SecondaryTagListener? secondaryTagListener;
   PlanDataModel? planDateModel;
 
   @override
@@ -63,35 +65,49 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
         bloc: addPlanBloc,
         listener: (context, state) {
           if (state is GetSavedPlanState) {
+            _refreshController.refreshCompleted();
             planDateModel = state.planDateModel;
             planAlreadyExists = true;
             txtRemarkController.text = state.planDateModel.remark;
-            primaryTag = PrimaryTag(
-                id: state.planDateModel.primaryTagId,
-                name: state.planDateModel.primaryTag);
-            secondaryTag = SecondaryTag(
-                id: state.planDateModel.secondaryTagId,
-                name: state.planDateModel.secondaryTag);
+            primaryTag = PrimaryTag(id: state.planDateModel.primaryTagId, name: state.planDateModel.primaryTag);
+            secondaryTag = SecondaryTag(id: state.planDateModel.secondaryTagId, name: state.planDateModel.secondaryTag);
+            addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
 
-            if (primaryTagListener != null) {
-              primaryTagListener!.onPrimaryTagSelect(primaryTag!);
-            }
-            if (secondaryTagListener != null) {
-              secondaryTagListener!
-                  .onPrimaryTagChange(primaryTag!, secondaryTag!);
-              secondaryTagListener!.onSecondaryTagSelect(secondaryTag!);
-            }
+            // if (primaryTagListener != null) {
+            //   primaryTagListener!.onPrimaryTagSelect(primaryTag!);
+            // }
+            // if (secondaryTagListener != null) {
+            //   secondaryTagListener!.onPrimaryTagChange(primaryTag!, secondaryTag!);
+            //   secondaryTagListener!.onSecondaryTagSelect(secondaryTag!);
+            // }
+          }
+
+          if (state is GetSecondaryTagState) {
+            secondaryTagList = state.secondaryTagList;
           }
           if (state is GetAddPlanFailureState) {
+            _refreshController.refreshCompleted();
             planDateModel = null;
             planAlreadyExists = false;
-          }
-          if (state is SelectPrimaryState) {
-            // secondaryTagListener!.onPrimaryTagChange(primaryTag!, secondaryTag!);
-            // secondaryTagListener!.onSecondaryTagSelect(secondaryTag!);
+            primaryTag = primaryTagList.first;
+            secondaryTag = null;
+            txtRemarkController.clear();
+            addPlanBloc.add(SelectPrimaryEvent(primaryTag: primaryTag!));
           }
           if (state is AddPlanSuccessState) {
+            Fluttertoast.showToast(msg: state.successMessage);
+          }
+          if (state is AddPlanFailureState) {
+            Fluttertoast.showToast(msg: state.failureMessage);
+          }
+
+          if (state is AddPlanSuccessState) {
             planAlreadyExists = true;
+          }
+          if (state is GetPrimaryTagState) {
+            primaryTagList = state.primaryTagList;
+            primaryTag = primaryTagList.first;
+            getInitialDate();
           }
         },
         child: Scaffold(
@@ -110,7 +126,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             actions: [
               Center(
                 child: Text(
-                  DateFormat("MMM yyyy").format(widget.month) + "\t\t",
+                  DateFormat("MMM yyyy").format(widget.month) + "\t\t\t\t",
                   style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
@@ -119,225 +135,347 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
               )
             ],
           ),
-          body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.width * 0.75,
-                  child: SfDateRangePicker(
-                    viewSpacing: 50,
-                    controller: dateRangePickerController,
-                    allowViewNavigation: false,
-                    enableMultiView: false,
-                    enablePastDates: false,
-                    showActionButtons: false,
-                    showNavigationArrow: false,
-                    toggleDaySelection: false,
-                    headerHeight: 0,
-                    showTodayButton: false,
-                    onSelectionChanged: (selectedDate) {
-                      dateTime = selectedDate.value;
+          body: SmartRefresher(
+            controller: _refreshController,
+            onRefresh: () {
+              addPlanBloc.add(
+                GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(dateTime!)),
+              );
+            },
+            header: const MaterialClassicHeader(),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.width * 0.75,
+                    child: SfDateRangePicker(
+                      viewSpacing: 50,
+                      controller: dateRangePickerController,
+                      allowViewNavigation: false,
+                      enableMultiView: false,
+                      enablePastDates: false,
+                      showActionButtons: false,
+                      showNavigationArrow: false,
+                      toggleDaySelection: false,
+                      headerHeight: 0,
+                      showTodayButton: false,
+                      onSelectionChanged: (selectedDate) {
+                        debugPrint("onSelectionChanged-->$selectedDate");
 
-                      int w = dateTime!.day;
+                        dateTime = selectedDate.value;
 
-                      week = (w / 7).toInt() + 1;
+                        // Current date and time of system
+                        String date = dateTime!.toString();
 
-                      addPlanBloc.add(
-                        GetSavedPlanEvent(
-                            selectedDate:
-                                DateFormat("yyyy-MM-dd").format(dateTime!)),
-                      );
-                    },
-                    // cellBuilder: (context, detail) {
-                    //   return Container(
-                    //     height: 20,
-                    //
-                    //     child: Text(detail.date.day.toString()),
-                    //   );
-                    // },
-                    minDate: DateTime(
-                        DateTime.now().year, DateTime.now().month + 1, 1),
-                    initialDisplayDate: DateTime(
-                        DateTime.now().year, DateTime.now().month + 1, 1),
-                    selectionMode: DateRangePickerSelectionMode.single,
-                    navigationMode: DateRangePickerNavigationMode.none,
-                    monthCellStyle: DateRangePickerMonthCellStyle(
-                      textStyle: const TextStyle(
-                          fontWeight: FontWeight.w600, color: Colors.black),
-                      leadingDatesTextStyle: TextStyle(
-                        color: Colors.grey.shade400,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      trailingDatesTextStyle: TextStyle(
-                        color: Colors.grey.shade400,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    monthViewSettings: const DateRangePickerMonthViewSettings(
-                      showTrailingAndLeadingDates: true,
-                      viewHeaderHeight: 50,
-                      viewHeaderStyle: DateRangePickerViewHeaderStyle(
-                        textStyle: TextStyle(color: Colors.black),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Primary Tag",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      BlocBuilder<AddPlanBloc, AddPlanStates>(
-                        builder: (context, state) {
-                          if (state is AddPlanInitialState) {
-                            getInitialDate();
-                          }
-                          return PrimaryTagWidget(
-                            onSelect: (tag) {
-                              primaryTag = tag;
+                        String firstDay = date.substring(0, 8) +
+                            '01' +
+                            date.substring(10); // This will generate the time and date for first day of month
 
-                              addPlanBloc.add(
-                                  SelectPrimaryEvent(primaryTag: primaryTag!));
+                        int weekDay = DateTime.parse(firstDay).weekday; // week day for the first day of the month
+                        int weekOfMonth;
+                        //  If your calender starts from Monday
+                        weekDay--;
+                        weekOfMonth = ((dateTime!.day + weekDay) / 7).ceil();
+                        week = weekOfMonth;
+                        print('Week of the month: $weekOfMonth');
 
-                              if (secondaryTagListener != null &&
-                                  primaryTag != null) {
-                                secondaryTagListener!.onPrimaryTagChange(
-                                    primaryTag!, secondaryTag);
-                              }
-                            },
-                            onInit: (PrimaryTagListener listener) {
-                              primaryTagListener = listener;
-                            },
-                          );
-                        },
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      BlocBuilder<AddPlanBloc, AddPlanStates>(
-                        builder: (context, state) {
-                          if (state is AddPlanInitialState) {
-                            return Container();
-                          }
-                          if (primaryTag == null) {
-                            return Container();
-                          }
-                          return SecondaryTagWidget(
-                            onSelect: (tag) {
-                              secondaryTag = tag;
-                            },
-                            onInit: (SecondaryTagListener listener) {
-                              secondaryTagListener = listener;
-                            },
-                            primaryTag: primaryTag,
-                          );
-                        },
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      const Text(
-                        remark,
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      TextFormField(
-                        minLines: 3,
-                        maxLines: 5,
-                        controller: txtRemarkController,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: const Color(0xffF2F2F2),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none),
+                        addPlanBloc.add(
+                          GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(dateTime!)),
+                        );
+                      },
+                      minDate: DateTime(DateTime.now().year, DateTime.now().month + 1, 1),
+                      initialDisplayDate: DateTime(DateTime.now().year, DateTime.now().month + 1, 1),
+                      selectionMode: DateRangePickerSelectionMode.single,
+                      navigationMode: DateRangePickerNavigationMode.none,
+                      monthCellStyle: DateRangePickerMonthCellStyle(
+                        textStyle: const TextStyle(fontWeight: FontWeight.w600, color: Colors.black),
+                        leadingDatesTextStyle: TextStyle(
+                          color: Colors.grey.shade400,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        trailingDatesTextStyle: TextStyle(
+                          color: Colors.grey.shade400,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(
-                        height: 15,
+                      monthViewSettings: const DateRangePickerMonthViewSettings(
+                        showTrailingAndLeadingDates: false,
+                        firstDayOfWeek: 1,
+                        viewHeaderHeight: 50,
+                        viewHeaderStyle: DateRangePickerViewHeaderStyle(
+                          textStyle: TextStyle(color: Colors.black),
+                        ),
                       ),
-                    ],
+                    ),
                   ),
-                )
-              ],
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Primary Tag",
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        BlocBuilder<AddPlanBloc, AddPlanStates>(
+                          builder: (context, state) {
+                            if (state is AddPlanInitialState) {
+                              addPlanBloc.add(GetPrimaryTagEvent());
+                            }
+
+                            if (primaryTagList.isEmpty) {
+                              return Container();
+                            }
+                            if (state is SelectPrimaryTagState) {
+                              if (primaryTag != null) {
+                                if (primaryTag!.id != state.primaryTag.id || secondaryTag == null) {
+                                  primaryTag = state.primaryTag;
+                                  addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
+                                }
+                              } else {
+                                primaryTag = state.primaryTag;
+                              }
+                            }
+                            primaryTag ??= primaryTagList.first;
+
+                            return Tags(
+                              itemCount: primaryTagList.length,
+                              alignment: WrapAlignment.start,
+                              itemBuilder: (index) {
+                                return ItemTags(
+                                  customData: primaryTagList[index],
+                                  singleItem: true,
+                                  onPressed: (item) {
+                                    addPlanBloc.add(SelectPrimaryEvent(primaryTag: item.customData));
+                                  },
+                                  active: primaryTag!.id == primaryTagList[index].id,
+                                  title: primaryTagList[index].name,
+                                  textActiveColor: Colors.black,
+                                  textColor: const Color(0xff555555),
+                                  elevation: 0,
+                                  textStyle: const TextStyle(fontSize: 16),
+                                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                  index: index,
+                                  border: Border.all(
+                                      color: primaryTag!.id == primaryTagList[index].id
+                                          ? MColor.colorPrimary
+                                          : const Color.fromRGBO(197, 197, 197, 1)),
+                                  activeColor:
+                                      primaryTag!.id == primaryTagList[index].id ? const Color(0xFFFFC9CC) : const Color(0xffFAFAFA),
+                                  color:
+                                      primaryTag!.id == primaryTagList[index].id ? const Color(0xFFFFC9CC) : const Color(0xffFAFAFA),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        BlocBuilder<AddPlanBloc, AddPlanStates>(
+                          builder: (context, state) {
+                            if (state is AddPlanInitialState) {
+                              return Container();
+                            }
+                            if (primaryTag == null) {
+                              return Container();
+                            }
+
+                            if (state is GetSecondaryTagState) {
+                              secondaryTagList = state.secondaryTagList;
+                            }
+                            if (state is SelectSecondaryState) {
+                              secondaryTag = state.secondaryTag;
+                            }
+                            if (secondaryTagList.isEmpty) {
+                              return Container();
+                            }
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                primaryTag!.id == 1 || primaryTag!.id == 2
+                                    ? const Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 15),
+                                        child: Text(
+                                          "Secondary Tag",
+                                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                        ),
+                                      )
+                                    : Container(),
+                                primaryTag!.id == 1
+                                    ? TextFormField(
+                                        scrollPadding: const EdgeInsets.all(0),
+                                        readOnly: true,
+                                        controller: txtBeatController,
+                                        onTap: () {
+                                          selectBeat(context, secondaryTagList);
+                                        },
+                                        decoration: InputDecoration(
+                                          contentPadding: const EdgeInsets.all(15),
+                                          hintText: "Select Retailing",
+                                          border:
+                                              OutlineInputBorder(borderRadius: BorderRadius.circular(25), borderSide: BorderSide.none),
+                                          suffixIcon: const Icon(
+                                            Icons.keyboard_arrow_down_outlined,
+                                            color: Colors.black,
+                                          ),
+                                          // suffixIconConstraints: BoxConstraints(maxWidth: 20, maxHeight: 20)
+                                        ),
+                                      )
+                                    : primaryTag!.id == 2
+                                        ? Tags(
+                                            itemCount: secondaryTagList.length,
+                                            alignment: WrapAlignment.start,
+                                            itemBuilder: (index) {
+                                              return ItemTags(
+                                                singleItem: true,
+                                                customData: secondaryTagList[index],
+                                                onPressed: (item) {
+                                                  addPlanBloc.add(SelectSecondaryEvent(secondaryTag: item.customData));
+                                                },
+                                                active: secondaryTag!.id == secondaryTagList[index].id,
+                                                title: secondaryTagList[index].name,
+                                                textActiveColor: Colors.black,
+                                                textColor: const Color(0xff555555),
+                                                elevation: 0,
+                                                textStyle: const TextStyle(fontSize: 16),
+                                                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                                index: index,
+                                                border: Border.all(
+                                                    color: secondaryTag != null
+                                                        ? secondaryTag!.id == secondaryTagList[index].id
+                                                            ? MColor.colorPrimary
+                                                            : const Color.fromRGBO(197, 197, 197, 1)
+                                                        : const Color.fromRGBO(197, 197, 197, 1)),
+                                                activeColor: const Color(0xFFFFC9CC),
+                                                color: secondaryTag != null
+                                                    ? secondaryTag!.id == secondaryTagList[index].id
+                                                        ? const Color(0xFFFFC9CC)
+                                                        : const Color(0xffFAFAFA)
+                                                    : const Color(0xffFAFAFA),
+                                              );
+                                            },
+                                          )
+                                        : Container(),
+                              ],
+                            );
+                          },
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        const Text(
+                          remark,
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        TextFormField(
+                          minLines: 3,
+                          maxLines: 5,
+                          controller: txtRemarkController,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: const Color(0xffF2F2F2),
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  )
+                ],
+              ),
             ),
           ),
-          bottomNavigationBar: BlocProvider(
+          bottomSheet: BlocProvider(
             create: (context) => addPlanBloc,
-            child: BlocListener<AddPlanBloc, AddPlanStates>(
-              listener: (context, state) {
-                if (state is AddPlanSuccessState) {
-                  Fluttertoast.showToast(msg: state.successMessage);
-                }
-                if (state is AddPlanFailureState) {
-                  Fluttertoast.showToast(msg: state.failureMessage);
-                }
-              },
-              child: MaterialButton(
-                height: 50,
-                minWidth: MediaQuery.of(context).size.width,
-                color: MColor.colorSecondary,
-                textColor: Colors.white,
-                onPressed: () async {
-                  Map<String, dynamic> input = {
-                    "user_id": await SharedPreference.getStringPreference(
-                        SharedPreference.userId),
-                    "add_plan_date": dateTime == null
-                        ? ""
-                        : DateFormat("yyyy-MM-dd").format(dateTime!),
-                    "primary_tag": primaryTag!.name,
-                    "primary_tag_id": primaryTag!.id,
-                    "secondary_tag": secondaryTag!.name,
-                    "secondary_tag_id": secondaryTag!.id,
-                    "remark": txtRemarkController.text.trim(),
-                    "week": week,
-                  };
-                  if (planAlreadyExists) {
-                    input["id"] = planDateModel!.id;
-                    addPlanBloc.add(
-                      UpdatePlanEvent(input: input),
-                    );
-                  } else {
-                    addPlanBloc.add(
-                      AddPlanEvent(input: input),
-                    );
-                  }
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      confirm,
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                    SizedBox(
-                      width: 20,
-                      height: 15,
-                      child: SvgPicture.asset(
-                        "assets/arrow_right.svg",
-                        height: 20,
-                        fit: BoxFit.contain,
-                        width: 15,
-                        allowDrawingOutsideViewBox: false,
-                        matchTextDirection: true,
+            child: BlocBuilder<AddPlanBloc, AddPlanStates>(
+              builder: (context, state) {
+                return MaterialButton(
+                  height: 50,
+                  minWidth: MediaQuery.of(context).size.width,
+                  // padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                  color: MColor.colorSecondary,
+                  textColor: Colors.white,
+                  onPressed: () async {
+                    if (primaryTag == null) {
+                      Fluttertoast.showToast(msg: "Please select primary tag");
+                      return;
+                    }
+                    if ((primaryTag!.id == 1 || primaryTag!.id == 2) && secondaryTag == null) {
+                      Fluttertoast.showToast(msg: "Please select secondary tag");
+                      return;
+                    }
+                    if (txtRemarkController.text.isEmpty) {
+                      Fluttertoast.showToast(msg: "Please enter remark");
+                      return;
+                    }
+
+                    Map<String, dynamic> input = HashMap<String, dynamic>();
+                    input["user_id"] = await SharedPreference.getStringPreference(SharedPreference.userId);
+                    input["add_plan_date"] = dateTime == null ? "" : DateFormat("yyyy-MM-dd").format(dateTime!);
+                    if (primaryTag != null) {
+                      input["primary_tag"] = primaryTag!.name;
+                      input["primary_tag_id"] = primaryTag!.id;
+
+                      if (secondaryTag != null) {
+                        input["secondary_tag"] = secondaryTag!.name;
+                        input["secondary_tag_id"] = secondaryTag!.id;
+                      } else {
+                        input["secondary_tag"] = '';
+                        input["secondary_tag_id"] = "";
+                      }
+                    }
+                    input["remark"] = txtRemarkController.text.trim();
+                    input["week"] = week;
+
+                    if (planAlreadyExists) {
+                      input["id"] = planDateModel!.id;
+                      addPlanBloc.add(
+                        UpdatePlanEvent(input: input),
+                      );
+                    } else {
+                      addPlanBloc.add(
+                        AddPlanEvent(input: input),
+                      );
+                    }
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        confirm,
+                        style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
-                    ),
-                    // Icon(Icons.arrow_forward_outlined)
-                  ],
-                ),
-              ),
+                      SizedBox(
+                        width: 20,
+                        height: 15,
+                        child: SvgPicture.asset(
+                          "assets/arrow_right.svg",
+                          height: 20,
+                          fit: BoxFit.contain,
+                          width: 15,
+                          allowDrawingOutsideViewBox: false,
+                          matchTextDirection: true,
+                        ),
+                      ),
+                      // Icon(Icons.arrow_forward_outlined)
+                    ],
+                  ),
+                );
+              },
             ),
           ),
         ),
@@ -345,12 +483,55 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
     );
   }
 
+  //  getWeekOfMonth(DateTime date) {
+  //   const startWeekDayIndex = 1; // 1 MonthDay 0 Sundays
+  //   DateT firstDate =  DateTime(date.year, date.month, 1);
+  //   const firstDay = firstDate.getDay();
+  //
+  //   let weekNumber = m.ceil((date.getDate() + firstDay) / 7);
+  //   if (startWeekDayIndex === 1) {
+  //     if (date.getDay() === 0 && date.getDate() > 1) {
+  //   weekNumber -= 1;
+  //   }
+  //
+  //   if (firstDate.getDate() === 1 && firstDay === 0 && date.getDate() > 1) {
+  //   weekNumber += 1;
+  //   }
+  // }
+  //   return weekNumber;
+  // }
   void getInitialDate() async {
     dateTime = await NTP.now();
-    dateRangePickerController.selectedDate =
-        DateTime(dateTime!.year, dateTime!.month + 1, 1);
-    // addPlanBloc.add(
-    //   GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(dateTime!)),
-    // );
+    dateRangePickerController.selectedDate = DateTime(dateTime!.year, dateTime!.month + 1, 1);
+  }
+
+  void selectBeat(BuildContext context, List<SecondaryTag> secondaryTag) async {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))),
+        builder: (context) {
+          return BeatBottomSheet(
+              beat: txtBeatController.text,
+              beats: secondaryTag,
+              onBeatSelect: (SecondaryTag beat) {
+                txtBeatController.text = beat.name;
+                addPlanBloc.add(SelectSecondaryEvent(secondaryTag: beat));
+              });
+        });
+  }
+}
+
+extension DateTimeExtension on DateTime {
+  int get weekOfMonth {
+    var wom = 0;
+    var date = this;
+
+    while (date.month == month) {
+      wom++;
+      date = date.subtract(const Duration(days: 7));
+    }
+
+    return wom;
   }
 }

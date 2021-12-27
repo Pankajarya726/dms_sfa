@@ -12,7 +12,7 @@ import 'package:dms/ui/add_plan/model/AddPlanUpdateData.dart';
 import 'package:dms/ui/change_password/model/model.dart';
 import 'package:dms/ui/drawer_menu/home_screen/model/get_menus_response.dart';
 import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart';
-import 'package:dms/ui/edit_profile/model/edit_profile_model.dart';
+import 'package:dms/ui/edit_profile/model/update_profile_response.dart';
 import 'package:dms/ui/login_screen/login_model/login_response.dart';
 import 'package:dms/ui/splash_screen/model/splash_model.dart';
 import 'package:dms/ui/start_my_day/model/end_my_day_response.dart';
@@ -178,7 +178,7 @@ class ApiRepository {
     }
   }
 
-  Future<UserDetails> getUserDetailsByUserId(String id) async {
+  Future<GetUserResponse> getUserDetailsByUserId(String id) async {
     Map<String, dynamic> userId = {"id": id};
 
     try {
@@ -188,17 +188,17 @@ class ApiRepository {
       );
 
       if (response.statusCode == 200) {
-        UserDetails userData = UserDetails.fromJson(response.toString());
+        GetUserResponse userData = GetUserResponse.fromJson(response.toString());
         return userData;
       } else {
-        return UserDetails(success: false, message: response.statusMessage.toString(), data: null);
+        return GetUserResponse(success: false, message: response.statusMessage.toString(), data: null);
       }
     } catch (exception) {
-      return UserDetails(success: false, message: "Something went wrong!", data: null);
+      return GetUserResponse(success: false, message: "Something went wrong!", data: null);
     }
   }
 
-  Future<EditProfileResponse> editProfile(String name, String email, File? imgFile) async {
+  Future<UpdateProfileResponse> editProfile(String name, String email, File? imgFile) async {
     Map<String, dynamic> params = HashMap<String, dynamic>();
 
     params["name"] = name;
@@ -217,16 +217,16 @@ class ApiRepository {
       );
 
       if (response.statusCode == 200) {
-        EditProfileResponse result = EditProfileResponse.fromJson(response.toString());
+        UpdateProfileResponse result = UpdateProfileResponse.fromJson(response.toString());
         return result;
       } else {
-        return EditProfileResponse(
+        return UpdateProfileResponse(
           message: response.statusMessage.toString(),
           success: false,
         );
       }
     } catch (exception) {
-      return EditProfileResponse(
+      return UpdateProfileResponse(
         message: "Something went Wrong!",
         success: false,
       );

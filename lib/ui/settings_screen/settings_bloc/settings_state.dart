@@ -1,4 +1,4 @@
-import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart';
+import 'package:dms/ui/edit_profile/model/update_profile_response.dart';
 import 'package:equatable/equatable.dart';
 
 class SettingsState extends Equatable {
@@ -8,11 +8,11 @@ class SettingsState extends Equatable {
 
 class SettingsInitialState extends SettingsState {}
 
-class DetailsSucessState extends SettingsState {
-  final UserDetails response;
-  DetailsSucessState({required this.response});
+class GetUserDetailsSuccessState extends SettingsState {
+  final User user;
+  GetUserDetailsSuccessState({required this.user});
   @override
-  List<Object?> get props => [response];
+  List<Object?> get props => [user];
 }
 
 class DetailsFailureState extends SettingsState {

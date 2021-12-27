@@ -1,3 +1,4 @@
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Utility {
@@ -34,5 +35,9 @@ class Utility {
   static Future<bool> clearPreference() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     return pref.clear();
+  }
+
+  static showToast(String message) {
+    Fluttertoast.showToast(msg: message);
   }
 }

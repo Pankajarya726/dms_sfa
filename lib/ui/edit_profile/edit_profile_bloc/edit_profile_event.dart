@@ -17,8 +17,7 @@ class EditProfileEvent extends EditProfileEvents {
 }
 
 class GetUserDetailsEvent extends EditProfileEvents {
-  final String userId;
-  GetUserDetailsEvent({required this.userId});
+  GetUserDetailsEvent();
   @override
-  List<Object?> get props => [userId];
+  List<Object?> get props => [];
 }

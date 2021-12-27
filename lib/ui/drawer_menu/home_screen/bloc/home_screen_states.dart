@@ -18,9 +18,9 @@ class HomeScreenFailureState extends HomeScreenStates {
   List<Object> get props => [failureMessage];
 }
 
-class GetUserDetailsState extends HomeScreenStates {
+class GetUserDetailsSuccessState extends HomeScreenStates {
   final UserDetails userDetails;
-  GetUserDetailsState({required this.userDetails});
+  GetUserDetailsSuccessState({required this.userDetails});
   @override
   List<Object> get props => [userDetails];
 }

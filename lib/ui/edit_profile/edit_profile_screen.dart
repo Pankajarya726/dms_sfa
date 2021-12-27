@@ -5,8 +5,8 @@ import 'package:dms/main.dart';
 import 'package:dms/ui/edit_profile/edit_profile_bloc/edit_profie_bloc.dart';
 import 'package:dms/ui/edit_profile/edit_profile_bloc/edit_profile_event.dart';
 import 'package:dms/ui/edit_profile/edit_profile_bloc/edit_profile_state.dart';
-import 'package:dms/utils/constants.dart';
-import 'package:dms/utils/shared_preference.dart';
+import 'package:dms/ui/edit_profile/model/update_profile_response.dart';
+import 'package:dms/utils/colors.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,12 +23,14 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  TextEditingController name = TextEditingController();
-  TextEditingController emailId = TextEditingController();
+  TextEditingController edtNAme = TextEditingController();
+  TextEditingController edtEmail = TextEditingController();
   String imageUrl = "";
   EditProfileBloc editProfileBloc = EditProfileBloc();
   RefreshController refreshController = RefreshController(initialRefresh: false);
   XFile? image;
+
+  User? user;
 
   @override
   void initState() {
@@ -76,23 +78,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             child: BlocListener<EditProfileBloc, EditProfileState>(
               listener: (context, state) {
                 if (state is EditProfileSuccessState) {
-                  loadUserDetails();
-                  Fluttertoast.showToast(msg: state.response.message);
-                  Navigator.pop(context, true);
+                  // Navigator.pop(context, true);
                 }
                 if (state is EditProfileFailureState) {
                   Fluttertoast.showToast(msg: state.message);
                 }
-                if (state is GetUserDetailsSucessState) {
-                  name.text = state.response.data!.name;
-                  emailId.text = state.response.data!.email;
-                  imageUrl = state.response.data!.image;
-                  SharedPreference.setStringPreference(SharedPreference.name, state.response.data!.name);
-                  SharedPreference.setStringPreference(SharedPreference.email, state.response.data!.email);
-                  SharedPreference.setStringPreference(SharedPreference.userImage, state.response.data!.image);
-                  Constants.name = state.response.data!.name;
-                  Constants.email = state.response.data!.email;
-                  Constants.image = state.response.data!.image;
+                if (state is GetUserDetailsSuccessState) {
+                  user = state.user;
+                  imageUrl = user!.profilePicture;
+                  edtNAme.text = user!.name;
+                  edtEmail.text = user!.email;
                 }
               },
               child: BlocBuilder<EditProfileBloc, EditProfileState>(
@@ -179,7 +174,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
                               child: TextFormField(
                                 maxLength: 30,
-                                controller: name,
+                                controller: edtNAme,
                                 style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),
                                 autocorrect: true,
                                 enableSuggestions: true,
@@ -195,14 +190,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   enabledBorder: UnderlineInputBorder(),
                                 ),
                                 onSaved: (value) {
-                                  name.text = value!;
+                                  edtNAme.text = value!;
                                 },
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.fromLTRB(20, 10, 20, 50),
                               child: TextFormField(
-                                controller: emailId,
+                                controller: edtEmail,
                                 style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),
                                 autocorrect: true,
                                 enableSuggestions: true,
@@ -220,23 +215,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   enabledBorder: UnderlineInputBorder(),
                                 ),
                                 onSaved: (value) {
-                                  emailId.text = value!;
+                                  edtEmail.text = value!;
                                 },
                               ),
                             ),
                             ElevatedButton(
                               onPressed: () {
-                                if (name.text.isNotEmpty && emailId.text.isNotEmpty) {
-                                  if (EmailValidator.validate(emailId.text) == true) {
+                                if (edtNAme.text.isNotEmpty && edtEmail.text.isNotEmpty) {
+                                  if (EmailValidator.validate(edtEmail.text) == true) {
                                     if (image != null) {
                                       editProfileBloc.add(
-                                        EditProfileEvent(name: name.text, emailId: emailId.text, imgFile: File(image!.path)),
+                                        EditProfileEvent(name: edtNAme.text, emailId: edtEmail.text, imgFile: File(image!.path)),
                                       );
                                     } else {
                                       editProfileBloc.add(
                                         EditProfileEvent(
-                                          name: name.text,
-                                          emailId: emailId.text,
+                                          name: edtNAme.text,
+                                          emailId: edtEmail.text,
                                         ),
                                       );
                                     }
@@ -371,8 +366,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   loadUserDetails() async {
-    var userId = await SharedPreference.getStringPreference(SharedPreference.userId);
-    editProfileBloc.add(GetUserDetailsEvent(userId: userId));
+    editProfileBloc.add(GetUserDetailsEvent());
   }
 
   void onRefresh() {

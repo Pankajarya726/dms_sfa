@@ -12,11 +12,13 @@ import '../../main.dart';
 import 'beat_bootom_sheet.dart';
 
 class SecondaryTagWidget extends StatefulWidget {
-  final PrimaryTag? primaryTag;
+  final SecondaryTag? secondaryTag;
+  final PrimaryTag primaryTag;
   final Function(SecondaryTag secondaryTag) onSelect;
-  final Function(SecondaryTagListener secondaryTagListerner) onInit;
+  final List<SecondaryTag> secondaryTagList;
 
-  const SecondaryTagWidget({Key? key, this.primaryTag, required this.onSelect, required this.onInit}) : super(key: key);
+  SecondaryTagWidget({Key? key, required this.primaryTag, this.secondaryTag, required this.onSelect, required this.secondaryTagList})
+      : super(key: key);
 
   @override
   _SecondaryTagWidgetState createState() => _SecondaryTagWidgetState();
@@ -31,12 +33,10 @@ class _SecondaryTagWidgetState extends State<SecondaryTagWidget> implements Seco
   @override
   void initState() {
     print("SecondaryTagWidget--->");
-    widget.onInit(this);
-    primaryTag = widget.primaryTag;
-    if (primaryTag != null) {
-      getSecondaryTag();
-    }
 
+    selectedSecondaryTag = widget.secondaryTag;
+    secondaryTagList = widget.secondaryTagList;
+    primaryTag = widget.primaryTag;
     super.initState();
   }
 
@@ -131,7 +131,9 @@ class _SecondaryTagWidgetState extends State<SecondaryTagWidget> implements Seco
           secondaryTagList = response.data!.jointWorker!;
         }
 
-        setState(() {});
+        if (mounted) {
+          setState(() {});
+        }
       } else {
         Fluttertoast.showToast(msg: response.message);
       }
@@ -167,7 +169,9 @@ class _SecondaryTagWidgetState extends State<SecondaryTagWidget> implements Seco
   @override
   void onSecondaryTagSelect(SecondaryTag secondaryTag) {
     selectedSecondaryTag = secondaryTag;
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 }
 

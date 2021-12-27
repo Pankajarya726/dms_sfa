@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-class UserDetails {
-  UserDetails({
+class GetUserResponse {
+  GetUserResponse({
     required this.success,
     required this.message,
     required this.data,
@@ -9,17 +9,16 @@ class UserDetails {
 
   bool success;
   String message;
-  Data? data;
+  UserDetails? data;
 
-  factory UserDetails.fromJson(String str) =>
-      UserDetails.fromMap(json.decode(str));
+  factory GetUserResponse.fromJson(String str) => GetUserResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory UserDetails.fromMap(Map<String, dynamic> json) => UserDetails(
+  factory GetUserResponse.fromMap(Map<String, dynamic> json) => GetUserResponse(
         success: json["success"] == null ? null : json["success"],
         message: json["message"] == null ? null : json["message"],
-        data: json["data"] == null ? null : Data.fromMap(json["data"]),
+        data: json["data"] == null ? null : UserDetails.fromMap(json["data"]),
       );
 
   Map<String, dynamic> toMap() => {
@@ -29,8 +28,8 @@ class UserDetails {
       };
 }
 
-class Data {
-  Data({
+class UserDetails {
+  UserDetails({
     required this.id,
     required this.name,
     required this.email,
@@ -54,24 +53,21 @@ class Data {
   String pjpButton;
   String startMyDay;
 
-  factory Data.fromJson(String str) => Data.fromMap(json.decode(str));
+  factory UserDetails.fromJson(String str) => UserDetails.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory Data.fromMap(Map<String, dynamic> json) => Data(
+  factory UserDetails.fromMap(Map<String, dynamic> json) => UserDetails(
         id: json["id"] == null ? null : json["id"],
         name: json["name"] == null ? null : json["name"],
         email: json["email"] == null ? null : json["email"],
-        mobileNumber:
-            json["mobile_number"] == null ? null : json["mobile_number"],
+        mobileNumber: json["mobile_number"] == null ? null : json["mobile_number"],
         image: json["image"] == null ? null : json["image"],
         designation: json["designation"] == null ? null : json["designation"],
         clockInOutData: json["clockInOutData"] == null
             ? []
-            : List<ClockInOutData>.from(
-                json["clockInOutData"].map((x) => ClockInOutData.fromMap(x))),
-        pjpDescription:
-            json["pjp_description"] == null ? null : json["pjp_description"],
+            : List<ClockInOutData>.from(json["clockInOutData"].map((x) => ClockInOutData.fromMap(x))),
+        pjpDescription: json["pjp_description"] == null ? null : json["pjp_description"],
         pjpButton: json["pjp_button"] == null ? null : json["pjp_button"],
         startMyDay: json["startMyday"] == null ? null : json["startMyday"],
       );
@@ -83,9 +79,7 @@ class Data {
         "mobile_number": mobileNumber == null ? null : mobileNumber,
         "image": image == null ? null : image,
         "designation": designation == null ? null : designation,
-        "clockInOutData": clockInOutData == null
-            ? null
-            : List<dynamic>.from(clockInOutData.map((x) => x.toMap())),
+        "clockInOutData": clockInOutData == null ? null : List<dynamic>.from(clockInOutData.map((x) => x.toMap())),
         "pjp_description": pjpDescription == null ? null : pjpDescription,
         "pjp_button": pjpButton == null ? null : pjpButton,
         "startMyday": startMyDay == null ? null : startMyDay,
@@ -111,25 +105,18 @@ class ClockInOutData {
   String comment;
   String clockOutImage;
 
-  factory ClockInOutData.fromJson(String str) =>
-      ClockInOutData.fromMap(json.decode(str));
+  factory ClockInOutData.fromJson(String str) => ClockInOutData.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
   factory ClockInOutData.fromMap(Map<String, dynamic> json) => ClockInOutData(
         inOutStatus: json["in_out_status"] == null ? 0 : json["in_out_status"],
-        absentReason: json["absent_reason"] == null
-            ? ""
-            : json["absent_reason"].toString(),
-        clockInTime: json["clock_in_time"] == null
-            ? ""
-            : json["clock_in_time"].toString(),
+        absentReason: json["absent_reason"] == null ? "" : json["absent_reason"].toString(),
+        clockInTime: json["clock_in_time"] == null ? "" : json["clock_in_time"].toString(),
         clockOutTime: json["clock_out_time"],
         userId: json["user_id"] == null ? 0 : json["user_id"],
         comment: json["comment"] == null ? "" : json["comment"].toString(),
-        clockOutImage: json["clock_out_image"] == null
-            ? ""
-            : json["clock_out_image"].toString(),
+        clockOutImage: json["clock_out_image"] == null ? "" : json["clock_out_image"].toString(),
       );
 
   Map<String, dynamic> toMap() => {

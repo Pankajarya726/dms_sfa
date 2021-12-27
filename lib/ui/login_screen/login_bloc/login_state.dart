@@ -25,7 +25,7 @@ class LoginFailureState extends LoginState {
 }
 
 class GetUserDetailsState extends LoginState {
-  final UserDetails userDetails;
+  final GetUserResponse userDetails;
   GetUserDetailsState({required this.userDetails});
   @override
   List<Object> get props => [userDetails];

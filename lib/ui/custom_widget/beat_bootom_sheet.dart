@@ -52,7 +52,7 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
               controller: edtSearch,
               autofocus: false,
               decoration: InputDecoration(
-                  hintText: "search",
+                  hintText: "SEARCH",
                   hintStyle: const TextStyle(
                     color: MColor.backButton,
                   ),
