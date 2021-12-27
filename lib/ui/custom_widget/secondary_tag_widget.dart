@@ -37,6 +37,10 @@ class _SecondaryTagWidgetState extends State<SecondaryTagWidget> implements Seco
     selectedSecondaryTag = widget.secondaryTag;
     secondaryTagList = widget.secondaryTagList;
     primaryTag = widget.primaryTag;
+    if (primaryTag != null) {
+      getSecondaryTag();
+    }
+
     super.initState();
   }
 
@@ -51,7 +55,11 @@ class _SecondaryTagWidgetState extends State<SecondaryTagWidget> implements Seco
                       padding: EdgeInsets.symmetric(vertical: 15),
                       child: Text(
                         secondaryTag,
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.67,
+                        ),
                       ),
                     )
                   : Container(),
