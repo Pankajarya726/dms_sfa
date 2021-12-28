@@ -5,6 +5,7 @@ import 'package:dms/ui/edit_profile/edit_profile_screen.dart';
 import 'package:dms/ui/edit_profile/model/update_profile_response.dart';
 import 'package:dms/ui/login_screen/login_screen.dart';
 import 'package:dms/ui/settings_screen/settings_bloc/settings_bloc.dart';
+import 'package:dms/ui/settings_screen/settings_bloc/settings_event.dart';
 import 'package:dms/ui/settings_screen/settings_bloc/settings_state.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/shared_preference.dart';
