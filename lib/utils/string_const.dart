@@ -3,6 +3,8 @@ const startMyDayCaps = "START MY DAY";
 const exploreCaps = "EXPLORE";
 
 const login = "Login";
+const logout = "Logout";
+const endDay = "End day";
 const startMyDay = "Start My Day";
 const explore = "Explore";
 const myPlan = "My Plan";
@@ -28,5 +30,6 @@ const writeYourRemark = "Write Your Remark";
 const getMeeting = "Get Meeting";
 const selfie = "Selfie";
 const confirm = "CONFIRM";
+const commingSoon = "Comming soon...";
 const loremIpsum =
     "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text";

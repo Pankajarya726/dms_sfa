@@ -324,7 +324,11 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                             padding: EdgeInsets.symmetric(vertical: 15),
                                             child: Text(
                                               "Secondary Tag",
-                                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                                letterSpacing: 0.67,
+                                              ),
                                             ),
                                           )
                                         : Container(),
@@ -656,11 +660,16 @@ class _StartDayScreenState extends State<StartDayScreen> {
           listener: (context, state) {
             if (state is StartMyDaySuccessState) {
               Fluttertoast.showToast(msg: state.successMessage);
-              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const DrawerScreen()), (route) => false);
+              SharedPreference.setStringPreference(
+                  SharedPreference.startMyDay, "hide");
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const DrawerScreen()),
+                  (route) => false);
             }
-            if (state is StartMyDayFailureState) {
-              Fluttertoast.showToast(msg: state.failureMessage);
-            }
+            // if (state is StartMyDayFailureState) {
+            //   Fluttertoast.showToast(msg: state.failureMessage);
+            // }
           },
           child: MaterialButton(
             height: 50,
@@ -712,10 +721,10 @@ class _StartDayScreenState extends State<StartDayScreen> {
               input["remark"] = txtRemarkController.text.trim();
               input["latitude"] = latitude.toString();
               input["longitude"] = longitude.toString();
-              input["get_meeting"] = isMeeting ? 1 : 2;
-              // input["address"] = currentAddress;
-              input["start day address"] = currentAddress;
-              input["start_day_time"] = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
+              input["get_meeting"] = isMeeting ? "Yes" : "No";
+              input["start_day_address"] = currentAddress;
+              input["start_day_time"] =
+                  "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
 
               if (imageFile != null) {
                 input["start_day_image"] = await MultipartFile.fromFile(

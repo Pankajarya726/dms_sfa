@@ -1,12 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/ui/drawer_menu/home_screen/home_screen.dart';
 import 'package:dms/ui/login_screen/login_screen.dart';
+import 'package:dms/ui/screen_after_login/screen_after_login.dart';
 import 'package:dms/ui/settings_screen/settings_screen.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_bloc.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_events.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_states.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/shared_preference.dart';
+import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -23,9 +25,12 @@ class DrawerScreen extends StatefulWidget {
 }
 
 class _DrawerScreenState extends State<DrawerScreen> {
-  KFDrawerController controller = KFDrawerController(initialPage: KFDrawerContent());
+  KFDrawerController controller =
+      KFDrawerController(initialPage: KFDrawerContent());
   StartMyDayBloc startMyDayBloc = StartMyDayBloc();
   ProfileUpdateListener? profileUpdateListener;
+
+  String startMyDay = "";
 
   @override
   void initState() {
@@ -37,6 +42,12 @@ class _DrawerScreenState extends State<DrawerScreen> {
         },
       ),
     );
+    getStart();
+  }
+
+  void getStart() async {
+    startMyDay =
+        await SharedPreference.getStringPreference(SharedPreference.startMyDay);
   }
 
   @override
@@ -92,8 +103,10 @@ class _DrawerScreenState extends State<DrawerScreen> {
                             image: imageProvider,
                           );
                         },
-                        errorWidget: (context, url, error) => Image.asset("assets/placeholder.png"),
-                        placeholder: (context, url) => Image.asset("assets/placeholder.png"),
+                        errorWidget: (context, url, error) =>
+                            Image.asset("assets/placeholder.png"),
+                        placeholder: (context, url) =>
+                            Image.asset("assets/placeholder.png"),
                       ),
                     ),
                     Padding(
@@ -104,10 +117,15 @@ class _DrawerScreenState extends State<DrawerScreen> {
                         children: [
                           Text(
                             Constants.name,
-                            style: const TextStyle(fontSize: 21, color: Colors.white, fontWeight: FontWeight.w400),
+                            style: const TextStyle(
+                                fontSize: 21,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400),
                           ),
                           Container(
-                            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4)),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4)),
                             child: Padding(
                               padding: const EdgeInsets.all(2),
                               child: Text(
@@ -144,7 +162,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
               onTap: () {
                 controller.close!.call();
               },
-              title: const Text("Home", style: TextStyle(color: Colors.white, fontSize: 18)),
+              title: const Text("Home",
+                  style: TextStyle(color: Colors.white, fontSize: 18)),
               leading: SvgPicture.asset(
                 "assets/Home.svg",
                 height: 28,
@@ -154,9 +173,11 @@ class _DrawerScreenState extends State<DrawerScreen> {
             ),
             ListTile(
               onTap: () {
-                controller.close!.call();
+                // controller.close!.call();
+                Fluttertoast.showToast(msg: commingSoon);
               },
-              title: const Text("Script", style: TextStyle(color: Colors.white, fontSize: 18)),
+              title: const Text("Script",
+                  style: TextStyle(color: Colors.white, fontSize: 18)),
               leading: SvgPicture.asset(
                 "assets/Script.svg",
                 height: 28,
@@ -166,9 +187,11 @@ class _DrawerScreenState extends State<DrawerScreen> {
             ),
             ListTile(
               onTap: () {
-                controller.close!.call();
+                // controller.close!.call();
+                Fluttertoast.showToast(msg: commingSoon);
               },
-              title: const Text("Message", style: TextStyle(color: Colors.white, fontSize: 18)),
+              title: const Text("Message",
+                  style: TextStyle(color: Colors.white, fontSize: 18)),
               leading: SvgPicture.asset(
                 "assets/Message.svg",
                 height: 28,
@@ -183,17 +206,35 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   if (state is EndMyDaySuccessState) {
                     Fluttertoast.showToast(msg: state.endMyDayResponse.message);
                     controller.close!.call();
+                    Navigator.pop(context);
                   }
                   if (state is EndMyDayFailureState) {
                     Fluttertoast.showToast(msg: state.failureMessage);
+                    Navigator.pop(context);
                   }
                 },
                 child: ListTile(
                   onTap: () {
-                    startMyDayBloc.add(EndMyDayEvent());
-                    // controller.close!.call();
+                    if (startMyDay == "hide") {
+                      logoutDialog(context, endDay);
+                    } else {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              const ScreenAfterLogin(),
+                        ),
+                      );
+                    }
                   },
-                  title: const Text("End Day", style: TextStyle(color: Colors.white, fontSize: 18)),
+                  title: startMyDay == "hide"
+                      ? const Text(
+                          "End Day",
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        )
+                      : const Text(
+                          "Start Day",
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
                   leading: SvgPicture.asset(
                     "assets/End-Day.svg",
                     height: 28,
@@ -205,9 +246,11 @@ class _DrawerScreenState extends State<DrawerScreen> {
             ),
             ListTile(
               onTap: () {
-                controller.close!.call();
+                // controller.close!.call();
+                Fluttertoast.showToast(msg: commingSoon);
               },
-              title: const Text("Sync", style: TextStyle(color: Colors.white, fontSize: 18)),
+              title: const Text("Sync",
+                  style: TextStyle(color: Colors.white, fontSize: 18)),
               leading: SvgPicture.asset(
                 "assets/Sync.svg",
                 height: 28,
@@ -226,8 +269,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
             ListTile(
               onTap: () async {
                 controller.close!.call();
-                await Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen()));
-                print("back from setting screen");
+                await Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const SettingsScreen()));
 
                 setState(() {});
                 if (profileUpdateListener != null) {
@@ -248,9 +291,10 @@ class _DrawerScreenState extends State<DrawerScreen> {
             ListTile(
               onTap: () {
                 // controller.close!.call();
-                logoutDialog(context);
+                logoutDialog(context, logout);
               },
-              title: const Text("Logout", style: TextStyle(color: Colors.white, fontSize: 18)),
+              title: const Text("Logout",
+                  style: TextStyle(color: Colors.white, fontSize: 18)),
               leading: SvgPicture.asset(
                 "assets/Logout.svg",
                 height: 28,
@@ -266,34 +310,79 @@ class _DrawerScreenState extends State<DrawerScreen> {
 
   @override
   void didUpdateWidget(DrawerScreen oldWidget) {
-    print("didUpdateWidget-->$oldWidget");
+    // print("didUpdateWidget-->$oldWidget");
     setState(() {});
     super.didUpdateWidget(oldWidget);
   }
 
-  logoutDialog(context) {
+  logoutDialog(context, titleText) {
     return showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
           contentPadding: const EdgeInsets.fromLTRB(25, 10, 0, 0),
-          title: const Text("Logout", style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w600)),
-          content: const Text("Are you sure you want to logout?",
-              style: TextStyle(color: Color.fromRGBO(85, 85, 85, 1), fontSize: 15, fontWeight: FontWeight.w500)),
+          title: Text(
+            titleText,
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          content: titleText == logout
+              ? const Text(
+                  "Are you sure you want to logout?",
+                  style: TextStyle(
+                    color: Color.fromRGBO(85, 85, 85, 1),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                )
+              : const Text(
+                  "Are you sure you want to End day?",
+                  style: TextStyle(
+                    color: Color.fromRGBO(85, 85, 85, 1),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
           actions: [
             MaterialButton(
-              child: const Text("Cancel", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600)),
+              child: const Text("Cancel",
+                  style: TextStyle(
+                      color: Colors.grey, fontWeight: FontWeight.w600)),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
             MaterialButton(
-              child: const Text("Logout", style: TextStyle(color: Color(0xfff4511e), fontWeight: FontWeight.w600)),
+              child: titleText == logout
+                  ? const Text(
+                      "Logout",
+                      style: TextStyle(
+                        color: Color(0xfff4511e),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )
+                  : const Text(
+                      "End day",
+                      style: TextStyle(
+                        color: Color(0xfff4511e),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
               onPressed: () async {
-                await SharedPreference.clearSharedPreference(context);
-                Navigator.pushAndRemoveUntil(
-                    context, MaterialPageRoute(builder: (context) => const LoginScreen()), ModalRoute.withName("/"));
+                if (titleText == logout) {
+                  await SharedPreference.clearSharedPreference(context);
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginScreen()),
+                      ModalRoute.withName("/"));
+                } else {
+                  startMyDayBloc.add(EndMyDayEvent());
+                }
               },
             ),
           ],

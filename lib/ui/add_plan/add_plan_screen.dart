@@ -39,7 +39,8 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
 
   TextEditingController txtRemarkController = TextEditingController();
   TextEditingController txtBeatController = TextEditingController();
-  DateRangePickerController dateRangePickerController = DateRangePickerController();
+  DateRangePickerController dateRangePickerController =
+      DateRangePickerController();
   final formKey = GlobalKey<FormState>();
   final RefreshController _refreshController = RefreshController();
   DateTime? dateTime;
@@ -70,8 +71,12 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             planDateModel = state.planDateModel;
             planAlreadyExists = true;
             txtRemarkController.text = state.planDateModel.remark;
-            primaryTag = PrimaryTag(id: state.planDateModel.primaryTagId, name: state.planDateModel.primaryTag);
-            secondaryTag = SecondaryTag(id: state.planDateModel.secondaryTagId, name: state.planDateModel.secondaryTag);
+            primaryTag = PrimaryTag(
+                id: state.planDateModel.primaryTagId,
+                name: state.planDateModel.primaryTag);
+            secondaryTag = SecondaryTag(
+                id: state.planDateModel.secondaryTagId,
+                name: state.planDateModel.secondaryTag);
             addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
             txtBeatController.text = secondaryTag!.name;
             // if (primaryTagListener != null) {
@@ -140,7 +145,8 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             controller: _refreshController,
             onRefresh: () {
               addPlanBloc.add(
-                GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(dateTime!)),
+                GetSavedPlanEvent(
+                    selectedDate: DateFormat("yyyy-MM-dd").format(dateTime!)),
               );
             },
             header: const MaterialClassicHeader(),
@@ -171,9 +177,11 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
 
                         String firstDay = date.substring(0, 8) +
                             '01' +
-                            date.substring(10); // This will generate the time and date for first day of month
+                            date.substring(
+                                10); // This will generate the time and date for first day of month
 
-                        int weekDay = DateTime.parse(firstDay).weekday; // week day for the first day of the month
+                        int weekDay = DateTime.parse(firstDay)
+                            .weekday; // week day for the first day of the month
                         int weekOfMonth;
                         //  If your calender starts from Monday
                         weekDay--;
@@ -182,11 +190,15 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                         print('Week of the month: $weekOfMonth');
 
                         addPlanBloc.add(
-                          GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(dateTime!)),
+                          GetSavedPlanEvent(
+                              selectedDate:
+                                  DateFormat("yyyy-MM-dd").format(dateTime!)),
                         );
                       },
-                      minDate: DateTime(DateTime.now().year, DateTime.now().month + 1, 1),
-                      initialDisplayDate: DateTime(DateTime.now().year, DateTime.now().month + 1, 1),
+                      minDate: DateTime(
+                          DateTime.now().year, DateTime.now().month + 1, 1),
+                      initialDisplayDate: DateTime(
+                          DateTime.now().year, DateTime.now().month + 1, 1),
                       selectionMode: DateRangePickerSelectionMode.single,
                       navigationMode: DateRangePickerNavigationMode.none,
                       monthCellStyle: DateRangePickerMonthCellStyle(
@@ -217,7 +229,11 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                       children: [
                         const Text(
                           "Primary Tag",
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.67,
+                          ),
                         ),
                         const SizedBox(
                           height: 15,
@@ -315,7 +331,11 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                                         padding: EdgeInsets.symmetric(vertical: 15),
                                         child: Text(
                                           "Secondary Tag",
-                                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 0.67,
+                                          ),
                                         ),
                                       )
                                     : Container(),
@@ -383,7 +403,11 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                         ),
                         const Text(
                           remark,
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.67,
+                          ),
                         ),
                         const SizedBox(
                           height: 15,

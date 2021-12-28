@@ -26,10 +26,12 @@ class LoginBloc extends Bloc<LoginEvents, LoginState> {
   Stream<LoginState> login(LoginEvent event) async* {
     if (await Network.isConnected()) {
       EasyLoading.show();
-      LoginResponse response = await repository.login(event.mobileNumber, event.password);
+      LoginResponse response =
+          await repository.login(event.mobileNumber, event.password);
       EasyLoading.dismiss();
       if (response.success) {
-        SharedPreference.setStringPreference(SharedPreference.accessToken, response.accessToken);
+        SharedPreference.setStringPreference(
+            SharedPreference.accessToken, response.accessToken);
         options.headers.addAll({
           "Authorization": "Bearer ${response.accessToken}",
         });
@@ -38,15 +40,18 @@ class LoginBloc extends Bloc<LoginEvents, LoginState> {
         yield LoginFailureState(message: response.message);
       }
     } else {
-      yield LoginFailureState(message: "Please check your internet connection!");
+      yield LoginFailureState(
+          message: "Please check your internet connection!");
     }
   }
 
   Stream<LoginState> getUserDetails(GetUserEvent event) async* {
     if (await Network.isConnected()) {
-      String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
+      String userId =
+          await SharedPreference.getStringPreference(SharedPreference.userId);
 
-      GetUserResponse response = await repository.getUserDetailsByUserId(userId);
+      GetUserResponse response =
+          await repository.getUserDetailsByUserId(userId);
 
       if (response.success) {
         yield GetUserDetailsState(userDetails: response);
@@ -54,7 +59,8 @@ class LoginBloc extends Bloc<LoginEvents, LoginState> {
         yield LoginFailureState(message: response.message);
       }
     } else {
-      yield LoginFailureState(message: "Please check your internet connection!");
+      yield LoginFailureState(
+          message: "Please check your internet connection!");
     }
   }
 }

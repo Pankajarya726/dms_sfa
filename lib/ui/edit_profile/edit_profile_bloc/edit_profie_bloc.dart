@@ -28,13 +28,18 @@ class EditProfileBloc extends Bloc<EditProfileEvents, EditProfileState> {
   Stream<EditProfileState> editProfile(EditProfileEvent event) async* {
     if (await Network.isConnected()) {
       EasyLoading.show();
-      UpdateProfileResponse response = await repository.editProfile(event.name, event.emailId, event.imgFile);
+      UpdateProfileResponse response = await repository.editProfile(
+          event.name, event.emailId, event.imgFile);
       EasyLoading.dismiss();
       if (response.success) {
-        await SharedPreference.setStringPreference(SharedPreference.name, response.data!.name);
-        await SharedPreference.setStringPreference(SharedPreference.email, response.data!.email);
-        await SharedPreference.setStringPreference(SharedPreference.userImage, response.data!.profilePicture);
-        await SharedPreference.setStringPreference(SharedPreference.mobileNumber, response.data!.mobileNumber);
+        await SharedPreference.setStringPreference(
+            SharedPreference.name, response.data!.name);
+        await SharedPreference.setStringPreference(
+            SharedPreference.email, response.data!.email);
+        await SharedPreference.setStringPreference(
+            SharedPreference.userImage, response.data!.profilePicture);
+        await SharedPreference.setStringPreference(
+            SharedPreference.mobileNumber, response.data!.mobileNumber);
         Constants.name = response.data!.name;
         Constants.email = response.data!.email;
         Constants.image = response.data!.profilePicture;
@@ -45,12 +50,14 @@ class EditProfileBloc extends Bloc<EditProfileEvents, EditProfileState> {
         EditProfileFailureState(message: response.message);
       }
     } else {
-      yield EditProfileNetworkState(message: "Please check your internet connection!");
+      yield EditProfileNetworkState(
+          message: "Please check your internet connection!");
     }
   }
 
   Stream<EditProfileState> getUserDetails() async* {
-    var userId = await SharedPreference.getStringPreference(SharedPreference.userId);
+    var userId =
+        await SharedPreference.getStringPreference(SharedPreference.userId);
 
     if (userId.isNotEmpty) {
       Constants.name = await SharedPreference.getStringPreference(
@@ -76,12 +83,17 @@ class EditProfileBloc extends Bloc<EditProfileEvents, EditProfileState> {
       yield GetUserDetailsSuccessState(user: user);
     } else {
       if (await Network.isConnected()) {
-        GetUserResponse response = await repository.getUserDetailsByUserId(userId);
+        GetUserResponse response =
+            await repository.getUserDetailsByUserId(userId);
         if (response.success) {
-          await SharedPreference.setStringPreference(SharedPreference.name, response.data!.name);
-          await SharedPreference.setStringPreference(SharedPreference.email, response.data!.email);
-          await SharedPreference.setStringPreference(SharedPreference.userImage, response.data!.image);
-          await SharedPreference.setStringPreference(SharedPreference.mobileNumber, response.data!.mobileNumber);
+          await SharedPreference.setStringPreference(
+              SharedPreference.name, response.data!.name);
+          await SharedPreference.setStringPreference(
+              SharedPreference.email, response.data!.email);
+          await SharedPreference.setStringPreference(
+              SharedPreference.userImage, response.data!.image);
+          await SharedPreference.setStringPreference(
+              SharedPreference.mobileNumber, response.data!.mobileNumber);
           Constants.name = response.data!.name;
           Constants.email = response.data!.email;
           Constants.image = response.data!.image;
@@ -99,7 +111,8 @@ class EditProfileBloc extends Bloc<EditProfileEvents, EditProfileState> {
           yield GetUserDetailsFailureState(message: response.message);
         }
       } else {
-        yield EditProfileNetworkState(message: "Please check your internet connection!");
+        yield EditProfileNetworkState(
+            message: "Please check your internet connection!");
       }
     }
   }

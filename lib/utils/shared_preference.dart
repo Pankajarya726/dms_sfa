@@ -16,6 +16,7 @@ class SharedPreference {
   static const userDesignation = "user_designation";
   static const userImage = "user_image";
   static const pjpButton = "pjp_button";
+  static const startMyDay = "startMyDay";
 
   static Future<bool> setStringPreference(String key, String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

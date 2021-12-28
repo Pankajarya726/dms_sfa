@@ -53,6 +53,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
             Constants.leader = state.loginResponse.isLeader;
             startMyDay = state.loginResponse.startMyDay;
+            SharedPreference.setStringPreference(
+                SharedPreference.startMyDay, state.loginResponse.startMyDay);
 
             loginBloc.add(GetUserEvent());
           }

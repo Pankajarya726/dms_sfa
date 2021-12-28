@@ -86,7 +86,9 @@ class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
           onTap: () {
             if (imageLabel == startMyDayCaps) {
               if (myPlan == null) {
-                Fluttertoast.showToast(msg: "You don't have any plan for today, Please connect to admin");
+                Fluttertoast.showToast(
+                    msg:
+                        "You don't have any plan for today, Please connect to admin");
               } else {
                 Navigator.push(
                   context,
@@ -130,7 +132,8 @@ class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
 
   void getMyPlan() async {
     if (await Network.isConnected()) {
-      String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
+      String userId =
+          await SharedPreference.getStringPreference(SharedPreference.userId);
       Map input = {
         "user_id": userId,
         "add_plan_date": DateFormat("yyyy-MM-dd").format(await NTP.now()),

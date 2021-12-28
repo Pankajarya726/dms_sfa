@@ -38,18 +38,24 @@ class _SplashScreenState extends State<SplashScreen> {
       child: BlocListener<SplashBloc, SplashState>(
         listener: (context, state) {
           if (state is SplashSuccessState) {
+            SharedPreference.setStringPreference(
+                SharedPreference.startMyDay, state.response.data!.startMyDay);
             if (state.response.data!.pjpButton == "hide") {
-              SharedPreference.setBooleanPreference(SharedPreference.pjpButton, false);
+              SharedPreference.setBooleanPreference(
+                  SharedPreference.pjpButton, false);
             } else {
-              SharedPreference.setBooleanPreference(SharedPreference.pjpButton, true);
+              SharedPreference.setBooleanPreference(
+                  SharedPreference.pjpButton, true);
             }
             nextPage(state.response.data!.startMyDay, context);
           }
           if (state is SplashFailureState) {
             if (state.response.data!.pjpButton == "hide") {
-              SharedPreference.setBooleanPreference(SharedPreference.pjpButton, false);
+              SharedPreference.setBooleanPreference(
+                  SharedPreference.pjpButton, false);
             } else {
-              SharedPreference.setBooleanPreference(SharedPreference.pjpButton, true);
+              SharedPreference.setBooleanPreference(
+                  SharedPreference.pjpButton, true);
             }
             showUpdateAlert(
               context,
@@ -81,11 +87,15 @@ class _SplashScreenState extends State<SplashScreen> {
                 height: MediaQuery.of(context).size.height * 0.15,
                 child: Center(
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(color: MColor.colorTabBG, borderRadius: BorderRadius.circular(50)),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                        color: MColor.colorTabBG,
+                        borderRadius: BorderRadius.circular(50)),
                     child: const Text(
                       "Sales Force Automation",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                     ),
                   ),
                 ),
@@ -108,12 +118,23 @@ class _SplashScreenState extends State<SplashScreen> {
       builder: (context) {
         return AlertDialog(
           contentPadding: const EdgeInsets.fromLTRB(25, 10, 25, 10),
-          title: const Text("Something Wrong!", style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.w600)),
+          title: const Text("Something Wrong!",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600)),
           content: const Text("Please check your internet and try again.",
-              style: TextStyle(color: Color.fromRGBO(85, 85, 85, 1), fontSize: 16, fontWeight: FontWeight.w500)),
+              style: TextStyle(
+                  color: Color.fromRGBO(85, 85, 85, 1),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500)),
           actions: [
             MaterialButton(
-              child: const Text("Retry", style: TextStyle(fontSize: 16, color: Color(0xfff4511e), fontWeight: FontWeight.w600)),
+              child: const Text("Retry",
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: Color(0xfff4511e),
+                      fontWeight: FontWeight.w600)),
               onPressed: () {
                 addEvent();
               },
@@ -135,13 +156,23 @@ class _SplashScreenState extends State<SplashScreen> {
       builder: (context) {
         return AlertDialog(
           contentPadding: const EdgeInsets.fromLTRB(25, 10, 0, 0),
-          title: const Text("SFA", style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w600)),
-          content: const Text("You are using older version of this app. Please update the app for batter experience.",
-              style: TextStyle(color: Color.fromRGBO(85, 85, 85, 1), fontSize: 15, fontWeight: FontWeight.w500)),
+          title: const Text("SFA",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600)),
+          content: const Text(
+              "You are using older version of this app. Please update the app for batter experience.",
+              style: TextStyle(
+                  color: Color.fromRGBO(85, 85, 85, 1),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500)),
           actions: [
             isMandatory != 1
                 ? MaterialButton(
-                    child: const Text("Later", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)),
+                    child: const Text("Later",
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.w600)),
                     onPressed: () {
                       Navigator.pop(context);
                       nextPage(startMyDay, mcontext);
@@ -149,10 +180,13 @@ class _SplashScreenState extends State<SplashScreen> {
                   )
                 : Container(),
             MaterialButton(
-              child: const Text("Update", style: TextStyle(color: Color(0xfff4511e), fontWeight: FontWeight.w600)),
+              child: const Text("Update",
+                  style: TextStyle(
+                      color: Color(0xfff4511e), fontWeight: FontWeight.w600)),
               onPressed: () async {
                 Navigator.pop(context);
-                StoreRedirect.redirect(androidAppId: "com.vvapps.dms").then((value) {
+                StoreRedirect.redirect(androidAppId: "com.vvapps.dms")
+                    .then((value) {
                   nextPage(startMyDay, mcontext);
                 });
               },
@@ -164,9 +198,11 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   nextPage(String startMyDay, BuildContext context) async {
-    bool login = await SharedPreference.getBooleanPreference(SharedPreference.isLogin);
+    bool login =
+        await SharedPreference.getBooleanPreference(SharedPreference.isLogin);
     if (login) {
-      Constants.name = await SharedPreference.getStringPreference(SharedPreference.name);
+      Constants.name =
+          await SharedPreference.getStringPreference(SharedPreference.name);
       Constants.mobile = await SharedPreference.getStringPreference(
         SharedPreference.mobileNumber,
       );
@@ -179,8 +215,11 @@ class _SplashScreenState extends State<SplashScreen> {
       Constants.image = await SharedPreference.getStringPreference(
         SharedPreference.userImage,
       );
-      Constants.leader = await SharedPreference.getBooleanPreference(SharedPreference.isLeader);
-      Constants.token = "Bearer " + await SharedPreference.getStringPreference(SharedPreference.accessToken);
+      Constants.leader = await SharedPreference.getBooleanPreference(
+          SharedPreference.isLeader);
+      Constants.token = "Bearer " +
+          await SharedPreference.getStringPreference(
+              SharedPreference.accessToken);
       dio.options.headers.addAll({"Authorization": Constants.token});
 
       if (startMyDay == "show") {
