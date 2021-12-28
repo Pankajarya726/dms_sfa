@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/ui/drawer_menu/home_screen/home_screen.dart';
 import 'package:dms/ui/login_screen/login_screen.dart';
+import 'package:dms/ui/screen_after_login/screen_after_login.dart';
 import 'package:dms/ui/settings_screen/settings_screen.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_bloc.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_events.dart';
@@ -214,7 +215,16 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 },
                 child: ListTile(
                   onTap: () {
-                    logoutDialog(context, endDay);
+                    if (startMyDay == "hide") {
+                      logoutDialog(context, endDay);
+                    } else {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              const ScreenAfterLogin(),
+                        ),
+                      );
+                    }
                   },
                   title: startMyDay == "hide"
                       ? const Text(
