@@ -10,8 +10,7 @@ import 'package:dms/model/secondary_tag_response.dart';
 import 'package:dms/ui/add_plan/bloc/add_plan_bloc.dart';
 import 'package:dms/ui/add_plan/bloc/add_plan_events.dart';
 import 'package:dms/ui/add_plan/bloc/add_plan_states.dart';
-import 'package:dms/ui/custom_widget/primary_tag_widget.dart';
-import 'package:dms/ui/custom_widget/secondary_tag_widget.dart';
+import 'package:dms/ui/custom_widget/beat_bootom_sheet.dart';
 import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_bloc.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_events.dart';
@@ -26,6 +25,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -57,8 +57,10 @@ class _StartDayScreenState extends State<StartDayScreen> {
   RefreshController refreshController = RefreshController(initialRefresh: false);
 
   PlanDataModel? planDateModel;
-  PrimaryTagListener? primaryTagListener;
-  SecondaryTagListener? secondaryTagListener;
+
+  List<PrimaryTag> primaryTagList = [];
+  List<SecondaryTag> secondaryTagList = [];
+
   PrimaryTag? primaryTag;
   SecondaryTag? secondaryTag;
 
@@ -96,396 +98,542 @@ class _StartDayScreenState extends State<StartDayScreen> {
             BlocProvider(create: (context) => addPlanBloc),
             BlocProvider(create: (context) => userLocationBloc),
           ],
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                BlocBuilder<StartMyDayBloc, StartMyDayStates>(
-                  builder: (context, state) {
-                    if (state is StartMyDayInitialState) {
-                      startMyDayBloc.add(GetQuotesAndImagesEvent());
-                    }
+          child: MultiBlocListener(
+            listeners: [
+              BlocListener<StartMyDayBloc, StartMyDayStates>(listener: (context, state) {
+                if (state is GetQuotesAndImagesState) {
+                  quoteImage = state.quotesAndImagesResponse.data!.image;
+                  quoteText = state.quotesAndImagesResponse.data!.text;
+                  dateTime = DateTime.parse(state.currentDate);
+                }
+                if (state is StartMyDayFailureState) {
+                  Fluttertoast.showToast(msg: state.failureMessage);
+                }
+              }),
+              BlocListener<AddPlanBloc, AddPlanStates>(listener: (context, state) {
+                if (state is GetSavedPlanState) {
+                  refreshController.refreshCompleted();
+                  planDateModel = state.planDateModel;
 
-                    if (state is GetQuotesAndImagesState) {
-                      quoteImage = state.quotesAndImagesResponse.data!.image;
-                      quoteText = state.quotesAndImagesResponse.data!.text;
-                      dateTime = DateTime.parse(state.currentDate);
-                    }
-                    if (state is StartMyDayFailureState) {
-                      Fluttertoast.showToast(msg: state.failureMessage);
-                    }
+                  txtRemarkController.text = state.planDateModel.remark;
+                  primaryTag = PrimaryTag(id: state.planDateModel.primaryTagId, name: state.planDateModel.primaryTag);
+                  secondaryTag = SecondaryTag(id: state.planDateModel.secondaryTagId, name: state.planDateModel.secondaryTag);
+                  addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
+                }
 
-                    return SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.width * 0.5,
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          CachedNetworkImage(
-                            width: MediaQuery.of(context).size.width,
-                            height: 90,
-                            fit: BoxFit.cover,
-                            imageUrl: quoteImage,
-                            errorWidget: (context, url, error) => Image.asset(
-                              "assets/3x/landscape_placeholder.png",
+                if (state is GetSecondaryTagState) {
+                  secondaryTagList = state.secondaryTagList;
+                }
+                if (state is GetAddPlanFailureState) {
+                  refreshController.refreshCompleted();
+                  planDateModel = null;
+
+                  primaryTag = primaryTagList.first;
+                  secondaryTag = null;
+                  txtRemarkController.clear();
+                  addPlanBloc.add(SelectPrimaryEvent(primaryTag: primaryTag!));
+                }
+                if (state is AddPlanSuccessState) {
+                  Fluttertoast.showToast(msg: state.successMessage);
+                }
+                if (state is AddPlanFailureState) {
+                  Fluttertoast.showToast(msg: state.failureMessage);
+                }
+
+                if (state is GetPrimaryTagState) {
+                  primaryTagList = state.primaryTagList;
+                  primaryTag = primaryTagList.first;
+                  getCurrentDate();
+                }
+              }),
+            ],
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  BlocBuilder<StartMyDayBloc, StartMyDayStates>(
+                    builder: (context, state) {
+                      if (state is StartMyDayInitialState) {
+                        startMyDayBloc.add(GetQuotesAndImagesEvent());
+                      }
+
+                      return SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.width * 0.5,
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            CachedNetworkImage(
                               width: MediaQuery.of(context).size.width,
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                          quoteImage.isNotEmpty
-                              ? Positioned(
-                                  top: 0,
-                                  left: 0,
-                                  right: 0,
-                                  bottom: 0,
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    height: MediaQuery.of(context).size.width * 0.5,
-                                    color: const Color(0xff000000).withOpacity(0.4),
-                                  ),
-                                )
-                              : Container(),
-                          Positioned(
-                            top: 20,
-                            left: 30,
-                            right: 30,
-                            bottom: 20,
-                            child: SingleChildScrollView(
-                              child: Text(
-                                quoteText,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  letterSpacing: 0.67,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              height: 90,
+                              fit: BoxFit.cover,
+                              imageUrl: quoteImage,
+                              errorWidget: (context, url, error) => Image.asset(
+                                "assets/3x/landscape_placeholder.png",
+                                width: MediaQuery.of(context).size.width,
+                                fit: BoxFit.fill,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BlocBuilder<AddPlanBloc, AddPlanStates>(
-                        builder: (context, state) {
-                          if (state is AddPlanInitialState) {
-                            getCurrentDate();
-                            return Container();
-                          }
-                          if (state is AddPlanLoadingState) {}
-                          if (state is GetSavedPlanState) {
-                            planDateModel = state.planDateModel;
-                            txtRemarkController.text = planDateModel!.remark;
-                            primaryTag = PrimaryTag(id: planDateModel!.primaryTagId, name: planDateModel!.primaryTag);
-                            secondaryTag = SecondaryTag(id: planDateModel!.secondaryTagId, name: planDateModel!.secondaryTag);
-
-                            if (primaryTagListener != null) {
-                              primaryTagListener!.onPrimaryTagSelect(primaryTag!);
-                            }
-                            if (secondaryTagListener != null) {
-                              secondaryTagListener!.onPrimaryTagChange(primaryTag!, secondaryTag!);
-                              secondaryTagListener!.onSecondaryTagSelect(secondaryTag!);
-                            }
-                            debugPrint("add plan data = ${state.planDateModel}");
-                          }
-
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Primary Tag",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 0.67,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              PrimaryTagWidget(onSelect: (tag) {
-                                primaryTag = tag;
-
-                                if (secondaryTagListener != null) {
-                                  secondaryTagListener!.onPrimaryTagChange(primaryTag!, secondaryTag);
-                                }
-                              }, onInit: (PrimaryTagListener listener) {
-                                primaryTagListener = listener;
-                              }),
-                              SecondaryTagWidget(
-                                onSelect: (tag) {
-                                  secondaryTag = tag;
-                                },
-                                // onInit: (SecondaryTagListener listener) {
-                                //   secondaryTagListener = listener;
-                                // },
-                                primaryTag: primaryTag!, secondaryTagList: [],
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              const Text(
-                                remark,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 0.67,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              TextFormField(
-                                minLines: 3,
-                                controller: txtRemarkController,
-                                maxLines: 5,
-                                maxLengthEnforcement: MaxLengthEnforcement.none,
-                                decoration: InputDecoration(
-                                  hintText: "Write your remark",
-                                  hintStyle: const TextStyle(
-                                    color: MColor.backButton,
-                                  ),
-                                  filled: true,
-                                  fillColor: const Color(0xffF2F2F2),
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                      BlocBuilder<UserLocationBloc, UserLocationStates>(
-                        builder: (context, state) {
-                          if (state is UserLocationInitialState) {
-                            userLocationBloc.add(GetUserLocationEvent());
-                          }
-
-                          if (state is UserLocationLoadingState) {
-                            EasyLoading.show();
-                          }
-
-                          if (state is GetUserLocationState) {
-                            EasyLoading.dismiss();
-                            currentAddress = state.currentAddress;
-                            latitude = state.latitude;
-                            longitude = state.longitude;
-                          }
-                          if (state is UserLocationFailureState) {
-                            EasyLoading.dismiss();
-                            currentAddress = state.failureMessage;
-                          }
-
-                          return InkWell(
-                            customBorder: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            onTap: () {
-                              userLocationBloc.add(GetUserLocationEvent());
-                            },
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Image(
-                                  image: AssetImage("assets/location.png"),
-                                  height: 20,
-                                  width: 20,
-                                  fit: BoxFit.contain,
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    currentAddress,
-                                    maxLines: 3,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: MColor.backButton,
-                                      letterSpacing: 0.67,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                getMeeting,
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.bold,
-                                  color: MColor.backButton,
-                                  letterSpacing: 0.67,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Row(
-                                children: [
-                                  InkWell(
-                                    customBorder: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                    onTap: () {
-                                      isMeeting = true;
-                                      setState(() {});
-                                    },
+                            quoteImage.isNotEmpty
+                                ? Positioned(
+                                    top: 0,
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 0,
                                     child: Container(
-                                      width: 60,
-                                      height: 60,
-                                      decoration: BoxDecoration(
-                                        color: isMeeting
-                                            ? const Color.fromRGBO(255, 201, 204, 0.5)
-                                            : const Color.fromRGBO(196, 196, 196, 0.5),
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: Container(
-                                        width: 48,
-                                        height: 48,
-                                        decoration: BoxDecoration(
-                                          color: isMeeting
-                                              ? const Color.fromRGBO(255, 201, 204, 1)
-                                              : const Color.fromRGBO(196, 196, 196, 1),
-                                          borderRadius: BorderRadius.circular(30),
-                                        ),
-                                        child: const Center(
-                                          child: Text(
-                                            "Yes",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              letterSpacing: 0.67,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
+                                      width: MediaQuery.of(context).size.width,
+                                      height: MediaQuery.of(context).size.width * 0.5,
+                                      color: const Color(0xff000000).withOpacity(0.4),
                                     ),
+                                  )
+                                : Container(),
+                            Positioned(
+                              top: 20,
+                              left: 30,
+                              right: 30,
+                              bottom: 20,
+                              child: SingleChildScrollView(
+                                child: Text(
+                                  quoteText,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    letterSpacing: 0.67,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Primary Tag",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.67,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            BlocBuilder<AddPlanBloc, AddPlanStates>(
+                              builder: (context, state) {
+                                if (state is AddPlanInitialState) {
+                                  addPlanBloc.add(GetPrimaryTagEvent());
+                                }
+
+                                if (primaryTagList.isEmpty) {
+                                  return Container();
+                                }
+                                if (state is SelectPrimaryTagState) {
+                                  if (primaryTag != null) {
+                                    if (primaryTag!.id != state.primaryTag.id || secondaryTag == null) {
+                                      primaryTag = state.primaryTag;
+                                      addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
+                                    }
+                                  } else {
+                                    primaryTag = state.primaryTag;
+                                  }
+                                }
+                                primaryTag ??= primaryTagList.first;
+
+                                return Tags(
+                                  itemCount: primaryTagList.length,
+                                  alignment: WrapAlignment.start,
+                                  itemBuilder: (index) {
+                                    return ItemTags(
+                                      customData: primaryTagList[index],
+                                      singleItem: true,
+                                      onPressed: (item) {
+                                        addPlanBloc.add(SelectPrimaryEvent(primaryTag: item.customData));
+                                      },
+                                      active: primaryTag!.id == primaryTagList[index].id,
+                                      title: primaryTagList[index].name,
+                                      textActiveColor: Colors.black,
+                                      textColor: const Color(0xff555555),
+                                      elevation: 0,
+                                      textStyle: const TextStyle(fontSize: 16),
+                                      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                      index: index,
+                                      border: Border.all(
+                                          color: primaryTag!.id == primaryTagList[index].id
+                                              ? MColor.colorPrimary
+                                              : const Color.fromRGBO(197, 197, 197, 1)),
+                                      activeColor: primaryTag!.id == primaryTagList[index].id
+                                          ? const Color(0xFFFFC9CC)
+                                          : const Color(0xffFAFAFA),
+                                      color: primaryTag!.id == primaryTagList[index].id
+                                          ? const Color(0xFFFFC9CC)
+                                          : const Color(0xffFAFAFA),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            BlocBuilder<AddPlanBloc, AddPlanStates>(
+                              builder: (context, state) {
+                                if (state is AddPlanInitialState) {
+                                  return Container();
+                                }
+                                if (primaryTag == null) {
+                                  return Container();
+                                }
+
+                                if (state is GetSecondaryTagState) {
+                                  secondaryTagList = state.secondaryTagList;
+                                }
+                                if (state is SelectSecondaryState) {
+                                  secondaryTag = state.secondaryTag;
+                                }
+                                if (secondaryTagList.isEmpty) {
+                                  return Container();
+                                }
+
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    primaryTag!.id == 1 || primaryTag!.id == 2
+                                        ? const Padding(
+                                            padding: EdgeInsets.symmetric(vertical: 15),
+                                            child: Text(
+                                              "Secondary Tag",
+                                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                            ),
+                                          )
+                                        : Container(),
+                                    primaryTag!.id == 1
+                                        ? TextFormField(
+                                            scrollPadding: const EdgeInsets.all(0),
+                                            readOnly: true,
+                                            controller: txtBeatController,
+                                            onTap: () {
+                                              selectBeat(context, secondaryTagList);
+                                            },
+                                            decoration: InputDecoration(
+                                              contentPadding: const EdgeInsets.all(15),
+                                              hintText: "Select Retailing",
+                                              border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(25), borderSide: BorderSide.none),
+                                              suffixIcon: const Icon(
+                                                Icons.keyboard_arrow_down_outlined,
+                                                color: Colors.black,
+                                              ),
+                                              // suffixIconConstraints: BoxConstraints(maxWidth: 20, maxHeight: 20)
+                                            ),
+                                          )
+                                        : primaryTag!.id == 2
+                                            ? Tags(
+                                                itemCount: secondaryTagList.length,
+                                                alignment: WrapAlignment.start,
+                                                itemBuilder: (index) {
+                                                  return ItemTags(
+                                                    singleItem: true,
+                                                    customData: secondaryTagList[index],
+                                                    onPressed: (item) {
+                                                      addPlanBloc.add(SelectSecondaryEvent(secondaryTag: item.customData));
+                                                    },
+                                                    active:
+                                                        secondaryTag != null ? secondaryTag!.id == secondaryTagList[index].id : false,
+                                                    title: secondaryTagList[index].name,
+                                                    textActiveColor: Colors.black,
+                                                    textColor: const Color(0xff555555),
+                                                    elevation: 0,
+                                                    textStyle: const TextStyle(fontSize: 16),
+                                                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                                    index: index,
+                                                    border: Border.all(
+                                                        color: secondaryTag != null
+                                                            ? secondaryTag!.id == secondaryTagList[index].id
+                                                                ? MColor.colorPrimary
+                                                                : const Color.fromRGBO(197, 197, 197, 1)
+                                                            : const Color.fromRGBO(197, 197, 197, 1)),
+                                                    activeColor: const Color(0xFFFFC9CC),
+                                                    color: secondaryTag != null
+                                                        ? secondaryTag!.id == secondaryTagList[index].id
+                                                            ? const Color(0xFFFFC9CC)
+                                                            : const Color(0xffFAFAFA)
+                                                        : const Color(0xffFAFAFA),
+                                                  );
+                                                },
+                                              )
+                                            : Container(),
+                                  ],
+                                );
+                              },
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            const Text(
+                              remark,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.67,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            TextFormField(
+                              minLines: 3,
+                              controller: txtRemarkController,
+                              maxLines: 5,
+                              maxLengthEnforcement: MaxLengthEnforcement.none,
+                              decoration: InputDecoration(
+                                hintText: "Write your remark",
+                                hintStyle: const TextStyle(
+                                  color: MColor.backButton,
+                                ),
+                                filled: true,
+                                fillColor: const Color(0xffF2F2F2),
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                          ],
+                        ),
+                        BlocBuilder<UserLocationBloc, UserLocationStates>(
+                          builder: (context, state) {
+                            if (state is UserLocationInitialState) {
+                              userLocationBloc.add(GetUserLocationEvent());
+                            }
+
+                            if (state is UserLocationLoadingState) {
+                              EasyLoading.show();
+                            }
+
+                            if (state is GetUserLocationState) {
+                              EasyLoading.dismiss();
+                              currentAddress = state.currentAddress;
+                              latitude = state.latitude;
+                              longitude = state.longitude;
+                            }
+                            if (state is UserLocationFailureState) {
+                              EasyLoading.dismiss();
+                              currentAddress = state.failureMessage;
+                            }
+
+                            return InkWell(
+                              customBorder: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              onTap: () {
+                                userLocationBloc.add(GetUserLocationEvent());
+                              },
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Image(
+                                    image: AssetImage("assets/location.png"),
+                                    height: 20,
+                                    width: 20,
+                                    fit: BoxFit.contain,
                                   ),
                                   const SizedBox(
-                                    width: 15,
+                                    width: 10,
                                   ),
-                                  InkWell(
-                                    customBorder: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                    onTap: () {
-                                      isMeeting = false;
-                                      setState(() {});
-                                    },
-                                    child: Container(
-                                      width: 60,
-                                      height: 60,
-                                      decoration: BoxDecoration(
-                                        color: isMeeting
-                                            ? const Color.fromRGBO(196, 196, 196, 0.5)
-                                            : const Color.fromRGBO(255, 201, 204, 0.5),
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: Container(
-                                        width: 48,
-                                        height: 48,
-                                        decoration: BoxDecoration(
-                                          color: isMeeting
-                                              ? const Color.fromRGBO(196, 196, 196, 1)
-                                              : const Color.fromRGBO(255, 201, 204, 1),
-                                          borderRadius: BorderRadius.circular(30),
-                                        ),
-                                        child: const Center(
-                                          child: Text(
-                                            "No",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              letterSpacing: 0.67,
-                                            ),
-                                          ),
-                                        ),
+                                  Expanded(
+                                    child: Text(
+                                      currentAddress,
+                                      maxLines: 3,
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: MColor.backButton,
+                                        letterSpacing: 0.67,
                                       ),
                                     ),
                                   ),
                                 ],
-                              )
-                            ],
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                selfie,
-                                style: TextStyle(
-                                  letterSpacing: 0.67,
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.bold,
-                                  color: MColor.backButton,
-                                ),
                               ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  selectImage();
-                                },
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width / 3,
-                                  height: MediaQuery.of(context).size.width / 3,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    color: Colors.white,
-                                    border: Border.all(
-                                      color: const Color.fromRGBO(85, 85, 85, 1),
-                                      width: 1,
-                                    ),
+                            );
+                          },
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  getMeeting,
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold,
+                                    color: MColor.backButton,
+                                    letterSpacing: 0.67,
                                   ),
-                                  child: imageFile == null
-                                      ? Center(
-                                          child: Image(
-                                            image: const AssetImage("assets/camera_icon.png"),
-                                            width: MediaQuery.of(context).size.width / 7,
-                                            height: MediaQuery.of(context).size.width / 7,
-                                            fit: BoxFit.contain,
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Row(
+                                  children: [
+                                    InkWell(
+                                      customBorder: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      onTap: () {
+                                        isMeeting = true;
+                                        setState(() {});
+                                      },
+                                      child: Container(
+                                        width: 60,
+                                        height: 60,
+                                        decoration: BoxDecoration(
+                                          color: isMeeting
+                                              ? const Color.fromRGBO(255, 201, 204, 0.5)
+                                              : const Color.fromRGBO(196, 196, 196, 0.5),
+                                          borderRadius: BorderRadius.circular(30),
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Container(
+                                          width: 48,
+                                          height: 48,
+                                          decoration: BoxDecoration(
+                                            color: isMeeting
+                                                ? const Color.fromRGBO(255, 201, 204, 1)
+                                                : const Color.fromRGBO(196, 196, 196, 1),
+                                            borderRadius: BorderRadius.circular(30),
                                           ),
-                                        )
-                                      : ClipRRect(
-                                          borderRadius: BorderRadius.circular(7),
-                                          child: Image(
-                                            image: FileImage(imageFile!),
-                                            fit: BoxFit.cover,
+                                          child: const Center(
+                                            child: Text(
+                                              "Yes",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                letterSpacing: 0.67,
+                                              ),
+                                            ),
                                           ),
                                         ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 15,
+                                    ),
+                                    InkWell(
+                                      customBorder: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      onTap: () {
+                                        isMeeting = false;
+                                        setState(() {});
+                                      },
+                                      child: Container(
+                                        width: 60,
+                                        height: 60,
+                                        decoration: BoxDecoration(
+                                          color: isMeeting
+                                              ? const Color.fromRGBO(196, 196, 196, 0.5)
+                                              : const Color.fromRGBO(255, 201, 204, 0.5),
+                                          borderRadius: BorderRadius.circular(30),
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Container(
+                                          width: 48,
+                                          height: 48,
+                                          decoration: BoxDecoration(
+                                            color: isMeeting
+                                                ? const Color.fromRGBO(196, 196, 196, 1)
+                                                : const Color.fromRGBO(255, 201, 204, 1),
+                                            borderRadius: BorderRadius.circular(30),
+                                          ),
+                                          child: const Center(
+                                            child: Text(
+                                              "No",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                letterSpacing: 0.67,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  selfie,
+                                  style: TextStyle(
+                                    letterSpacing: 0.67,
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold,
+                                    color: MColor.backButton,
+                                  ),
                                 ),
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                )
-              ],
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    selectImage();
+                                  },
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width / 3,
+                                    height: MediaQuery.of(context).size.width / 3,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      color: Colors.white,
+                                      border: Border.all(
+                                        color: const Color.fromRGBO(85, 85, 85, 1),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: imageFile == null
+                                        ? Center(
+                                            child: Image(
+                                              image: const AssetImage("assets/camera_icon.png"),
+                                              width: MediaQuery.of(context).size.width / 7,
+                                              height: MediaQuery.of(context).size.width / 7,
+                                              fit: BoxFit.contain,
+                                            ),
+                                          )
+                                        : ClipRRect(
+                                            borderRadius: BorderRadius.circular(7),
+                                            child: Image(
+                                              image: FileImage(imageFile!),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -615,20 +763,20 @@ class _StartDayScreenState extends State<StartDayScreen> {
     );
   }
 
-  void selectBeat(BuildContext context, List<String> secondaryTag) async {
-    // showModalBottomSheet(
-    //     context: context,
-    //     isScrollControlled: true,
-    //     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))),
-    //     builder: (context) {
-    //       return BeatBottomSheet(
-    //           beat: txtBeatController.text,
-    //           beats: secondaryTag,
-    //           onBeatSelect: (String beat) {
-    //             txtBeatController.text = beat;
-    //             selectedSecondaryTag = txtBeatController.text;
-    //           });
-    //     });
+  void selectBeat(BuildContext context, List<SecondaryTag> secondaryTag) async {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))),
+        builder: (context) {
+          return BeatBottomSheet(
+              beat: txtBeatController.text,
+              beats: secondaryTag,
+              onBeatSelect: (SecondaryTag beat) {
+                txtBeatController.text = beat.name;
+                addPlanBloc.add(SelectSecondaryEvent(secondaryTag: beat));
+              });
+        });
   }
 
   void selectImage() async {

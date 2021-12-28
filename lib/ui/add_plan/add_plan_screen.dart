@@ -338,7 +338,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                                                 onPressed: (item) {
                                                   addPlanBloc.add(SelectSecondaryEvent(secondaryTag: item.customData));
                                                 },
-                                                active: secondaryTag!.id == secondaryTagList[index].id,
+                                                active: secondaryTag != null ? secondaryTag!.id == secondaryTagList[index].id : false,
                                                 title: secondaryTagList[index].name,
                                                 textActiveColor: Colors.black,
                                                 textColor: const Color(0xff555555),
