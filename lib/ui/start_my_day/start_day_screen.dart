@@ -740,6 +740,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
           listener: (context, state) {
             if (state is StartMyDaySuccessState) {
               Fluttertoast.showToast(msg: state.successMessage);
+              SharedPreference.setStringPreference(
+                  SharedPreference.startMyDay, "hide");
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => const DrawerScreen()),
