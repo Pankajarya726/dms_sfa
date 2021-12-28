@@ -119,6 +119,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                   primaryTag = PrimaryTag(id: state.planDateModel.primaryTagId, name: state.planDateModel.primaryTag);
                   secondaryTag = SecondaryTag(id: state.planDateModel.secondaryTagId, name: state.planDateModel.secondaryTag);
                   addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
+                  txtBeatController.text = state.planDateModel.secondaryTag;
                 }
 
                 if (state is GetSecondaryTagState) {
@@ -131,6 +132,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                   primaryTag = primaryTagList.first;
                   secondaryTag = null;
                   txtRemarkController.clear();
+                  txtBeatController.clear();
                   addPlanBloc.add(SelectPrimaryEvent(primaryTag: primaryTag!));
                 }
                 if (state is AddPlanSuccessState) {
@@ -238,14 +240,23 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                   return Container();
                                 }
                                 if (state is SelectPrimaryTagState) {
+                                  txtRemarkController.clear();
                                   if (primaryTag != null) {
                                     if (primaryTag!.id != state.primaryTag.id || secondaryTag == null) {
                                       primaryTag = state.primaryTag;
+                                      secondaryTag = null;
+                                      txtBeatController.clear();
+                                      txtRemarkController.clear();
                                       addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
                                     }
                                   } else {
+                                    secondaryTag = null;
+                                    txtBeatController.clear();
+                                    txtRemarkController.clear();
                                     primaryTag = state.primaryTag;
+                                    addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
                                   }
+                                  txtRemarkController.notifyListeners();
                                 }
                                 primaryTag ??= primaryTagList.first;
 
@@ -299,6 +310,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                 }
                                 if (state is SelectSecondaryState) {
                                   secondaryTag = state.secondaryTag;
+                                  txtBeatController.text = secondaryTag!.name;
                                 }
                                 if (secondaryTagList.isEmpty) {
                                   return Container();
@@ -701,7 +713,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
               input["latitude"] = latitude.toString();
               input["longitude"] = longitude.toString();
               input["get_meeting"] = isMeeting ? 1 : 2;
-              input["address"] = currentAddress;
+              // input["address"] = currentAddress;
+              input["start day address"] = currentAddress;
               input["start_day_time"] = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
 
               if (imageFile != null) {

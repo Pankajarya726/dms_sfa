@@ -73,7 +73,7 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderSt
                                   alignment: Alignment.center,
                                   child: Text(
                                     "Week ${weeklyPlan[i].week}",
-                                    style: const TextStyle(color: Colors.black, fontSize: 16),
+                                    style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               )),

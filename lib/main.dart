@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dms/navigation/navigation_service.dart';
 import 'package:dms/provider/repository.dart';
 import 'package:dms/provider/url.dart';
 import 'package:dms/ui/splash_screen/splash_screen.dart';
@@ -19,7 +20,7 @@ BaseOptions options = BaseOptions(
 Dio dio = Dio(options);
 ApiRepository repository = ApiRepository();
 ImagePicker imagePicker = ImagePicker();
-
+NavigationService navigationService = NavigationService();
 configLoading() {
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)
@@ -70,6 +71,7 @@ class MyApp extends StatelessWidget {
           '',
       debugShowCheckedModeBanner: false,
       builder: EasyLoading.init(),
+      navigatorKey: navigationService.navigatorKey,
       theme: ThemeData(
           primarySwatch: const MaterialColor(
             0xFFF3505A,

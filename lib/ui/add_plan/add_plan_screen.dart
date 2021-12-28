@@ -64,6 +64,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
       child: BlocListener<AddPlanBloc, AddPlanStates>(
         bloc: addPlanBloc,
         listener: (context, state) {
+          debugPrint("state----->$state");
           if (state is GetSavedPlanState) {
             _refreshController.refreshCompleted();
             planDateModel = state.planDateModel;
@@ -72,7 +73,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             primaryTag = PrimaryTag(id: state.planDateModel.primaryTagId, name: state.planDateModel.primaryTag);
             secondaryTag = SecondaryTag(id: state.planDateModel.secondaryTagId, name: state.planDateModel.secondaryTag);
             addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
-
+            txtBeatController.text = secondaryTag!.name;
             // if (primaryTagListener != null) {
             //   primaryTagListener!.onPrimaryTagSelect(primaryTag!);
             // }
@@ -92,6 +93,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             primaryTag = primaryTagList.first;
             secondaryTag = null;
             txtRemarkController.clear();
+            txtBeatController.clear();
             addPlanBloc.add(SelectPrimaryEvent(primaryTag: primaryTag!));
           }
           if (state is AddPlanSuccessState) {
@@ -100,7 +102,6 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
           if (state is AddPlanFailureState) {
             Fluttertoast.showToast(msg: state.failureMessage);
           }
-
           if (state is AddPlanSuccessState) {
             planAlreadyExists = true;
           }
@@ -189,7 +190,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                       selectionMode: DateRangePickerSelectionMode.single,
                       navigationMode: DateRangePickerNavigationMode.none,
                       monthCellStyle: DateRangePickerMonthCellStyle(
-                        textStyle: const TextStyle(fontWeight: FontWeight.w600, color: Colors.black),
+                        textStyle: const TextStyle(fontWeight: FontWeight.w600, color: Colors.black, fontSize: 16),
                         leadingDatesTextStyle: TextStyle(
                           color: Colors.grey.shade400,
                           fontWeight: FontWeight.w600,
@@ -204,7 +205,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                         firstDayOfWeek: 1,
                         viewHeaderHeight: 50,
                         viewHeaderStyle: DateRangePickerViewHeaderStyle(
-                          textStyle: TextStyle(color: Colors.black),
+                          textStyle: TextStyle(fontWeight: FontWeight.w500, color: Colors.black, fontSize: 16),
                         ),
                       ),
                     ),
@@ -231,14 +232,24 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                               return Container();
                             }
                             if (state is SelectPrimaryTagState) {
+                              txtRemarkController.clear();
+
                               if (primaryTag != null) {
                                 if (primaryTag!.id != state.primaryTag.id || secondaryTag == null) {
                                   primaryTag = state.primaryTag;
+                                  secondaryTag = null;
+                                  txtBeatController.clear();
+                                  txtRemarkController.clear();
                                   addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
                                 }
                               } else {
+                                secondaryTag = null;
+                                txtBeatController.clear();
+                                txtRemarkController.clear();
                                 primaryTag = state.primaryTag;
+                                addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
                               }
+                              txtRemarkController.notifyListeners();
                             }
                             primaryTag ??= primaryTagList.first;
 
@@ -290,6 +301,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                             }
                             if (state is SelectSecondaryState) {
                               secondaryTag = state.secondaryTag;
+                              txtBeatController.text = secondaryTag!.name;
                             }
                             if (secondaryTagList.isEmpty) {
                               return Container();
@@ -379,8 +391,11 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                         TextFormField(
                           minLines: 3,
                           maxLines: 5,
+                          maxLength: 255,
                           controller: txtRemarkController,
                           decoration: InputDecoration(
+                            hintText: "Enter remark",
+                            counter: Container(),
                             filled: true,
                             fillColor: const Color(0xffF2F2F2),
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),

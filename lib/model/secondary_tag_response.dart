@@ -67,6 +67,7 @@ class SecondaryTag {
 
   int id;
   String name;
+  bool check = false;
 
   factory SecondaryTag.fromJson(String str) => SecondaryTag.fromMap(json.decode(str));
 

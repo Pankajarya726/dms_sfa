@@ -9,12 +9,7 @@ class BeatBottomSheet extends StatefulWidget {
   final Function(SecondaryTag beat) onBeatSelect;
   final List<SecondaryTag> beats;
 
-  const BeatBottomSheet(
-      {Key? key,
-      required this.beat,
-      required this.beats,
-      required this.onBeatSelect})
-      : super(key: key);
+  const BeatBottomSheet({Key? key, required this.beat, required this.beats, required this.onBeatSelect}) : super(key: key);
 
   @override
   _BeatBottomSheetState createState() => _BeatBottomSheetState();
@@ -38,8 +33,7 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     return Padding(
-      padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom),
       child: IntrinsicHeight(
           child: Container(
         margin: const EdgeInsets.only(left: 15, right: 15, top: 15),
@@ -58,7 +52,7 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
               controller: edtSearch,
               autofocus: false,
               decoration: InputDecoration(
-                  hintText: "SEARCH",
+                  hintText: "Search",
                   hintStyle: const TextStyle(
                     color: MColor.backButton,
                   ),
@@ -91,9 +85,7 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
                   List<SecondaryTag> searchList = [];
 
                   for (var element in beats) {
-                    if (element.name
-                        .toLowerCase()
-                        .contains(text.trim().toLowerCase())) {
+                    if (element.name.toLowerCase().contains(text.trim().toLowerCase())) {
                       searchList.add(element);
                     }
                   }
@@ -113,48 +105,47 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
               child: StreamBuilder<List<SecondaryTag>>(
                 stream: controller.stream,
                 initialData: widget.beats,
-                builder: (context, snapshpt) {
-                  debugPrint("snapshet data-->${snapshpt.data}");
+                builder: (context, snapshot) {
+                  debugPrint("snapshot data-->${snapshot.data}");
 
-                  if (snapshpt.connectionState == ConnectionState.waiting) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
                       child: CircularProgressIndicator(),
                     );
                   }
 
-                  if (snapshpt.hasError) {
+                  if (snapshot.hasError) {
                     return const Center(child: Text("data not found!"));
                   }
 
-                  if (snapshpt.data!.isEmpty) {
+                  if (snapshot.data!.isEmpty) {
                     return const Center(child: Text("data not found!"));
                   }
 
-                  if (snapshpt.hasData) {
+                  if (snapshot.hasData) {
                     return ListView.separated(
                         itemBuilder: (context, index) => ListTile(
                               onTap: () {
-                                widget.onBeatSelect(snapshpt.data![index]);
-                                Navigator.pop(context);
+                                // widget.onBeatSelect(snapshot.data![index]);
+                                // Navigator.pop(context);
                               },
-                              contentPadding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                              leading: Text(snapshpt.data![index].name
-                                  .toString()
-                                  .toUpperCase()),
-                              trailing: snapshpt.data![index].toString() ==
-                                      widget.beat.toString()
-                                  ? const Icon(Icons.check)
-                                  : const SizedBox(
-                                      width: 0,
-                                      height: 0,
-                                    ),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                              leading: Text(snapshot.data![index].name.toString().toUpperCase()),
+                              trailing: Checkbox(
+                                value: snapshot.data![index].check,
+                                onChanged: (value) {
+                                  snapshot.data![index].check = value!;
+                                  beats.singleWhere((element) => element.id == snapshot.data![index].id).check = value;
+
+                                  controller.add(snapshot.data!);
+                                },
+                              ),
                             ),
                         separatorBuilder: (context, index) => Divider(
                               height: 1,
                               color: Colors.grey.shade300,
                             ),
-                        itemCount: snapshpt.data!.length);
+                        itemCount: snapshot.data!.length);
                   }
 
                   return const Text(
@@ -167,19 +158,39 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
-              child: MaterialButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                height: 50,
-                minWidth: width,
-                elevation: 5,
-                child: const Text(
-                  "Cancel",
-                  style: TextStyle(color: Colors.red),
-                ),
+              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  MaterialButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    height: 30,
+                    elevation: 5,
+                    color: MColor.colorPrimary,
+                    child: const Text(
+                      "Cancel",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+                  MaterialButton(
+                    onPressed: () {
+                      List<SecondaryTag> tags = beats.where((element) => element.check).toList();
+                      if (tags.isNotEmpty) {
+                        widget.onBeatSelect(tags.first);
+                      }
+                      Navigator.pop(context);
+                    },
+                    height: 30,
+                    color: MColor.colorSecondary,
+                    elevation: 5,
+                    child: const Text(
+                      "Ok",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
