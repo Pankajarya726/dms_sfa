@@ -52,7 +52,10 @@ class ApiRepository {
   }
 
   Future<LoginResponse> login(String mobileNumber, String password) async {
-    Map<String, dynamic> data = {"mobile_number": mobileNumber, "password": password};
+    Map<String, dynamic> data = {
+      "mobile_number": mobileNumber,
+      "password": password
+    };
 
     try {
       Response response = await dio.post(
@@ -70,7 +73,14 @@ class ApiRepository {
         message = "Something Went wrong";
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
-      return LoginResponse(success: false, message: message, id: 0, accessToken: "", tokenType: "", isLeader: false, startMyDay: "");
+      return LoginResponse(
+          success: false,
+          message: message,
+          id: 0,
+          accessToken: "",
+          tokenType: "",
+          isLeader: false,
+          startMyDay: "");
     }
   }
 
@@ -78,19 +88,21 @@ class ApiRepository {
     try {
       Response response = await dio.get(Url.getQuotesAndImages);
 
-      if (response.statusCode == 200) {
-        QuotesAndImagesResponse quotesAndImagesResponse = QuotesAndImagesResponse.fromJson(response.toString());
-        return quotesAndImagesResponse;
+      QuotesAndImagesResponse quotesAndImagesResponse =
+          QuotesAndImagesResponse.fromJson(response.toString());
+      return quotesAndImagesResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
       } else {
-        return QuotesAndImagesResponse(
-          success: false,
-          message: response.statusMessage.toString(),
-        );
+        message = "Something Went wrong";
       }
-    } catch (exception) {
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return QuotesAndImagesResponse(
         success: false,
-        message: "Something went wrong!",
+        message: message,
       );
     }
   }
@@ -101,19 +113,21 @@ class ApiRepository {
     try {
       Response response = await dio.post(Url.startMyDay, data: formData);
 
-      if (response.statusCode == 200) {
-        StartMyDayResponse startMyDayResponse = StartMyDayResponse.fromJson(response.toString());
-        return startMyDayResponse;
+      StartMyDayResponse startMyDayResponse =
+          StartMyDayResponse.fromJson(response.toString());
+      return startMyDayResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
       } else {
-        return StartMyDayResponse(
-          success: false,
-          message: response.statusMessage.toString(),
-        );
+        message = "Something Went wrong";
       }
-    } catch (exception) {
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return StartMyDayResponse(
         success: false,
-        message: "Something went wrong!",
+        message: message,
       );
     }
   }
@@ -124,19 +138,19 @@ class ApiRepository {
         Url.getMenus,
       );
 
-      if (response.statusCode == 200) {
-        GetMenusResponse result = GetMenusResponse.fromJson(response.toString());
-        return result;
+      GetMenusResponse result = GetMenusResponse.fromJson(response.toString());
+      return result;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
       } else {
-        return GetMenusResponse(
-          message: response.statusMessage.toString(),
-          success: false,
-          data: [],
-        );
+        message = "Something Went wrong";
       }
-    } catch (exception) {
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return GetMenusResponse(
-        message: "Something went Wrong!",
+        message: message,
         success: false,
         data: [],
       );
@@ -158,19 +172,22 @@ class ApiRepository {
 
     try {
       Response response = await dio.post(Url.endMyDay, data: data);
-      if (response.statusCode == 200) {
-        EndMyDayResponse endMyDayResponse = EndMyDayResponse.fromJson(response.toString());
-        return endMyDayResponse;
+
+      EndMyDayResponse endMyDayResponse =
+          EndMyDayResponse.fromJson(response.toString());
+      return endMyDayResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
       } else {
-        return EndMyDayResponse(
-          success: false,
-          message: response.statusMessage.toString(),
-        );
+        message = "Something Went wrong";
       }
-    } catch (exception) {
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return EndMyDayResponse(
         success: false,
-        message: "Something went wrong!",
+        message: message,
       );
     }
   }
@@ -184,26 +201,31 @@ class ApiRepository {
         data: userId,
       );
 
-      if (response.statusCode == 200) {
-        GetUserResponse userData = GetUserResponse.fromJson(response.toString());
-        return userData;
+      GetUserResponse userData = GetUserResponse.fromJson(response.toString());
+      return userData;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
       } else {
-        return GetUserResponse(success: false, message: response.statusMessage.toString(), data: null);
+        message = "Something Went wrong";
       }
-    } catch (exception) {
-      return GetUserResponse(success: false, message: "Something went wrong!", data: null);
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return GetUserResponse(success: false, message: message, data: null);
     }
   }
 
-  Future<UpdateProfileResponse> editProfile(String name, String email, File? imgFile) async {
+  Future<UpdateProfileResponse> editProfile(
+      String name, String email, File? imgFile) async {
     Map<String, dynamic> params = HashMap<String, dynamic>();
 
     params["name"] = name;
     params["email"] = email;
 
     if (imgFile != null) {
-      params["profile_picture"] =
-          await MultipartFile.fromFile(imgFile.path, filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
+      params["profile_picture"] = await MultipartFile.fromFile(imgFile.path,
+          filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
     }
 
     FormData data = FormData.fromMap(params);
@@ -213,24 +235,27 @@ class ApiRepository {
         data: data,
       );
 
-      if (response.statusCode == 200) {
-        UpdateProfileResponse result = UpdateProfileResponse.fromJson(response.toString());
-        return result;
+      UpdateProfileResponse result =
+          UpdateProfileResponse.fromJson(response.toString());
+      return result;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
       } else {
-        return UpdateProfileResponse(
-          message: response.statusMessage.toString(),
-          success: false,
-        );
+        message = "Something Went wrong";
       }
-    } catch (exception) {
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return UpdateProfileResponse(
-        message: "Something went Wrong!",
+        message: message,
         success: false,
       );
     }
   }
 
-  Future<ChangePassResponse> changePassword(String id, String currPassword, String newPassword, String confPassword) async {
+  Future<ChangePassResponse> changePassword(String id, String currPassword,
+      String newPassword, String confPassword) async {
     Map<String, dynamic> params = {
       "current_password": currPassword,
       "new_password": newPassword,
@@ -244,18 +269,20 @@ class ApiRepository {
         data: params,
       );
 
-      if (response.statusCode == 200) {
-        ChangePassResponse result = ChangePassResponse.fromJson(response.toString());
-        return result;
+      ChangePassResponse result =
+          ChangePassResponse.fromJson(response.toString());
+      return result;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
       } else {
-        return ChangePassResponse(
-          message: response.statusMessage.toString(),
-          success: false,
-        );
+        message = "Something Went wrong";
       }
-    } catch (exception) {
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return ChangePassResponse(
-        message: "Something went Wrong!",
+        message: message,
         success: false,
       );
     }
@@ -267,19 +294,22 @@ class ApiRepository {
         Url.addPlan,
         data: input,
       );
-      if (response.statusCode == 200) {
-        AddPlanResponse addPlanResponse = AddPlanResponse.fromJson(response.toString());
-        return addPlanResponse;
+
+      AddPlanResponse addPlanResponse =
+          AddPlanResponse.fromJson(response.toString());
+      return addPlanResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
       } else {
-        return AddPlanResponse(
-          success: false,
-          message: response.statusMessage.toString(),
-        );
+        message = "Something Went wrong";
       }
-    } catch (exception) {
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return AddPlanResponse(
         success: false,
-        message: "Something went wrong!",
+        message: message,
       );
     }
   }
@@ -290,10 +320,18 @@ class ApiRepository {
         Url.getPrimaryTag,
       );
       return PrimaryTagResponse.fromJson(response.toString());
-    } catch (exception) {
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = "Something Went wrong";
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return PrimaryTagResponse(
         success: false,
-        message: "Something went wrong!",
+        message: message,
         data: [],
       );
     }
@@ -321,10 +359,18 @@ class ApiRepository {
       );
 
       return GetPlanResponse.fromJson(response.toString());
-    } catch (exception) {
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = "Something Went wrong";
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return GetPlanResponse(
         success: false,
-        message: "Something went wrong!",
+        message: message,
         data: [],
       );
     }
@@ -344,7 +390,8 @@ class ApiRepository {
       Url.getMyPlanByMonth,
       data: data,
     );
-    GetPlanResponse getAddPlanDataResponse = GetPlanResponse.fromJson(response.toString());
+    GetPlanResponse getAddPlanDataResponse =
+        GetPlanResponse.fromJson(response.toString());
     return getAddPlanDataResponse;
     // } catch (exception) {
     //   return GetPlanResponse(
@@ -361,19 +408,22 @@ class ApiRepository {
         Url.updateAddPlan,
         data: input,
       );
-      if (response.statusCode == 200) {
-        AddPlanUpdateDataResponse getAddPlanDataResponse = AddPlanUpdateDataResponse.fromJson(response.toString());
-        return getAddPlanDataResponse;
+
+      AddPlanUpdateDataResponse getAddPlanDataResponse =
+          AddPlanUpdateDataResponse.fromJson(response.toString());
+      return getAddPlanDataResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
       } else {
-        return AddPlanUpdateDataResponse(
-          success: false,
-          message: response.statusMessage.toString(),
-        );
+        message = "Something Went wrong";
       }
-    } catch (exception) {
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return AddPlanUpdateDataResponse(
         success: false,
-        message: "Something went wrong!",
+        message: message,
       );
     }
   }
