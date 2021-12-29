@@ -660,12 +660,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
           listener: (context, state) {
             if (state is StartMyDaySuccessState) {
               Fluttertoast.showToast(msg: state.successMessage);
-              SharedPreference.setStringPreference(
-                  SharedPreference.startMyDay, "hide");
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const DrawerScreen()),
-                  (route) => false);
+              SharedPreference.setStringPreference(SharedPreference.startMyDay, "hide");
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const DrawerScreen()), (route) => false);
             }
             // if (state is StartMyDayFailureState) {
             //   Fluttertoast.showToast(msg: state.failureMessage);
@@ -723,8 +719,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
               input["longitude"] = longitude.toString();
               input["get_meeting"] = isMeeting ? "Yes" : "No";
               input["start_day_address"] = currentAddress;
-              input["start_day_time"] =
-                  "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
+              input["start_day_time"] = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
 
               if (imageFile != null) {
                 input["start_day_image"] = await MultipartFile.fromFile(

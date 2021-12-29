@@ -24,13 +24,11 @@ class HomeScreen extends KFDrawerContent {
 }
 
 // home screen
-class _HomeScreenState extends State<HomeScreen>
-    implements ProfileUpdateListener {
+class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListener {
   int currentBottomTabIndex = 0;
 
   HomeScreenBloc homeScreenBloc = HomeScreenBloc();
-  RefreshController refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController refreshController = RefreshController(initialRefresh: false);
 
   List<MenuData> menu = [];
 
@@ -82,17 +80,18 @@ class _HomeScreenState extends State<HomeScreen>
                     child: CachedNetworkImage(
                       width: 50,
                       height: 50,
-                      fit: BoxFit.contain,
+                      fit: BoxFit.cover,
                       imageUrl: Constants.image,
                       imageBuilder: (context, imageProvider) {
                         return Image(
                           image: imageProvider,
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
                         );
                       },
-                      errorWidget: (context, url, error) =>
-                          Image.asset("assets/placeholder.png"),
-                      placeholder: (context, url) =>
-                          Image.asset("assets/placeholder.png"),
+                      errorWidget: (context, url, error) => Image.asset("assets/placeholder.png"),
+                      placeholder: (context, url) => Image.asset("assets/placeholder.png"),
                     ),
                   ),
                   const SizedBox(
@@ -114,8 +113,7 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                       Container(
                         margin: const EdgeInsets.only(top: 4),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 4, horizontal: 6),
+                        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
                         decoration: BoxDecoration(
                           color: const Color(0xFFF3505A).withOpacity(0.3),
                           borderRadius: BorderRadius.circular(3),
@@ -242,8 +240,7 @@ class _HomeScreenState extends State<HomeScreen>
                 crossAxisSpacing: 20,
                 mainAxisSpacing: 20,
                 childAspectRatio: 1,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
+                padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
                 children: List.generate(menu.length, (index) {
                   return Container(
                     height: MediaQuery.of(context).size.height / 4,
@@ -278,10 +275,8 @@ class _HomeScreenState extends State<HomeScreen>
                                 imageBuilder: (context, imageProvider) {
                                   return Image(
                                       fit: BoxFit.cover,
-                                      width:
-                                          MediaQuery.of(context).size.width / 8,
-                                      height:
-                                          MediaQuery.of(context).size.width / 8,
+                                      width: MediaQuery.of(context).size.width / 8,
+                                      height: MediaQuery.of(context).size.width / 8,
                                       image: imageProvider);
                                 },
                                 errorWidget: (context, url, error) {
@@ -323,8 +318,7 @@ class _HomeScreenState extends State<HomeScreen>
         Fluttertoast.showToast(msg: commingSoon);
         break;
       case 3:
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const MyPlan()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const MyPlan()));
         break;
     }
   }

@@ -58,18 +58,18 @@ class UserDetails {
   String toJson() => json.encode(toMap());
 
   factory UserDetails.fromMap(Map<String, dynamic> json) => UserDetails(
-        id: json["id"] == null ? null : json["id"],
-        name: json["name"] == null ? null : json["name"],
-        email: json["email"] == null ? null : json["email"],
-        mobileNumber: json["mobile_number"] == null ? null : json["mobile_number"],
-        image: json["image"] == null ? null : json["image"],
-        designation: json["designation"] == null ? null : json["designation"],
+        id: json["id"] == null ? 0 : json["id"],
+        name: json["name"] == null ? "" : json["name"],
+        email: json["email"] == null ? "" : json["email"],
+        mobileNumber: json["mobile_number"] == null ? "" : json["mobile_number"],
+        image: json["image"] == null ? "" : json["image"],
+        designation: json["designation"] == null ? "" : json["designation"],
         clockInOutData: json["clockInOutData"] == null
             ? []
             : List<ClockInOutData>.from(json["clockInOutData"].map((x) => ClockInOutData.fromMap(x))),
-        pjpDescription: json["pjp_description"] == null ? null : json["pjp_description"],
-        pjpButton: json["pjp_button"] == null ? null : json["pjp_button"],
-        startMyDay: json["startMyday"] == null ? null : json["startMyday"],
+        pjpDescription: json["pjp_description"] == null ? "" : json["pjp_description"],
+        pjpButton: json["pjp_button"] == null ? "hide" : json["pjp_button"],
+        startMyDay: json["startMyday"] == null ? "hide" : json["startMyday"],
       );
 
   Map<String, dynamic> toMap() => {

@@ -44,10 +44,10 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.vvapps.dms"
-        minSdkVersion 16
-        targetSdkVersion 30
+        minSdkVersion 20
+        targetSdkVersion 31
         versionCode 1
-        versionName '1.0.0'
+        versionName '1.0'
     }
 
     buildTypes {

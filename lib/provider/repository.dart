@@ -53,10 +53,7 @@ class ApiRepository {
   }
 
   Future<LoginResponse> login(String mobileNumber, String password) async {
-    Map<String, dynamic> data = {
-      "mobile_number": mobileNumber,
-      "password": password
-    };
+    Map<String, dynamic> data = {"mobile_number": mobileNumber, "password": password};
 
     try {
       Response response = await dio.post(
@@ -64,8 +61,7 @@ class ApiRepository {
         data: data,
       );
       if (response.statusCode == 200) {
-        LoginResponse loginDetails =
-            LoginResponse.fromJson(response.toString());
+        LoginResponse loginDetails = LoginResponse.fromJson(response.toString());
         return loginDetails;
       } else {
         return LoginResponse(
@@ -79,13 +75,7 @@ class ApiRepository {
       }
     } catch (exception) {
       return LoginResponse(
-          success: false,
-          message: "Something went wrong!",
-          id: 0,
-          accessToken: "",
-          tokenType: "",
-          isLeader: false,
-          startMyDay: "");
+          success: false, message: "Something went wrong!", id: 0, accessToken: "", tokenType: "", isLeader: false, startMyDay: "");
     }
   }
 
@@ -94,8 +84,7 @@ class ApiRepository {
       Response response = await dio.get(Url.getQuotesAndImages);
 
       if (response.statusCode == 200) {
-        QuotesAndImagesResponse quotesAndImagesResponse =
-            QuotesAndImagesResponse.fromJson(response.toString());
+        QuotesAndImagesResponse quotesAndImagesResponse = QuotesAndImagesResponse.fromJson(response.toString());
         return quotesAndImagesResponse;
       } else {
         return QuotesAndImagesResponse(
@@ -118,8 +107,7 @@ class ApiRepository {
       Response response = await dio.post(Url.startMyDay, data: formData);
 
       if (response.statusCode == 200) {
-        StartMyDayResponse startMyDayResponse =
-            StartMyDayResponse.fromJson(response.toString());
+        StartMyDayResponse startMyDayResponse = StartMyDayResponse.fromJson(response.toString());
         return startMyDayResponse;
       } else {
         return StartMyDayResponse(
@@ -142,8 +130,7 @@ class ApiRepository {
       );
 
       if (response.statusCode == 200) {
-        GetMenusResponse result =
-            GetMenusResponse.fromJson(response.toString());
+        GetMenusResponse result = GetMenusResponse.fromJson(response.toString());
         return result;
       } else {
         return GetMenusResponse(
@@ -177,8 +164,7 @@ class ApiRepository {
     try {
       Response response = await dio.post(Url.endMyDay, data: data);
       if (response.statusCode == 200) {
-        EndMyDayResponse endMyDayResponse =
-            EndMyDayResponse.fromJson(response.toString());
+        EndMyDayResponse endMyDayResponse = EndMyDayResponse.fromJson(response.toString());
         return endMyDayResponse;
       } else {
         return EndMyDayResponse(
@@ -204,31 +190,25 @@ class ApiRepository {
       );
 
       if (response.statusCode == 200) {
-        GetUserResponse userData =
-            GetUserResponse.fromJson(response.toString());
+        GetUserResponse userData = GetUserResponse.fromJson(response.toString());
         return userData;
       } else {
-        return GetUserResponse(
-            success: false,
-            message: response.statusMessage.toString(),
-            data: null);
+        return GetUserResponse(success: false, message: response.statusMessage.toString(), data: null);
       }
     } catch (exception) {
-      return GetUserResponse(
-          success: false, message: "Something went wrong!", data: null);
+      return GetUserResponse(success: false, message: "Something went wrong!", data: null);
     }
   }
 
-  Future<UpdateProfileResponse> editProfile(
-      String name, String email, File? imgFile) async {
+  Future<UpdateProfileResponse> editProfile(String name, String email, File? imgFile) async {
     Map<String, dynamic> params = HashMap<String, dynamic>();
 
     params["name"] = name;
     params["email"] = email;
 
     if (imgFile != null) {
-      params["profile_picture"] = await MultipartFile.fromFile(imgFile.path,
-          filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
+      params["profile_picture"] =
+          await MultipartFile.fromFile(imgFile.path, filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
     }
 
     FormData data = FormData.fromMap(params);
@@ -239,8 +219,7 @@ class ApiRepository {
       );
 
       if (response.statusCode == 200) {
-        UpdateProfileResponse result =
-            UpdateProfileResponse.fromJson(response.toString());
+        UpdateProfileResponse result = UpdateProfileResponse.fromJson(response.toString());
         return result;
       } else {
         return UpdateProfileResponse(
@@ -256,8 +235,7 @@ class ApiRepository {
     }
   }
 
-  Future<ChangePassResponse> changePassword(String id, String currPassword,
-      String newPassword, String confPassword) async {
+  Future<ChangePassResponse> changePassword(String id, String currPassword, String newPassword, String confPassword) async {
     Map<String, dynamic> params = {
       "current_password": currPassword,
       "new_password": newPassword,
@@ -272,8 +250,7 @@ class ApiRepository {
       );
 
       if (response.statusCode == 200) {
-        ChangePassResponse result =
-            ChangePassResponse.fromJson(response.toString());
+        ChangePassResponse result = ChangePassResponse.fromJson(response.toString());
         return result;
       } else {
         return ChangePassResponse(
@@ -296,8 +273,7 @@ class ApiRepository {
         data: input,
       );
       if (response.statusCode == 200) {
-        AddPlanResponse addPlanResponse =
-            AddPlanResponse.fromJson(response.toString());
+        AddPlanResponse addPlanResponse = AddPlanResponse.fromJson(response.toString());
         return addPlanResponse;
       } else {
         return AddPlanResponse(
@@ -373,8 +349,7 @@ class ApiRepository {
       Url.getMyPlanByMonth,
       data: data,
     );
-    GetPlanResponse getAddPlanDataResponse =
-        GetPlanResponse.fromJson(response.toString());
+    GetPlanResponse getAddPlanDataResponse = GetPlanResponse.fromJson(response.toString());
     return getAddPlanDataResponse;
     // } catch (exception) {
     //   return GetPlanResponse(
@@ -392,8 +367,7 @@ class ApiRepository {
         data: input,
       );
       if (response.statusCode == 200) {
-        AddPlanUpdateDataResponse getAddPlanDataResponse =
-            AddPlanUpdateDataResponse.fromJson(response.toString());
+        AddPlanUpdateDataResponse getAddPlanDataResponse = AddPlanUpdateDataResponse.fromJson(response.toString());
         return getAddPlanDataResponse;
       } else {
         return AddPlanUpdateDataResponse(
