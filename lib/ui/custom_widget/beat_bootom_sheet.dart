@@ -137,6 +137,12 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
                                   snapshot.data![index].check = value!;
                                   beats.singleWhere((element) => element.id == snapshot.data![index].id).check = value;
 
+                                  for (var element in beats) {
+                                    if (element.id != snapshot.data![index].id) {
+                                      element.check = !value;
+                                    }
+                                  }
+
                                   controller.add(snapshot.data!);
                                 },
                               ),
