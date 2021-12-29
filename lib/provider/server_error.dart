@@ -64,7 +64,6 @@ class ServerError implements Exception {
               actions: [
                 TextButton(
                     onPressed: () async {
-                      ;
                       await SharedPreference.clearSharedPreference(context);
 
                       navigationService.navigateToUntil("/");

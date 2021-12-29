@@ -6,6 +6,7 @@ import 'package:dms/main.dart';
 import 'package:dms/model/get_plan_response.dart';
 import 'package:dms/model/primary_tag_response.dart';
 import 'package:dms/model/secondary_tag_response.dart';
+import 'package:dms/provider/server_error.dart';
 import 'package:dms/provider/url.dart';
 import 'package:dms/ui/add_plan/model/AddPlanResponse.dart';
 import 'package:dms/ui/add_plan/model/AddPlanUpdateData.dart';
@@ -18,6 +19,7 @@ import 'package:dms/ui/splash_screen/model/splash_model.dart';
 import 'package:dms/ui/start_my_day/model/end_my_day_response.dart';
 import 'package:dms/ui/start_my_day/model/quotes_and_images_response.dart';
 import 'package:dms/ui/start_my_day/model/start_my_day_response.dart.dart';
+import 'package:flutter/cupertino.dart';
 
 class ApiRepository {
   static final ApiRepository repository = ApiRepository.internal();
@@ -34,21 +36,18 @@ class ApiRepository {
         Url.validateAppVer,
         data: input,
       );
-
-      if (response.statusCode == 200) {
-        SplashResponse result = SplashResponse.fromJson(response.toString());
-        return result;
+      SplashResponse result = SplashResponse.fromJson(response.toString());
+      return result;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
       } else {
-        return SplashResponse(
-          message: response.statusMessage.toString(),
-          success: false,
-        );
+        message = "Something Went wrong";
       }
-    } catch (exception) {
-      return SplashResponse(
-        message: "Something went Wrong!",
-        success: false,
-      );
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return SplashResponse(success: false, message: message);
     }
   }
 
@@ -60,22 +59,18 @@ class ApiRepository {
         Url.login,
         data: data,
       );
-      if (response.statusCode == 200) {
-        LoginResponse loginDetails = LoginResponse.fromJson(response.toString());
-        return loginDetails;
+      LoginResponse loginDetails = LoginResponse.fromJson(response.toString());
+      return loginDetails;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
       } else {
-        return LoginResponse(
-            success: false,
-            message: response.statusMessage.toString(),
-            id: 0,
-            accessToken: "",
-            tokenType: "",
-            isLeader: false,
-            startMyDay: "");
+        message = "Something Went wrong";
       }
-    } catch (exception) {
-      return LoginResponse(
-          success: false, message: "Something went wrong!", id: 0, accessToken: "", tokenType: "", isLeader: false, startMyDay: "");
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return LoginResponse(success: false, message: message, id: 0, accessToken: "", tokenType: "", isLeader: false, startMyDay: "");
     }
   }
 
