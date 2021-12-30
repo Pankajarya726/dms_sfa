@@ -119,7 +119,7 @@ class AddPlanBloc extends Bloc<AddPlanEvents, AddPlanStates> {
         yield GetAddPlanFailureState(message: response.message);
       }
     } else {
-      yield AddPlanFailureState(failureMessage: "Please check your internet connection!");
+      yield GetAddPlanFailureState(message: "Please check your internet connection!");
     }
   }
 

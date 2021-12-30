@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -39,5 +40,9 @@ class Utility {
 
   static showToast(String message) {
     Fluttertoast.showToast(msg: message);
+  }
+
+  static hideKeyboard() {
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
   }
 }

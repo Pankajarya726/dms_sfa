@@ -11,12 +11,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 BaseOptions options = BaseOptions(
-  responseType: ResponseType.json,
-  baseUrl: Url.baseUrl,
-  connectTimeout: 60000,
-  sendTimeout: 60000,
-  receiveTimeout: 60000,
-);
+    responseType: ResponseType.json,
+    baseUrl: Url.baseUrl,
+    connectTimeout: 60000,
+    sendTimeout: 60000,
+    receiveTimeout: 60000,
+    headers: {"Accept": "application/json"});
 Dio dio = Dio(options);
 ApiRepository repository = ApiRepository();
 ImagePicker imagePicker = ImagePicker();

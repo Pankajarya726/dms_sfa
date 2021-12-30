@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dms/ui/login_screen/login_screen.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:flutter/material.dart';
 
@@ -66,7 +67,8 @@ class ServerError implements Exception {
                     onPressed: () async {
                       await SharedPreference.clearSharedPreference(context);
 
-                      navigationService.navigateToUntil("/");
+                      Navigator.pushAndRemoveUntil(
+                          context, MaterialPageRoute(builder: (_) => const LoginScreen()), ModalRoute.withName("/"));
                     },
                     child: const Text("Ok"))
               ],

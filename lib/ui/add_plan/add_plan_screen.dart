@@ -40,7 +40,6 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
   TextEditingController txtRemarkController = TextEditingController();
   TextEditingController txtBeatController = TextEditingController();
   DateRangePickerController dateRangePickerController = DateRangePickerController();
-  final formKey = GlobalKey<FormState>();
   final RefreshController _refreshController = RefreshController();
   DateTime? dateTime;
   bool planAlreadyExists = false;
@@ -92,7 +91,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             planAlreadyExists = false;
             primaryTag = primaryTagList.first;
             secondaryTag = null;
-            txtRemarkController.clear();
+            txtRemarkController.text = "";
             txtBeatController.clear();
             addPlanBloc.add(SelectPrimaryEvent(primaryTag: primaryTag!));
           }
@@ -157,10 +156,35 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                       enableMultiView: false,
                       enablePastDates: false,
                       showActionButtons: false,
-                      showNavigationArrow: false,
-                      toggleDaySelection: false,
+                      showNavigationArrow: true,
+                      toggleDaySelection: true,
                       headerHeight: 0,
                       showTodayButton: false,
+
+                      selectionMode: DateRangePickerSelectionMode.single,
+                      navigationMode: DateRangePickerNavigationMode.none,
+                      minDate: DateTime(DateTime.now().year, DateTime.now().month + 1, 1),
+                      // maxDate: DateTime(2022, 2, 28),
+                      initialDisplayDate: DateTime(DateTime.now().year, DateTime.now().month + 1, 1),
+                      monthCellStyle: DateRangePickerMonthCellStyle(
+                        textStyle: const TextStyle(fontWeight: FontWeight.w600, color: Colors.black, fontSize: 16),
+                        leadingDatesTextStyle: TextStyle(
+                          color: Colors.grey.shade400,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        trailingDatesTextStyle: TextStyle(
+                          color: Colors.grey.shade400,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      monthViewSettings: const DateRangePickerMonthViewSettings(
+                        showTrailingAndLeadingDates: false,
+                        firstDayOfWeek: 1,
+                        viewHeaderHeight: 50,
+                        viewHeaderStyle: DateRangePickerViewHeaderStyle(
+                          textStyle: TextStyle(fontWeight: FontWeight.w500, color: Colors.black, fontSize: 16),
+                        ),
+                      ),
                       onSelectionChanged: (selectedDate) {
                         debugPrint("onSelectionChanged-->$selectedDate");
 
@@ -185,30 +209,11 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                           GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(dateTime!)),
                         );
                       },
-                      minDate: DateTime(DateTime.now().year, DateTime.now().month + 1, 1),
-                      initialDisplayDate: DateTime(DateTime.now().year, DateTime.now().month + 1, 1),
-                      selectionMode: DateRangePickerSelectionMode.single,
-                      navigationMode: DateRangePickerNavigationMode.none,
-                      monthCellStyle: DateRangePickerMonthCellStyle(
-                        textStyle: const TextStyle(fontWeight: FontWeight.w600, color: Colors.black, fontSize: 16),
-                        leadingDatesTextStyle: TextStyle(
-                          color: Colors.grey.shade400,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        trailingDatesTextStyle: TextStyle(
-                          color: Colors.grey.shade400,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      monthViewSettings: const DateRangePickerMonthViewSettings(
-                        showTrailingAndLeadingDates: false,
-                        firstDayOfWeek: 1,
-                        viewHeaderHeight: 50,
-                        viewHeaderStyle: DateRangePickerViewHeaderStyle(
-                          textStyle: TextStyle(fontWeight: FontWeight.w500, color: Colors.black, fontSize: 16),
-                        ),
-                      ),
                     ),
+                  ),
+                  const Divider(
+                    thickness: 1.5,
+                    color: Color.fromRGBO(0, 0, 0, 0.05),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(15.0),
@@ -236,20 +241,20 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                               return Container();
                             }
                             if (state is SelectPrimaryTagState) {
-                              txtRemarkController.clear();
+                              txtRemarkController.text = "";
 
                               if (primaryTag != null) {
                                 if (primaryTag!.id != state.primaryTag.id || secondaryTag == null) {
                                   primaryTag = state.primaryTag;
                                   secondaryTag = null;
                                   txtBeatController.clear();
-                                  txtRemarkController.clear();
+
                                   addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
                                 }
                               } else {
                                 secondaryTag = null;
                                 txtBeatController.clear();
-                                txtRemarkController.clear();
+
                                 primaryTag = state.primaryTag;
                                 addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
                               }
@@ -400,18 +405,22 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                         const SizedBox(
                           height: 15,
                         ),
-                        TextFormField(
-                          minLines: 3,
-                          maxLines: 5,
-                          maxLength: 255,
-                          controller: txtRemarkController,
-                          decoration: InputDecoration(
-                            hintText: "Enter remark",
-                            counter: Container(),
-                            filled: true,
-                            fillColor: const Color(0xffF2F2F2),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
-                          ),
+                        BlocBuilder<AddPlanBloc, AddPlanStates>(
+                          builder: (context, state) {
+                            return TextFormField(
+                              minLines: 3,
+                              maxLines: 5,
+                              maxLength: 255,
+                              controller: txtRemarkController,
+                              decoration: InputDecoration(
+                                hintText: "Enter remark",
+                                counter: Container(),
+                                filled: true,
+                                fillColor: const Color(0xffF2F2F2),
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                              ),
+                            );
+                          },
                         ),
                         const SizedBox(
                           height: 15,
