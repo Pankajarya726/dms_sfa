@@ -10,6 +10,6 @@ class RetailerListScreen extends StatefulWidget {
 class _RetailerListScreenState extends State<RetailerListScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold();
   }
 }
