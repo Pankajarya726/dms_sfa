@@ -839,8 +839,11 @@ class _StartDayScreenState extends State<StartDayScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: BlocProvider(
-        create: (context) => startMyDayBloc,
+      bottomSheet: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => startMyDayBloc),
+          BlocProvider(create: (context) => addPlanBloc),
+        ],
         child: BlocListener<StartMyDayBloc, StartMyDayStates>(
           listener: (context, state) {
             if (state is StartMyDaySuccessState) {
@@ -853,119 +856,141 @@ class _StartDayScreenState extends State<StartDayScreen> {
                   (route) => false);
             }
           },
-          child: MaterialButton(
-            height: 50,
-            minWidth: MediaQuery.of(context).size.width,
-            color: MColor.colorSecondary,
-            textColor: Colors.white,
-            onPressed: () async {
+          child: BlocBuilder<AddPlanBloc, AddPlanStates>(
+            builder: (context, state) {
               if (primaryTag == null) {
-                Fluttertoast.showToast(msg: "Please select primary tag");
-                return;
+                return const SizedBox();
               }
-              if ((primaryTag!.id == 1 || primaryTag!.id == 2) &&
-                  secondaryTag == null) {
-                Fluttertoast.showToast(msg: "Please select secondary tag");
-                return;
-              }
-              if (txtRemarkController.text.trim().isEmpty) {
-                Fluttertoast.showToast(msg: "Please enter remark");
-                return;
-              }
-              if (txtRemarkController.text.trim().length > 255) {
-                Fluttertoast.showToast(msg: "Word limit-250 characters");
-                return;
-              }
-              if (latitude == 0.0 && longitude == 0.0) {
-                Fluttertoast.showToast(
-                    msg:
-                        "Could not fetch your location, Please try again later");
-                userLocationBloc.add(GetUserLocationEvent());
-                return;
-              }
-              if (currentAddress.isEmpty) {
-                Fluttertoast.showToast(
-                    msg:
-                        "Could not proceed, because we are not able to fetch your area detail. Please allow location permission to continue");
-                userLocationBloc.add(GetUserLocationEvent());
-                return;
-              }
+              return MaterialButton(
+                height: 50,
+                minWidth: MediaQuery.of(context).size.width,
+                color: MColor.colorSecondary,
+                textColor: Colors.white,
+                onPressed: () async {
+                  //when leave and holiday selected then if will execute
+                  if (primaryTag!.id == 5 || primaryTag!.id == 6) {
+                    if (txtRemarkController.text.trim().isEmpty) {
+                      Fluttertoast.showToast(msg: "Please enter remark");
+                      return;
+                    }
+                    if (txtRemarkController.text.trim().length > 255) {
+                      Fluttertoast.showToast(msg: "Word limit-250 characters");
+                      return;
+                    }
+                    debugPrint("remark fields ok ");
+                    Map<String, dynamic> input = HashMap<String, dynamic>();
 
-              Map<String, dynamic> input = HashMap<String, dynamic>();
+                    DateTime _ntpTime = await NTP.now();
+                    input["user_id"] =
+                        await SharedPreference.getStringPreference(
+                            SharedPreference.userId);
+                    input["start_day_date"] =
+                        DateFormat("yyyy-MM-dd").format(_ntpTime);
+                    input["start_day_time"] =
+                        "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
+                    input["primary_tag"] = primaryTag!.name;
+                    input["primary_tag_id"] = primaryTag!.id;
+                    input["remark"] = txtRemarkController.text.trim();
 
-              DateTime _ntpTime = await NTP.now();
-              input["user_id"] = await SharedPreference.getStringPreference(
-                  SharedPreference.userId);
-              input["start_day_date"] =
-                  DateFormat("yyyy-MM-dd").format(_ntpTime);
-              input["primary_tag"] = primaryTag!.name;
-              input["primary_tag_id"] = primaryTag!.id;
-              if (secondaryTag != null) {
-                input["secondary_tag"] = secondaryTag!.name;
-                input["secondary_tag_id"] = secondaryTag!.id;
-              }
+                    debugPrint("start_my_day_input-->");
+                    startMyDayBloc.add(StartMyDayEvent(input: input));
+                  }
+                  //otherwise else will execute
+                  else {
+                    if (primaryTag == null) {
+                      Fluttertoast.showToast(msg: "Please select primary tag");
+                      return;
+                    }
+                    if ((primaryTag!.id == 1 || primaryTag!.id == 2) &&
+                        secondaryTag == null) {
+                      Fluttertoast.showToast(
+                          msg: "Please select secondary tag");
+                      return;
+                    }
+                    if (txtRemarkController.text.trim().isEmpty) {
+                      Fluttertoast.showToast(msg: "Please enter remark");
+                      return;
+                    }
+                    if (txtRemarkController.text.trim().length > 255) {
+                      Fluttertoast.showToast(msg: "Word limit-250 characters");
+                      return;
+                    }
+                    if (latitude == 0.0 && longitude == 0.0) {
+                      Fluttertoast.showToast(
+                          msg:
+                              "Could not fetch your location, Please try again later");
+                      userLocationBloc.add(GetUserLocationEvent());
+                      return;
+                    }
+                    if (currentAddress.isEmpty) {
+                      Fluttertoast.showToast(
+                          msg:
+                              "Could not proceed, because we are not able to fetch your area detail. Please allow location permission to continue");
+                      userLocationBloc.add(GetUserLocationEvent());
+                      return;
+                    }
+                    debugPrint("all fields ok ");
+                    Map<String, dynamic> input = HashMap<String, dynamic>();
 
-              input["remark"] = txtRemarkController.text.trim();
-              input["latitude"] = latitude.toString();
-              input["longitude"] = longitude.toString();
-              input["get_meeting"] = isMeeting ? "Yes" : "No";
-              input["start_day_address"] = currentAddress;
-              input["start_day_time"] =
-                  "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
+                    DateTime _ntpTime = await NTP.now();
+                    input["user_id"] =
+                        await SharedPreference.getStringPreference(
+                            SharedPreference.userId);
+                    input["start_day_date"] =
+                        DateFormat("yyyy-MM-dd").format(_ntpTime);
+                    input["primary_tag"] = primaryTag!.name;
+                    input["primary_tag_id"] = primaryTag!.id;
+                    if (secondaryTag != null) {
+                      input["secondary_tag"] = secondaryTag!.name;
+                      input["secondary_tag_id"] = secondaryTag!.id;
+                    }
 
-              if (imageFile != null) {
-                input["start_day_image"] = await MultipartFile.fromFile(
-                  imageFile!.path,
-                  filename: fileName,
-                );
-              }
+                    input["remark"] = txtRemarkController.text.trim();
+                    input["latitude"] = latitude.toString();
+                    input["longitude"] = longitude.toString();
+                    input["get_meeting"] = isMeeting ? "Yes" : "No";
+                    input["start_day_address"] = currentAddress;
+                    input["start_day_time"] =
+                        "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
 
-              debugPrint("start_my_day_input-->$input");
-              startMyDayBloc.add(StartMyDayEvent(input: input));
-
-              // if (selectedSecondaryTag.isNotEmpty) {
-              //   if (txtRemarkController.text.isNotEmpty) {
-              //     if (latitude != 0.0 && longitude != 0.0) {
-              //       startMyDayBloc.add(StartMyDayEvent(
-              //         primaryTag: selectedPrimaryTag,
-              //         secondaryTag: selectedSecondaryTag,
-              //         remark: txtRemarkController.text,
-              //         latitude: latitude.toString(),
-              //         longitude: longitude.toString(),
-              //         getMeeting: isMeeting ? 1 : 2,
-              //         startDayImage: imageFile == null ? "" : imageFile!.path,
-              //         primaryTagId: "1",
-              //         secondaryTagId: "1",
-              //         address: currentAddress,
-              //       ));
-              //     } else {
-              //       Fluttertoast.showToast(msg: "Please turn on GPS location");
-              //       userLocationBloc.add(GetUserLocationEvent());
-              //     }
-              //   } else {
-              //     Fluttertoast.showToast(msg: "Please add remark");
-              //   }
-              // } else {
-              //   Fluttertoast.showToast(msg: "Please select secondary tag");
-              // }
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Text(
-                  letsBegin,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    letterSpacing: 0.67,
-                  ),
+                    if (imageFile != null) {
+                      input["start_day_image"] = await MultipartFile.fromFile(
+                        imageFile!.path,
+                        filename: fileName,
+                      );
+                    }
+                    debugPrint("start_my_day_input-->");
+                    startMyDayBloc.add(StartMyDayEvent(input: input));
+                  } //end of else
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    primaryTag!.id == 5 || primaryTag!.id == 6
+                        ? const Text(
+                            confirm,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 0.67,
+                            ),
+                          )
+                        : const Text(
+                            letsBegin,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 0.67,
+                            ),
+                          ),
+                    const Image(
+                      width: 30,
+                      image: AssetImage("assets/arrow.png"),
+                    )
+                  ],
                 ),
-                Image(
-                  width: 30,
-                  image: AssetImage("assets/arrow.png"),
-                )
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
@@ -1003,18 +1028,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
   }
 
   void onRefresh() async {
-    primaryTag = null;
-    secondaryTag = null;
-    isMeeting = false;
-    latitude = 0.0;
-    longitude = 0.0;
-    quoteImage = "";
-    quoteText = "";
-    currentAddress = "";
     imageFile = null;
-    dateTime = null;
-    txtRemarkController = TextEditingController();
-    txtBeatController = TextEditingController();
+    commonBloc.add(CommonBlocGetMeetingEvent(getMeeting: false));
     startMyDayBloc.add(GetQuotesAndImagesEvent());
     addPlanBloc.add(GetSavedPlanEvent(
         selectedDate: DateFormat("yyyy-MM-dd").format(DateTime.now())));

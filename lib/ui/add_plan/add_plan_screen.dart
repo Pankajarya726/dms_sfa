@@ -39,7 +39,8 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
 
   TextEditingController txtRemarkController = TextEditingController();
   TextEditingController txtBeatController = TextEditingController();
-  DateRangePickerController dateRangePickerController = DateRangePickerController();
+  DateRangePickerController dateRangePickerController =
+      DateRangePickerController();
   final formKey = GlobalKey<FormState>();
   final RefreshController _refreshController = RefreshController();
   DateTime? dateTime;
@@ -70,8 +71,12 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             planDateModel = state.planDateModel;
             planAlreadyExists = true;
             txtRemarkController.text = state.planDateModel.remark;
-            primaryTag = PrimaryTag(id: state.planDateModel.primaryTagId, name: state.planDateModel.primaryTag);
-            secondaryTag = SecondaryTag(id: state.planDateModel.secondaryTagId, name: state.planDateModel.secondaryTag);
+            primaryTag = PrimaryTag(
+                id: state.planDateModel.primaryTagId,
+                name: state.planDateModel.primaryTag);
+            secondaryTag = SecondaryTag(
+                id: state.planDateModel.secondaryTagId,
+                name: state.planDateModel.secondaryTag);
             addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
             txtBeatController.text = secondaryTag!.name;
             // if (primaryTagListener != null) {
@@ -112,6 +117,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
           }
         },
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           appBar: AppBar(
             leading: IconButton(
               onPressed: () {
@@ -140,7 +146,8 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             controller: _refreshController,
             onRefresh: () {
               addPlanBloc.add(
-                GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(dateTime!)),
+                GetSavedPlanEvent(
+                    selectedDate: DateFormat("yyyy-MM-dd").format(dateTime!)),
               );
             },
             header: const MaterialClassicHeader(),
@@ -171,9 +178,11 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
 
                         String firstDay = date.substring(0, 8) +
                             '01' +
-                            date.substring(10); // This will generate the time and date for first day of month
+                            date.substring(
+                                10); // This will generate the time and date for first day of month
 
-                        int weekDay = DateTime.parse(firstDay).weekday; // week day for the first day of the month
+                        int weekDay = DateTime.parse(firstDay)
+                            .weekday; // week day for the first day of the month
                         int weekOfMonth;
                         //  If your calender starts from Monday
                         weekDay--;
@@ -182,15 +191,22 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                         print('Week of the month: $weekOfMonth');
 
                         addPlanBloc.add(
-                          GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(dateTime!)),
+                          GetSavedPlanEvent(
+                              selectedDate:
+                                  DateFormat("yyyy-MM-dd").format(dateTime!)),
                         );
                       },
-                      minDate: DateTime(DateTime.now().year, DateTime.now().month + 1, 1),
-                      initialDisplayDate: DateTime(DateTime.now().year, DateTime.now().month + 1, 1),
+                      minDate: DateTime(
+                          DateTime.now().year, DateTime.now().month + 1, 1),
+                      initialDisplayDate: DateTime(
+                          DateTime.now().year, DateTime.now().month + 1, 1),
                       selectionMode: DateRangePickerSelectionMode.single,
                       navigationMode: DateRangePickerNavigationMode.none,
                       monthCellStyle: DateRangePickerMonthCellStyle(
-                        textStyle: const TextStyle(fontWeight: FontWeight.w600, color: Colors.black, fontSize: 16),
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                            fontSize: 16),
                         leadingDatesTextStyle: TextStyle(
                           color: Colors.grey.shade400,
                           fontWeight: FontWeight.w600,
@@ -205,7 +221,10 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                         firstDayOfWeek: 1,
                         viewHeaderHeight: 50,
                         viewHeaderStyle: DateRangePickerViewHeaderStyle(
-                          textStyle: TextStyle(fontWeight: FontWeight.w500, color: Colors.black, fontSize: 16),
+                          textStyle: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                              fontSize: 16),
                         ),
                       ),
                     ),
@@ -239,19 +258,22 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                               txtRemarkController.clear();
 
                               if (primaryTag != null) {
-                                if (primaryTag!.id != state.primaryTag.id || secondaryTag == null) {
+                                if (primaryTag!.id != state.primaryTag.id ||
+                                    secondaryTag == null) {
                                   primaryTag = state.primaryTag;
                                   secondaryTag = null;
                                   txtBeatController.clear();
                                   txtRemarkController.clear();
-                                  addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
+                                  addPlanBloc.add(GetSecondaryTagEvent(
+                                      primaryTagId: primaryTag!.id));
                                 }
                               } else {
                                 secondaryTag = null;
                                 txtBeatController.clear();
                                 txtRemarkController.clear();
                                 primaryTag = state.primaryTag;
-                                addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
+                                addPlanBloc.add(GetSecondaryTagEvent(
+                                    primaryTagId: primaryTag!.id));
                               }
                               txtRemarkController.notifyListeners();
                             }
@@ -265,24 +287,33 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                                   customData: primaryTagList[index],
                                   singleItem: true,
                                   onPressed: (item) {
-                                    addPlanBloc.add(SelectPrimaryEvent(primaryTag: item.customData));
+                                    addPlanBloc.add(SelectPrimaryEvent(
+                                        primaryTag: item.customData));
                                   },
-                                  active: primaryTag!.id == primaryTagList[index].id,
+                                  active: primaryTag!.id ==
+                                      primaryTagList[index].id,
                                   title: primaryTagList[index].name,
                                   textActiveColor: Colors.black,
                                   textColor: const Color(0xff555555),
                                   elevation: 0,
                                   textStyle: const TextStyle(fontSize: 16),
-                                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5, horizontal: 10),
                                   index: index,
                                   border: Border.all(
-                                      color: primaryTag!.id == primaryTagList[index].id
+                                      color: primaryTag!.id ==
+                                              primaryTagList[index].id
                                           ? MColor.colorPrimary
-                                          : const Color.fromRGBO(197, 197, 197, 1)),
+                                          : const Color.fromRGBO(
+                                              197, 197, 197, 1)),
                                   activeColor:
-                                      primaryTag!.id == primaryTagList[index].id ? const Color(0xFFFFC9CC) : const Color(0xffFAFAFA),
+                                      primaryTag!.id == primaryTagList[index].id
+                                          ? const Color(0xFFFFC9CC)
+                                          : const Color(0xffFAFAFA),
                                   color:
-                                      primaryTag!.id == primaryTagList[index].id ? const Color(0xFFFFC9CC) : const Color(0xffFAFAFA),
+                                      primaryTag!.id == primaryTagList[index].id
+                                          ? const Color(0xFFFFC9CC)
+                                          : const Color(0xffFAFAFA),
                                 );
                               },
                             );
@@ -316,7 +347,8 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                               children: [
                                 primaryTag!.id == 1 || primaryTag!.id == 2
                                     ? const Padding(
-                                        padding: EdgeInsets.symmetric(vertical: 15),
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 15),
                                         child: Text(
                                           "Secondary Tag",
                                           style: TextStyle(
@@ -336,10 +368,13 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                                           selectBeat(context, secondaryTagList);
                                         },
                                         decoration: InputDecoration(
-                                          contentPadding: const EdgeInsets.all(15),
+                                          contentPadding:
+                                              const EdgeInsets.all(15),
                                           hintText: "Select Retailing",
-                                          border:
-                                              OutlineInputBorder(borderRadius: BorderRadius.circular(25), borderSide: BorderSide.none),
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(25),
+                                              borderSide: BorderSide.none),
                                           suffixIcon: const Icon(
                                             Icons.keyboard_arrow_down_outlined,
                                             color: Colors.black,
@@ -354,29 +389,59 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                                             itemBuilder: (index) {
                                               return ItemTags(
                                                 singleItem: true,
-                                                customData: secondaryTagList[index],
+                                                customData:
+                                                    secondaryTagList[index],
                                                 onPressed: (item) {
-                                                  addPlanBloc.add(SelectSecondaryEvent(secondaryTag: item.customData));
+                                                  addPlanBloc.add(
+                                                      SelectSecondaryEvent(
+                                                          secondaryTag:
+                                                              item.customData));
                                                 },
-                                                active: secondaryTag != null ? secondaryTag!.id == secondaryTagList[index].id : false,
-                                                title: secondaryTagList[index].name,
+                                                active: secondaryTag != null
+                                                    ? secondaryTag!.id ==
+                                                        secondaryTagList[index]
+                                                            .id
+                                                    : false,
+                                                title: secondaryTagList[index]
+                                                    .name,
                                                 textActiveColor: Colors.black,
-                                                textColor: const Color(0xff555555),
+                                                textColor:
+                                                    const Color(0xff555555),
                                                 elevation: 0,
-                                                textStyle: const TextStyle(fontSize: 16),
-                                                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                                textStyle: const TextStyle(
+                                                    fontSize: 16),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 5,
+                                                        horizontal: 10),
                                                 index: index,
                                                 border: Border.all(
                                                     color: secondaryTag != null
-                                                        ? secondaryTag!.id == secondaryTagList[index].id
-                                                            ? MColor.colorPrimary
-                                                            : const Color.fromRGBO(197, 197, 197, 1)
-                                                        : const Color.fromRGBO(197, 197, 197, 1)),
-                                                activeColor: const Color(0xFFFFC9CC),
+                                                        ? secondaryTag!.id ==
+                                                                secondaryTagList[
+                                                                        index]
+                                                                    .id
+                                                            ? MColor
+                                                                .colorPrimary
+                                                            : const Color
+                                                                    .fromRGBO(
+                                                                197,
+                                                                197,
+                                                                197,
+                                                                1)
+                                                        : const Color.fromRGBO(
+                                                            197, 197, 197, 1)),
+                                                activeColor:
+                                                    const Color(0xFFFFC9CC),
                                                 color: secondaryTag != null
-                                                    ? secondaryTag!.id == secondaryTagList[index].id
-                                                        ? const Color(0xFFFFC9CC)
-                                                        : const Color(0xffFAFAFA)
+                                                    ? secondaryTag!.id ==
+                                                            secondaryTagList[
+                                                                    index]
+                                                                .id
+                                                        ? const Color(
+                                                            0xFFFFC9CC)
+                                                        : const Color(
+                                                            0xffFAFAFA)
                                                     : const Color(0xffFAFAFA),
                                               );
                                             },
@@ -410,7 +475,9 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                             counter: Container(),
                             filled: true,
                             fillColor: const Color(0xffF2F2F2),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none),
                           ),
                         ),
                         const SizedBox(
@@ -441,8 +508,10 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                       Fluttertoast.showToast(msg: "Please select primary tag");
                       return;
                     }
-                    if ((primaryTag!.id == 1 || primaryTag!.id == 2) && secondaryTag == null) {
-                      Fluttertoast.showToast(msg: "Please select secondary tag");
+                    if ((primaryTag!.id == 1 || primaryTag!.id == 2) &&
+                        secondaryTag == null) {
+                      Fluttertoast.showToast(
+                          msg: "Please select secondary tag");
                       return;
                     }
                     if (txtRemarkController.text.isEmpty) {
@@ -451,8 +520,12 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                     }
 
                     Map<String, dynamic> input = HashMap<String, dynamic>();
-                    input["user_id"] = await SharedPreference.getStringPreference(SharedPreference.userId);
-                    input["add_plan_date"] = dateTime == null ? "" : DateFormat("yyyy-MM-dd").format(dateTime!);
+                    input["user_id"] =
+                        await SharedPreference.getStringPreference(
+                            SharedPreference.userId);
+                    input["add_plan_date"] = dateTime == null
+                        ? ""
+                        : DateFormat("yyyy-MM-dd").format(dateTime!);
                     if (primaryTag != null) {
                       input["primary_tag"] = primaryTag!.name;
                       input["primary_tag_id"] = primaryTag!.id;
@@ -529,14 +602,16 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
   // }
   void getInitialDate() async {
     dateTime = await NTP.now();
-    dateRangePickerController.selectedDate = DateTime(dateTime!.year, dateTime!.month + 1, 1);
+    dateRangePickerController.selectedDate =
+        DateTime(dateTime!.year, dateTime!.month + 1, 1);
   }
 
   void selectBeat(BuildContext context, List<SecondaryTag> secondaryTag) async {
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))),
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))),
         builder: (context) {
           return BeatBottomSheet(
               beat: txtBeatController.text,
