@@ -98,6 +98,7 @@ class ApiRepository {
   }
 
   Future<StartMyDayResponse> startMyDayApi(Map<String, dynamic> input) async {
+    debugPrint("input-->$input");
     FormData formData = FormData.fromMap(input);
 
     try {
