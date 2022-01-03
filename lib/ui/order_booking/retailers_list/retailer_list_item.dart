@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class RetailerListItems extends StatelessWidget {
@@ -14,8 +16,14 @@ class RetailerListItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return ListView.separated(
+      padding: const EdgeInsets.all(5),
       itemCount: bidName.length,
+      separatorBuilder: (context, index) {
+        return const SizedBox(
+          height: 5,
+        );
+      },
       itemBuilder: (context, index) {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -24,9 +32,8 @@ class RetailerListItems extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             boxShadow: const [
               BoxShadow(
-                offset: Offset(0, 0),
-                blurRadius: 8,
-                color: Color.fromRGBO(181, 181, 181, 0.25),
+                color: Colors.black12,
+                blurRadius: 10,
               ),
             ],
           ),
@@ -38,17 +45,23 @@ class RetailerListItems extends StatelessWidget {
               ),
               onTap: () {},
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                padding: const EdgeInsets.only(
+                    top: 10, bottom: 10, left: 15, right: 15),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       children: [
                         Expanded(
                           child: Row(
                             children: [
-                              const Text("478956"),
+                              const Text(
+                                "478956",
+                                style: TextStyle(
+                                  color: Color(0XFF555555),
+                                  letterSpacing: 0.67,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                               const SizedBox(
                                 width: 10,
                               ),
@@ -60,52 +73,95 @@ class RetailerListItems extends StatelessWidget {
                               const SizedBox(
                                 width: 10,
                               ),
-                              Text(bidName[index]),
+                              Text(
+                                bidName[index],
+                                style: const TextStyle(
+                                  color: Color(0XFF555555),
+                                  letterSpacing: 0.67,
+                                  fontWeight: FontWeight.w600,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                        const Icon(Icons.location_pin)
+                        const Image(
+                          width: 25,
+                          image: AssetImage("assets/location_green.png"),
+                        )
                       ],
                     ),
+                    const SizedBox(
+                      height: 5,
+                    ),
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: Colors.pink,
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: const Image(
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.fill,
+                            image: NetworkImage(
+                                "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg"),
                           ),
                         ),
                         const SizedBox(
                           width: 10,
                         ),
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text("1502, Oldsmobile Bravada"),
-                              Text("Palasiya"),
-                            ],
+                          child: Container(
+                            height: 50,
+                            padding: const EdgeInsets.symmetric(vertical: 5),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: const [
+                                Text(
+                                  "1502, Oldsmobile Bravada",
+                                  style: TextStyle(
+                                    letterSpacing: 0.67,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  "Palasiya",
+                                  style: TextStyle(
+                                    letterSpacing: 0.67,
+                                    color: MColor.backButton,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         Container(
-                          width: 50,
-                          height: 25,
-                          decoration: BoxDecoration(
-                            color: const Color(0XFFDAA520),
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                          child: const Align(
-                            child: Text(
-                              "POB",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: 0.67,
+                          height: 50,
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 5, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: const Color(0XFFDAA520),
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
+                                child: const Align(
+                                  child: Text(
+                                    "POB",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 0.67,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
                         )
                       ],

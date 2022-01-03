@@ -1,3 +1,4 @@
+import 'package:dms/ui/order_booking/edit_store/edit_store_screen.dart';
 import 'package:dms/ui/order_booking/retailers_list/retailer_list_item.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
@@ -32,6 +33,40 @@ class _RetailerListScreenState extends State<RetailerListScreen> {
             color: MColor.backButton,
           ),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 13, 0, 14),
+            child: ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all(MColor.colorSecondary),
+              ),
+              onPressed: () async {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const EditStoreScreen(),
+                  ),
+                );
+              },
+              child: const Text(
+                addCaps,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: const Image(
+              width: 30,
+              image: AssetImage("assets/filter.png"),
+            ),
+          )
+        ],
       ),
       body: RetailerListItems(),
     );
