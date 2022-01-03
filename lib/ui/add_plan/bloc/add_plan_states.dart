@@ -68,7 +68,7 @@ class SelectPrimaryTagState extends AddPlanStates {
 }
 
 class SelectSecondaryState extends AddPlanStates {
-  final SecondaryTag secondaryTag;
+  final List<SecondaryTag> secondaryTag;
 
   SelectSecondaryState({required this.secondaryTag});
 

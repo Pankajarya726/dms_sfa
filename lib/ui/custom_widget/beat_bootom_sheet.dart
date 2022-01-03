@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 class BeatBottomSheet extends StatefulWidget {
   final String beat;
-  final Function(SecondaryTag beat) onBeatSelect;
+  final Function(List<SecondaryTag> beat) onBeatSelect;
   final List<SecondaryTag> beats;
 
   const BeatBottomSheet({Key? key, required this.beat, required this.beats, required this.onBeatSelect}) : super(key: key);
@@ -137,11 +137,11 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
                                   snapshot.data![index].check = value!;
                                   beats.singleWhere((element) => element.id == snapshot.data![index].id).check = value;
 
-                                  for (var element in beats) {
-                                    if (element.id != snapshot.data![index].id) {
-                                      element.check = !value;
-                                    }
-                                  }
+                                  // for (var element in beats) {
+                                  //   if (element.id != snapshot.data![index].id) {
+                                  //     element.check = !value;
+                                  //   }
+                                  // }
 
                                   controller.add(snapshot.data!);
                                 },
@@ -183,9 +183,7 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
                   MaterialButton(
                     onPressed: () {
                       List<SecondaryTag> tags = beats.where((element) => element.check).toList();
-                      if (tags.isNotEmpty) {
-                        widget.onBeatSelect(tags.first);
-                      }
+                      widget.onBeatSelect(tags);
                       Navigator.pop(context);
                     },
                     height: 30,

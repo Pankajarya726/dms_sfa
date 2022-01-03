@@ -159,9 +159,9 @@ class _SecondaryTagWidgetState extends State<SecondaryTagWidget> implements Seco
           return BeatBottomSheet(
               beat: txtBeatController.text,
               beats: secondaryTag,
-              onBeatSelect: (SecondaryTag beat) {
-                txtBeatController.text = beat.name;
-                selectedSecondaryTag = beat;
+              onBeatSelect: (List<SecondaryTag> beat) {
+                // txtBeatController.text = beat.name;
+                // selectedSecondaryTag = beat;
                 widget.onSelect(selectedSecondaryTag!);
               });
         });

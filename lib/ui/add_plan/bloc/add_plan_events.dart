@@ -51,7 +51,7 @@ class GetSecondaryTagEvent extends AddPlanEvents {
 }
 
 class SelectSecondaryEvent extends AddPlanEvents {
-  final SecondaryTag secondaryTag;
+  final List<SecondaryTag> secondaryTag;
 
   SelectSecondaryEvent({required this.secondaryTag});
 

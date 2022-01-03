@@ -65,7 +65,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
   List<SecondaryTag> secondaryTagList = [];
 
   PrimaryTag? primaryTag;
-  SecondaryTag? secondaryTag;
+  List<SecondaryTag> secondaryTag = [];
 
   @override
   Widget build(BuildContext context) {
@@ -121,9 +121,20 @@ class _StartDayScreenState extends State<StartDayScreen> {
 
                   txtRemarkController.text = state.planDateModel.remark;
                   primaryTag = PrimaryTag(id: state.planDateModel.primaryTagId, name: state.planDateModel.primaryTag);
-                  secondaryTag = SecondaryTag(id: state.planDateModel.secondaryTagId, name: state.planDateModel.secondaryTag);
+                  secondaryTag.clear();
+                  secondaryTag.add(SecondaryTag(id: state.planDateModel.secondaryTagId, name: state.planDateModel.secondaryTag));
                   addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
-                  txtBeatController.text = state.planDateModel.secondaryTag;
+                  String selectedBeats = "";
+                  if (secondaryTag.isNotEmpty) {
+                    for (int i = 0; i < secondaryTag.length; i++) {
+                      if (i == secondaryTag.length - 1) {
+                        selectedBeats += secondaryTag[i].name;
+                      } else {
+                        selectedBeats += secondaryTag[i].name + ", ";
+                      }
+                    }
+                  }
+                  txtBeatController.text = selectedBeats;
                 }
 
                 if (state is GetSecondaryTagState) {
@@ -134,7 +145,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                   planDateModel = null;
 
                   primaryTag = primaryTagList.first;
-                  secondaryTag = null;
+                  secondaryTag.clear();
                   txtRemarkController.clear();
                   txtBeatController.clear();
                   addPlanBloc.add(SelectPrimaryEvent(primaryTag: primaryTag!));
@@ -246,21 +257,20 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                 if (state is SelectPrimaryTagState) {
                                   txtRemarkController.clear();
                                   if (primaryTag != null) {
-                                    if (primaryTag!.id != state.primaryTag.id || secondaryTag == null) {
+                                    if (primaryTag!.id != state.primaryTag.id || secondaryTag.isEmpty) {
                                       primaryTag = state.primaryTag;
-                                      secondaryTag = null;
+                                      secondaryTag.clear();
                                       txtBeatController.clear();
                                       txtRemarkController.clear();
                                       addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
                                     }
                                   } else {
-                                    secondaryTag = null;
+                                    secondaryTag.clear();
                                     txtBeatController.clear();
                                     txtRemarkController.clear();
                                     primaryTag = state.primaryTag;
                                     addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
                                   }
-                                  txtRemarkController.notifyListeners();
                                 }
 
                                 return Tags(
@@ -313,7 +323,18 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                 }
                                 if (state is SelectSecondaryState) {
                                   secondaryTag = state.secondaryTag;
-                                  txtBeatController.text = secondaryTag!.name;
+
+                                  String selectedBeats = "";
+                                  if (secondaryTag.isNotEmpty) {
+                                    for (int i = 0; i < secondaryTag.length; i++) {
+                                      if (i == secondaryTag.length - 1) {
+                                        selectedBeats += secondaryTag[i].name;
+                                      } else {
+                                        selectedBeats += secondaryTag[i].name + ", ";
+                                      }
+                                    }
+                                  }
+                                  txtBeatController.text = selectedBeats;
                                 }
                                 if (secondaryTagList.isEmpty) {
                                   return Container();
@@ -322,7 +343,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    primaryTag!.id == 1 || primaryTag!.id == 2
+                                    primaryTag!.id == "1" || primaryTag!.id == "2"
                                         ? const Padding(
                                             padding: EdgeInsets.symmetric(vertical: 15),
                                             child: Text(
@@ -335,7 +356,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                             ),
                                           )
                                         : Container(),
-                                    primaryTag!.id == 1
+                                    primaryTag!.id == "1"
                                         ? TextFormField(
                                             scrollPadding: const EdgeInsets.all(0),
                                             readOnly: true,
@@ -355,7 +376,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                               // suffixIconConstraints: BoxConstraints(maxWidth: 20, maxHeight: 20)
                                             ),
                                           )
-                                        : primaryTag!.id == 2
+                                        : primaryTag!.id == "2"
                                             ? Tags(
                                                 itemCount: secondaryTagList.length,
                                                 alignment: WrapAlignment.start,
@@ -364,10 +385,11 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                                     singleItem: true,
                                                     customData: secondaryTagList[index],
                                                     onPressed: (item) {
-                                                      addPlanBloc.add(SelectSecondaryEvent(secondaryTag: item.customData));
+                                                      addPlanBloc.add(SelectSecondaryEvent(secondaryTag: [item.customData]));
                                                     },
-                                                    active:
-                                                        secondaryTag != null ? secondaryTag!.id == secondaryTagList[index].id : false,
+                                                    active: secondaryTag.isNotEmpty
+                                                        ? secondaryTag.first.id == secondaryTagList[index].id
+                                                        : false,
                                                     title: secondaryTagList[index].name,
                                                     textActiveColor: Colors.black,
                                                     textColor: const Color(0xff555555),
@@ -376,14 +398,14 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                                     padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                                                     index: index,
                                                     border: Border.all(
-                                                        color: secondaryTag != null
-                                                            ? secondaryTag!.id == secondaryTagList[index].id
+                                                        color: secondaryTag.isNotEmpty
+                                                            ? secondaryTag.first.id == secondaryTagList[index].id
                                                                 ? MColor.colorPrimary
                                                                 : const Color.fromRGBO(197, 197, 197, 1)
                                                             : const Color.fromRGBO(197, 197, 197, 1)),
                                                     activeColor: const Color(0xFFFFC9CC),
-                                                    color: secondaryTag != null
-                                                        ? secondaryTag!.id == secondaryTagList[index].id
+                                                    color: secondaryTag.isNotEmpty
+                                                        ? secondaryTag.first.id == secondaryTagList[index].id
                                                             ? const Color(0xFFFFC9CC)
                                                             : const Color(0xffFAFAFA)
                                                         : const Color(0xffFAFAFA),
@@ -434,7 +456,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                             if (primaryTag == null) {
                               return Container();
                             }
-                            if (primaryTag!.id == 5 || primaryTag!.id == 6) {
+                            if (primaryTag!.id == "5" || primaryTag!.id == "6") {
                               return Container();
                             }
                             return Column(
@@ -680,7 +702,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                       ],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 50,
                   )
                 ],
@@ -714,7 +736,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                 textColor: Colors.white,
                 onPressed: () async {
                   //when leave and holiday selected then if will execute
-                  if (primaryTag!.id == 5 || primaryTag!.id == 6) {
+                  if (primaryTag!.id == "5" || primaryTag!.id == "6") {
                     if (txtRemarkController.text.trim().isEmpty) {
                       Fluttertoast.showToast(msg: "Please enter remark");
                       return;
@@ -743,7 +765,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                       Fluttertoast.showToast(msg: "Please select primary tag");
                       return;
                     }
-                    if ((primaryTag!.id == 1 || primaryTag!.id == 2) && secondaryTag == null) {
+                    if ((primaryTag!.id == "1" || primaryTag!.id == "2") && secondaryTag.isEmpty) {
                       Fluttertoast.showToast(msg: "Please select secondary tag");
                       return;
                     }
@@ -775,9 +797,21 @@ class _StartDayScreenState extends State<StartDayScreen> {
                     input["start_day_date"] = DateFormat("yyyy-MM-dd").format(_ntpTime);
                     input["primary_tag"] = primaryTag!.name;
                     input["primary_tag_id"] = primaryTag!.id;
-                    if (secondaryTag != null) {
-                      input["secondary_tag"] = secondaryTag!.name;
-                      input["secondary_tag_id"] = secondaryTag!.id;
+                    if (secondaryTag.isNotEmpty) {
+                      String selectedBeats = "";
+                      String selectedBeatsId = "";
+                      if (secondaryTag.isNotEmpty) {
+                        for (int i = 0; i < secondaryTag.length; i++) {
+                          if (i == secondaryTag.length - 1) {
+                            selectedBeats += secondaryTag[i].name;
+                          } else {
+                            selectedBeats += secondaryTag[i].name + ", ";
+                          }
+                        }
+                      }
+
+                      input["secondary_tag"] = selectedBeats;
+                      input["secondary_tag_id"] = selectedBeatsId;
                     }
 
                     input["remark"] = txtRemarkController.text.trim();
@@ -800,7 +834,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    primaryTag!.id == 5 || primaryTag!.id == 6
+                    primaryTag!.id == "5" || primaryTag!.id == "6"
                         ? const Text(
                             confirm,
                             style: TextStyle(
@@ -840,8 +874,18 @@ class _StartDayScreenState extends State<StartDayScreen> {
           return BeatBottomSheet(
               beat: txtBeatController.text,
               beats: secondaryTag,
-              onBeatSelect: (SecondaryTag beat) {
-                txtBeatController.text = beat.name;
+              onBeatSelect: (List<SecondaryTag> beat) {
+                String selectedBeats = "";
+                if (beat.isNotEmpty) {
+                  for (int i = 0; i < beat.length; i++) {
+                    if (i == beat.length - 1) {
+                      selectedBeats += beat[i].name;
+                    } else {
+                      selectedBeats += beat[i].name + ", ";
+                    }
+                  }
+                }
+                txtBeatController.text = selectedBeats;
                 addPlanBloc.add(SelectSecondaryEvent(secondaryTag: beat));
               });
         });

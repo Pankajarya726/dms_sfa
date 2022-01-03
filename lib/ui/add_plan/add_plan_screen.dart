@@ -10,6 +10,7 @@ import 'package:dms/ui/custom_widget/beat_bootom_sheet.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -48,7 +49,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
   List<SecondaryTag> secondaryTagList = [];
 
   PrimaryTag? primaryTag;
-  SecondaryTag? secondaryTag;
+  List<SecondaryTag> secondaryTag = [];
   PlanDataModel? planDateModel;
 
   @override
@@ -70,16 +71,19 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             planAlreadyExists = true;
             txtRemarkController.text = state.planDateModel.remark;
             primaryTag = PrimaryTag(id: state.planDateModel.primaryTagId, name: state.planDateModel.primaryTag);
-            secondaryTag = SecondaryTag(id: state.planDateModel.secondaryTagId, name: state.planDateModel.secondaryTag);
+            secondaryTag.add(SecondaryTag(id: state.planDateModel.secondaryTagId, name: state.planDateModel.secondaryTag));
             addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
-            txtBeatController.text = secondaryTag!.name;
-            // if (primaryTagListener != null) {
-            //   primaryTagListener!.onPrimaryTagSelect(primaryTag!);
-            // }
-            // if (secondaryTagListener != null) {
-            //   secondaryTagListener!.onPrimaryTagChange(primaryTag!, secondaryTag!);
-            //   secondaryTagListener!.onSecondaryTagSelect(secondaryTag!);
-            // }
+            String selectedBeats = "";
+            if (secondaryTag.isNotEmpty) {
+              for (int i = 0; i < secondaryTag.length; i++) {
+                if (i == secondaryTag.length - 1) {
+                  selectedBeats += secondaryTag[i].name;
+                } else {
+                  selectedBeats += secondaryTag[i].name + ", ";
+                }
+              }
+            }
+            txtBeatController.text = selectedBeats;
           }
 
           if (state is GetSecondaryTagState) {
@@ -90,7 +94,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             planDateModel = null;
             planAlreadyExists = false;
             primaryTag = primaryTagList.first;
-            secondaryTag = null;
+            secondaryTag = [];
             txtRemarkController.text = "";
             txtBeatController.clear();
             addPlanBloc.add(SelectPrimaryEvent(primaryTag: primaryTag!));
@@ -243,15 +247,15 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                               txtRemarkController.text = "";
 
                               if (primaryTag != null) {
-                                if (primaryTag!.id != state.primaryTag.id || secondaryTag == null) {
+                                if (primaryTag!.id != state.primaryTag.id || secondaryTag.isEmpty) {
                                   primaryTag = state.primaryTag;
-                                  secondaryTag = null;
+                                  secondaryTag.clear();
                                   txtBeatController.clear();
 
                                   addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
                                 }
                               } else {
-                                secondaryTag = null;
+                                secondaryTag.clear();
                                 txtBeatController.clear();
 
                                 primaryTag = state.primaryTag;
@@ -309,7 +313,18 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                             }
                             if (state is SelectSecondaryState) {
                               secondaryTag = state.secondaryTag;
-                              txtBeatController.text = secondaryTag!.name;
+
+                              String selectedBeats = "";
+                              if (secondaryTag.isNotEmpty) {
+                                for (int i = 0; i < secondaryTag.length; i++) {
+                                  if (i == secondaryTag.length - 1) {
+                                    selectedBeats += secondaryTag[i].name;
+                                  } else {
+                                    selectedBeats += secondaryTag[i].name + ", ";
+                                  }
+                                }
+                              }
+                              txtBeatController.text = selectedBeats;
                             }
                             if (secondaryTagList.isEmpty) {
                               return Container();
@@ -360,9 +375,11 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                                                 singleItem: true,
                                                 customData: secondaryTagList[index],
                                                 onPressed: (item) {
-                                                  addPlanBloc.add(SelectSecondaryEvent(secondaryTag: item.customData));
+                                                  addPlanBloc.add(SelectSecondaryEvent(secondaryTag: [item.customData]));
                                                 },
-                                                active: secondaryTag != null ? secondaryTag!.id == secondaryTagList[index].id : false,
+                                                active: secondaryTag.isNotEmpty
+                                                    ? secondaryTag.first.id == secondaryTagList[index].id
+                                                    : false,
                                                 title: secondaryTagList[index].name,
                                                 textActiveColor: Colors.black,
                                                 textColor: const Color(0xff555555),
@@ -371,14 +388,14 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                                                 padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                                                 index: index,
                                                 border: Border.all(
-                                                    color: secondaryTag != null
-                                                        ? secondaryTag!.id == secondaryTagList[index].id
+                                                    color: secondaryTag.isNotEmpty
+                                                        ? secondaryTag.first.id == secondaryTagList[index].id
                                                             ? MColor.colorPrimary
                                                             : const Color.fromRGBO(197, 197, 197, 1)
                                                         : const Color.fromRGBO(197, 197, 197, 1)),
                                                 activeColor: const Color(0xFFFFC9CC),
-                                                color: secondaryTag != null
-                                                    ? secondaryTag!.id == secondaryTagList[index].id
+                                                color: secondaryTag.isNotEmpty
+                                                    ? secondaryTag.first.id == secondaryTagList[index].id
                                                         ? const Color(0xFFFFC9CC)
                                                         : const Color(0xffFAFAFA)
                                                     : const Color(0xffFAFAFA),
@@ -445,11 +462,12 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                   color: MColor.colorSecondary,
                   textColor: Colors.white,
                   onPressed: () async {
+                    Utility.hideKeyboard();
                     if (primaryTag == null) {
                       Fluttertoast.showToast(msg: "Please select primary tag");
                       return;
                     }
-                    if ((primaryTag!.id == "1" || primaryTag!.id == "2") && secondaryTag == null) {
+                    if ((primaryTag!.id == "1" || primaryTag!.id == "2") && secondaryTag.isEmpty) {
                       Fluttertoast.showToast(msg: "Please select secondary tag");
                       return;
                     }
@@ -465,9 +483,22 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                       input["primary_tag"] = primaryTag!.name;
                       input["primary_tag_id"] = primaryTag!.id;
 
-                      if (secondaryTag != null) {
-                        input["secondary_tag"] = secondaryTag!.name;
-                        input["secondary_tag_id"] = secondaryTag!.id;
+                      if (secondaryTag.isNotEmpty) {
+                        String secondaryTagName = "";
+                        String secondaryTagId = "";
+                        if (secondaryTag.isNotEmpty) {
+                          for (int i = 0; i < secondaryTag.length; i++) {
+                            if (i == secondaryTag.length - 1) {
+                              secondaryTagName += secondaryTag[i].name;
+                              secondaryTagId += secondaryTag[i].id;
+                            } else {
+                              secondaryTagName += secondaryTag[i].name + ",";
+                              secondaryTagId += secondaryTag[i].id + ",";
+                            }
+                          }
+                        }
+                        input["secondary_tag"] = secondaryTagName;
+                        input["secondary_tag_id"] = secondaryTagId;
                       } else {
                         input["secondary_tag"] = '';
                         input["secondary_tag_id"] = "";
@@ -475,6 +506,9 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                     }
                     input["remark"] = txtRemarkController.text.trim();
                     input["week"] = week;
+
+                    debugPrint("input---->$input");
+                    // return;
 
                     if (planAlreadyExists) {
                       input["id"] = planDateModel!.id;
@@ -549,8 +583,18 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
           return BeatBottomSheet(
               beat: txtBeatController.text,
               beats: secondaryTag,
-              onBeatSelect: (SecondaryTag beat) {
-                txtBeatController.text = beat.name;
+              onBeatSelect: (List<SecondaryTag> beat) {
+                String selectedBeats = "";
+                if (beat.isNotEmpty) {
+                  for (int i = 0; i < beat.length; i++) {
+                    if (i == beat.length - 1) {
+                      selectedBeats += beat[i].name;
+                    } else {
+                      selectedBeats += beat[i].name + ", ";
+                    }
+                  }
+                }
+                txtBeatController.text = selectedBeats;
                 addPlanBloc.add(SelectSecondaryEvent(secondaryTag: beat));
               });
         });

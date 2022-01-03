@@ -19,7 +19,7 @@ class MyPlanTabScreen extends StatefulWidget {
 }
 
 class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderStateMixin {
-  List<int> week = [];
+  List<String> week = [];
   List<WeeklyPlanModel> weeklyPlan = [];
   TabController? tabController;
 
@@ -279,7 +279,7 @@ class _PlanListWidgetState extends State<PlanListWidget> {
 }
 
 class WeeklyPlanModel {
-  int week;
+  String week;
   List<PlanDataModel> planList;
 
   WeeklyPlanModel({required this.week, required this.planList});

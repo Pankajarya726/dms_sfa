@@ -20,15 +20,15 @@ class GetPlanResponse {
   String toJson() => json.encode(toMap());
 
   factory GetPlanResponse.fromMap(Map<String, dynamic> json) => GetPlanResponse(
-        success: json["success"] == null ? null : json["success"],
-        message: json["message"] == null ? null : json["message"],
+        success: json["success"] ?? false,
+        message: json["message"] ?? "",
         data: json["data"] == null ? [] : List<PlanDataModel>.from(json["data"].map((x) => PlanDataModel.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
-        "success": success == null ? null : success,
-        "message": message == null ? null : message,
-        "data": data == null ? null : List<dynamic>.from(data.map((x) => x.toMap())),
+        "success": success ?? false,
+        "message": message ?? "",
+        "data": data == null ? [] : List<dynamic>.from(data.map((x) => x.toMap())),
       };
 }
 
@@ -45,30 +45,30 @@ class PlanDataModel {
     required this.week,
   });
 
-  int id;
-  int userId;
+  String id;
+  String userId;
   DateTime addPlanDate;
   String primaryTagId;
   String primaryTag;
   String secondaryTagId;
   String secondaryTag;
   String remark;
-  int week;
+  String week;
 
   factory PlanDataModel.fromJson(String str) => PlanDataModel.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
   factory PlanDataModel.fromMap(Map<String, dynamic> json) => PlanDataModel(
-        id: json["id"] == null ? 0 : json["id"],
-        userId: json["user_id"] == null ? 0 : json["user_id"],
+        id: json["id"] == null ? "0" : json["id"].toString(),
+        userId: json["user_id"] == null ? "0" : json["user_id"].toString(),
         addPlanDate: json["add_plan_date"] == DateTime.now() ? DateTime.now() : DateTime.parse(json["add_plan_date"]),
         primaryTagId: json["primary_tag_id"] == null ? "0" : json["primary_tag_id"].toString(),
-        primaryTag: json["primary_tag"] == null ? "" : json["primary_tag"],
+        primaryTag: json["primary_tag"] ?? "",
         secondaryTagId: json["secondary_tag_id"] == null ? "0" : json["secondary_tag_id"].toString(),
-        secondaryTag: json["secondary_tag"] == null ? "" : json["secondary_tag"],
-        remark: json["remark"] == null ? "" : json["remark"],
-        week: json["week"] == null ? 1 : json["week"],
+        secondaryTag: json["secondary_tag"] ?? "",
+        remark: json["remark"] ?? "",
+        week: json["week"] == null ? "1" : json["week"].toString(),
       );
 
   Map<String, dynamic> toMap() => {
