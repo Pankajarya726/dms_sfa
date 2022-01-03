@@ -3,8 +3,8 @@ import 'package:dms/model/get_plan_response.dart';
 import 'package:dms/model/primary_tag_response.dart';
 import 'package:dms/model/secondary_tag_response.dart';
 import 'package:dms/ui/add_plan/bloc/add_plan_states.dart';
-import 'package:dms/ui/add_plan/model/AddPlanResponse.dart';
 import 'package:dms/ui/add_plan/model/AddPlanUpdateData.dart';
+import 'package:dms/ui/add_plan/model/add_plan_response.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
@@ -58,7 +58,7 @@ class AddPlanBloc extends Bloc<AddPlanEvents, AddPlanStates> {
       SecondaryTagResponse response = await repository.getSecondaryTag(event.primaryTagId.toString());
 
       if (response.success) {
-        if (event.primaryTagId == 1) {
+        if (event.primaryTagId == "1") {
           yield GetSecondaryTagState(secondaryTagList: response.data!.location!);
         } else {
           yield GetSecondaryTagState(secondaryTagList: response.data!.jointWorker!);
@@ -95,7 +95,8 @@ class AddPlanBloc extends Bloc<AddPlanEvents, AddPlanStates> {
       );
       EasyLoading.dismiss();
       if (response.success) {
-        yield AddPlanSuccessState(successMessage: response.message);
+        Utility.showToast(response.message);
+        yield AddPlanSuccessState(planDataModel: response.data!);
       } else {
         yield AddPlanFailureState(failureMessage: response.message);
       }
@@ -129,9 +130,11 @@ class AddPlanBloc extends Bloc<AddPlanEvents, AddPlanStates> {
       AddPlanUpdateDataResponse response = await repository.addPlanUpdateData(event.input);
       EasyLoading.dismiss();
       if (response.success) {
-        yield AddPlanSuccessState(successMessage: response.message);
+        Utility.showToast(response.message);
+        // yield AddPlanSuccessState(successMessage: response.message);
       } else {
-        yield AddPlanFailureState(failureMessage: response.message);
+        Utility.showToast(response.message);
+        // yield AddPlanFailureState(failureMessage: response.message);
       }
     } else {
       yield AddPlanFailureState(failureMessage: "Please check your internet connection!");

@@ -2,14 +2,15 @@ import 'dart:collection';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:dms/main.dart';
 import 'package:dms/model/get_plan_response.dart';
 import 'package:dms/model/primary_tag_response.dart';
 import 'package:dms/model/secondary_tag_response.dart';
 import 'package:dms/provider/server_error.dart';
 import 'package:dms/provider/url.dart';
-import 'package:dms/ui/add_plan/model/AddPlanResponse.dart';
 import 'package:dms/ui/add_plan/model/AddPlanUpdateData.dart';
+import 'package:dms/ui/add_plan/model/add_plan_response.dart';
 import 'package:dms/ui/change_password/model/model.dart';
 import 'package:dms/ui/drawer_menu/home_screen/model/get_menus_response.dart';
 import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart';
@@ -33,10 +34,8 @@ class ApiRepository {
 
   Future<SplashResponse> validateAppVersion(Map input) async {
     try {
-      Response response = await dio.post(
-        Url.validateAppVer,
-        data: input,
-      );
+      Response response = await dio.post(Url.validateAppVer,
+          data: input, options: buildCacheOptions(const Duration(days: 7), forceRefresh: true, maxStale: Duration(days: 7)));
       SplashResponse result = SplashResponse.fromJson(response.toString());
       return result;
     } catch (error, stacktrace) {
@@ -124,8 +123,18 @@ class ApiRepository {
 
   Future<GetMenusResponse> getMenus() async {
     try {
-      Response response = await dio.get(Url.getMenus);
-
+      Response response = await dio.get(
+        Url.getMenus,
+        options: buildCacheOptions(
+          const Duration(days: 3),
+          maxStale: const Duration(days: 7),
+        ),
+      );
+      if (null != response.headers.value(DIO_CACHE_HEADER_KEY_DATA_SOURCE)) {
+        debugPrint("data come from cache");
+      } else {
+        debugPrint("data come from net");
+      }
       GetMenusResponse result = GetMenusResponse.fromJson(response.toString());
       return result;
     } catch (error, stacktrace) {

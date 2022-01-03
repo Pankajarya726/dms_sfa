@@ -38,7 +38,7 @@ class PrimaryTag {
     required this.name,
   });
 
-  int id;
+  String id;
   String name;
 
   factory PrimaryTag.fromJson(String str) => PrimaryTag.fromMap(json.decode(str));
@@ -46,8 +46,8 @@ class PrimaryTag {
   String toJson() => json.encode(toMap());
 
   factory PrimaryTag.fromMap(Map<String, dynamic> json) => PrimaryTag(
-        id: json["id"] == null ? null : json["id"],
-        name: json["name"] == null ? null : json["name"],
+        id: json["id"] == null ? "0" : json["id"].toString(),
+        name: json["name"] == null ? "" : json["name"].toString(),
       );
 
   Map<String, dynamic> toMap() => {

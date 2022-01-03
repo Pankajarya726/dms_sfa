@@ -48,9 +48,9 @@ class PlanDataModel {
   int id;
   int userId;
   DateTime addPlanDate;
-  int primaryTagId;
+  String primaryTagId;
   String primaryTag;
-  int secondaryTagId;
+  String secondaryTagId;
   String secondaryTag;
   String remark;
   int week;
@@ -63,9 +63,9 @@ class PlanDataModel {
         id: json["id"] == null ? 0 : json["id"],
         userId: json["user_id"] == null ? 0 : json["user_id"],
         addPlanDate: json["add_plan_date"] == DateTime.now() ? DateTime.now() : DateTime.parse(json["add_plan_date"]),
-        primaryTagId: json["primary_tag_id"] == null ? 0 : json["primary_tag_id"],
+        primaryTagId: json["primary_tag_id"] == null ? "0" : json["primary_tag_id"].toString(),
         primaryTag: json["primary_tag"] == null ? "" : json["primary_tag"],
-        secondaryTagId: json["secondary_tag_id"] == null ? 0 : json["secondary_tag_id"],
+        secondaryTagId: json["secondary_tag_id"] == null ? "0" : json["secondary_tag_id"].toString(),
         secondaryTag: json["secondary_tag"] == null ? "" : json["secondary_tag"],
         remark: json["remark"] == null ? "" : json["remark"],
         week: json["week"] == null ? 1 : json["week"],

@@ -140,7 +140,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                   addPlanBloc.add(SelectPrimaryEvent(primaryTag: primaryTag!));
                 }
                 if (state is AddPlanSuccessState) {
-                  Fluttertoast.showToast(msg: state.successMessage);
+                  // Fluttertoast.showToast(msg: state.successMessage);
                 }
                 if (state is AddPlanFailureState) {
                   Fluttertoast.showToast(msg: state.failureMessage);

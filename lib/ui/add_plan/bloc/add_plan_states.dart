@@ -22,12 +22,12 @@ class AddPlanFailureState extends AddPlanStates {
 }
 
 class AddPlanSuccessState extends AddPlanStates {
-  final String successMessage;
+  final PlanDataModel planDataModel;
 
-  AddPlanSuccessState({required this.successMessage});
+  AddPlanSuccessState({required this.planDataModel});
 
   @override
-  List<Object> get props => [successMessage];
+  List<Object> get props => [planDataModel];
 }
 
 class AddPlanGetDataState extends AddPlanStates {

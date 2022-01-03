@@ -56,6 +56,7 @@ dependencies:
   flutter_easyloading:
   store_redirect:
   flutter_share:
+  dio_http_cache:
   # webview_flutter:
 
 

@@ -65,7 +65,7 @@ class SecondaryTag {
     required this.name,
   });
 
-  int id;
+  String id;
   String name;
   bool check = false;
 
@@ -74,8 +74,8 @@ class SecondaryTag {
   String toJson() => json.encode(toMap());
 
   factory SecondaryTag.fromMap(Map<String, dynamic> json) => SecondaryTag(
-        id: json["id"] == null ? 0 : json["id"],
-        name: json["name"] == null ? "" : json["name"],
+        id: json["id"] == null ? "0" : json["id"].toString(),
+        name: json["name"] == null ? "" : json["name"].toString(),
       );
 
   Map<String, dynamic> toMap() => {

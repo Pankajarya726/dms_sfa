@@ -43,7 +43,7 @@ class GetPrimaryTagEvent extends AddPlanEvents {
 }
 
 class GetSecondaryTagEvent extends AddPlanEvents {
-  final int primaryTagId;
+  final String primaryTagId;
 
   GetSecondaryTagEvent({required this.primaryTagId});
   @override

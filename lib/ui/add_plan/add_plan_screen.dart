@@ -95,14 +95,13 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             txtBeatController.clear();
             addPlanBloc.add(SelectPrimaryEvent(primaryTag: primaryTag!));
           }
-          if (state is AddPlanSuccessState) {
-            Fluttertoast.showToast(msg: state.successMessage);
-          }
+
           if (state is AddPlanFailureState) {
             Fluttertoast.showToast(msg: state.failureMessage);
           }
           if (state is AddPlanSuccessState) {
             planAlreadyExists = true;
+            planDateModel = state.planDataModel;
           }
           if (state is GetPrimaryTagState) {
             primaryTagList = state.primaryTagList;
@@ -319,7 +318,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                primaryTag!.id == 1 || primaryTag!.id == 2
+                                primaryTag!.id == "1" || primaryTag!.id == "2"
                                     ? const Padding(
                                         padding: EdgeInsets.symmetric(vertical: 15),
                                         child: Text(
@@ -332,7 +331,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                                         ),
                                       )
                                     : Container(),
-                                primaryTag!.id == 1
+                                primaryTag!.id == "1"
                                     ? TextFormField(
                                         scrollPadding: const EdgeInsets.all(0),
                                         readOnly: true,
@@ -352,7 +351,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                                           // suffixIconConstraints: BoxConstraints(maxWidth: 20, maxHeight: 20)
                                         ),
                                       )
-                                    : primaryTag!.id == 2
+                                    : primaryTag!.id == "2"
                                         ? Tags(
                                             itemCount: secondaryTagList.length,
                                             alignment: WrapAlignment.start,
@@ -450,7 +449,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                       Fluttertoast.showToast(msg: "Please select primary tag");
                       return;
                     }
-                    if ((primaryTag!.id == 1 || primaryTag!.id == 2) && secondaryTag == null) {
+                    if ((primaryTag!.id == "1" || primaryTag!.id == "2") && secondaryTag == null) {
                       Fluttertoast.showToast(msg: "Please select secondary tag");
                       return;
                     }
