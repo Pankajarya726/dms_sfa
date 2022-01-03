@@ -1,7 +1,7 @@
 const addCaps = "ADD";
 const startMyDayCaps = "START MY DAY";
 const exploreCaps = "EXPLORE";
-
+const retailers = "Retailers";
 const login = "Login";
 const logout = "Logout";
 const endDay = "End day";

@@ -24,8 +24,16 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingsScreen> {
   SettingsBloc settingsBloc = SettingsBloc();
-  RefreshController refreshController = RefreshController(initialRefresh: false);
-  List<String> textList = ["Edit Profile", "Change Password", "About Us", "Rate App", "Share App", "Logout"];
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
+  List<String> textList = [
+    "Edit Profile",
+    "Change Password",
+    "About Us",
+    "Rate App",
+    "Share App",
+    "Logout"
+  ];
   User? user;
 
   @override
@@ -79,7 +87,8 @@ class _SettingScreenState extends State<SettingsScreen> {
                                 height: 50,
                                 margin: const EdgeInsets.only(top: 30),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     IconButton(
                                       onPressed: () {
@@ -91,8 +100,13 @@ class _SettingScreenState extends State<SettingsScreen> {
                                       ),
                                     ),
                                     const Text("Settings",
-                                        style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500)),
-                                    const Text("Opacity", style: TextStyle(color: Colors.transparent)),
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500)),
+                                    const Text("Opacity",
+                                        style: TextStyle(
+                                            color: Colors.transparent)),
                                   ],
                                 ),
                               ),
@@ -105,38 +119,50 @@ class _SettingScreenState extends State<SettingsScreen> {
                                     padding: const EdgeInsets.only(top: 60),
                                     decoration: const BoxDecoration(
                                       image: DecorationImage(
-                                        image: AssetImage("assets/3x/rounded-bg.png"),
+                                        image: AssetImage(
+                                            "assets/3x/rounded-bg.png"),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
                                     child: Column(
                                       children: [
-                                        BlocBuilder<SettingsBloc, SettingsState>(builder: (context, state) {
+                                        BlocBuilder<SettingsBloc,
+                                                SettingsState>(
+                                            builder: (context, state) {
                                           if (user != null) {
                                             return Text(user!.name,
                                                 style: const TextStyle(
-                                                    color: Color(0xfff24b55), fontSize: 20, fontWeight: FontWeight.w600));
+                                                    color: Color(0xfff24b55),
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.w600));
                                           }
                                           return Text(Constants.name,
                                               style: const TextStyle(
-                                                  color: Color(0xfff24b55), fontSize: 20, fontWeight: FontWeight.w600));
+                                                  color: Color(0xfff24b55),
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w600));
                                         }),
                                         const SizedBox(
                                           height: 10,
                                         ),
                                         Text(Constants.designation,
-                                            style:
-                                                const TextStyle(color: Color(0xff303030), fontSize: 14, fontWeight: FontWeight.w600))
+                                            style: const TextStyle(
+                                                color: Color(0xff303030),
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600))
                                       ],
                                     ),
                                   ),
                                   Positioned(
                                     top: 17,
-                                    left: MediaQuery.of(context).size.width * 0.39,
+                                    left: MediaQuery.of(context).size.width *
+                                        0.39,
                                     child: Container(
                                       alignment: Alignment.center,
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(100),
+                                        borderRadius:
+                                            BorderRadius.circular(100),
                                         boxShadow: const [
                                           BoxShadow(
                                             color: Colors.black12,
@@ -147,10 +173,14 @@ class _SettingScreenState extends State<SettingsScreen> {
                                         ],
                                       ),
                                       child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(100),
-                                        child: BlocBuilder<SettingsBloc, SettingsState>(builder: (context, state) {
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        child: BlocBuilder<SettingsBloc,
+                                                SettingsState>(
+                                            builder: (context, state) {
                                           String url = Constants.image;
-                                          if (state is GetUserDetailsSuccessState) {
+                                          if (state
+                                              is GetUserDetailsSuccessState) {
                                             url = state.user.profilePicture;
                                           }
                                           return CachedNetworkImage(
@@ -158,8 +188,12 @@ class _SettingScreenState extends State<SettingsScreen> {
                                             height: 90,
                                             fit: BoxFit.cover,
                                             imageUrl: url,
-                                            errorWidget: (context, url, error) => Image.asset("assets/3x/placeholder.png"),
-                                            placeholder: (context, url) => const CircularProgressIndicator(
+                                            errorWidget: (context, url,
+                                                    error) =>
+                                                Image.asset(
+                                                    "assets/3x/placeholder.png"),
+                                            placeholder: (context, url) =>
+                                                const CircularProgressIndicator(
                                               color: Colors.red,
                                             ),
                                           );
@@ -180,7 +214,9 @@ class _SettingScreenState extends State<SettingsScreen> {
                               return Container(
                                 // padding: const EdgeInsets.all(15),
                                 decoration: const BoxDecoration(
-                                  border: Border(bottom: BorderSide(width: 1, color: Color(0xffbdbdbd))),
+                                  border: Border(
+                                      bottom: BorderSide(
+                                          width: 1, color: Color(0xffbdbdbd))),
                                 ),
                                 child: ListTile(
                                   onTap: () {
@@ -189,11 +225,16 @@ class _SettingScreenState extends State<SettingsScreen> {
                                   title: Expanded(
                                       child: Text(textList[index],
                                           style: TextStyle(
-                                              color: index == 5 ? const Color(0xfff24b55) : Colors.black,
+                                              color: index == 5
+                                                  ? const Color(0xfff24b55)
+                                                  : Colors.black,
                                               fontSize: 14,
                                               fontWeight: FontWeight.w600))),
-                                  leading: Image.asset("assets/s${index + 1}.png", width: 24),
-                                  trailing: const Icon(Icons.arrow_forward_ios, color: Colors.black, size: 15),
+                                  leading: Image.asset(
+                                      "assets/s${index + 1}.png",
+                                      width: 24),
+                                  trailing: const Icon(Icons.arrow_forward_ios,
+                                      color: Colors.black, size: 15),
                                 ),
                               );
                             }),
@@ -212,7 +253,11 @@ class _SettingScreenState extends State<SettingsScreen> {
   onItemClick(int index, BuildContext context) {
     switch (index) {
       case 0:
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfileScreen())).then((value) => addEvent());
+        Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const EditProfileScreen()))
+            .then((value) => addEvent());
         break;
       case 1:
         Navigator.push(
@@ -255,21 +300,35 @@ class _SettingScreenState extends State<SettingsScreen> {
       builder: (context) {
         return AlertDialog(
           contentPadding: const EdgeInsets.fromLTRB(25, 10, 0, 0),
-          title: const Text("Logout", style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w600)),
+          title: const Text("Logout",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600)),
           content: const Text("Are you sure you want to logout?",
-              style: TextStyle(color: Color.fromRGBO(85, 85, 85, 1), fontSize: 15, fontWeight: FontWeight.w500)),
+              style: TextStyle(
+                  color: Color.fromRGBO(85, 85, 85, 1),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500)),
           actions: [
             MaterialButton(
-              child: const Text("Cancel", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600)),
+              child: const Text("Cancel",
+                  style: TextStyle(
+                      color: Colors.grey, fontWeight: FontWeight.w600)),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
             MaterialButton(
-              child: const Text("Logout", style: TextStyle(color: Color(0xfff4511e), fontWeight: FontWeight.w600)),
+              child: const Text("Logout",
+                  style: TextStyle(
+                      color: Color(0xfff4511e), fontWeight: FontWeight.w600)),
               onPressed: () {
                 Navigator.pushAndRemoveUntil(
-                    context, MaterialPageRoute(builder: (context) => const LoginScreen()), ModalRoute.withName("/"));
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen()),
+                    ModalRoute.withName("/"));
                 SharedPreference.clearSharedPreference(context);
               },
             ),
@@ -280,7 +339,8 @@ class _SettingScreenState extends State<SettingsScreen> {
   }
 
   addEvent() async {
-    var usrId = await SharedPreference.getStringPreference(SharedPreference.userId);
+    var usrId =
+        await SharedPreference.getStringPreference(SharedPreference.userId);
     settingsBloc.add(GetSettingEvent(userId: usrId));
   }
 

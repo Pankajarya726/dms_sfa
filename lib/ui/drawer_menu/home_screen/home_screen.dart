@@ -3,6 +3,7 @@ import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_bloc.dart';
 import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_events.dart';
 import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_states.dart';
 import 'package:dms/ui/my_plan/my_plan.dart';
+import 'package:dms/ui/order_booking/retailers_list/retailers_list_screen.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
@@ -24,11 +25,13 @@ class HomeScreen extends KFDrawerContent {
 }
 
 // home screen
-class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListener {
+class _HomeScreenState extends State<HomeScreen>
+    implements ProfileUpdateListener {
   int currentBottomTabIndex = 0;
 
   HomeScreenBloc homeScreenBloc = HomeScreenBloc();
-  RefreshController refreshController = RefreshController(initialRefresh: false);
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
 
   List<MenuData> menu = [];
 
@@ -90,8 +93,10 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
                           fit: BoxFit.cover,
                         );
                       },
-                      errorWidget: (context, url, error) => Image.asset("assets/placeholder.png"),
-                      placeholder: (context, url) => Image.asset("assets/placeholder.png"),
+                      errorWidget: (context, url, error) =>
+                          Image.asset("assets/placeholder.png"),
+                      placeholder: (context, url) =>
+                          Image.asset("assets/placeholder.png"),
                     ),
                   ),
                   const SizedBox(
@@ -113,7 +118,8 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
                       ),
                       Container(
                         margin: const EdgeInsets.only(top: 4),
-                        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 4, horizontal: 6),
                         decoration: BoxDecoration(
                           color: const Color(0xFFF3505A).withOpacity(0.3),
                           borderRadius: BorderRadius.circular(3),
@@ -240,7 +246,8 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
                 crossAxisSpacing: 20,
                 mainAxisSpacing: 20,
                 childAspectRatio: 1,
-                padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
                 children: List.generate(menu.length, (index) {
                   return Container(
                     height: MediaQuery.of(context).size.height / 4,
@@ -262,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
                           borderRadius: BorderRadius.circular(15),
                         ),
                         onTap: () {
-                          Fluttertoast.showToast(msg: commingSoon);
+                          navigateToHomeItems(index);
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10),
@@ -275,8 +282,10 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
                                 imageBuilder: (context, imageProvider) {
                                   return Image(
                                       fit: BoxFit.cover,
-                                      width: MediaQuery.of(context).size.width / 8,
-                                      height: MediaQuery.of(context).size.width / 8,
+                                      width:
+                                          MediaQuery.of(context).size.width / 8,
+                                      height:
+                                          MediaQuery.of(context).size.width / 8,
                                       image: imageProvider);
                                 },
                                 errorWidget: (context, url, error) {
@@ -306,6 +315,32 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
     );
   }
 
+  void navigateToHomeItems(index) {
+    switch (index) {
+      case 0:
+        Fluttertoast.showToast(msg: commingSoon);
+        break;
+      case 1:
+        Fluttertoast.showToast(msg: commingSoon);
+        break;
+      case 2:
+        Fluttertoast.showToast(msg: commingSoon);
+        break;
+      case 3:
+        Fluttertoast.showToast(msg: commingSoon);
+        break;
+      case 4:
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const RetailerListScreen()));
+        break;
+      case 5:
+        Fluttertoast.showToast(msg: commingSoon);
+        break;
+    }
+  }
+
   void navigateToBottomBarItems() {
     switch (currentBottomTabIndex) {
       case 0:
@@ -318,7 +353,8 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
         Fluttertoast.showToast(msg: commingSoon);
         break;
       case 3:
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const MyPlan()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const MyPlan()));
         break;
     }
   }
