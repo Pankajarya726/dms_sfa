@@ -20,3 +20,24 @@ class CommonBlocSelectImageEvent extends CommonBlocEvents {
   @override
   List<Object> get props => [imageFile];
 }
+
+class CommonBlocEnrollTypeRadioEvent extends CommonBlocEvents {
+  final Object enrollmentRadioTag;
+  CommonBlocEnrollTypeRadioEvent({required this.enrollmentRadioTag});
+  @override
+  List<Object> get props => [enrollmentRadioTag];
+}
+
+class CommonBlocRetailerRadioEvent extends CommonBlocEvents {
+  final Object retailerRadioTag;
+  CommonBlocRetailerRadioEvent({required this.retailerRadioTag});
+  @override
+  List<Object> get props => [retailerRadioTag];
+}
+
+class CommonBlocIsKRORadioEvent extends CommonBlocEvents {
+  final Object isKRORadioTag;
+  CommonBlocIsKRORadioEvent({required this.isKRORadioTag});
+  @override
+  List<Object> get props => [isKRORadioTag];
+}

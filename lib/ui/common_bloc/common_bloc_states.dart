@@ -24,3 +24,24 @@ class CommonBlocSelectImageState extends CommonBlocStates {
   @override
   List<Object> get props => [imageFile];
 }
+
+class CommonBlocEnrollRadioTagState extends CommonBlocStates {
+  final Object enrollmentRadioTag;
+  CommonBlocEnrollRadioTagState({required this.enrollmentRadioTag});
+  @override
+  List<Object> get props => [enrollmentRadioTag];
+}
+
+class CommonBlocRetailerRadioState extends CommonBlocStates {
+  final Object retailerRadioTag;
+  CommonBlocRetailerRadioState({required this.retailerRadioTag});
+  @override
+  List<Object> get props => [retailerRadioTag];
+}
+
+class CommonBlocIsKRORadioState extends CommonBlocStates {
+  final Object isKRORadioTag;
+  CommonBlocIsKRORadioState({required this.isKRORadioTag});
+  @override
+  List<Object> get props => [isKRORadioTag];
+}
