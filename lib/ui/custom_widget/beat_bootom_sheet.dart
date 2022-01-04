@@ -5,11 +5,11 @@ import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class BeatBottomSheet extends StatefulWidget {
-  final String beat;
+  final List<SecondaryTag> selectedBeat;
   final Function(List<SecondaryTag> beat) onBeatSelect;
   final List<SecondaryTag> beats;
 
-  const BeatBottomSheet({Key? key, required this.beat, required this.beats, required this.onBeatSelect}) : super(key: key);
+  const BeatBottomSheet({Key? key, required this.selectedBeat, required this.beats, required this.onBeatSelect}) : super(key: key);
 
   @override
   _BeatBottomSheetState createState() => _BeatBottomSheetState();
@@ -206,6 +206,11 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
   void getBeats() async {
     // print(widget.beats);
     beats = widget.beats;
+
+    widget.selectedBeat.forEach((beat) {
+      beats.singleWhere((element) => element.id == beat.id).check = true;
+    });
+
     // print(beats);
     controller.add(beats);
   }

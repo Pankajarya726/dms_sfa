@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 
 import '../../main.dart';
 
@@ -44,6 +45,16 @@ class _LoginScreenState extends State<LoginScreen> {
             SharedPreference.setBooleanPreference(SharedPreference.isLeader, state.loginResponse.isLeader);
 
             SharedPreference.setStringPreference(SharedPreference.accessToken, state.loginResponse.accessToken);
+
+            if (state.loginResponse.pjpButton!.addPjpButton == "1") {
+              SharedPreference.setBooleanPreference(SharedPreference.showAddPlanButton, true);
+              SharedPreference.setStringPreference(
+                  SharedPreference.fromDate, DateFormat("yyyy-MM-dd").format(state.loginResponse.pjpButton!.fromDate));
+              SharedPreference.setStringPreference(
+                  SharedPreference.toDate, DateFormat("yyyy-MM-dd").format(state.loginResponse.pjpButton!.toDate));
+            } else {
+              SharedPreference.setBooleanPreference(SharedPreference.showAddPlanButton, false);
+            }
             Constants.token = "Bearer " + state.loginResponse.accessToken;
             dio.options.headers.addAll({
               "Authorization": Constants.token,
@@ -63,9 +74,9 @@ class _LoginScreenState extends State<LoginScreen> {
             SharedPreference.setStringPreference(SharedPreference.userDesignation, state.userDetails.data!.designation);
             SharedPreference.setStringPreference(SharedPreference.userImage, state.userDetails.data!.image);
             if (state.userDetails.data!.pjpButton == "hide") {
-              SharedPreference.setBooleanPreference(SharedPreference.pjpButton, false);
+              SharedPreference.setBooleanPreference(SharedPreference.showAddPlanButton, false);
             } else {
-              SharedPreference.setBooleanPreference(SharedPreference.pjpButton, true);
+              SharedPreference.setBooleanPreference(SharedPreference.showAddPlanButton, true);
             }
 
             Constants.name = state.userDetails.data!.name;

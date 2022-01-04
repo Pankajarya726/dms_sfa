@@ -70,7 +70,8 @@ class ApiRepository {
         message = "Something Went wrong";
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
-      return LoginResponse(success: false, message: message, id: 0, accessToken: "", tokenType: "", isLeader: false, startMyDay: "");
+      return LoginResponse(
+          success: false, message: message, id: 0, accessToken: "", tokenType: "", isLeader: false, startMyDay: "", pjpButton: null);
     }
   }
 
@@ -351,29 +352,28 @@ class ApiRepository {
     }
   }
 
-  Future<GetPlanResponse> getSavedPlan(Map input) async {
-    try {
-      Response response = await dio.post(
-        Url.getSavedPlan,
-        data: input,
-      );
+  Future<GetPlanByDateResponse> getSavedPlan(Map input) async {
+    // try {
+    Response response = await dio.post(
+      Url.getSavedPlan,
+      data: input,
+    );
 
-      return GetPlanResponse.fromJson(response.toString());
-    } catch (error, stacktrace) {
-      String message = "";
-      if (error is DioError) {
-        ServerError e = ServerError.withError(error: error);
-        message = e.getErrorMessage();
-      } else {
-        message = "Something Went wrong";
-      }
-      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
-      return GetPlanResponse(
-        success: false,
-        message: message,
-        data: [],
-      );
-    }
+    return GetPlanByDateResponse.fromJson(response.toString());
+    // } catch (error, stacktrace) {
+    //   String message = "";
+    //   if (error is DioError) {
+    //     ServerError e = ServerError.withError(error: error);
+    //     message = e.getErrorMessage();
+    //   } else {
+    //     message = "Something Went wrong";
+    //   }
+    //   debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+    //   return GetPlanByDateResponse(
+    //     success: false,
+    //     message: message,
+    //   );
+    // }
   }
 
   Future<GetPlanResponse> getPlanByMonth(

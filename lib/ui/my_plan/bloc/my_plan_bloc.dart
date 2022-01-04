@@ -40,7 +40,7 @@ class MyPlanBloc extends Bloc<MyPlanEvents, MyPlanStates> {
   }
 
   Stream<MyPlanStates> getMonths() async* {
-    bool pjpButton = await SharedPreference.getBooleanPreference(SharedPreference.pjpButton);
+    bool pjpButton = await SharedPreference.getBooleanPreference(SharedPreference.showAddPlanButton);
     List<DateTime> months = [];
     debugPrint((DateFormat("MMMM").format(DateTime(DateTime.now().year, DateTime.now().month - 6, DateTime.now().day))).toString());
     DateTime now = DateTime.now();

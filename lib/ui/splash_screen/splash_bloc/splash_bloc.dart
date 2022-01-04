@@ -31,7 +31,9 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
 
       input["user_id"] = await SharedPreference.getStringPreference(SharedPreference.userId);
       input["date"] = DateFormat("yyyy-MM-dd").format(await NTP.now());
+      // input["date"] = "2022-01-27";
       input["app_version"] = packageInfo.version;
+      // input["app_version"] = "0.0";
 
       if (Platform.isAndroid) {
         input["device_type"] = 1;

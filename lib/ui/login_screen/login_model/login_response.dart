@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:dms/ui/splash_screen/model/splash_model.dart';
+
 class LoginResponse {
   LoginResponse({
     required this.success,
@@ -9,6 +11,7 @@ class LoginResponse {
     required this.tokenType,
     required this.isLeader,
     required this.startMyDay,
+    this.pjpButton,
   });
 
   bool success;
@@ -18,28 +21,31 @@ class LoginResponse {
   String tokenType;
   bool isLeader;
   String startMyDay;
-
+  PjpButton? pjpButton;
   factory LoginResponse.fromJson(String str) => LoginResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
   factory LoginResponse.fromMap(Map<String, dynamic> json) => LoginResponse(
-        success: json["success"] == null ? false : json["success"],
+        success: json["success"] ?? false,
         message: json["message"] == null ? "" : json["message"].toString(),
-        id: json["id"] == null ? 0 : json["id"],
+        id: json["id"] ?? 0,
         accessToken: json["access_token"] == null ? "" : json["access_token"].toString(),
         tokenType: json["token_type"] == null ? "" : json["token_type"].toString(),
-        isLeader: json["is_leader"] == null ? false : json["is_leader"],
-        startMyDay: json["startMyDay"] == null ? "" : json["startMyDay"],
+        isLeader: json["is_leader"] ?? false,
+        startMyDay: json["startMyDay"] ?? "hide",
+        pjpButton: json["pjpbutton"] == null
+            ? PjpButton(addPjpButton: "0", fromDate: DateTime.now(), toDate: DateTime.now())
+            : PjpButton.fromMap(json["pjpbutton"]),
       );
 
   Map<String, dynamic> toMap() => {
-        "success": success == null ? null : success,
-        "message": message == null ? null : message,
-        "id": id == null ? null : id,
-        "access_token": accessToken == null ? null : accessToken,
-        "token_type": tokenType == null ? null : tokenType,
-        "is_leader": isLeader == null ? null : isLeader,
-        "startMyDay": startMyDay == null ? null : startMyDay,
+        "success": success,
+        "message": message,
+        "id": id,
+        "access_token": accessToken,
+        "token_type": tokenType,
+        "is_leader": isLeader,
+        "startMyDay": startMyDay,
       };
 }

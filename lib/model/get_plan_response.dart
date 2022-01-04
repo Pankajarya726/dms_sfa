@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:dms/model/secondary_tag_response.dart';
+
 class GetPlanResponse {
   GetPlanResponse({
     required this.success,
@@ -26,9 +28,37 @@ class GetPlanResponse {
       );
 
   Map<String, dynamic> toMap() => {
-        "success": success ?? false,
-        "message": message ?? "",
-        "data": data == null ? [] : List<dynamic>.from(data.map((x) => x.toMap())),
+        "success": success,
+        "message": message,
+        "data": data,
+      };
+}
+
+class GetPlanByDateResponse {
+  GetPlanByDateResponse({
+    required this.success,
+    required this.message,
+    this.data,
+  });
+
+  bool success;
+  String message;
+  PlanDataModel? data;
+
+  factory GetPlanByDateResponse.fromJson(String str) => GetPlanByDateResponse.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory GetPlanByDateResponse.fromMap(Map<String, dynamic> json) => GetPlanByDateResponse(
+        success: json["success"] ?? false,
+        message: json["message"] ?? "",
+        data: json["data"] == null ? null : PlanDataModel.fromMap(json['data']),
+      );
+
+  Map<String, dynamic> toMap() => {
+        "success": success,
+        "message": message,
+        "data": data,
       };
 }
 
@@ -40,6 +70,7 @@ class PlanDataModel {
     required this.primaryTagId,
     required this.primaryTag,
     required this.secondaryTagId,
+    required this.secondaryTags,
     required this.secondaryTag,
     required this.remark,
     required this.week,
@@ -52,6 +83,7 @@ class PlanDataModel {
   String primaryTag;
   String secondaryTagId;
   String secondaryTag;
+  List<SecondaryTag> secondaryTags;
   String remark;
   String week;
 
@@ -65,23 +97,24 @@ class PlanDataModel {
         addPlanDate: json["add_plan_date"] == DateTime.now() ? DateTime.now() : DateTime.parse(json["add_plan_date"]),
         primaryTagId: json["primary_tag_id"] == null ? "0" : json["primary_tag_id"].toString(),
         primaryTag: json["primary_tag"] ?? "",
-        secondaryTagId: json["secondary_tag_id"] == null ? "0" : json["secondary_tag_id"].toString(),
         secondaryTag: json["secondary_tag"] ?? "",
+        secondaryTagId: json["secondary_tag_id"] == null ? "0" : json["secondary_tag_id"].toString(),
+        secondaryTags:
+            json["secondary_tags"] == null ? [] : List<SecondaryTag>.from(json["secondary_tags"].map((x) => SecondaryTag.fromMap(x))),
         remark: json["remark"] ?? "",
         week: json["week"] == null ? "1" : json["week"].toString(),
       );
 
   Map<String, dynamic> toMap() => {
-        "id": id == null ? null : id,
-        "user_id": userId == null ? null : userId,
+        "id": id,
+        "user_id": userId,
         "add_plan_date": addPlanDate == null
             ? null
             : "${addPlanDate.year.toString().padLeft(4, '0')}-${addPlanDate.month.toString().padLeft(2, '0')}-${addPlanDate.day.toString().padLeft(2, '0')}",
-        "primary_tag_id": primaryTagId == null ? null : primaryTagId,
-        "primary_tag": primaryTag == null ? null : primaryTag,
-        "secondary_tag_id": secondaryTagId == null ? null : secondaryTagId,
-        "secondary_tag": secondaryTag == null ? null : secondaryTag,
-        "remark": remark == null ? null : remark,
-        "week": week == null ? null : week,
+        "primary_tag_id": primaryTagId,
+        "primary_tag": primaryTag,
+        "secondary_tag_id": secondaryTagId,
+        "remark": remark,
+        "week": week,
       };
 }

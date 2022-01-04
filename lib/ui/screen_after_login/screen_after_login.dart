@@ -135,11 +135,11 @@ class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
         "user_id": userId,
         "add_plan_date": DateFormat("yyyy-MM-dd").format(await NTP.now()),
       };
-      GetPlanResponse response = await repository.getSavedPlan(input);
+      GetPlanByDateResponse response = await repository.getSavedPlan(input);
 
       if (response.success) {
-        if (response.data.isNotEmpty) {
-          myPlan = response.data.first;
+        if (response.data != null) {
+          myPlan = response.data;
         }
       } else {
         // Fluttertoast.showToast(msg: response.message);

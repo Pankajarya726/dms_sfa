@@ -112,10 +112,10 @@ class AddPlanBloc extends Bloc<AddPlanEvents, AddPlanStates> {
         "user_id": userId,
         "add_plan_date": event.selectedDate,
       };
-      GetPlanResponse response = await repository.getSavedPlan(input);
+      GetPlanByDateResponse response = await repository.getSavedPlan(input);
 
       if (response.success) {
-        yield GetSavedPlanState(planDateModel: response.data[0]);
+        yield GetSavedPlanState(planDateModel: response.data!);
       } else {
         yield GetAddPlanFailureState(message: response.message);
       }

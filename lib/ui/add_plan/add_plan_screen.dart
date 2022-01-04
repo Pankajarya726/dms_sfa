@@ -17,16 +17,17 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:ntp/ntp.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class AddPlanScreen extends StatefulWidget {
-  final DateTime month;
+  final DateTime fromDate;
+  final DateTime toDate;
 
   const AddPlanScreen({
     Key? key,
-    required this.month,
+    required this.fromDate,
+    required this.toDate,
   }) : super(key: key);
 
   @override
@@ -71,15 +72,15 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             planAlreadyExists = true;
             txtRemarkController.text = state.planDateModel.remark;
             primaryTag = PrimaryTag(id: state.planDateModel.primaryTagId, name: state.planDateModel.primaryTag);
-            secondaryTag.add(SecondaryTag(id: state.planDateModel.secondaryTagId, name: state.planDateModel.secondaryTag));
+            secondaryTag = state.planDateModel.secondaryTags;
             addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
             String selectedBeats = "";
             if (secondaryTag.isNotEmpty) {
               for (int i = 0; i < secondaryTag.length; i++) {
                 if (i == secondaryTag.length - 1) {
-                  selectedBeats += secondaryTag[i].name;
+                  selectedBeats += secondaryTag[i].locationCode;
                 } else {
-                  selectedBeats += secondaryTag[i].name + ", ";
+                  selectedBeats += secondaryTag[i].locationCode + ", ";
                 }
               }
             }
@@ -88,6 +89,9 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
 
           if (state is GetSecondaryTagState) {
             secondaryTagList = state.secondaryTagList;
+            if (secondaryTag.isNotEmpty) {
+              addPlanBloc.add(SelectSecondaryEvent(secondaryTag: secondaryTag));
+            }
           }
           if (state is GetAddPlanFailureState) {
             _refreshController.refreshCompleted();
@@ -129,7 +133,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             actions: [
               Center(
                 child: Text(
-                  DateFormat("MMM yyyy").format(widget.month) + "\t\t\t\t",
+                  DateFormat("MMM yyyy").format(widget.fromDate) + "\t\t\t\t",
                   style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
@@ -163,12 +167,11 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                       toggleDaySelection: true,
                       headerHeight: 0,
                       showTodayButton: false,
-
                       selectionMode: DateRangePickerSelectionMode.single,
                       navigationMode: DateRangePickerNavigationMode.none,
-                      minDate: DateTime(DateTime.now().year, DateTime.now().month + 1, 1),
-                      // maxDate: DateTime(2022, 2, 28),
-                      initialDisplayDate: DateTime(DateTime.now().year, DateTime.now().month + 1, 1),
+                      minDate: widget.fromDate,
+                      maxDate: widget.toDate,
+                      initialDisplayDate: widget.fromDate,
                       monthCellStyle: DateRangePickerMonthCellStyle(
                         textStyle: const TextStyle(fontWeight: FontWeight.w600, color: Colors.black, fontSize: 16),
                         leadingDatesTextStyle: TextStyle(
@@ -318,9 +321,9 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                               if (secondaryTag.isNotEmpty) {
                                 for (int i = 0; i < secondaryTag.length; i++) {
                                   if (i == secondaryTag.length - 1) {
-                                    selectedBeats += secondaryTag[i].name;
+                                    selectedBeats += secondaryTag[i].locationCode;
                                   } else {
-                                    selectedBeats += secondaryTag[i].name + ", ";
+                                    selectedBeats += secondaryTag[i].locationCode + ", ";
                                   }
                                 }
                               }
@@ -570,23 +573,23 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
   //   return weekNumber;
   // }
   void getInitialDate() async {
-    dateTime = await NTP.now();
-    dateRangePickerController.selectedDate = DateTime(dateTime!.year, dateTime!.month + 1, 1);
+    dateRangePickerController.selectedDate = widget.fromDate;
   }
 
-  void selectBeat(BuildContext context, List<SecondaryTag> secondaryTag) async {
+  void selectBeat(BuildContext context, List<SecondaryTag> tags) async {
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))),
         builder: (context) {
           return BeatBottomSheet(
-              beat: txtBeatController.text,
-              beats: secondaryTag,
+              selectedBeat: secondaryTag,
+              beats: tags,
               onBeatSelect: (List<SecondaryTag> beat) {
                 String selectedBeats = "";
                 if (beat.isNotEmpty) {
                   for (int i = 0; i < beat.length; i++) {
+                    beat[i].locationCode = beat[i].name;
                     if (i == beat.length - 1) {
                       selectedBeats += beat[i].name;
                     } else {

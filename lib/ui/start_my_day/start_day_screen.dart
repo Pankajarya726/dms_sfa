@@ -122,15 +122,15 @@ class _StartDayScreenState extends State<StartDayScreen> {
                   txtRemarkController.text = state.planDateModel.remark;
                   primaryTag = PrimaryTag(id: state.planDateModel.primaryTagId, name: state.planDateModel.primaryTag);
                   secondaryTag.clear();
-                  secondaryTag.add(SecondaryTag(id: state.planDateModel.secondaryTagId, name: state.planDateModel.secondaryTag));
+                  secondaryTag = state.planDateModel.secondaryTags;
                   addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.id));
                   String selectedBeats = "";
                   if (secondaryTag.isNotEmpty) {
                     for (int i = 0; i < secondaryTag.length; i++) {
                       if (i == secondaryTag.length - 1) {
-                        selectedBeats += secondaryTag[i].name;
+                        selectedBeats += secondaryTag[i].locationCode;
                       } else {
-                        selectedBeats += secondaryTag[i].name + ", ";
+                        selectedBeats += secondaryTag[i].locationCode + ", ";
                       }
                     }
                   }
@@ -328,9 +328,9 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                   if (secondaryTag.isNotEmpty) {
                                     for (int i = 0; i < secondaryTag.length; i++) {
                                       if (i == secondaryTag.length - 1) {
-                                        selectedBeats += secondaryTag[i].name;
+                                        selectedBeats += secondaryTag[i].locationCode;
                                       } else {
-                                        selectedBeats += secondaryTag[i].name + ", ";
+                                        selectedBeats += secondaryTag[i].locationCode + ", ";
                                       }
                                     }
                                   }
@@ -803,9 +803,9 @@ class _StartDayScreenState extends State<StartDayScreen> {
                       if (secondaryTag.isNotEmpty) {
                         for (int i = 0; i < secondaryTag.length; i++) {
                           if (i == secondaryTag.length - 1) {
-                            selectedBeats += secondaryTag[i].name;
+                            selectedBeats += secondaryTag[i].locationCode;
                           } else {
-                            selectedBeats += secondaryTag[i].name + ", ";
+                            selectedBeats += secondaryTag[i].locationCode + ", ";
                           }
                         }
                       }
@@ -865,19 +865,20 @@ class _StartDayScreenState extends State<StartDayScreen> {
     );
   }
 
-  void selectBeat(BuildContext context, List<SecondaryTag> secondaryTag) async {
+  void selectBeat(BuildContext context, List<SecondaryTag> tags) async {
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))),
         builder: (context) {
           return BeatBottomSheet(
-              beat: txtBeatController.text,
-              beats: secondaryTag,
+              selectedBeat: secondaryTag,
+              beats: tags,
               onBeatSelect: (List<SecondaryTag> beat) {
                 String selectedBeats = "";
                 if (beat.isNotEmpty) {
                   for (int i = 0; i < beat.length; i++) {
+                    beat[i].locationCode = beat[i].name;
                     if (i == beat.length - 1) {
                       selectedBeats += beat[i].name;
                     } else {

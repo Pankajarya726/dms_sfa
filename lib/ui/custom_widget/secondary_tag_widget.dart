@@ -157,7 +157,7 @@ class _SecondaryTagWidgetState extends State<SecondaryTagWidget> implements Seco
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))),
         builder: (context) {
           return BeatBottomSheet(
-              beat: txtBeatController.text,
+              selectedBeat: [],
               beats: secondaryTag,
               onBeatSelect: (List<SecondaryTag> beat) {
                 // txtBeatController.text = beat.name;
