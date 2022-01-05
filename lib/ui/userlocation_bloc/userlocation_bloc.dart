@@ -50,7 +50,11 @@ class UserLocationBloc extends Bloc<UserLocationEvents, UserLocationStates> {
       }
 
       yield GetUserLocationState(
-          currentAddress: address, latitude: latitude, longitude: longitude);
+        currentAddress: address,
+        latitude: latitude,
+        longitude: longitude,
+        pincode: postalCode,
+      );
     } catch (exception) {
       yield UserLocationFailureState(
           failureMessage: "Click here to get current location!");

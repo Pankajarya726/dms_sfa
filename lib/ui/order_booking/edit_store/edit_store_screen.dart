@@ -1,14 +1,21 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dms/ui/common_bloc/common_bloc.dart';
 import 'package:dms/ui/common_bloc/common_bloc_events.dart';
 import 'package:dms/ui/common_bloc/common_bloc_states.dart';
+import 'package:dms/ui/userlocation_bloc/userlocation_bloc.dart';
+import 'package:dms/ui/userlocation_bloc/userlocation_events.dart';
+import 'package:dms/ui/userlocation_bloc/userlocation_states.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:ntp/ntp.dart';
 
 import '../../../main.dart';
 
@@ -25,7 +32,9 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
   Object isKRORadio = "";
   File? imageFile;
   String fileName = "test.jpg";
+  DateTime? dateTime;
   CommonBloc commonBloc = CommonBloc();
+  UserLocationBloc userLocationBloc = UserLocationBloc();
   TextEditingController txtOrderBookingController = TextEditingController();
   TextEditingController txtOutletNameController = TextEditingController();
   TextEditingController txtOwnerNameController = TextEditingController();
@@ -44,45 +53,52 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          editStore,
-          style: TextStyle(
-            color: MColor.backButton,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => commonBloc),
+        BlocProvider(create: (context) => userLocationBloc),
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            editStore,
+            style: TextStyle(
+              color: MColor.backButton,
+            ),
           ),
+          centerTitle: true,
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: MColor.backButton,
+            ),
+          ),
+          actions: [
+            IconButton(
+              padding: const EdgeInsets.only(right: 10),
+              onPressed: () {
+                userLocationBloc.add(GetUserLocationEvent());
+              },
+              icon: const Image(
+                width: 30,
+                image: AssetImage("assets/get_location.png"),
+              ),
+            ),
+          ],
         ),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: MColor.backButton,
-          ),
-        ),
-        actions: const [
-          Image(
-            width: 30,
-            image: AssetImage("assets/get_location.png"),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(15, 15, 15, 60),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              textWidget(enrollmentType),
-              BlocProvider(
-                create: (context) => commonBloc,
-                child: BlocBuilder<CommonBloc, CommonBlocStates>(
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(15, 15, 15, 60),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                textWidget(enrollmentType),
+                sizedBoxWidget(5.0),
+                BlocBuilder<CommonBloc, CommonBlocStates>(
                   builder: (context, state) {
                     if (state is CommonBlocEnrollRadioTagState) {
                       selectEnrollmentRadio = state.enrollmentRadioTag;
@@ -97,52 +113,72 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                     );
                   },
                 ),
-              ),
-              sizedBoxTop(),
-              textWidget(orderBookingDay),
-              sizedBoxTop(),
-              textFields(txtOrderBookingController, day),
-              sizedBoxBottom(),
-              textWidget(outletName),
-              sizedBoxTop(),
-              textFields(txtOutletNameController, enterHere),
-              sizedBoxBottom(),
-              textWidget(ownerName),
-              sizedBoxTop(),
-              textFields(txtOwnerNameController, enterHere),
-              sizedBoxBottom(),
-              textWidget(latitude),
-              sizedBoxTop(),
-              textFields(txtLatitudeController, enterHere),
-              sizedBoxBottom(),
-              textWidget(longitude),
-              sizedBoxTop(),
-              textFields(txtLongtitudeController, enterHere),
-              sizedBoxBottom(),
-              textWidget(address),
-              sizedBoxTop(),
-              textFields(txtAddressController, enterHere),
-              sizedBoxBottom(),
-              textWidget(landmark),
-              sizedBoxTop(),
-              textFields(txtLandmarkController, enterHere),
-              sizedBoxBottom(),
-              textWidget(pincode),
-              sizedBoxTop(),
-              textFields(txtPincodeController, enterHere),
-              sizedBoxBottom(),
-              textWidget(primaryMobile),
-              sizedBoxTop(),
-              textFields(txtPrimaryMobController, enterHere),
-              sizedBoxBottom(),
-              textWidget(secondaryMobile),
-              sizedBoxTop(),
-              textFields(txtSecondaryMobController, enterHere),
-              sizedBoxBottom(),
-              textWidget(existingRetailer),
-              BlocProvider(
-                create: (context) => commonBloc,
-                child: BlocBuilder<CommonBloc, CommonBlocStates>(
+                sizedBoxWidget(5.0),
+                textWidget(orderBookingDay),
+                sizedBoxWidget(12.0),
+                textFields(txtOrderBookingController, day),
+                sizedBoxWidget(17.0),
+                textWidget(outletName),
+                sizedBoxWidget(12.0),
+                textFields(txtOutletNameController, enterHere),
+                sizedBoxWidget(17.0),
+                textWidget(ownerName),
+                sizedBoxWidget(12.0),
+                textFields(txtOwnerNameController, enterHere),
+                sizedBoxWidget(17.0),
+                textWidget(latitude),
+                sizedBoxWidget(12.0),
+                BlocBuilder<UserLocationBloc, UserLocationStates>(
+                  builder: (context, state) {
+                    if (state is UserLocationInitialState) {
+                      userLocationBloc.add(GetUserLocationEvent());
+                    }
+                    if (state is GetUserLocationState) {
+                      txtLatitudeController.text = state.latitude.toString();
+                      txtLongtitudeController.text = state.longitude.toString();
+                      txtAddressController.text = state.currentAddress;
+                      txtPincodeController.text = state.pincode;
+                    }
+                    if (state is UserLocationFailureState) {
+                      Fluttertoast.showToast(
+                          msg: "Please turn on GPS to get current location");
+                    }
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        textFields(txtLatitudeController, enterHere),
+                        sizedBoxWidget(17.0),
+                        textWidget(longitude),
+                        sizedBoxWidget(12.0),
+                        textFields(txtLongtitudeController, enterHere),
+                        sizedBoxWidget(17.0),
+                        textWidget(address),
+                        sizedBoxWidget(12.0),
+                        textFields(txtAddressController, enterHere),
+                        sizedBoxWidget(17.0),
+                        textWidget(landmark),
+                        sizedBoxWidget(12.0),
+                        textFields(txtLandmarkController, enterHere),
+                        sizedBoxWidget(17.0),
+                        textWidget(pincode),
+                        sizedBoxWidget(12.0),
+                        textFields(txtPincodeController, enterHere),
+                      ],
+                    );
+                  },
+                ),
+                sizedBoxWidget(17.0),
+                textWidget(primaryMobile),
+                sizedBoxWidget(12.0),
+                textFields(txtPrimaryMobController, enterHere),
+                sizedBoxWidget(17.0),
+                textWidget(secondaryMobile),
+                sizedBoxWidget(12.0),
+                textFields(txtSecondaryMobController, enterHere),
+                sizedBoxWidget(17.0),
+                textWidget(existingRetailer),
+                sizedBoxWidget(5.0),
+                BlocBuilder<CommonBloc, CommonBlocStates>(
                   builder: (context, state) {
                     if (state is CommonBlocRetailerRadioState) {
                       existingRetailerRadio = state.retailerRadioTag;
@@ -156,11 +192,10 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                     );
                   },
                 ),
-              ),
-              textWidget(isKRO),
-              BlocProvider(
-                create: (context) => commonBloc,
-                child: BlocBuilder<CommonBloc, CommonBlocStates>(
+                sizedBoxWidget(5.0),
+                textWidget(isKRO),
+                sizedBoxWidget(5.0),
+                BlocBuilder<CommonBloc, CommonBlocStates>(
                   builder: (context, state) {
                     if (state is CommonBlocIsKRORadioState) {
                       isKRORadio = state.isKRORadioTag;
@@ -174,33 +209,38 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                     );
                   },
                 ),
-              ),
-              sizedBoxBottom(),
-              textWidget(gstNo),
-              sizedBoxTop(),
-              textFields(txtGSTController, enterHere),
-              sizedBoxBottom(),
-              textWidget(pan),
-              sizedBoxTop(),
-              textFields(txtPANController, enterHere),
-              sizedBoxBottom(),
-              textWidget(adharNumber),
-              sizedBoxTop(),
-              textFields(txtAdharNumberController, enterHere),
-              sizedBoxBottom(),
-              textWidget(email),
-              sizedBoxTop(),
-              textFields(txtEmailController, enterHere),
-              sizedBoxBottom(),
-              textWidget(birthday),
-              sizedBoxTop(),
-              textFields(txtPicDateController, picDate),
-              sizedBoxBottom(),
-              textWidget(photo),
-              sizedBoxTop(),
-              BlocProvider(
-                create: (context) => commonBloc,
-                child: BlocBuilder<CommonBloc, CommonBlocStates>(
+                sizedBoxWidget(5.0),
+                textWidget(gstNo),
+                sizedBoxWidget(12.0),
+                textFields(txtGSTController, enterHere),
+                sizedBoxWidget(17.0),
+                textWidget(pan),
+                sizedBoxWidget(12.0),
+                textFields(txtPANController, enterHere),
+                sizedBoxWidget(17.0),
+                textWidget(adharNumber),
+                sizedBoxWidget(12.0),
+                textFields(txtAdharNumberController, enterHere),
+                sizedBoxWidget(17.0),
+                textWidget(email),
+                sizedBoxWidget(12.0),
+                textFields(txtEmailController, enterHere),
+                sizedBoxWidget(17.0),
+                textWidget(birthday),
+                sizedBoxWidget(12.0),
+                BlocBuilder<CommonBloc, CommonBlocStates>(
+                  builder: (context, state) {
+                    if (state is CommonBlocSelectDateState) {
+                      txtPicDateController.text =
+                          DateFormat("yyyy-MM-dd").format(state.dateTime);
+                    }
+                    return textFields(txtPicDateController, picDate);
+                  },
+                ),
+                sizedBoxWidget(17.0),
+                textWidget(photo),
+                sizedBoxWidget(12.0),
+                BlocBuilder<CommonBloc, CommonBlocStates>(
                   builder: (context, state) {
                     if (state is CommonBlocSelectImageState) {
                       imageFile = state.imageFile;
@@ -241,55 +281,58 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                     );
                   },
                 ),
+              ],
+            ),
+          ),
+        ),
+        bottomSheet: MaterialButton(
+          height: 50,
+          minWidth: MediaQuery.of(context).size.width,
+          color: MColor.colorSecondary,
+          textColor: Colors.white,
+          onPressed: () async {},
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Text(
+                updateCaps,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.67,
+                ),
               ),
+              Image(
+                width: 30,
+                image: AssetImage("assets/arrow.png"),
+              )
             ],
           ),
         ),
       ),
-      bottomSheet: MaterialButton(
-        height: 50,
-        minWidth: MediaQuery.of(context).size.width,
-        color: MColor.colorSecondary,
-        textColor: Colors.white,
-        onPressed: () async {},
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text(
-              updateCaps,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 0.67,
-              ),
-            ),
-            Image(
-              width: 30,
-              image: AssetImage("assets/arrow.png"),
-            )
-          ],
-        ),
-      ),
     );
   }
 
-  Widget sizedBoxTop() {
-    return const SizedBox(
-      height: 12,
-    );
-  }
-
-  Widget sizedBoxBottom() {
-    return const SizedBox(
-      height: 17,
+  Widget sizedBoxWidget(boxHeight) {
+    return SizedBox(
+      height: boxHeight,
     );
   }
 
   Widget textFields(txtController, textHint) {
     return txtController == txtPicDateController
         ? GestureDetector(
-            onTap: () {
-              Fluttertoast.showToast(msg: "Open Calendar");
+            onTap: () async {
+              dateTime ??= await NTP.now();
+              dateTime = await showDatePicker(
+                context: context,
+                initialDate: dateTime!,
+                firstDate: DateTime(1950),
+                lastDate: await NTP.now(),
+              );
+              if (dateTime != null) {
+                commonBloc.add(CommonBlocSelectDateEvent(dateTime: dateTime!));
+              }
             },
             child: TextFormField(
               enabled: false,
@@ -330,13 +373,26 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
             ),
           )
         : TextFormField(
+            keyboardType: txtController == txtPincodeController ||
+                    txtController == txtPrimaryMobController ||
+                    txtController == txtSecondaryMobController ||
+                    txtController == txtGSTController ||
+                    txtController == txtPANController ||
+                    txtController == txtAdharNumberController
+                ? TextInputType.number
+                : TextInputType.text,
+            controller: txtController,
+            enabled: txtController == txtLatitudeController ||
+                    txtController == txtLongtitudeController ||
+                    txtController == txtPincodeController
+                ? false
+                : true,
             style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
               letterSpacing: 0.67,
               color: MColor.backButton,
             ),
-            controller: txtController,
             decoration: InputDecoration(
               hintText: textHint,
               hintStyle: const TextStyle(
@@ -353,6 +409,10 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                 borderSide: BorderSide.none,
               ),
             ),
+            onSaved: (value) {
+              log(value.toString());
+              txtAddressController.text = value!;
+            },
           );
   }
 

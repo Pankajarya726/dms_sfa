@@ -45,3 +45,10 @@ class CommonBlocIsKRORadioState extends CommonBlocStates {
   @override
   List<Object> get props => [isKRORadioTag];
 }
+
+class CommonBlocSelectDateState extends CommonBlocStates {
+  final DateTime dateTime;
+  CommonBlocSelectDateState({required this.dateTime});
+  @override
+  List<Object> get props => [dateTime];
+}
