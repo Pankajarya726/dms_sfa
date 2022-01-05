@@ -353,27 +353,27 @@ class ApiRepository {
   }
 
   Future<GetPlanByDateResponse> getSavedPlan(Map input) async {
-    // try {
-    Response response = await dio.post(
-      Url.getSavedPlan,
-      data: input,
-    );
+    try {
+      Response response = await dio.post(
+        Url.getSavedPlan,
+        data: input,
+      );
 
-    return GetPlanByDateResponse.fromJson(response.toString());
-    // } catch (error, stacktrace) {
-    //   String message = "";
-    //   if (error is DioError) {
-    //     ServerError e = ServerError.withError(error: error);
-    //     message = e.getErrorMessage();
-    //   } else {
-    //     message = "Something Went wrong";
-    //   }
-    //   debugPrint("Exception occurred: $message stackTrace: $stacktrace");
-    //   return GetPlanByDateResponse(
-    //     success: false,
-    //     message: message,
-    //   );
-    // }
+      return GetPlanByDateResponse.fromJson(response.toString());
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = "Something Went wrong";
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return GetPlanByDateResponse(
+        success: false,
+        message: message,
+      );
+    }
   }
 
   Future<GetPlanResponse> getPlanByMonth(
