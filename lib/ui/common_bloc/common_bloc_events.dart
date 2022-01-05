@@ -41,3 +41,10 @@ class CommonBlocIsKRORadioEvent extends CommonBlocEvents {
   @override
   List<Object> get props => [isKRORadioTag];
 }
+
+class CommonBlocSelectDateEvent extends CommonBlocEvents {
+  final DateTime dateTime;
+  CommonBlocSelectDateEvent({required this.dateTime});
+  @override
+  List<Object> get props => [dateTime];
+}
