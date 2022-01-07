@@ -9,9 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class SelectCityBottomSheet extends StatefulWidget {
   final Function(String selectedCity) onCitySelect;
   final String selectedCityName;
-  const SelectCityBottomSheet(
-      {Key? key, required this.onCitySelect, required this.selectedCityName})
-      : super(key: key);
+  const SelectCityBottomSheet({Key? key, required this.onCitySelect, required this.selectedCityName}) : super(key: key);
 
   @override
   _SelectCityBottomSheetState createState() => _SelectCityBottomSheetState();
@@ -74,15 +72,13 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
                     builder: (context, state) {
                       if (state is CommonBlocInitialState) {
                         if (selectCityRadio == names[index]) {
-                          commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                              enrollmentRadioTag: index));
+                          commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: index));
                         }
                       }
                       if (state is CommonBlocEnrollRadioTagState) {
                         selectCityRadio = state.enrollmentRadioTag;
                       }
-                      return radioButtonWidget(
-                          selectCityRadio, index, names[index]);
+                      return radioButtonWidget(selectCityRadio, index, names[index]);
                     },
                   ),
                 );
@@ -129,8 +125,7 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
   Widget radioButtonWidget(groupValue, value, label) {
     return GestureDetector(
       onTap: () {
-        commonBloc
-            .add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
+        commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
         selectedCity = names[value];
       },
       child: Row(
@@ -143,8 +138,7 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
               activeColor: MColor.colorPrimary,
               fillColor: MaterialStateProperty.all(MColor.colorPrimary),
               onChanged: (value) {
-                commonBloc.add(
-                    CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
+                commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
                 selectedCity = names[value].toString();
               },
             ),
