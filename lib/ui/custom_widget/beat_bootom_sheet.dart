@@ -9,7 +9,12 @@ class BeatBottomSheet extends StatefulWidget {
   final Function(List<SecondaryTag> beat) onBeatSelect;
   final List<SecondaryTag> beats;
 
-  const BeatBottomSheet({Key? key, required this.selectedBeat, required this.beats, required this.onBeatSelect}) : super(key: key);
+  const BeatBottomSheet(
+      {Key? key,
+      required this.selectedBeat,
+      required this.beats,
+      required this.onBeatSelect})
+      : super(key: key);
 
   @override
   _BeatBottomSheetState createState() => _BeatBottomSheetState();
@@ -33,7 +38,8 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom),
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom),
       child: IntrinsicHeight(
           child: Container(
         margin: const EdgeInsets.only(left: 15, right: 15, top: 15),
@@ -85,7 +91,9 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
                   List<SecondaryTag> searchList = [];
 
                   for (var element in beats) {
-                    if (element.name.toLowerCase().contains(text.trim().toLowerCase())) {
+                    if (element.name
+                        .toLowerCase()
+                        .contains(text.trim().toLowerCase())) {
                       searchList.add(element);
                     }
                   }
@@ -129,13 +137,20 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
                                 // widget.onBeatSelect(snapshot.data![index]);
                                 // Navigator.pop(context);
                               },
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                              leading: Text(snapshot.data![index].name.toString().toUpperCase()),
+                              contentPadding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              leading: Text(snapshot.data![index].name
+                                  .toString()
+                                  .toUpperCase()),
                               trailing: Checkbox(
                                 value: snapshot.data![index].check,
                                 onChanged: (value) {
                                   snapshot.data![index].check = value!;
-                                  beats.singleWhere((element) => element.id == snapshot.data![index].id).check = value;
+                                  beats
+                                      .singleWhere((element) =>
+                                          element.id ==
+                                          snapshot.data![index].id)
+                                      .check = value;
 
                                   // for (var element in beats) {
                                   //   if (element.id != snapshot.data![index].id) {
@@ -164,7 +179,8 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -182,7 +198,8 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
                   ),
                   MaterialButton(
                     onPressed: () {
-                      List<SecondaryTag> tags = beats.where((element) => element.check).toList();
+                      List<SecondaryTag> tags =
+                          beats.where((element) => element.check).toList();
                       widget.onBeatSelect(tags);
                       Navigator.pop(context);
                     },

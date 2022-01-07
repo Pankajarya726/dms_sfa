@@ -1,6 +1,10 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:dms/ui/bottom_sheet_widget/select_beat_name_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_city_bottom_sheet.dart';
+import 'package:dms/ui/bottom_sheet_widget/select_distributor_bottom_sheet.dart';
+import 'package:dms/ui/bottom_sheet_widget/select_lang_first_bottom_sheet.dart';
+import 'package:dms/ui/bottom_sheet_widget/select_lang_second_bottom_sheet.dart';
 import 'package:dms/ui/common_bloc/common_bloc.dart';
 import 'package:dms/ui/common_bloc/common_bloc_events.dart';
 import 'package:dms/ui/common_bloc/common_bloc_states.dart';
@@ -125,7 +129,8 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                     return Row(
                       children: [
                         radioButtonWidget(selectEnrollmentRadio, 0, retailer),
-                        radioButtonWidget(selectEnrollmentRadio, 1, teleRetailer),
+                        radioButtonWidget(
+                            selectEnrollmentRadio, 1, teleRetailer),
                       ],
                     );
                   },
@@ -139,7 +144,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                 sizedBoxWidget(12.0),
                 textFields(txtSelectDistributorController, selectHint),
                 sizedBoxWidget(17.0),
-                textWidget(beatName),
+                textWidget(beatNameMandatory),
                 sizedBoxWidget(12.0),
                 textFields(txtSelectBeatNameController, selectHint),
                 sizedBoxWidget(17.0),
@@ -173,7 +178,8 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                       txtPincodeController.text = state.pincode;
                     }
                     if (state is UserLocationFailureState) {
-                      Fluttertoast.showToast(msg: "Please turn on GPS to get current location");
+                      Fluttertoast.showToast(
+                          msg: "Please turn on GPS to get current location");
                     }
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -283,7 +289,8 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                 BlocBuilder<CommonBloc, CommonBlocStates>(
                   builder: (context, state) {
                     if (state is CommonBlocSelectDateState) {
-                      txtPicDateController.text = DateFormat("yyyy-MM-dd").format(state.dateTime);
+                      txtPicDateController.text =
+                          DateFormat("yyyy-MM-dd").format(state.dateTime);
                     }
                     return textFields(txtPicDateController, picDate);
                   },
@@ -314,7 +321,8 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                         child: imageFile == null
                             ? Center(
                                 child: Image(
-                                  image: const AssetImage("assets/camera_icon.png"),
+                                  image: const AssetImage(
+                                      "assets/camera_icon.png"),
                                   width: MediaQuery.of(context).size.width / 7,
                                   height: MediaQuery.of(context).size.width / 7,
                                   fit: BoxFit.contain,
@@ -394,7 +402,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                       .add(CommonBlocSelectDateEvent(dateTime: dateTime!));
                 }
               } else {
-                openBottomSheet(context);
+                openBottomSheet(context, txtController);
               }
             },
             child: TextFormField(
@@ -507,7 +515,8 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
   Widget radioButtonWidget(groupValue, value, label) {
     void addRadioEvent() {
       if (value == 0 || value == 1) {
-        commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
+        commonBloc
+            .add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
       }
       if (value == 2 || value == 3) {
         commonBloc.add(CommonBlocRetailerRadioEvent(retailerRadioTag: value));
@@ -556,7 +565,10 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
 
   void selectImage() async {
     XFile? image = await imagePicker.pickImage(
-        source: ImageSource.camera, maxHeight: 512, maxWidth: 512, preferredCameraDevice: CameraDevice.front);
+        source: ImageSource.camera,
+        maxHeight: 512,
+        maxWidth: 512,
+        preferredCameraDevice: CameraDevice.front);
     if (image != null) {
       imageFile = File(image.path);
       fileName = image.name;
@@ -564,7 +576,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
     }
   }
 
-  void openBottomSheet(BuildContext context) async {
+  void openBottomSheet(BuildContext context, txtController) async {
     showModalBottomSheet(
         context: context,
         // isScrollControlled: true,
@@ -572,7 +584,56 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
         ),
         builder: (context) {
-          return const SelectCityBottomSheet();
+          return txtController == txtSelectCityController
+              ? SelectCityBottomSheet(
+                  selectedCityName: txtSelectCityController.text.isEmpty
+                      ? ""
+                      : txtSelectCityController.text,
+                  onCitySelect: (city) {
+                    txtSelectCityController.text = city;
+                  },
+                )
+              : txtController == txtSelectDistributorController
+                  ? SelectDistributorBottomSheet(
+                      selectedDistributorName:
+                          txtSelectDistributorController.text.isEmpty
+                              ? ""
+                              : txtSelectDistributorController.text,
+                      onDistributorSelect: (distributor) {
+                        txtSelectDistributorController.text = distributor;
+                      },
+                    )
+                  : txtController == txtSelectBeatNameController
+                      ? SelectBeatNameBottomSheet(
+                          selectedBeatNameName:
+                              txtSelectBeatNameController.text.isEmpty
+                                  ? ""
+                                  : txtSelectBeatNameController.text,
+                          onBeatNameSelect: (beatName) {
+                            txtSelectBeatNameController.text = beatName;
+                          },
+                        )
+                      : txtController == txtSelectLangFirstController
+                          ? SelectLangFirstBottomSheet(
+                              selectedLangFirstName:
+                                  txtSelectLangFirstController.text.isEmpty
+                                      ? ""
+                                      : txtSelectLangFirstController.text,
+                              onLangFirstSelect: (languageName) {
+                                txtSelectLangFirstController.text =
+                                    languageName;
+                              },
+                            )
+                          : SelectLangSecondBottomSheet(
+                              selectedLangSecondName:
+                                  txtSelectLangSecondController.text.isEmpty
+                                      ? ""
+                                      : txtSelectLangSecondController.text,
+                              onLangSecondSelect: (languageName) {
+                                txtSelectLangSecondController.text =
+                                    languageName;
+                              },
+                            );
         });
   }
 }
