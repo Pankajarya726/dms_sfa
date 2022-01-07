@@ -57,6 +57,7 @@ dependencies:
   store_redirect:
   flutter_share:
   dio_http_cache:
+  flutter_icons:
   # webview_flutter:
 
 

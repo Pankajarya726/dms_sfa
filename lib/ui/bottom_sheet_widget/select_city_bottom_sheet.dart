@@ -54,8 +54,10 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
           topLeft: Radius.circular(25),
         ),
       ),
+      constraints: BoxConstraints(minHeight: 100, maxHeight: 600),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           const Text(
             selectCity,
@@ -69,9 +71,9 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
           const SizedBox(
             height: 10,
           ),
-          Flexible(
+          Expanded(
             child: ListView.builder(
-              controller: ScrollController(keepScrollOffset: false),
+              // controller: ScrollController(keepScrollOffset: false),
               itemCount: names.length,
               itemBuilder: (context, index) {
                 return radioButtonWidget(index, index, names[index]);
@@ -82,23 +84,27 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
             height: 20,
           ),
           Center(
-            child: ElevatedButton(
+            child: MaterialButton(
               onPressed: () {},
-              style: ButtonStyle(
-                fixedSize: MaterialStateProperty.all(const Size(220, 60)),
-                backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
-                elevation: MaterialStateProperty.all(0),
-                shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25),
               ),
+              color: MColor.colorPrimary,
+              // style: ButtonStyle(
+              //   fixedSize: MaterialStateProperty.all(const Size(220, 60)),
+              //   backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
+              //   elevation: MaterialStateProperty.all(0),
+              //   shape: MaterialStateProperty.all(
+              //     RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(30),
+              //     ),
+              //   ),
+              // ),
               child: const Text(
                 done,
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 24,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),

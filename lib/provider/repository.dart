@@ -70,8 +70,7 @@ class ApiRepository {
         message = "Something Went wrong";
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
-      return LoginResponse(
-          success: false, message: message, id: 0, accessToken: "", tokenType: "", isLeader: false, startMyDay: "", pjpButton: null);
+      return LoginResponse(success: false, message: message);
     }
   }
 

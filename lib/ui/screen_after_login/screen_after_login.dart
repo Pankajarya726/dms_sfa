@@ -22,7 +22,7 @@ class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
 
   @override
   void initState() {
-    getMyPlan();
+    // getMyPlan();
     super.initState();
   }
 
@@ -85,16 +85,16 @@ class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
           ),
           onTap: () {
             if (imageLabel == startMyDayCaps) {
-              if (myPlan == null) {
-                Fluttertoast.showToast(msg: "You don't have any plan for today, Please connect to admin");
-              } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const StartDayScreen(),
-                  ),
-                );
-              }
+              // if (myPlan == null) {
+              //   Fluttertoast.showToast(msg: "You don't have any plan for today, Please connect to admin");
+              // } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const StartDayScreen(),
+                ),
+              );
+              // }
             } else {
               Navigator.push(
                 context,

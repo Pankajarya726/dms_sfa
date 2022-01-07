@@ -36,12 +36,14 @@ class Data {
   Data({
     required this.isMandatory,
     required this.startMyDay,
+    required this.addPlanButton,
     required this.pjpButton,
   });
 
   int isMandatory;
   String startMyDay;
-  PjpButton pjpButton;
+  AddPlanButton addPlanButton;
+  String pjpButton;
 
   factory Data.fromJson(String str) => Data.fromMap(json.decode(str));
 
@@ -50,20 +52,22 @@ class Data {
   factory Data.fromMap(Map<String, dynamic> json) => Data(
         isMandatory: json["isMandatory"] ?? 0,
         startMyDay: json["StartMyDay"] ?? "hide",
-        pjpButton: json["pjpbutton"] == null
-            ? PjpButton(addPjpButton: "0", fromDate: DateTime.now(), toDate: DateTime.now())
-            : PjpButton.fromMap(json["pjpbutton"]),
+        pjpButton: json["pjpbutton"] ?? "hide",
+        addPlanButton: json["add_plan_button"] == null
+            ? AddPlanButton(addPjpButton: "0", fromDate: DateTime.now(), toDate: DateTime.now())
+            : AddPlanButton.fromMap(json["add_plan_button"]),
       );
 
   Map<String, dynamic> toMap() => {
         "isMandatory": isMandatory,
         "StartMyDay": startMyDay,
-        "pjpbutton": pjpButton == null ? null : pjpButton.toMap(),
+        "add_plan_button": addPlanButton == null ? null : addPlanButton.toMap(),
+        "pjpbutton": pjpButton,
       };
 }
 
-class PjpButton {
-  PjpButton({
+class AddPlanButton {
+  AddPlanButton({
     required this.addPjpButton,
     required this.fromDate,
     required this.toDate,
@@ -73,14 +77,22 @@ class PjpButton {
   DateTime fromDate;
   DateTime toDate;
 
-  factory PjpButton.fromJson(String str) => PjpButton.fromMap(json.decode(str));
+  factory AddPlanButton.fromJson(String str) => AddPlanButton.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory PjpButton.fromMap(Map<String, dynamic> json) => PjpButton(
+  factory AddPlanButton.fromMap(Map<String, dynamic> json) => AddPlanButton(
         addPjpButton: json["addpjpbutton"] == null ? "0" : json["addpjpbutton"].toString(),
-        fromDate: json["fromDate"] == null ? DateTime.now() : DateTime.parse(json["fromDate"]),
-        toDate: json["toDate"] == null ? DateTime.now() : DateTime.parse(json["toDate"]),
+        fromDate: json["fromDate"] == null
+            ? DateTime.now()
+            : json["fromDate"].toString().isEmpty
+                ? DateTime.now()
+                : DateTime.parse(json["fromDate"]),
+        toDate: json["toDate"] == null
+            ? DateTime.now()
+            : json["toDate"].toString().isEmpty
+                ? DateTime.now()
+                : DateTime.parse(json["toDate"]),
       );
 
   Map<String, dynamic> toMap() => {

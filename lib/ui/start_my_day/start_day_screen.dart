@@ -118,7 +118,6 @@ class _StartDayScreenState extends State<StartDayScreen> {
                 if (state is GetSavedPlanState) {
                   refreshController.refreshCompleted();
                   planDateModel = state.planDateModel;
-
                   txtRemarkController.text = state.planDateModel.remark;
                   primaryTag = PrimaryTag(id: state.planDateModel.primaryTagId, name: state.planDateModel.primaryTag);
                   secondaryTag.clear();

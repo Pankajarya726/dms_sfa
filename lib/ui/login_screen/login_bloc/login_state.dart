@@ -12,11 +12,11 @@ class LoginInitialState extends LoginState {}
 class LoginLoadingState extends LoginState {}
 
 class LoginSuccessState extends LoginState {
-  final LoginResponse loginResponse;
+  final LoginData data;
 
-  LoginSuccessState({required this.loginResponse});
+  LoginSuccessState({required this.data});
   @override
-  List<Object?> get props => [loginResponse];
+  List<Object?> get props => [data];
 }
 
 class LoginFailureState extends LoginState {

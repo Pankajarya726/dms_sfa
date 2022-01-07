@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dms/main.dart';
 import 'package:dms/model/get_plan_response.dart';
 import 'package:dms/ui/my_plan/my_plan.dart';
@@ -5,6 +7,7 @@ import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
@@ -22,6 +25,8 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderSt
   List<String> week = [];
   List<WeeklyPlanModel> weeklyPlan = [];
   TabController? tabController;
+
+  StreamController<List<PlanDataModel>> planStreamController = StreamController.broadcast();
 
   @override
   void initState() {
@@ -43,54 +48,28 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderSt
 
           if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             List<WeeklyPlanModel> weeklyPlan = snapshot.data!;
-            return DefaultTabController(
-                length: weeklyPlan.length,
-                child: Column(
-                  children: [
-                    TabBar(
-                      labelStyle: const TextStyle(fontWeight: FontWeight.w500),
-                      controller: tabController,
-                      isScrollable: true,
-                      unselectedLabelColor: Colors.black54,
-                      // indicatorWeight: 40,
-                      indicator: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: const Color(0xffFFC9CC),
-                          border: Border.all(width: 1, color: const Color(0xffF3505A))),
-
-                      onTap: (index) {
-                        tabController!.index = index;
-                      },
-
-                      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                      indicatorPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
-                      labelPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      tabs: List.generate(
-                          weeklyPlan.length,
-                          (i) => Tab(
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "Week ${weeklyPlan[i].week}",
-                                    style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              )),
-                    ),
-                    Expanded(
-                        child: TabBarView(
-                            physics: const NeverScrollableScrollPhysics(),
-                            controller: tabController,
-                            children: List.generate(weeklyPlan.length, (index) {
-                              weeklyPlan[index].planList.sort((a, b) => a.addPlanDate.compareTo(b.addPlanDate));
-
-                              return PlanListWidget(
-                                planList: weeklyPlan[index].planList,
-                              );
-                            })))
-                  ],
-                ));
+            return Column(
+              children: [
+                WeekTabWidget(
+                    weeks: weeklyPlan,
+                    onSelect: (planModel) {
+                      planStreamController.add(planModel.planList);
+                    }),
+                Expanded(
+                  child: StreamBuilder<List<PlanDataModel>>(
+                      stream: planStreamController.stream,
+                      initialData: weeklyPlan.first.planList,
+                      builder: (builder, snapshot) {
+                        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                          return PlanListWidget(
+                            planList: snapshot.data!,
+                          );
+                        }
+                        return const Center(child: Text("Data not found"));
+                      }),
+                ),
+              ],
+            );
           }
           return const Center(
             child: Text("Record not found"),
@@ -100,6 +79,7 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderSt
 
   Future<List<WeeklyPlanModel>> getPlans() async {
     if (await Network.isConnected()) {
+      // planStreamController.close();
       String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
       GetPlanResponse response = await repository.getPlanByMonth(userId, DateFormat("yyyy-MM").format(widget.dateTime));
 
@@ -127,6 +107,67 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderSt
       Fluttertoast.showToast(msg: "Please check your internet connection!");
       return [];
     }
+  }
+}
+
+class WeekTabWidget extends StatefulWidget {
+  final List<WeeklyPlanModel> weeks;
+  final Function(WeeklyPlanModel week) onSelect;
+
+  const WeekTabWidget({Key? key, required this.weeks, required this.onSelect}) : super(key: key);
+
+  @override
+  _WeekTabWidgetState createState() => _WeekTabWidgetState();
+}
+
+class _WeekTabWidgetState extends State<WeekTabWidget> {
+  String week = "Week 1";
+
+  @override
+  void initState() {
+    week = widget.weeks.first.week;
+    widget.onSelect(widget.weeks.first);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: Tags(
+        direction: Axis.horizontal,
+        itemCount: widget.weeks.length,
+        alignment: WrapAlignment.start,
+        runAlignment: WrapAlignment.start,
+        horizontalScroll: true,
+        itemBuilder: (index) {
+          return ItemTags(
+            alignment: MainAxisAlignment.start,
+            index: index,
+            onPressed: (item) {
+              week = item.customData.week;
+              widget.onSelect(item.customData);
+              setState(() {});
+            },
+            active: widget.weeks[index].week == week,
+            customData: widget.weeks[index],
+            textActiveColor: Colors.black,
+            textColor: const Color(0xff555555),
+            elevation: 0,
+            textStyle: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+            // textStyle: const TextStyle(fontSize: 16),
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            border: Border.all(
+              color: widget.weeks[index].week == week ? MColor.colorPrimary : const Color(0xffC5C5C5),
+            ),
+            singleItem: true,
+            activeColor: widget.weeks[index].week == week ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
+            color: widget.weeks[index].week == week ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
+            title: "Week " + widget.weeks[index].week,
+          );
+        },
+      ),
+    );
   }
 }
 
@@ -255,6 +296,7 @@ class _PlanListWidgetState extends State<PlanListWidget> {
                             Text(
                               model.remark,
                               overflow: TextOverflow.ellipsis,
+                              maxLines: 3,
                               style: const TextStyle(
                                 letterSpacing: 0.67,
                                 overflow: TextOverflow.ellipsis,

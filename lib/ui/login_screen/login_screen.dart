@@ -38,31 +38,31 @@ class _LoginScreenState extends State<LoginScreen> {
           if (state is LoginSuccessState) {
             SharedPreference.setStringPreference(SharedPreference.mobileNumber, mobileNumber.toString());
 
-            SharedPreference.setStringPreference(SharedPreference.userId, state.loginResponse.id.toString());
+            SharedPreference.setStringPreference(SharedPreference.userId, state.data.id.toString());
 
-            SharedPreference.setBooleanPreference(SharedPreference.isLogin, state.loginResponse.success);
+            SharedPreference.setBooleanPreference(SharedPreference.isLogin, true);
 
-            SharedPreference.setBooleanPreference(SharedPreference.isLeader, state.loginResponse.isLeader);
+            SharedPreference.setBooleanPreference(SharedPreference.isLeader, state.data.isLeader);
 
-            SharedPreference.setStringPreference(SharedPreference.accessToken, state.loginResponse.accessToken);
+            SharedPreference.setStringPreference(SharedPreference.accessToken, state.data.accessToken);
 
-            if (state.loginResponse.pjpButton!.addPjpButton == "1") {
+            if (state.data.pjpButton.addPjpButton == 1) {
               SharedPreference.setBooleanPreference(SharedPreference.showAddPlanButton, true);
               SharedPreference.setStringPreference(
-                  SharedPreference.fromDate, DateFormat("yyyy-MM-dd").format(state.loginResponse.pjpButton!.fromDate));
+                  SharedPreference.fromDate, DateFormat("yyyy-MM-dd").format(state.data.pjpButton.fromDate));
               SharedPreference.setStringPreference(
-                  SharedPreference.toDate, DateFormat("yyyy-MM-dd").format(state.loginResponse.pjpButton!.toDate));
+                  SharedPreference.toDate, DateFormat("yyyy-MM-dd").format(state.data.pjpButton.toDate));
             } else {
               SharedPreference.setBooleanPreference(SharedPreference.showAddPlanButton, false);
             }
-            Constants.token = "Bearer " + state.loginResponse.accessToken;
+            Constants.token = "Bearer " + state.data.accessToken;
             dio.options.headers.addAll({
               "Authorization": Constants.token,
             });
 
-            Constants.leader = state.loginResponse.isLeader;
-            startMyDay = state.loginResponse.startMyDay;
-            SharedPreference.setStringPreference(SharedPreference.startMyDay, state.loginResponse.startMyDay);
+            Constants.leader = state.data.isLeader;
+            startMyDay = state.data.startMyDay;
+            SharedPreference.setStringPreference(SharedPreference.startMyDay, state.data.startMyDay);
 
             loginBloc.add(GetUserEvent());
           }
