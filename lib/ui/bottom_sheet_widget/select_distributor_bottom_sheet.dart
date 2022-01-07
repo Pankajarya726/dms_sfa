@@ -6,35 +6,41 @@ import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SelectCityBottomSheet extends StatefulWidget {
-  final Function(String selectedCity) onCitySelect;
-  final String selectedCityName;
-  const SelectCityBottomSheet(
-      {Key? key, required this.onCitySelect, required this.selectedCityName})
+class SelectDistributorBottomSheet extends StatefulWidget {
+  final Function(String selectedDistributor) onDistributorSelect;
+  final String selectedDistributorName;
+  const SelectDistributorBottomSheet(
+      {Key? key,
+      required this.onDistributorSelect,
+      required this.selectedDistributorName})
       : super(key: key);
 
   @override
-  _SelectCityBottomSheetState createState() => _SelectCityBottomSheetState();
+  _SelectDistributorBottomSheetState createState() =>
+      _SelectDistributorBottomSheetState();
 }
 
-class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
+class _SelectDistributorBottomSheetState
+    extends State<SelectDistributorBottomSheet> {
   List<String> names = [
-    "Indore",
-    "Bhopal",
-    "Delhi",
-    "Surat",
-    "Banglore",
+    "Murtuza",
+    "Himanshu",
+    "Vaibhav",
+    "Pankaj",
+    "Rishabh",
+    "Chandan",
+    "Atul",
+    "Aakash",
   ];
-  Object selectCityRadio = "";
-  String selectedCity = "";
+  Object selectDistributorRadio = "";
+  String selectedDistributor = "";
   CommonBloc commonBloc = CommonBloc();
 
   @override
   void initState() {
     super.initState();
-    selectCityRadio = widget.selectedCityName;
-    selectedCity = widget.selectedCityName;
-    print("sheet $selectedCity");
+    selectDistributorRadio = widget.selectedDistributorName;
+    selectedDistributor = widget.selectedDistributorName;
   }
 
   @override
@@ -52,7 +58,7 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            selectCity,
+            selectDistributor,
             style: TextStyle(
               fontSize: 19,
               color: MColor.colorPrimary,
@@ -73,16 +79,16 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
                   child: BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
                       if (state is CommonBlocInitialState) {
-                        if (selectCityRadio == names[index]) {
+                        if (selectDistributorRadio == names[index]) {
                           commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                               enrollmentRadioTag: index));
                         }
                       }
                       if (state is CommonBlocEnrollRadioTagState) {
-                        selectCityRadio = state.enrollmentRadioTag;
+                        selectDistributorRadio = state.enrollmentRadioTag;
                       }
                       return radioButtonWidget(
-                          selectCityRadio, index, names[index]);
+                          selectDistributorRadio, index, names[index]);
                     },
                   ),
                 );
@@ -95,7 +101,7 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
           Center(
             child: ElevatedButton(
               onPressed: () {
-                widget.onCitySelect(selectedCity);
+                widget.onDistributorSelect(selectedDistributor);
                 Navigator.pop(context);
               },
               style: ButtonStyle(
@@ -131,7 +137,7 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
       onTap: () {
         commonBloc
             .add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-        selectedCity = names[value];
+        selectedDistributor = names[value];
       },
       child: Row(
         children: [
@@ -145,7 +151,7 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
               onChanged: (value) {
                 commonBloc.add(
                     CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-                selectedCity = names[value].toString();
+                selectedDistributor = names[value].toString();
               },
             ),
           ),

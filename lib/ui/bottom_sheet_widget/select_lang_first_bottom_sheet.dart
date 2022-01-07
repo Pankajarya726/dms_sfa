@@ -6,35 +6,39 @@ import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SelectCityBottomSheet extends StatefulWidget {
-  final Function(String selectedCity) onCitySelect;
-  final String selectedCityName;
-  const SelectCityBottomSheet(
-      {Key? key, required this.onCitySelect, required this.selectedCityName})
+class SelectLangFirstBottomSheet extends StatefulWidget {
+  final Function(String selectedLangFirst) onLangFirstSelect;
+  final String selectedLangFirstName;
+  const SelectLangFirstBottomSheet(
+      {Key? key,
+      required this.onLangFirstSelect,
+      required this.selectedLangFirstName})
       : super(key: key);
 
   @override
-  _SelectCityBottomSheetState createState() => _SelectCityBottomSheetState();
+  _SelectLangFirstBottomSheetState createState() =>
+      _SelectLangFirstBottomSheetState();
 }
 
-class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
+class _SelectLangFirstBottomSheetState
+    extends State<SelectLangFirstBottomSheet> {
   List<String> names = [
-    "Indore",
-    "Bhopal",
-    "Delhi",
-    "Surat",
-    "Banglore",
+    "English",
+    "Hindi",
+    "Tamil",
+    "Urdu",
+    "Telgu",
+    "Marathi",
   ];
-  Object selectCityRadio = "";
-  String selectedCity = "";
+  Object selectLangFirstRadio = "";
+  String selectedLangFirst = "";
   CommonBloc commonBloc = CommonBloc();
 
   @override
   void initState() {
     super.initState();
-    selectCityRadio = widget.selectedCityName;
-    selectedCity = widget.selectedCityName;
-    print("sheet $selectedCity");
+    selectLangFirstRadio = widget.selectedLangFirstName;
+    selectedLangFirst = widget.selectedLangFirstName;
   }
 
   @override
@@ -52,7 +56,7 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            selectCity,
+            selectLangFirst,
             style: TextStyle(
               fontSize: 19,
               color: MColor.colorPrimary,
@@ -73,16 +77,16 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
                   child: BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
                       if (state is CommonBlocInitialState) {
-                        if (selectCityRadio == names[index]) {
+                        if (selectLangFirstRadio == names[index]) {
                           commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                               enrollmentRadioTag: index));
                         }
                       }
                       if (state is CommonBlocEnrollRadioTagState) {
-                        selectCityRadio = state.enrollmentRadioTag;
+                        selectLangFirstRadio = state.enrollmentRadioTag;
                       }
                       return radioButtonWidget(
-                          selectCityRadio, index, names[index]);
+                          selectLangFirstRadio, index, names[index]);
                     },
                   ),
                 );
@@ -95,7 +99,7 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
           Center(
             child: ElevatedButton(
               onPressed: () {
-                widget.onCitySelect(selectedCity);
+                widget.onLangFirstSelect(selectedLangFirst);
                 Navigator.pop(context);
               },
               style: ButtonStyle(
@@ -131,7 +135,7 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
       onTap: () {
         commonBloc
             .add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-        selectedCity = names[value];
+        selectedLangFirst = names[value];
       },
       child: Row(
         children: [
@@ -145,7 +149,7 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
               onChanged: (value) {
                 commonBloc.add(
                     CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-                selectedCity = names[value].toString();
+                selectedLangFirst = names[value].toString();
               },
             ),
           ),
