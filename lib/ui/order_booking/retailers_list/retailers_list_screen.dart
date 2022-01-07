@@ -1,3 +1,5 @@
+import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
+import 'package:dms/ui/bottom_sheet_widget/filter_retailer_bottom_sheet.dart';
 import 'package:dms/ui/order_booking/edit_store/edit_store_screen.dart';
 import 'package:dms/ui/order_booking/retailers_list/retailers_tab.dart';
 import 'package:dms/utils/colors.dart';
@@ -68,7 +70,14 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
               ),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                showModalBottomSheet(
+                    context: context,
+                    shape: bottomSheetShape,
+                    builder: (context) {
+                      return const FilterRetailerBottomSheet();
+                    });
+              },
               icon: const Image(
                 width: 30,
                 image: AssetImage("assets/filter.png"),
@@ -119,19 +128,19 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                         Tab(
                           child: Text(
                             "Not Connected",
-                            style: TextStyle(color: Color(0xff303030)),
+                            style: TextStyle(color: Color(0xff303030), fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ),
                         Tab(
                           child: Text(
                             "No Order",
-                            style: TextStyle(color: Color(0xff303030)),
+                            style: TextStyle(color: Color(0xff303030), fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ),
                         Tab(
                           child: Text(
                             "Order",
-                            style: TextStyle(color: Color(0xff303030)),
+                            style: TextStyle(color: Color(0xff303030), fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ]),

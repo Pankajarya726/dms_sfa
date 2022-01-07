@@ -1,5 +1,6 @@
 import 'package:dms/ui/userlocation_bloc/userlocation_events.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_states.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
@@ -10,20 +11,19 @@ class UserLocationBloc extends Bloc<UserLocationEvents, UserLocationStates> {
 
   @override
   Stream<UserLocationStates> mapEventToState(UserLocationEvents event) async* {
+    debugPrint("event--->$event");
     if (event is GetUserLocationEvent) {
       yield UserLocationLoadingState();
       yield* getUserLocation(event);
     }
   }
 
-  Stream<UserLocationStates> getUserLocation(
-      GetUserLocationEvent event) async* {
+  Stream<UserLocationStates> getUserLocation(GetUserLocationEvent event) async* {
     try {
       Position position = await location();
       double latitude = position.latitude;
       double longitude = position.longitude;
-      List<Placemark> placemarks =
-          await placemarkFromCoordinates(position.latitude, position.longitude);
+      List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
       Placemark place = placemarks[0];
 
       String locality = place.locality!;
@@ -35,18 +35,9 @@ class UserLocationBloc extends Bloc<UserLocationEvents, UserLocationStates> {
 
       // In some cases, street and name are same, to handle this situation we applied this condition
       if (street == name) {
-        address =
-            street + " " + subLocality + " " + locality + " " + postalCode;
+        address = street + " " + subLocality + " " + locality + " " + postalCode;
       } else {
-        address = street +
-            " " +
-            name +
-            " " +
-            subLocality +
-            " " +
-            locality +
-            " " +
-            postalCode;
+        address = street + " " + name + " " + subLocality + " " + locality + " " + postalCode;
       }
 
       yield GetUserLocationState(
@@ -56,8 +47,7 @@ class UserLocationBloc extends Bloc<UserLocationEvents, UserLocationStates> {
         pincode: postalCode,
       );
     } catch (exception) {
-      yield UserLocationFailureState(
-          failureMessage: "Click here to get current location!");
+      yield UserLocationFailureState(failureMessage: "Click here to get current location!");
     }
   }
 
@@ -71,21 +61,18 @@ class UserLocationBloc extends Bloc<UserLocationEvents, UserLocationStates> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        Fluttertoast.showToast(
-            msg: "Please turn on the location for continue!");
+        Fluttertoast.showToast(msg: "Please turn on the location for continue!");
         return Future.error('Location permissions are denied');
       }
     }
     if (permission == LocationPermission.deniedForever) {
       // Permissions are denied forever, handle appropriately.
 
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
+      return Future.error('Location permissions are permanently denied, we cannot request permissions.');
     }
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
 
-    return await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
   }
 }

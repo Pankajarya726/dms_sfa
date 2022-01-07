@@ -11,7 +11,6 @@ import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -52,7 +51,14 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
   TextEditingController txtPicDateController = TextEditingController();
 
   @override
+  void initState() {
+    txtOutletNameController.text = "Pankaj";
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    print("build---->");
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => commonBloc),
@@ -107,8 +113,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                     return Row(
                       children: [
                         radioButtonWidget(selectEnrollmentRadio, 0, retailer),
-                        radioButtonWidget(
-                            selectEnrollmentRadio, 1, teleRetailer),
+                        radioButtonWidget(selectEnrollmentRadio, 1, teleRetailer),
                       ],
                     );
                   },
@@ -129,10 +134,14 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                 textWidget(latitude),
                 sizedBoxWidget(12.0),
                 BlocBuilder<UserLocationBloc, UserLocationStates>(
+                  bloc: userLocationBloc,
                   builder: (context, state) {
+                    print("state---->$state");
+
                     if (state is UserLocationInitialState) {
                       userLocationBloc.add(GetUserLocationEvent());
                     }
+
                     if (state is GetUserLocationState) {
                       txtLatitudeController.text = state.latitude.toString();
                       txtLongtitudeController.text = state.longitude.toString();
@@ -140,8 +149,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                       txtPincodeController.text = state.pincode;
                     }
                     if (state is UserLocationFailureState) {
-                      Fluttertoast.showToast(
-                          msg: "Please turn on GPS to get current location");
+                      Fluttertoast.showToast(msg: "Please turn on GPS to get current location");
                     }
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,8 +239,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                 BlocBuilder<CommonBloc, CommonBlocStates>(
                   builder: (context, state) {
                     if (state is CommonBlocSelectDateState) {
-                      txtPicDateController.text =
-                          DateFormat("yyyy-MM-dd").format(state.dateTime);
+                      txtPicDateController.text = DateFormat("yyyy-MM-dd").format(state.dateTime);
                     }
                     return textFields(txtPicDateController, picDate);
                   },
@@ -263,8 +270,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                         child: imageFile == null
                             ? Center(
                                 child: Image(
-                                  image: const AssetImage(
-                                      "assets/camera_icon.png"),
+                                  image: const AssetImage("assets/camera_icon.png"),
                                   width: MediaQuery.of(context).size.width / 7,
                                   height: MediaQuery.of(context).size.width / 7,
                                   fit: BoxFit.contain,
@@ -409,6 +415,10 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                 borderSide: BorderSide.none,
               ),
             ),
+            onChanged: (v) {},
+            onFieldSubmitted: (v) {
+              print("v---->$v");
+            },
             onSaved: (value) {
               log(value.toString());
               txtAddressController.text = value!;
@@ -431,8 +441,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
   Widget radioButtonWidget(groupValue, value, label) {
     void addRadioEvent() {
       if (value == 0 || value == 1) {
-        commonBloc
-            .add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
+        commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
       }
       if (value == 2 || value == 3) {
         commonBloc.add(CommonBlocRetailerRadioEvent(retailerRadioTag: value));
@@ -481,10 +490,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
 
   void selectImage() async {
     XFile? image = await imagePicker.pickImage(
-        source: ImageSource.camera,
-        maxHeight: 512,
-        maxWidth: 512,
-        preferredCameraDevice: CameraDevice.front);
+        source: ImageSource.camera, maxHeight: 512, maxWidth: 512, preferredCameraDevice: CameraDevice.front);
     if (image != null) {
       imageFile = File(image.path);
       fileName = image.name;

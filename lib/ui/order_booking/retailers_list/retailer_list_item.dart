@@ -1,3 +1,4 @@
+import 'package:dms/ui/order_booking/retailer_detail/retailer_detail_screen.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -37,7 +38,9 @@ class _RetailerListItemsState extends State<RetailerListItems> {
           customBorder: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          onTap: () {},
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => RetailerDetailScreen()));
+          },
           child: Padding(
             padding: const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
             child: Column(
