@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
-
+import 'package:dms/ui/bottom_sheet_widget/select_city_bottom_sheet.dart';
 import 'package:dms/ui/common_bloc/common_bloc.dart';
 import 'package:dms/ui/common_bloc/common_bloc_events.dart';
 import 'package:dms/ui/common_bloc/common_bloc_states.dart';
@@ -15,7 +15,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
-
 import '../../../main.dart';
 
 class EditStoreScreen extends StatefulWidget {
@@ -49,6 +48,17 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
   TextEditingController txtAdharNumberController = TextEditingController();
   TextEditingController txtEmailController = TextEditingController();
   TextEditingController txtPicDateController = TextEditingController();
+  TextEditingController txtSelectCityController = TextEditingController();
+  TextEditingController txtSelectDistributorController =
+      TextEditingController();
+  TextEditingController txtSelectBeatNameController = TextEditingController();
+  TextEditingController txtSelectVisitTimeController = TextEditingController();
+  TextEditingController txtSelectLangFirstController = TextEditingController();
+  TextEditingController txtSelectLangSecondController = TextEditingController();
+  TextEditingController txtSelectRetailerTypeController =
+      TextEditingController();
+  TextEditingController txtSelectRetailerCategoryController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -66,6 +76,8 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
       ],
       child: Scaffold(
         appBar: AppBar(
+          elevation: 5,
+          shadowColor: Colors.white24,
           title: const Text(
             editStore,
             style: TextStyle(
@@ -119,6 +131,18 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                   },
                 ),
                 sizedBoxWidget(5.0),
+                textWidget(city),
+                sizedBoxWidget(12.0),
+                textFields(txtSelectCityController, selectHint),
+                sizedBoxWidget(17.0),
+                textWidget(distributor),
+                sizedBoxWidget(12.0),
+                textFields(txtSelectDistributorController, selectHint),
+                sizedBoxWidget(17.0),
+                textWidget(beatName),
+                sizedBoxWidget(12.0),
+                textFields(txtSelectBeatNameController, selectHint),
+                sizedBoxWidget(17.0),
                 textWidget(orderBookingDay),
                 sizedBoxWidget(12.0),
                 textFields(txtOrderBookingController, day),
@@ -201,6 +225,26 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                   },
                 ),
                 sizedBoxWidget(5.0),
+                textWidget(visitTime),
+                sizedBoxWidget(12.0),
+                textFields(txtSelectVisitTimeController, selectHint),
+                sizedBoxWidget(17.0),
+                textWidget(languageFirst),
+                sizedBoxWidget(12.0),
+                textFields(txtSelectLangFirstController, selectHint),
+                sizedBoxWidget(17.0),
+                textWidget(languageSecond),
+                sizedBoxWidget(12.0),
+                textFields(txtSelectLangSecondController, selectHint),
+                sizedBoxWidget(17.0),
+                textWidget(retailerType),
+                sizedBoxWidget(12.0),
+                textFields(txtSelectRetailerTypeController, selectHint),
+                sizedBoxWidget(17.0),
+                textWidget(retailerCategory),
+                sizedBoxWidget(12.0),
+                textFields(txtSelectRetailerCategoryController, selectHint),
+                sizedBoxWidget(17.0),
                 textWidget(isKRO),
                 sizedBoxWidget(5.0),
                 BlocBuilder<CommonBloc, CommonBlocStates>(
@@ -326,18 +370,31 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
   }
 
   Widget textFields(txtController, textHint) {
-    return txtController == txtPicDateController
+    return txtController == txtPicDateController ||
+            txtController == txtSelectCityController ||
+            txtController == txtSelectDistributorController ||
+            txtController == txtSelectBeatNameController ||
+            txtController == txtSelectVisitTimeController ||
+            txtController == txtSelectLangFirstController ||
+            txtController == txtSelectLangSecondController ||
+            txtController == txtSelectRetailerTypeController ||
+            txtController == txtSelectRetailerCategoryController
         ? GestureDetector(
             onTap: () async {
-              dateTime ??= await NTP.now();
-              dateTime = await showDatePicker(
-                context: context,
-                initialDate: dateTime!,
-                firstDate: DateTime(1950),
-                lastDate: await NTP.now(),
-              );
-              if (dateTime != null) {
-                commonBloc.add(CommonBlocSelectDateEvent(dateTime: dateTime!));
+              if (txtController == txtPicDateController) {
+                dateTime ??= await NTP.now();
+                dateTime = await showDatePicker(
+                  context: context,
+                  initialDate: dateTime!,
+                  firstDate: DateTime(1950),
+                  lastDate: await NTP.now(),
+                );
+                if (dateTime != null) {
+                  commonBloc
+                      .add(CommonBlocSelectDateEvent(dateTime: dateTime!));
+                }
+              } else {
+                openBottomSheet(context);
               }
             },
             child: TextFormField(
@@ -350,17 +407,26 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
               ),
               controller: txtController,
               decoration: InputDecoration(
-                suffixIcon: const Padding(
-                  padding: EdgeInsets.only(right: 20),
-                  child: Align(
-                    widthFactor: 1,
-                    alignment: Alignment.centerRight,
-                    child: Image(
-                      width: 22,
-                      image: AssetImage("assets/calendar_icon.png"),
-                    ),
-                  ),
-                ),
+                suffixIcon: txtController == txtPicDateController
+                    ? const Padding(
+                        padding: EdgeInsets.only(right: 20),
+                        child: Align(
+                          widthFactor: 1,
+                          alignment: Alignment.centerRight,
+                          child: Image(
+                            width: 22,
+                            image: AssetImage("assets/calendar_icon.png"),
+                          ),
+                        ),
+                      )
+                    : const Padding(
+                        padding: EdgeInsets.only(right: 15),
+                        child: Icon(
+                          Icons.keyboard_arrow_down_outlined,
+                          color: MColor.backButton,
+                          size: 30,
+                        ),
+                      ),
                 hintText: textHint,
                 hintStyle: const TextStyle(
                   color: MColor.backButton,
@@ -496,5 +562,17 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
       fileName = image.name;
       commonBloc.add(CommonBlocSelectImageEvent(imageFile: imageFile!));
     }
+  }
+
+  void openBottomSheet(BuildContext context) async {
+    showModalBottomSheet(
+        context: context,
+        // isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+        ),
+        builder: (context) {
+          return const SelectCityBottomSheet();
+        });
   }
 }

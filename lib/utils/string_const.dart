@@ -69,3 +69,6 @@ const no = "No";
 const day = "Day";
 const enterHere = "Enter here";
 const picDate = "Pic your date";
+const selectHint = "Select";
+const selectCity = "Select City";
+const done = "Done";
