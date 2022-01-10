@@ -5,6 +5,9 @@ import 'package:dms/ui/bottom_sheet_widget/select_city_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_distributor_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_lang_first_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_lang_second_bottom_sheet.dart';
+import 'package:dms/ui/bottom_sheet_widget/select_retailercategory_bottom_sheet.dart';
+import 'package:dms/ui/bottom_sheet_widget/select_retailertype_bottom_sheet.dart';
+import 'package:dms/ui/bottom_sheet_widget/select_visittime_bottom_sheet.dart';
 import 'package:dms/ui/common_bloc/common_bloc.dart';
 import 'package:dms/ui/common_bloc/common_bloc_events.dart';
 import 'package:dms/ui/common_bloc/common_bloc_states.dart';
@@ -14,6 +17,7 @@ import 'package:dms/ui/userlocation_bloc/userlocation_states.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -31,9 +35,12 @@ class EditStoreScreen extends StatefulWidget {
 class _EditStoreScreenState extends State<EditStoreScreen> {
   Object selectEnrollmentRadio = "";
   Object existingRetailerRadio = "";
+  Object whatsAppSmsRadio = "";
   Object isKRORadio = "";
-  File? imageFile;
-  String fileName = "test.jpg";
+  File? outletPhotoFile;
+  File? ownerPhotoFile;
+  String outletFileName = "outlet.jpg";
+  String ownerFileName = "owner.jpg";
   DateTime? dateTime;
   CommonBloc commonBloc = CommonBloc();
   UserLocationBloc userLocationBloc = UserLocationBloc();
@@ -56,7 +63,8 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
   TextEditingController txtSelectDistributorController =
       TextEditingController();
   TextEditingController txtSelectBeatNameController = TextEditingController();
-  TextEditingController txtSelectVisitTimeController = TextEditingController();
+  TextEditingController txtSelectCallTimeSlotController =
+      TextEditingController();
   TextEditingController txtSelectLangFirstController = TextEditingController();
   TextEditingController txtSelectLangSecondController = TextEditingController();
   TextEditingController txtSelectRetailerTypeController =
@@ -65,14 +73,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
       TextEditingController();
 
   @override
-  void initState() {
-    txtOutletNameController.text = "Pankaj";
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    print("build---->");
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => commonBloc),
@@ -139,27 +140,27 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                 textWidget(city),
                 sizedBoxWidget(12.0),
                 textFields(txtSelectCityController, selectHint),
-                sizedBoxWidget(17.0),
+                sizedBoxWidget(20.0),
                 textWidget(distributor),
                 sizedBoxWidget(12.0),
                 textFields(txtSelectDistributorController, selectHint),
-                sizedBoxWidget(17.0),
+                sizedBoxWidget(20.0),
                 textWidget(beatNameMandatory),
                 sizedBoxWidget(12.0),
                 textFields(txtSelectBeatNameController, selectHint),
-                sizedBoxWidget(17.0),
+                sizedBoxWidget(20.0),
                 textWidget(orderBookingDay),
                 sizedBoxWidget(12.0),
                 textFields(txtOrderBookingController, day),
-                sizedBoxWidget(17.0),
+                sizedBoxWidget(20.0),
                 textWidget(outletName),
                 sizedBoxWidget(12.0),
                 textFields(txtOutletNameController, enterHere),
-                sizedBoxWidget(17.0),
+                sizedBoxWidget(20.0),
                 textWidget(ownerName),
                 sizedBoxWidget(12.0),
                 textFields(txtOwnerNameController, enterHere),
-                sizedBoxWidget(17.0),
+                sizedBoxWidget(20.0),
                 textWidget(latitude),
                 sizedBoxWidget(12.0),
                 BlocBuilder<UserLocationBloc, UserLocationStates>(
@@ -205,15 +206,15 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                     );
                   },
                 ),
-                sizedBoxWidget(17.0),
+                sizedBoxWidget(20.0),
                 textWidget(primaryMobile),
                 sizedBoxWidget(12.0),
                 textFields(txtPrimaryMobController, enterHere),
-                sizedBoxWidget(17.0),
+                sizedBoxWidget(20.0),
                 textWidget(secondaryMobile),
                 sizedBoxWidget(12.0),
                 textFields(txtSecondaryMobController, enterHere),
-                sizedBoxWidget(17.0),
+                sizedBoxWidget(20.0),
                 textWidget(existingRetailer),
                 sizedBoxWidget(5.0),
                 BlocBuilder<CommonBloc, CommonBlocStates>(
@@ -231,26 +232,43 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                   },
                 ),
                 sizedBoxWidget(5.0),
-                textWidget(visitTime),
+                textWidget(callTimeSlot),
                 sizedBoxWidget(12.0),
-                textFields(txtSelectVisitTimeController, selectHint),
-                sizedBoxWidget(17.0),
+                textFields(txtSelectCallTimeSlotController, selectHint),
+                sizedBoxWidget(20.0),
                 textWidget(languageFirst),
                 sizedBoxWidget(12.0),
                 textFields(txtSelectLangFirstController, selectHint),
-                sizedBoxWidget(17.0),
+                sizedBoxWidget(20.0),
                 textWidget(languageSecond),
                 sizedBoxWidget(12.0),
                 textFields(txtSelectLangSecondController, selectHint),
-                sizedBoxWidget(17.0),
+                sizedBoxWidget(20.0),
                 textWidget(retailerType),
                 sizedBoxWidget(12.0),
                 textFields(txtSelectRetailerTypeController, selectHint),
-                sizedBoxWidget(17.0),
+                sizedBoxWidget(20.0),
                 textWidget(retailerCategory),
                 sizedBoxWidget(12.0),
                 textFields(txtSelectRetailerCategoryController, selectHint),
-                sizedBoxWidget(17.0),
+                sizedBoxWidget(20.0),
+                textWidget(whatsAppSms),
+                sizedBoxWidget(5.0),
+                BlocBuilder<CommonBloc, CommonBlocStates>(
+                  builder: (context, state) {
+                    if (state is CommonBlocWhatsAppRadioState) {
+                      whatsAppSmsRadio = state.whatsAppRadioTag;
+                      debugPrint("$whatsAppSmsRadio");
+                    }
+                    return Row(
+                      children: [
+                        radioButtonWidget(whatsAppSmsRadio, 4, yes),
+                        radioButtonWidget(whatsAppSmsRadio, 5, no),
+                      ],
+                    );
+                  },
+                ),
+                sizedBoxWidget(5.0),
                 textWidget(isKRO),
                 sizedBoxWidget(5.0),
                 BlocBuilder<CommonBloc, CommonBlocStates>(
@@ -261,8 +279,8 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                     }
                     return Row(
                       children: [
-                        radioButtonWidget(isKRORadio, 4, yes),
-                        radioButtonWidget(isKRORadio, 5, no),
+                        radioButtonWidget(isKRORadio, 6, yes),
+                        radioButtonWidget(isKRORadio, 7, no),
                       ],
                     );
                   },
@@ -271,19 +289,19 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                 textWidget(gstNo),
                 sizedBoxWidget(12.0),
                 textFields(txtGSTController, enterHere),
-                sizedBoxWidget(17.0),
+                sizedBoxWidget(20.0),
                 textWidget(pan),
                 sizedBoxWidget(12.0),
                 textFields(txtPANController, enterHere),
-                sizedBoxWidget(17.0),
+                sizedBoxWidget(20.0),
                 textWidget(adharNumber),
                 sizedBoxWidget(12.0),
                 textFields(txtAdharNumberController, enterHere),
-                sizedBoxWidget(17.0),
+                sizedBoxWidget(20.0),
                 textWidget(email),
                 sizedBoxWidget(12.0),
                 textFields(txtEmailController, enterHere),
-                sizedBoxWidget(17.0),
+                sizedBoxWidget(20.0),
                 textWidget(birthday),
                 sizedBoxWidget(12.0),
                 BlocBuilder<CommonBloc, CommonBlocStates>(
@@ -295,50 +313,57 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                     return textFields(txtPicDateController, picDate);
                   },
                 ),
-                sizedBoxWidget(17.0),
-                textWidget(photo),
-                sizedBoxWidget(12.0),
-                BlocBuilder<CommonBloc, CommonBlocStates>(
-                  builder: (context, state) {
-                    if (state is CommonBlocSelectImageState) {
-                      imageFile = state.imageFile;
-                    }
-                    return InkWell(
-                      onTap: () {
-                        selectImage();
-                      },
-                      child: Container(
-                        width: MediaQuery.of(context).size.width / 3,
-                        height: MediaQuery.of(context).size.width / 3,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.white,
-                          border: Border.all(
-                            color: const Color.fromRGBO(85, 85, 85, 1),
-                            width: 1,
-                          ),
+                sizedBoxWidget(5.0),
+                Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        sizedBoxWidget(17.0),
+                        textWidget(outletPhoto),
+                        sizedBoxWidget(12.0),
+                        BlocBuilder<CommonBloc, CommonBlocStates>(
+                          builder: (context, state) {
+                            if (state is CommonBlocSelectImageState) {
+                              outletPhotoFile = state.imageFile;
+                            }
+                            return InkWell(
+                              onTap: () {
+                                selectImage(outletName);
+                              },
+                              child: selectImageWidget(outletName),
+                            );
+                          },
                         ),
-                        child: imageFile == null
-                            ? Center(
-                                child: Image(
-                                  image: const AssetImage(
-                                      "assets/camera_icon.png"),
-                                  width: MediaQuery.of(context).size.width / 7,
-                                  height: MediaQuery.of(context).size.width / 7,
-                                  fit: BoxFit.contain,
-                                ),
-                              )
-                            : ClipRRect(
-                                borderRadius: BorderRadius.circular(7),
-                                child: Image(
-                                  image: FileImage(imageFile!),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                      ),
-                    );
-                  },
+                      ],
+                    ),
+                    const SizedBox(
+                      width: 40,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        sizedBoxWidget(17.0),
+                        textWidget(ownerPhoto),
+                        sizedBoxWidget(12.0),
+                        BlocBuilder<CommonBloc, CommonBlocStates>(
+                          builder: (context, state) {
+                            if (state is CommonBlocSelectOwnerImageState) {
+                              ownerPhotoFile = state.imageFile;
+                            }
+                            return InkWell(
+                              onTap: () {
+                                selectImage(ownerName);
+                              },
+                              child: selectImageWidget(ownerName),
+                            );
+                          },
+                        ),
+                      ],
+                    )
+                  ],
                 ),
+                sizedBoxWidget(10.0),
               ],
             ),
           ),
@@ -348,7 +373,38 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
           minWidth: MediaQuery.of(context).size.width,
           color: MColor.colorSecondary,
           textColor: Colors.white,
-          onPressed: () async {},
+          onPressed: () async {
+            if (selectEnrollmentRadio == "") {
+              Fluttertoast.showToast(msg: "Please select enrollment type");
+            } else if (txtSelectBeatNameController.text.isEmpty) {
+              Fluttertoast.showToast(msg: "Please select beat name");
+            } else if (txtOutletNameController.text.isEmpty) {
+              Fluttertoast.showToast(msg: "Please enter outlet name");
+            } else if (txtOwnerNameController.text.isEmpty) {
+              Fluttertoast.showToast(msg: "Please enter owner name");
+            } else if (txtLandmarkController.text.isEmpty) {
+              Fluttertoast.showToast(msg: "Please enter landmark");
+            } else if (txtPrimaryMobController.text.isEmpty) {
+              Fluttertoast.showToast(msg: "Please enter primary mobile");
+            } else if (existingRetailerRadio == "") {
+              Fluttertoast.showToast(msg: "Please select existing retailer");
+            } else if (txtSelectCallTimeSlotController.text.isEmpty) {
+              Fluttertoast.showToast(msg: "Please select call time slot");
+            } else if (txtSelectLangFirstController.text.isEmpty) {
+              Fluttertoast.showToast(msg: "Please select language 1st");
+            } else if (txtSelectRetailerTypeController.text.isEmpty) {
+              Fluttertoast.showToast(msg: "Please select retailer type");
+            } else if (txtSelectRetailerCategoryController.text.isEmpty) {
+              Fluttertoast.showToast(msg: "Please select retailer category");
+            } else if (whatsAppSmsRadio == "") {
+              Fluttertoast.showToast(
+                  msg: "Please select opt-in for whatsapp message / SMS");
+            } else if (outletPhotoFile == null) {
+              Fluttertoast.showToast(msg: "Please capture outlet photo");
+            } else {
+              Fluttertoast.showToast(msg: "Store added successful");
+            }
+          },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
@@ -382,7 +438,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
             txtController == txtSelectCityController ||
             txtController == txtSelectDistributorController ||
             txtController == txtSelectBeatNameController ||
-            txtController == txtSelectVisitTimeController ||
+            txtController == txtSelectCallTimeSlotController ||
             txtController == txtSelectLangFirstController ||
             txtController == txtSelectLangSecondController ||
             txtController == txtSelectRetailerTypeController ||
@@ -456,15 +512,20 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
             keyboardType: txtController == txtPincodeController ||
                     txtController == txtPrimaryMobController ||
                     txtController == txtSecondaryMobController ||
-                    txtController == txtGSTController ||
-                    txtController == txtPANController ||
                     txtController == txtAdharNumberController
                 ? TextInputType.number
-                : TextInputType.text,
+                : txtController == txtEmailController
+                    ? TextInputType.emailAddress
+                    : TextInputType.text,
             controller: txtController,
+            maxLength: txtController == txtPrimaryMobController ||
+                    txtController == txtSecondaryMobController
+                ? 10
+                : null,
             enabled: txtController == txtLatitudeController ||
                     txtController == txtLongtitudeController ||
-                    txtController == txtPincodeController
+                    txtController == txtPincodeController ||
+                    txtController == txtOrderBookingController
                 ? false
                 : true,
             style: const TextStyle(
@@ -484,19 +545,12 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
               contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
               filled: true,
               fillColor: const Color(0xffF2F2F2),
+              counter: Container(),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(30),
                 borderSide: BorderSide.none,
               ),
             ),
-            onChanged: (v) {},
-            onFieldSubmitted: (v) {
-              print("v---->$v");
-            },
-            onSaved: (value) {
-              log(value.toString());
-              txtAddressController.text = value!;
-            },
           );
   }
 
@@ -522,6 +576,9 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
         commonBloc.add(CommonBlocRetailerRadioEvent(retailerRadioTag: value));
       }
       if (value == 4 || value == 5) {
+        commonBloc.add(CommonBlocWhatsAppRadioEvent(whatsAppRadioTag: value));
+      }
+      if (value == 6 || value == 7) {
         commonBloc.add(CommonBlocIsKRORadioEvent(isKRORadioTag: value));
       }
     }
@@ -563,16 +620,79 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
     );
   }
 
-  void selectImage() async {
-    XFile? image = await imagePicker.pickImage(
-        source: ImageSource.camera,
-        maxHeight: 512,
-        maxWidth: 512,
-        preferredCameraDevice: CameraDevice.front);
-    if (image != null) {
-      imageFile = File(image.path);
-      fileName = image.name;
-      commonBloc.add(CommonBlocSelectImageEvent(imageFile: imageFile!));
+  Widget selectImageWidget(imageLabel) {
+    return Container(
+      width: MediaQuery.of(context).size.width / 3,
+      height: MediaQuery.of(context).size.width / 3,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: Colors.white,
+        border: Border.all(
+          color: const Color.fromRGBO(85, 85, 85, 1),
+          width: 1,
+        ),
+      ),
+      child: imageLabel == outletName
+          ? (outletPhotoFile == null
+              ? Center(
+                  child: Image(
+                    image: const AssetImage("assets/camera_icon.png"),
+                    width: MediaQuery.of(context).size.width / 7,
+                    height: MediaQuery.of(context).size.width / 7,
+                    fit: BoxFit.contain,
+                  ),
+                )
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular(7),
+                  child: Image(
+                    image: FileImage(outletPhotoFile!),
+                    fit: BoxFit.cover,
+                  ),
+                ))
+          : ownerPhotoFile == null
+              ? Center(
+                  child: Image(
+                    image: const AssetImage("assets/camera_icon.png"),
+                    width: MediaQuery.of(context).size.width / 7,
+                    height: MediaQuery.of(context).size.width / 7,
+                    fit: BoxFit.contain,
+                  ),
+                )
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular(7),
+                  child: Image(
+                    image: FileImage(ownerPhotoFile!),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+    );
+  }
+
+  void selectImage(imageLabel) async {
+    try {
+      XFile? image = await imagePicker.pickImage(
+          source: ImageSource.camera,
+          maxHeight: 512,
+          maxWidth: 512,
+          preferredCameraDevice: CameraDevice.front);
+      if (image != null) {
+        if (imageLabel == outletName) {
+          outletPhotoFile = File(image.path);
+          outletFileName = image.name;
+          commonBloc
+              .add(CommonBlocSelectImageEvent(imageFile: outletPhotoFile!));
+        } else {
+          ownerPhotoFile = File(image.path);
+          ownerFileName = image.name;
+          commonBloc
+              .add(CommonBlocSelectOwnerImageEvent(imageFile: ownerPhotoFile!));
+        }
+      }
+    } catch (exception) {
+      Fluttertoast.showToast(
+          msg:
+              "Permission denied, go to app settings and allow camera permission",
+          toastLength: Toast.LENGTH_LONG);
     }
   }
 
@@ -624,16 +744,57 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                                     languageName;
                               },
                             )
-                          : SelectLangSecondBottomSheet(
-                              selectedLangSecondName:
-                                  txtSelectLangSecondController.text.isEmpty
-                                      ? ""
-                                      : txtSelectLangSecondController.text,
-                              onLangSecondSelect: (languageName) {
-                                txtSelectLangSecondController.text =
-                                    languageName;
-                              },
-                            );
+                          : txtController == txtSelectLangSecondController
+                              ? SelectLangSecondBottomSheet(
+                                  selectedLangSecondName:
+                                      txtSelectLangSecondController.text.isEmpty
+                                          ? ""
+                                          : txtSelectLangSecondController.text,
+                                  onLangSecondSelect: (languageName) {
+                                    txtSelectLangSecondController.text =
+                                        languageName;
+                                  },
+                                )
+                              : txtController == txtSelectCallTimeSlotController
+                                  ? SelectCallTimeSlotBottomSheet(
+                                      selectedCallTimeSlotName:
+                                          txtSelectCallTimeSlotController
+                                                  .text.isEmpty
+                                              ? ""
+                                              : txtSelectCallTimeSlotController
+                                                  .text,
+                                      onCallTimeSlotSelect: (callTimeSlot) {
+                                        txtSelectCallTimeSlotController.text =
+                                            callTimeSlot;
+                                      },
+                                    )
+                                  : txtController ==
+                                          txtSelectRetailerTypeController
+                                      ? SelectRetailerTypeBottomSheet(
+                                          selectedRetailerTypeName:
+                                              txtSelectRetailerTypeController
+                                                      .text.isEmpty
+                                                  ? ""
+                                                  : txtSelectRetailerTypeController
+                                                      .text,
+                                          onRetailerTypeSelect: (retailerType) {
+                                            txtSelectRetailerTypeController
+                                                .text = retailerType;
+                                          },
+                                        )
+                                      : SelectRetailerCategoryBottomSheet(
+                                          selectedRetailerCategoryName:
+                                              txtSelectRetailerCategoryController
+                                                      .text.isEmpty
+                                                  ? ""
+                                                  : txtSelectRetailerCategoryController
+                                                      .text,
+                                          onRetailerCategorySelect:
+                                              (retailerCategory) {
+                                            txtSelectRetailerCategoryController
+                                                .text = retailerCategory;
+                                          },
+                                        );
         });
   }
 }
