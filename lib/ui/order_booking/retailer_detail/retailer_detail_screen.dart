@@ -47,11 +47,11 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                 ),
               ]),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, childAspectRatio: 2.5, mainAxisSpacing: 15, crossAxisSpacing: 0)),
+                  crossAxisCount: 2, childAspectRatio: 2.6, mainAxisSpacing: 15, crossAxisSpacing: 0)),
           SliverList(
               delegate: SliverChildListDelegate([
             Padding(
-              padding: const EdgeInsets.all(15.0),
+              padding: const EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 10),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -66,7 +66,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                   IconButton(
                       onPressed: () {},
                       padding: EdgeInsets.zero,
-                      splashRadius: 15,
+                      splashRadius: 13,
                       icon: Container(
                         height: 25,
                         width: 25,
@@ -82,6 +82,146 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                 ],
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10)), boxShadow: [
+                  BoxShadow(
+                    color: Color.fromRGBO(237, 237, 237, 0.25),
+                    blurRadius: 10,
+                  )
+                ]),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Expanded(
+                          child: RetailerDetailItem(
+                            value: "Rahul Shrivastav",
+                            image: "assets/user.png",
+                            name: "Owner Name",
+                            type: 1,
+                          ),
+                        ),
+                        Container(
+                          width: 1,
+                          height: 30,
+                          color: const Color(0xffC5C5C5),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        const Expanded(
+                          child: RetailerDetailItem(
+                            value: "Friday",
+                            image: "assets/telephone.png",
+                            name: "Calling Day",
+                            type: 1,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Expanded(
+                          child: RetailerDetailItem(
+                            value: "9450237542",
+                            image: "assets/phone_call.png",
+                            name: "Primary No.",
+                            type: 1,
+                          ),
+                        ),
+                        Container(
+                          width: 1,
+                          height: 30,
+                          color: Color(0xffC5C5C5),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        const Expanded(
+                          child: RetailerDetailItem(
+                            value: "7801365498",
+                            image: "assets/phone_call.png",
+                            name: "Secondary No.",
+                            type: 1,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Image(
+                            image: AssetImage("assets/map.png"),
+                            width: 30,
+                            height: 30,
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Address",
+                                style: TextStyle(color: Color(0xff303030), fontSize: 15, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.75,
+                                child: const Text(
+                                  "Major District Rd, depalpur road | near by payal kirana store",
+                                  overflow: TextOverflow.clip,
+                                  style: TextStyle(color: Color(0xff555555), fontSize: 14, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 10),
+              child: Text(
+                "Remark",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 5),
+              child: TextFormField(
+                maxLines: 5,
+                minLines: 3,
+                style: TextStyle(fontSize: 16, color: const Color(0xff555555)),
+                decoration: const InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: UnderlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10)), borderSide: BorderSide.none)),
+              ),
+            )
           ]))
         ],
       ),
@@ -213,7 +353,7 @@ class _DetailGritItemState extends State<DetailGritItem> {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(left: 10, right: 10),
-      padding: const EdgeInsets.only(left: 10, right: 10),
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
       decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10)), boxShadow: [
         BoxShadow(
           color: Color.fromRGBO(237, 237, 237, 0.25),
@@ -227,8 +367,8 @@ class _DetailGritItemState extends State<DetailGritItem> {
             image: AssetImage(
               widget.image,
             ),
-            width: 40,
-            height: 40,
+            width: 35,
+            height: 35,
           ),
           const SizedBox(
             width: 10,
@@ -239,14 +379,72 @@ class _DetailGritItemState extends State<DetailGritItem> {
             children: [
               Text(
                 widget.name,
-                style: const TextStyle(color: Color(0xff303030), fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(color: Color(0xff303030), fontSize: 15, fontWeight: FontWeight.bold),
               ),
               const SizedBox(
                 height: 5,
               ),
               Text(
                 widget.value,
-                style: const TextStyle(color: Color(0xff555555), fontSize: 16, fontWeight: FontWeight.w500),
+                style: const TextStyle(color: Color(0xff555555), fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class RetailerDetailItem extends StatefulWidget {
+  final String image;
+  final String name;
+  final String value;
+  final int type;
+
+  const RetailerDetailItem({Key? key, required this.image, required this.name, required this.value, required this.type})
+      : super(key: key);
+
+  @override
+  _RetailerDetailItemState createState() => _RetailerDetailItemState();
+}
+
+class _RetailerDetailItemState extends State<RetailerDetailItem> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Image(
+            image: AssetImage(
+              widget.image,
+            ),
+            width: 30,
+            height: 30,
+          ),
+          const SizedBox(
+            width: 5,
+          ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.name,
+                style: const TextStyle(color: Color(0xff303030), fontSize: 15, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.29,
+                child: Text(
+                  widget.value,
+                  overflow: TextOverflow.clip,
+                  style: const TextStyle(color: Color(0xff555555), fontSize: 14, fontWeight: FontWeight.bold),
+                ),
               ),
             ],
           )
