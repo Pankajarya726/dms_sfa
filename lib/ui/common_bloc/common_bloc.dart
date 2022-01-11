@@ -15,6 +15,10 @@ class CommonBloc extends Bloc<CommonBlocEvents, CommonBlocStates> {
       yield CommonBlocLoadingState();
       yield* selectImage(event);
     }
+    if (event is CommonBlocSelectOwnerImageEvent) {
+      yield CommonBlocLoadingState();
+      yield* selectOwnerImage(event);
+    }
     if (event is CommonBlocEnrollTypeRadioEvent) {
       yield CommonBlocLoadingState();
       yield* enrollmentTypeRadioTag(event);
@@ -22,6 +26,10 @@ class CommonBloc extends Bloc<CommonBlocEvents, CommonBlocStates> {
     if (event is CommonBlocRetailerRadioEvent) {
       yield CommonBlocLoadingState();
       yield* retailerRadioTag(event);
+    }
+    if (event is CommonBlocWhatsAppRadioEvent) {
+      yield CommonBlocLoadingState();
+      yield* whatsAppRadioTag(event);
     }
     if (event is CommonBlocIsKRORadioEvent) {
       yield CommonBlocLoadingState();
@@ -42,6 +50,11 @@ class CommonBloc extends Bloc<CommonBlocEvents, CommonBlocStates> {
     yield CommonBlocSelectImageState(imageFile: event.imageFile);
   }
 
+  Stream<CommonBlocStates> selectOwnerImage(
+      CommonBlocSelectOwnerImageEvent event) async* {
+    yield CommonBlocSelectOwnerImageState(imageFile: event.imageFile);
+  }
+
   Stream<CommonBlocStates> enrollmentTypeRadioTag(
       CommonBlocEnrollTypeRadioEvent event) async* {
     yield CommonBlocEnrollRadioTagState(
@@ -52,6 +65,12 @@ class CommonBloc extends Bloc<CommonBlocEvents, CommonBlocStates> {
       CommonBlocRetailerRadioEvent event) async* {
     yield CommonBlocRetailerRadioState(
         retailerRadioTag: event.retailerRadioTag);
+  }
+
+  Stream<CommonBlocStates> whatsAppRadioTag(
+      CommonBlocWhatsAppRadioEvent event) async* {
+    yield CommonBlocWhatsAppRadioState(
+        whatsAppRadioTag: event.whatsAppRadioTag);
   }
 
   Stream<CommonBlocStates> isKRORadioTag(

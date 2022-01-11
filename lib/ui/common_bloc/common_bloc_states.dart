@@ -25,6 +25,13 @@ class CommonBlocSelectImageState extends CommonBlocStates {
   List<Object> get props => [imageFile];
 }
 
+class CommonBlocSelectOwnerImageState extends CommonBlocStates {
+  final File imageFile;
+  CommonBlocSelectOwnerImageState({required this.imageFile});
+  @override
+  List<Object> get props => [imageFile];
+}
+
 class CommonBlocEnrollRadioTagState extends CommonBlocStates {
   final Object enrollmentRadioTag;
   CommonBlocEnrollRadioTagState({required this.enrollmentRadioTag});
@@ -37,6 +44,13 @@ class CommonBlocRetailerRadioState extends CommonBlocStates {
   CommonBlocRetailerRadioState({required this.retailerRadioTag});
   @override
   List<Object> get props => [retailerRadioTag];
+}
+
+class CommonBlocWhatsAppRadioState extends CommonBlocStates {
+  final Object whatsAppRadioTag;
+  CommonBlocWhatsAppRadioState({required this.whatsAppRadioTag});
+  @override
+  List<Object> get props => [whatsAppRadioTag];
 }
 
 class CommonBlocIsKRORadioState extends CommonBlocStates {
