@@ -10,4 +10,5 @@ class MColor {
   static const Color colorGrayLite = Color(0xfff2f2f2);
   static const Color colorTabBG = Color(0xfffbcacd);
   static const Color colorRed = Color(0xfff24b55);
+  static const Color textColor = Color(0xff555555);
 }

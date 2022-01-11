@@ -90,7 +90,7 @@ class PjpButton {
   String toJson() => json.encode(toMap());
 
   factory PjpButton.fromMap(Map<String, dynamic> json) => PjpButton(
-        addPjpButton: json["addpjpbutton"] ?? "",
+        addPjpButton: json["addpjpbutton"] ?? 0,
         fromDate: json["fromDate"] == null ? DateTime.now() : DateTime.parse(json["fromDate"]),
         toDate: json["toDate"] == null ? DateTime.now() : DateTime.parse(json["toDate"]),
       );
