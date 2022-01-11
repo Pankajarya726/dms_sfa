@@ -47,11 +47,15 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                 ),
               ]),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, childAspectRatio: 2.6, mainAxisSpacing: 15, crossAxisSpacing: 0)),
+                  crossAxisCount: 2,
+                  childAspectRatio: 2.6,
+                  mainAxisSpacing: 15,
+                  crossAxisSpacing: 0)),
           SliverList(
               delegate: SliverChildListDelegate([
             Padding(
-              padding: const EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 10),
+              padding: const EdgeInsets.only(
+                  left: 15, right: 10, bottom: 0, top: 10),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -70,8 +74,10 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                       icon: Container(
                         height: 25,
                         width: 25,
-                        decoration:
-                            const BoxDecoration(color: MColor.colorSecondary, borderRadius: BorderRadius.all(Radius.circular(15))),
+                        decoration: const BoxDecoration(
+                            color: MColor.colorSecondary,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(15))),
                         child: const Center(
                             child: Icon(
                           Icons.edit,
@@ -85,13 +91,17 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-                decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10)), boxShadow: [
-                  BoxShadow(
-                    color: Color.fromRGBO(237, 237, 237, 0.25),
-                    blurRadius: 10,
-                  )
-                ]),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color.fromRGBO(237, 237, 237, 0.25),
+                        blurRadius: 10,
+                      )
+                    ]),
                 child: Column(
                   children: [
                     Row(
@@ -159,7 +169,8 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                       height: 15,
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 0, vertical: 5),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,7 +189,10 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                             children: [
                               const Text(
                                 "Address",
-                                style: TextStyle(color: Color(0xff303030), fontSize: 15, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    color: Color(0xff303030),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -188,7 +202,10 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                                 child: const Text(
                                   "Major District Rd, depalpur road | near by payal kirana store",
                                   overflow: TextOverflow.clip,
-                                  style: TextStyle(color: Color(0xff555555), fontSize: 14, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      color: Color(0xff555555),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ],
@@ -211,7 +228,8 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 5),
+              padding:
+                  const EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 5),
               child: TextFormField(
                 maxLines: 5,
                 minLines: 3,
@@ -219,7 +237,9 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                 decoration: const InputDecoration(
                     filled: true,
                     fillColor: Colors.white,
-                    border: UnderlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10)), borderSide: BorderSide.none)),
+                    border: UnderlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        borderSide: BorderSide.none)),
               ),
             )
           ]))
@@ -272,7 +292,8 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
               child: AppBar(
                   elevation: 5,
                   toolbarHeight: 60,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5)),
                   backgroundColor: Colors.white,
                   primary: false,
                   automaticallyImplyLeading: false,
@@ -293,8 +314,10 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                               fit: BoxFit.cover,
                             );
                           },
-                          errorWidget: (context, url, error) => Image.asset("assets/placeholder.png"),
-                          placeholder: (context, url) => Image.asset("assets/placeholder.png"),
+                          errorWidget: (context, url, error) =>
+                              Image.asset("assets/placeholder.png"),
+                          placeholder: (context, url) =>
+                              Image.asset("assets/placeholder.png"),
                         ),
                       ),
                       const SizedBox(
@@ -342,7 +365,13 @@ class DetailGritItem extends StatefulWidget {
   final String value;
   final int type;
 
-  const DetailGritItem({Key? key, required this.image, required this.name, required this.value, required this.type}) : super(key: key);
+  const DetailGritItem(
+      {Key? key,
+      required this.image,
+      required this.name,
+      required this.value,
+      required this.type})
+      : super(key: key);
 
   @override
   _DetailGritItemState createState() => _DetailGritItemState();
@@ -354,12 +383,15 @@ class _DetailGritItemState extends State<DetailGritItem> {
     return Container(
       margin: const EdgeInsets.only(left: 10, right: 10),
       padding: const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
-      decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10)), boxShadow: [
-        BoxShadow(
-          color: Color.fromRGBO(237, 237, 237, 0.25),
-          blurRadius: 10,
-        )
-      ]),
+      decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          boxShadow: [
+            BoxShadow(
+              color: Color.fromRGBO(237, 237, 237, 0.25),
+              blurRadius: 10,
+            )
+          ]),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -379,14 +411,20 @@ class _DetailGritItemState extends State<DetailGritItem> {
             children: [
               Text(
                 widget.name,
-                style: const TextStyle(color: Color(0xff303030), fontSize: 15, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    color: Color(0xff303030),
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold),
               ),
               const SizedBox(
                 height: 5,
               ),
               Text(
                 widget.value,
-                style: const TextStyle(color: Color(0xff555555), fontSize: 14, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    color: Color(0xff555555),
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold),
               ),
             ],
           )
@@ -402,7 +440,12 @@ class RetailerDetailItem extends StatefulWidget {
   final String value;
   final int type;
 
-  const RetailerDetailItem({Key? key, required this.image, required this.name, required this.value, required this.type})
+  const RetailerDetailItem(
+      {Key? key,
+      required this.image,
+      required this.name,
+      required this.value,
+      required this.type})
       : super(key: key);
 
   @override
@@ -433,7 +476,10 @@ class _RetailerDetailItemState extends State<RetailerDetailItem> {
             children: [
               Text(
                 widget.name,
-                style: const TextStyle(color: Color(0xff303030), fontSize: 15, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    color: Color(0xff303030),
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold),
               ),
               const SizedBox(
                 height: 5,
@@ -443,7 +489,10 @@ class _RetailerDetailItemState extends State<RetailerDetailItem> {
                 child: Text(
                   widget.value,
                   overflow: TextOverflow.clip,
-                  style: const TextStyle(color: Color(0xff555555), fontSize: 14, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      color: Color(0xff555555),
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ],
