@@ -1,4 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
+import 'package:dms/ui/bottom_sheet_widget/last_visit_bottom_sheet.dart';
+import 'package:dms/ui/bottom_sheet_widget/tele_caller_status_bottm_sheet.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -31,19 +34,19 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                   value: "3",
                   image: "assets/task.png",
                   name: "Task",
-                  type: 1,
+                  type: 2,
                 ),
                 const DetailGritItem(
                   value: "No Order",
                   image: "assets/phone.png",
                   name: "TC Status",
-                  type: 1,
+                  type: 3,
                 ),
                 const DetailGritItem(
                   value: "Potential",
                   image: "assets/experience.png",
                   name: "₹5,000",
-                  type: 1,
+                  type: 4,
                 ),
               ]),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -215,15 +218,104 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
               child: TextFormField(
                 maxLines: 5,
                 minLines: 3,
-                style: TextStyle(fontSize: 16, color: const Color(0xff555555)),
+                style: const TextStyle(fontSize: 16, color: Color(0xff555555)),
                 decoration: const InputDecoration(
                     filled: true,
                     fillColor: Colors.white,
                     border: UnderlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10)), borderSide: BorderSide.none)),
               ),
-            )
+            ),
+            const Padding(
+              padding: EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 10),
+              child: Text(
+                "Order History",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 5),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10)), boxShadow: [
+                  BoxShadow(
+                    color: Color.fromRGBO(237, 237, 237, 0.25),
+                    blurRadius: 10,
+                  )
+                ]),
+                child: Column(
+                  children: List.generate(
+                      4,
+                      (index) => Container(
+                            margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                            height: 50,
+                            decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xffC5C5C5), width: 0.5))),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Date: ${DateFormat("dd-MM-yyyy").format(DateTime.now())}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    color: Color(0xff555555),
+                                    letterSpacing: 0.67,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                const Text(
+                                  "Value: ₹7,200",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    color: Color(0xff555555),
+                                    letterSpacing: 0.67,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
           ]))
         ],
+      ),
+      bottomNavigationBar: SizedBox(
+        height: 50,
+        width: MediaQuery.of(context).size.width,
+        child: Row(
+          children: [
+            MaterialButton(
+              onPressed: () {},
+              shape: const RoundedRectangleBorder(),
+              child: const Text(
+                "NO ORDER",
+                style: TextStyle(color: Color(0xffFFFFFF), fontSize: 20, letterSpacing: 0.72),
+              ),
+              color: const Color(0xff3D8FFF),
+              height: 50,
+              elevation: 0,
+              minWidth: MediaQuery.of(context).size.width / 2,
+            ),
+            MaterialButton(
+              onPressed: () {},
+              shape: const RoundedRectangleBorder(),
+              child: const Text(
+                "ORDER",
+                style: TextStyle(color: Color(0xffFFFFFF), fontSize: 20, letterSpacing: 0.72),
+              ),
+              color: MColor.colorSecondary,
+              height: 50,
+              elevation: 0,
+              minWidth: MediaQuery.of(context).size.width / 2,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -351,46 +443,57 @@ class DetailGritItem extends StatefulWidget {
 class _DetailGritItemState extends State<DetailGritItem> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(left: 10, right: 10),
-      padding: const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
-      decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10)), boxShadow: [
-        BoxShadow(
-          color: Color.fromRGBO(237, 237, 237, 0.25),
-          blurRadius: 10,
-        )
-      ]),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Image(
-            image: AssetImage(
-              widget.image,
-            ),
-            width: 35,
-            height: 35,
-          ),
-          const SizedBox(
-            width: 10,
-          ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.name,
-                style: const TextStyle(color: Color(0xff303030), fontSize: 15, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Text(
-                widget.value,
-                style: const TextStyle(color: Color(0xff555555), fontSize: 14, fontWeight: FontWeight.bold),
-              ),
-            ],
+    return InkWell(
+      onTap: () {
+        if (widget.type == 1) {
+          showModalBottomSheet(context: context, shape: bottomSheetShape, builder: (context) => LastVisitBottomSheet());
+        }
+        if (widget.type == 3) {
+          showModalBottomSheet(
+              context: context, isScrollControlled: true, shape: bottomSheetShape, builder: (context) => TeleCallerStatusSheet());
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.only(left: 10, right: 10),
+        padding: const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
+        decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10)), boxShadow: [
+          BoxShadow(
+            color: Color.fromRGBO(237, 237, 237, 0.25),
+            blurRadius: 10,
           )
-        ],
+        ]),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Image(
+              image: AssetImage(
+                widget.image,
+              ),
+              width: 35,
+              height: 35,
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.name,
+                  style: const TextStyle(color: Color(0xff303030), fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  widget.value,
+                  style: const TextStyle(color: Color(0xff555555), fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

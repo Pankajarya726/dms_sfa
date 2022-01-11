@@ -124,23 +124,26 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                       indicatorColor: MColor.colorPrimary,
                       labelPadding: const EdgeInsets.symmetric(horizontal: 5),
                       indicatorPadding: const EdgeInsets.symmetric(horizontal: 5),
-                      tabs: const [
+                      tabs: [
                         Tab(
                           child: Text(
                             "Not Connected",
-                            style: TextStyle(color: Color(0xff303030), fontSize: 18, fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodyText1!.merge(TextStyle(
+                                color: const Color(0xff303030).withOpacity(0.85), letterSpacing: 0.5, fontWeight: FontWeight.w600)),
                           ),
                         ),
                         Tab(
                           child: Text(
                             "No Order",
-                            style: TextStyle(color: Color(0xff303030), fontSize: 18, fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodyText2!.merge(TextStyle(
+                                color: const Color(0xff303030).withOpacity(0.85), letterSpacing: 0.5, fontWeight: FontWeight.w600)),
                           ),
                         ),
                         Tab(
                           child: Text(
                             "Order",
-                            style: TextStyle(color: Color(0xff303030), fontSize: 18, fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodyText2!.merge(TextStyle(
+                                color: const Color(0xff303030).withOpacity(0.85), letterSpacing: 0.5, fontWeight: FontWeight.w600)),
                           ),
                         ),
                       ]),
