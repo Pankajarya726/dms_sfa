@@ -6,7 +6,9 @@ class RetailerListItems extends StatefulWidget {
   final int index;
   final Retailer retailer;
 
-  const RetailerListItems({Key? key, required this.index, required this.retailer}) : super(key: key);
+  const RetailerListItems(
+      {Key? key, required this.index, required this.retailer})
+      : super(key: key);
 
   @override
   State<RetailerListItems> createState() => _RetailerListItemsState();
@@ -39,10 +41,12 @@ class _RetailerListItemsState extends State<RetailerListItems> {
             borderRadius: BorderRadius.circular(10),
           ),
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => RetailerDetailScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => RetailerDetailScreen()));
           },
           child: Padding(
-            padding: const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
+            padding:
+                const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
             child: Column(
               children: [
                 Row(
@@ -140,7 +144,8 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 3),
                             decoration: BoxDecoration(
                               color: const Color(0XFFDAA520),
                               borderRadius: BorderRadius.circular(2),

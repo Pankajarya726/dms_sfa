@@ -33,6 +33,7 @@ const writeYourRemark = "Write Your Remark";
 const getMeeting = "Get Meeting";
 const selfie = "Selfie";
 const confirm = "CONFIRM";
+const confirmSmall = "Confirm";
 const commingSoon = "Comming soon...";
 const loremIpsum =
     "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text";
@@ -43,6 +44,7 @@ const selectDistributor = "Select Distributor";
 const beatNameMandatory = "Beat Name *";
 const beatName = "Select Beat Name";
 const orderBookingDay = "Order Booking Day";
+const orderBooking = "Order Booking";
 const outletName = "Outlet Name *";
 const ownerName = "Owner Name *";
 const latitude = "Latitude";
