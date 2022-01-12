@@ -17,7 +17,6 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(left: 5),
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(11),
@@ -74,6 +73,7 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                                 letterSpacing: 0.67,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 16,
+                                color: MColor.backButton,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),

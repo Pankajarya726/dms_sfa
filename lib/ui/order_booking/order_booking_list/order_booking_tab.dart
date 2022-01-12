@@ -66,7 +66,7 @@ class _OrderBookingTabState extends State<OrderBookingTab> {
               }
 
               return ListView.separated(
-                padding: const EdgeInsets.all(15),
+                padding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
                 itemCount: snapshot.data!.length,
                 separatorBuilder: (context, index) {
                   return const SizedBox(
@@ -154,40 +154,54 @@ class _BeatWidgetState extends State<BeatWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Tags(
-      direction: Axis.horizontal,
-      itemCount: widget.tags.length,
-      horizontalScroll: true,
-      itemBuilder: (index) {
-        return ItemTags(
-          index: index,
-          onPressed: (item) {
-            tag = item.customData;
-            widget.onSelect(item.customData);
-            setState(() {});
-          },
-          active: widget.tags[index] == tag,
-          customData: widget.tags[index],
-          textActiveColor: Colors.black,
-          textColor: const Color(0xff555555),
-          elevation: 0,
-          textStyle: const TextStyle(fontSize: 16),
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          border: Border.all(
-            color: widget.tags[index] == tag
-                ? MColor.colorPrimary
-                : const Color(0xffC5C5C5),
-          ),
-          singleItem: true,
-          activeColor: widget.tags[index] == tag
-              ? const Color(0xffFFC9CC)
-              : const Color(0xffFAFAFA),
-          color: widget.tags[index] == tag
-              ? const Color(0xffFFC9CC)
-              : const Color(0xffFAFAFA),
-          title: widget.tags[index],
-        );
-      },
+    return SizedBox(
+      height: 50,
+      child: Tags(
+        direction: Axis.horizontal,
+        itemCount: widget.tags.length,
+        horizontalScroll: true,
+        itemBuilder: (index) {
+          return Padding(
+            padding: index == 0
+                ? const EdgeInsets.only(left: 10)
+                : widget.tags[index] == widget.tags.last
+                    ? const EdgeInsets.only(right: 10)
+                    : const EdgeInsets.all(0),
+            child: ItemTags(
+              index: index,
+              onPressed: (item) {
+                tag = item.customData;
+                widget.onSelect(item.customData);
+                setState(() {});
+              },
+              active: widget.tags[index] == tag,
+              customData: widget.tags[index],
+              textActiveColor: Colors.black,
+              textColor: const Color(0xff555555),
+              elevation: 0,
+              textStyle: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.67,
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              border: Border.all(
+                color: widget.tags[index] == tag
+                    ? MColor.colorPrimary
+                    : const Color(0xffC5C5C5),
+              ),
+              singleItem: true,
+              activeColor: widget.tags[index] == tag
+                  ? const Color(0xffFFC9CC)
+                  : const Color(0xffFAFAFA),
+              color: widget.tags[index] == tag
+                  ? const Color(0xffFFC9CC)
+                  : const Color(0xffFAFAFA),
+              title: widget.tags[index],
+            ),
+          );
+        },
+      ),
     );
   }
 }

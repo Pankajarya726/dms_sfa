@@ -105,7 +105,8 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
           child: Column(
             children: [
               Container(
-                padding: const EdgeInsets.all(15),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                 child: TextFormField(
                   style: const TextStyle(fontSize: 16),
                   decoration: InputDecoration(
@@ -137,47 +138,57 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
                 height: 50,
                 color: const Color(0xffEDEDED),
                 child: TabBar(
-                    controller: tabController,
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    indicatorWeight: 3,
-                    indicatorColor: MColor.colorPrimary,
-                    labelPadding: const EdgeInsets.symmetric(horizontal: 5),
-                    indicatorPadding: const EdgeInsets.symmetric(horizontal: 5),
-                    tabs: [
-                      Tab(
-                        child: Text(
-                          "Suggested",
-                          style: Theme.of(context).textTheme.bodyText1!.merge(
+                  controller: tabController,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicatorWeight: 4,
+                  indicatorColor: MColor.colorPrimary,
+                  labelPadding: const EdgeInsets.symmetric(horizontal: 5),
+                  indicatorPadding: const EdgeInsets.symmetric(horizontal: 5),
+                  tabs: [
+                    Tab(
+                      child: Text(
+                        "Suggested",
+                        style: Theme.of(context).textTheme.bodyText1!.merge(
                               TextStyle(
-                                  color:
-                                      const Color(0xff303030).withOpacity(0.85),
-                                  letterSpacing: 0.5,
-                                  fontWeight: FontWeight.w600)),
-                        ),
+                                color:
+                                    const Color(0xff303030).withOpacity(0.85),
+                                letterSpacing: 0.67,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18,
+                              ),
+                            ),
                       ),
-                      Tab(
-                        child: Text(
-                          "Scheme 1",
-                          style: Theme.of(context).textTheme.bodyText2!.merge(
+                    ),
+                    Tab(
+                      child: Text(
+                        "Scheme 1",
+                        style: Theme.of(context).textTheme.bodyText2!.merge(
                               TextStyle(
-                                  color:
-                                      const Color(0xff303030).withOpacity(0.85),
-                                  letterSpacing: 0.5,
-                                  fontWeight: FontWeight.w600)),
-                        ),
+                                color:
+                                    const Color(0xff303030).withOpacity(0.85),
+                                letterSpacing: 0.67,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18,
+                              ),
+                            ),
                       ),
-                      Tab(
-                        child: Text(
-                          "Tiny Tush",
-                          style: Theme.of(context).textTheme.bodyText2!.merge(
+                    ),
+                    Tab(
+                      child: Text(
+                        "Tiny Tush",
+                        style: Theme.of(context).textTheme.bodyText2!.merge(
                               TextStyle(
-                                  color:
-                                      const Color(0xff303030).withOpacity(0.85),
-                                  letterSpacing: 0.5,
-                                  fontWeight: FontWeight.w600)),
-                        ),
+                                color:
+                                    const Color(0xff303030).withOpacity(0.85),
+                                letterSpacing: 0.67,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18,
+                              ),
+                            ),
                       ),
-                    ]),
+                    ),
+                  ],
+                ),
               )
             ],
           ),
