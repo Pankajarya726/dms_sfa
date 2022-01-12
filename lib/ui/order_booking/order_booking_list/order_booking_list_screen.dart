@@ -1,3 +1,5 @@
+import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
+import 'package:dms/ui/bottom_sheet_widget/filter_order_booking_bottom_sheet.dart';
 import 'package:dms/ui/order_booking/order_booking_list/order_booking_tab.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
@@ -13,6 +15,7 @@ class OrderBookingListScreen extends StatefulWidget {
 class _OrderBookingListScreenState extends State<OrderBookingListScreen>
     with TickerProviderStateMixin {
   late TabController tabController;
+  String selectedPrice = "";
 
   @override
   void initState() {
@@ -32,9 +35,12 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
         ),
         centerTitle: true,
         automaticallyImplyLeading: false,
+        leadingWidth: 90,
         leading: Row(
           children: [
             IconButton(
+              padding: const EdgeInsets.only(left: 15),
+              constraints: const BoxConstraints(),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -44,15 +50,21 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
               ),
             ),
             IconButton(
+              padding: EdgeInsets.zero,
               onPressed: () {
-                // showModalBottomSheet(
-                //     context: context,
-                //     shape: bottomSheetShape,
-                //     builder: (context) {
-                //       return const FilterRetailerBottomSheet();
-                //     });
+                showModalBottomSheet(
+                  context: context,
+                  shape: bottomSheetShape,
+                  builder: (context) => FilterOrderBookingBottomSheet(
+                    onPriceSelect: (price) {
+                      selectedPrice = price;
+                    },
+                    selectedPrice: selectedPrice,
+                  ),
+                );
               },
               icon: const Image(
+                fit: BoxFit.cover,
                 width: 30,
                 image: AssetImage("assets/filter.png"),
               ),
@@ -101,37 +113,37 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
           ),
         ],
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(120),
+          preferredSize: const Size.fromHeight(110),
           child: Column(
             children: [
               Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
                 child: TextFormField(
                   style: const TextStyle(fontSize: 16),
                   decoration: InputDecoration(
-                      hintText: "Search",
-                      hintStyle: const TextStyle(fontSize: 16),
-                      contentPadding: const EdgeInsets.all(10),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          gapPadding: 2,
-                          borderSide: const BorderSide(
-                              width: 1, color: Color(0xffC5C5C5))),
-                      disabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          gapPadding: 2,
-                          borderSide: const BorderSide(
-                              width: 1, color: Color(0xffC5C5C5))),
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          gapPadding: 2,
-                          borderSide: const BorderSide(
-                              width: 1, color: Color(0xffC5C5C5))),
-                      prefixIcon: const Icon(
-                        Icons.search,
-                        color: Color(0xff555555),
-                      )),
+                    hintText: "Search",
+                    hintStyle: const TextStyle(fontSize: 16),
+                    contentPadding: const EdgeInsets.all(10),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        gapPadding: 2,
+                        borderSide: const BorderSide(
+                            width: 1, color: Color(0xffC5C5C5))),
+                    disabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        gapPadding: 2,
+                        borderSide: const BorderSide(
+                            width: 1, color: Color(0xffC5C5C5))),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        gapPadding: 2,
+                        borderSide: const BorderSide(
+                            width: 1, color: Color(0xffC5C5C5))),
+                    prefixIcon: const Icon(
+                      Icons.search,
+                      color: Color(0xff555555),
+                    ),
+                  ),
                 ),
               ),
               Container(

@@ -6,7 +6,8 @@ class OrderHistoryBottomSheet extends StatefulWidget {
   const OrderHistoryBottomSheet({Key? key}) : super(key: key);
 
   @override
-  _OrderHistoryBottomSheetState createState() => _OrderHistoryBottomSheetState();
+  _OrderHistoryBottomSheetState createState() =>
+      _OrderHistoryBottomSheetState();
 }
 
 class _OrderHistoryBottomSheetState extends State<OrderHistoryBottomSheet> {
@@ -31,7 +32,11 @@ class _OrderHistoryBottomSheetState extends State<OrderHistoryBottomSheet> {
     padding: EdgeInsets.all(15.0),
     child: Text(
       "Summary",
-      style: TextStyle(color: MColor.colorPrimary, fontSize: 20, letterSpacing: 0.67),
+      style: TextStyle(
+        color: MColor.colorPrimary,
+        fontSize: 20,
+        letterSpacing: 0.67,
+      ),
     ),
   );
 }

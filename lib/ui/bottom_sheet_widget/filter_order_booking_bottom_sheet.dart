@@ -6,34 +6,37 @@ import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SelectCityBottomSheet extends StatefulWidget {
-  final Function(String selectedCity) onCitySelect;
-  final String selectedCityName;
-  const SelectCityBottomSheet(
-      {Key? key, required this.onCitySelect, required this.selectedCityName})
+class FilterOrderBookingBottomSheet extends StatefulWidget {
+  final Function(String price) onPriceSelect;
+  final String selectedPrice;
+  const FilterOrderBookingBottomSheet(
+      {Key? key, required this.onPriceSelect, required this.selectedPrice})
       : super(key: key);
 
   @override
-  _SelectCityBottomSheetState createState() => _SelectCityBottomSheetState();
+  _FilterOrderBookingBottomSheetState createState() =>
+      _FilterOrderBookingBottomSheetState();
 }
 
-class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
+class _FilterOrderBookingBottomSheetState
+    extends State<FilterOrderBookingBottomSheet> {
   List<String> names = [
-    "Indore",
-    "Bhopal",
-    "Delhi",
-    "Surat",
-    "Banglore",
+    "₹200",
+    "₹400",
+    "₹600",
+    "₹800",
+    "₹1000",
+    "₹1200",
   ];
-  Object selectCityRadio = "";
-  String selectedCity = "";
+  Object filterOrderBookingRadio = "";
+  String selectedPrice = "";
   CommonBloc commonBloc = CommonBloc();
 
   @override
   void initState() {
     super.initState();
-    selectCityRadio = widget.selectedCityName;
-    selectedCity = widget.selectedCityName;
+    filterOrderBookingRadio = widget.selectedPrice;
+    selectedPrice = widget.selectedPrice;
   }
 
   @override
@@ -51,7 +54,7 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            selectCity,
+            filter,
             style: TextStyle(
               fontSize: 19,
               color: MColor.colorPrimary,
@@ -72,16 +75,16 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
                   child: BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
                       if (state is CommonBlocInitialState) {
-                        if (selectCityRadio == names[index]) {
+                        if (filterOrderBookingRadio == names[index]) {
                           commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                               enrollmentRadioTag: index));
                         }
                       }
                       if (state is CommonBlocEnrollRadioTagState) {
-                        selectCityRadio = state.enrollmentRadioTag;
+                        filterOrderBookingRadio = state.enrollmentRadioTag;
                       }
                       return radioButtonWidget(
-                          selectCityRadio, index, names[index]);
+                          filterOrderBookingRadio, index, names[index]);
                     },
                   ),
                 );
@@ -94,7 +97,7 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
           Center(
             child: ElevatedButton(
               onPressed: () {
-                widget.onCitySelect(selectedCity);
+                widget.onPriceSelect(selectedPrice);
                 Navigator.pop(context);
               },
               style: ButtonStyle(
@@ -130,7 +133,7 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
       onTap: () {
         commonBloc
             .add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-        selectedCity = names[value];
+        selectedPrice = names[value];
       },
       child: Row(
         children: [
@@ -144,7 +147,7 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
               onChanged: (value) {
                 commonBloc.add(
                     CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-                selectedCity = names[value].toString();
+                selectedPrice = names[value].toString();
               },
             ),
           ),
