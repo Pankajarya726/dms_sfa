@@ -21,7 +21,8 @@ class MyPlanTabScreen extends StatefulWidget {
   _MyPlanTabScreenState createState() => _MyPlanTabScreenState();
 }
 
-class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderStateMixin {
+class _MyPlanTabScreenState extends State<MyPlanTabScreen>
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<MyPlanTabScreen> {
   List<String> week = [];
   List<WeeklyPlanModel> weeklyPlan = [];
   TabController? tabController;
@@ -30,7 +31,7 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderSt
 
   @override
   void initState() {
-    print("MyPlanTabScreen--->");
+    debugPrint("MyPlanTabScreen--->");
     super.initState();
   }
 
@@ -61,6 +62,10 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderSt
                       initialData: weeklyPlan.first.planList,
                       builder: (builder, snapshot) {
                         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+
+
+                          snapshot.data!.sort((a,b)=>a.addPlanDate.compareTo(b.addPlanDate));
+
                           return PlanListWidget(
                             planList: snapshot.data!,
                           );
@@ -108,6 +113,9 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen> with TickerProviderSt
       return [];
     }
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class WeekTabWidget extends StatefulWidget {

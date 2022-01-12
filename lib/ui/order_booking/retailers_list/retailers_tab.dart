@@ -14,7 +14,7 @@ class RetailerTab extends StatefulWidget {
   _RetailerTabState createState() => _RetailerTabState();
 }
 
-class _RetailerTabState extends State<RetailerTab> {
+class _RetailerTabState extends State<RetailerTab> with AutomaticKeepAliveClientMixin<RetailerTab> {
   List<Retailer> retailers = [];
   List<String> tags = ["All", "Vijay Nagar", "Palasia", "Rajwada"];
   String tag = "All";
@@ -22,6 +22,7 @@ class _RetailerTabState extends State<RetailerTab> {
 
   @override
   void initState() {
+    debugPrint("retailerTab--->");
     getRetailers();
     super.initState();
   }
@@ -145,6 +146,9 @@ class _RetailerTabState extends State<RetailerTab> {
         priority: "P0"));
     retailerStreamController.add(retailers);
   }
+
+  @override
+  bool get wantKeepAlive => retailers.isNotEmpty;
 }
 
 class BeatWidget extends StatefulWidget {

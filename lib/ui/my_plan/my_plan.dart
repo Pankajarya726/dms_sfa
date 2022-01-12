@@ -39,6 +39,7 @@ class _MyPlanState extends State<MyPlan> with TickerProviderStateMixin {
 
   @override
   void initState() {
+    debugPrint("MyPlan--->");
     super.initState();
   }
 

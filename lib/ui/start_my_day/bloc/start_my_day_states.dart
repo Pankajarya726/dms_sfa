@@ -28,8 +28,7 @@ class StartMyDayFailureState extends StartMyDayStates {
 class GetQuotesAndImagesState extends StartMyDayStates {
   final QuotesAndImagesResponse quotesAndImagesResponse;
   final String currentDate;
-  GetQuotesAndImagesState(
-      {required this.quotesAndImagesResponse, required this.currentDate});
+  GetQuotesAndImagesState({required this.quotesAndImagesResponse, required this.currentDate});
   @override
   List<Object> get props => [quotesAndImagesResponse, currentDate];
 }
@@ -43,6 +42,7 @@ class EndMyDaySuccessState extends StartMyDayStates {
 
 class EndMyDayFailureState extends StartMyDayStates {
   final String failureMessage;
+
   EndMyDayFailureState({required this.failureMessage});
   @override
   List<Object> get props => [failureMessage];

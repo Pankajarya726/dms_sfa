@@ -3,7 +3,6 @@ import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_bloc.dart';
 import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_events.dart';
 import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_states.dart';
 import 'package:dms/ui/my_plan/my_plan.dart';
-import 'package:dms/ui/order_booking/retailers_list/retailers_list_screen.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
@@ -322,8 +321,8 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
         Fluttertoast.showToast(msg: commingSoon);
         break;
       case 4:
-        // Fluttertoast.showToast(msg: commingSoon);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const RetailerListScreen()));
+        Fluttertoast.showToast(msg: commingSoon);
+        // Navigator.push(context, MaterialPageRoute(builder: (context) => const RetailerListScreen()));
         break;
       case 5:
         Fluttertoast.showToast(msg: commingSoon);
