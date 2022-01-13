@@ -13,8 +13,7 @@ class OrderBookingListScreen extends StatefulWidget {
   _OrderBookingListScreenState createState() => _OrderBookingListScreenState();
 }
 
-class _OrderBookingListScreenState extends State<OrderBookingListScreen>
-    with TickerProviderStateMixin {
+class _OrderBookingListScreenState extends State<OrderBookingListScreen> with TickerProviderStateMixin {
   late TabController tabController;
   String selectedPrice = "";
 
@@ -118,8 +117,7 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
           child: Column(
             children: [
               Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                 child: TextFormField(
                   style: const TextStyle(fontSize: 16),
                   decoration: InputDecoration(
@@ -129,18 +127,15 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5),
                           gapPadding: 2,
-                          borderSide: const BorderSide(
-                              width: 1, color: Color(0xffC5C5C5))),
+                          borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                       disabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5),
                           gapPadding: 2,
-                          borderSide: const BorderSide(
-                              width: 1, color: Color(0xffC5C5C5))),
+                          borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5),
                           gapPadding: 2,
-                          borderSide: const BorderSide(
-                              width: 1, color: Color(0xffC5C5C5))),
+                          borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                       prefixIcon: const Icon(
                         Icons.search,
                         color: Color(0xff555555),
@@ -163,8 +158,7 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
                         "Suggested",
                         style: Theme.of(context).textTheme.bodyText1!.merge(
                               TextStyle(
-                                color:
-                                    const Color(0xff303030).withOpacity(0.85),
+                                color: const Color(0xff303030).withOpacity(0.85),
                                 letterSpacing: 0.67,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 18,
@@ -177,8 +171,7 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
                         "Scheme 1",
                         style: Theme.of(context).textTheme.bodyText2!.merge(
                               TextStyle(
-                                color:
-                                    const Color(0xff303030).withOpacity(0.85),
+                                color: const Color(0xff303030).withOpacity(0.85),
                                 letterSpacing: 0.67,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 18,
@@ -191,8 +184,7 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
                         "Tiny Tush",
                         style: Theme.of(context).textTheme.bodyText2!.merge(
                               TextStyle(
-                                color:
-                                    const Color(0xff303030).withOpacity(0.85),
+                                color: const Color(0xff303030).withOpacity(0.85),
                                 letterSpacing: 0.67,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 18,
@@ -209,11 +201,7 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
       ),
       body: TabBarView(
         controller: tabController,
-        children: const [
-          OrderBookingTab(index: 0),
-          OrderBookingTab(index: 1),
-          OrderBookingTab(index: 2)
-        ],
+        children: const [OrderBookingTab(index: 0), OrderBookingTab(index: 1), OrderBookingTab(index: 2)],
       ),
     );
   }
