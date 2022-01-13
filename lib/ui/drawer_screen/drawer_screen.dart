@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/ui/drawer_menu/home_screen/home_screen.dart';
+import 'package:dms/ui/end_day/end_day_screen.dart';
 import 'package:dms/ui/login_screen/login_screen.dart';
 import 'package:dms/ui/screen_after_login/screen_after_login.dart';
 import 'package:dms/ui/settings_screen/settings_screen.dart';
@@ -201,8 +202,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                     Navigator.pop(context);
                   }
                   if (state is EndMyDayFailureState) {
-                    Fluttertoast.showToast(msg: state.failureMessage);
-                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => EndDayScreen(state.data)));
                   }
                 },
                 child: FutureBuilder<String>(
@@ -379,6 +379,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   Navigator.pushAndRemoveUntil(
                       context, MaterialPageRoute(builder: (context) => const LoginScreen()), ModalRoute.withName("/"));
                 } else {
+                  Navigator.pop(context);
                   startMyDayBloc.add(EndMyDayEvent());
                 }
               },

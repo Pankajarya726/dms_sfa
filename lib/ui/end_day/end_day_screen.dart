@@ -1,11 +1,29 @@
+import 'dart:collection';
+
+import 'package:dms/main.dart';
+import 'package:dms/model/base_response.dart';
+import 'package:dms/ui/drawer_screen/drawer_screen.dart';
+import 'package:dms/ui/start_my_day/model/end_my_day_response.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/constants.dart';
+import 'package:dms/utils/my_location.dart';
+import 'package:dms/utils/network.dart';
+import 'package:dms/utils/shared_preference.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
+import 'package:ntp/ntp.dart';
 
 class EndDayScreen extends StatefulWidget {
-  const EndDayScreen({Key? key}) : super(key: key);
+  final StartDayData startDayData;
+
+  const EndDayScreen(this.startDayData, {Key? key}) : super(key: key);
 
   @override
   _EndDayScreenState createState() => _EndDayScreenState();
@@ -48,7 +66,7 @@ class _EndDayScreenState extends State<EndDayScreen> {
               itemBuilder: (index) {
                 return ItemTags(
                   index: index,
-                  title: "Retailing",
+                  title: widget.startDayData.primaryTag.name,
                   active: true,
                   textActiveColor: Colors.black,
                   textColor: const Color(0xff555555),
@@ -75,12 +93,13 @@ class _EndDayScreenState extends State<EndDayScreen> {
               height: 10,
             ),
             Tags(
-              itemCount: 2,
+              itemCount: widget.startDayData.secondaryTag.length,
               itemBuilder: (index) {
                 return ItemTags(
                   index: index,
-                  title: "Retailing",
+                  title: widget.startDayData.secondaryTag[index].locationCode,
                   active: true,
+                  pressEnabled: false,
                   textActiveColor: Colors.black,
                   elevation: 0,
                   textStyle: const TextStyle(color: Colors.black, fontSize: 16, letterSpacing: 0.5, fontWeight: FontWeight.normal),
@@ -108,6 +127,7 @@ class _EndDayScreenState extends State<EndDayScreen> {
                         height: 5,
                       ),
                       TextFormField(
+                        controller: edtTc,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         keyboardType: TextInputType.number,
                       )
@@ -129,6 +149,7 @@ class _EndDayScreenState extends State<EndDayScreen> {
                         height: 5,
                       ),
                       TextFormField(
+                        controller: edtPc,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         keyboardType: TextInputType.number,
                       )
@@ -141,13 +162,14 @@ class _EndDayScreenState extends State<EndDayScreen> {
               height: 20,
             ),
             const Text(
-              "Total Sale *",
+              "Total Sale Amount *",
               style: TextStyle(letterSpacing: 0.5, fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(
               height: 5,
             ),
             TextFormField(
+              controller: edtTotalSale,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
               ],
@@ -164,6 +186,7 @@ class _EndDayScreenState extends State<EndDayScreen> {
               height: 5,
             ),
             TextFormField(
+              controller: edtRemark,
               keyboardType: TextInputType.text,
             )
           ],
@@ -174,7 +197,9 @@ class _EndDayScreenState extends State<EndDayScreen> {
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
         child: MaterialButton(
-          onPressed: () {},
+          onPressed: () {
+            submit(context);
+          },
           height: 50,
           elevation: 0,
           color: MColor.colorSecondary,
@@ -186,5 +211,69 @@ class _EndDayScreenState extends State<EndDayScreen> {
         ),
       ),
     );
+  }
+
+  void submit(BuildContext context) async {
+    if (edtTc.text.isEmpty) {
+      Utility.showToast("Please enter TC");
+      return;
+    }
+    if (edtPc.text.isEmpty) {
+      Utility.showToast("Please enter PC");
+      return;
+    }
+    if (edtTotalSale.text.isEmpty) {
+      Utility.showToast("Please enter Total sale amount");
+      return;
+    }
+    DateTime _ntpTime = await NTP.now();
+
+    try {
+      Position position = await MyLocation.getCurrentLocation();
+      List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
+      Placemark place = placemarks[0];
+      String locality = place.locality!;
+      String name = place.name!;
+      String postalCode = place.postalCode!;
+      String street = place.street!;
+      String subLocality = place.subLocality!;
+      String address = "";
+      if (street == name) {
+        address = street + " " + subLocality + " " + locality + " " + postalCode;
+      } else {
+        address = street + " " + name + " " + subLocality + " " + locality + " " + postalCode;
+      }
+      Map input = HashMap<String, dynamic>();
+      input["user_id"] = await Utility.getStringPreference(SharedPreference.userId);
+      input["start_day_date"] = DateFormat("yyyy-MM-dd").format(_ntpTime);
+      input["end_day_time"] = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
+      input["end_day_address"] = address;
+      input["end_day_latitude"] = position.latitude.toString();
+      input["end_day_longitude"] = position.longitude.toString();
+      input["total_visit"] = edtTc.text.trim().toString();
+      input["total_order"] = edtPc.text.trim().toString();
+      input["total_sale_ammount"] = edtTotalSale.text.trim().toString();
+      input["end_day_remark"] = edtRemark.text.trim();
+      debugPrint("input-->$input");
+      confirmEndDayApi(input);
+    } catch (exception) {
+      debugPrint("exception--->$exception");
+      return;
+    }
+  }
+
+  void confirmEndDayApi(Map input) async {
+    if (await Network.isConnected()) {
+      EasyLoading.show();
+      BaseResponse response = await repository.confirmEndDay(input);
+      EasyLoading.dismiss();
+      Utility.showToast(response.message);
+
+      if (response.success) {
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => DrawerScreen()), (route) => false);
+      }
+    } else {
+      Utility.showToast(Constants.internetAlert);
+    }
   }
 }

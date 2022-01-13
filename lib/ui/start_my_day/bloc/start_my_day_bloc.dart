@@ -3,6 +3,7 @@ import 'package:dms/ui/start_my_day/bloc/start_my_day_states.dart';
 import 'package:dms/ui/start_my_day/model/end_my_day_response.dart';
 import 'package:dms/ui/start_my_day/model/quotes_and_images_response.dart';
 import 'package:dms/ui/start_my_day/model/start_my_day_response.dart.dart';
+import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,8 +34,7 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
     }
   }
 
-  Stream<StartMyDayStates> getQuotesAndImages(
-      GetQuotesAndImagesEvent event) async* {
+  Stream<StartMyDayStates> getQuotesAndImages(GetQuotesAndImagesEvent event) async* {
     if (await Network.isConnected()) {
       DateTime _ntpTime;
       _ntpTime = await NTP.now();
@@ -42,15 +42,12 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
       QuotesAndImagesResponse response = await repository.getQuotesAndImages();
 
       if (response.success) {
-        yield GetQuotesAndImagesState(
-            quotesAndImagesResponse: response,
-            currentDate: DateFormat("yyyy-MM-dd").format(_ntpTime));
+        yield GetQuotesAndImagesState(quotesAndImagesResponse: response, currentDate: DateFormat("yyyy-MM-dd").format(_ntpTime));
       } else {
         yield StartMyDayFailureState(failureMessage: response.message);
       }
     } else {
-      yield StartMyDayFailureState(
-          failureMessage: "Please check your internet connection!");
+      yield StartMyDayFailureState(failureMessage: "Please check your internet connection!");
     }
   }
 
@@ -65,15 +62,13 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
         yield StartMyDayFailureState(failureMessage: response.message);
       }
     } else {
-      yield StartMyDayFailureState(
-          failureMessage: "Please check your internet connection!");
+      yield StartMyDayFailureState(failureMessage: "Please check your internet connection!");
     }
   }
 
   Stream<StartMyDayStates> endMyDay(EndMyDayEvent event) async* {
     if (await Network.isConnected()) {
-      String userId =
-          await SharedPreference.getStringPreference(SharedPreference.userId);
+      String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
       DateTime _ntpTime;
       _ntpTime = await NTP.now();
       String webtime = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
@@ -84,8 +79,7 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
         Position position = await location();
         EasyLoading.dismiss();
 
-        List<Placemark> placemarks = await placemarkFromCoordinates(
-            position.latitude, position.longitude);
+        List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
         Placemark place = placemarks[0];
         String locality = place.locality!;
         String name = place.name!;
@@ -95,18 +89,9 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
 
         // In some cases, street and name are same, to handle this situation we applied this condition
         if (street == name) {
-          address =
-              street + " " + subLocality + " " + locality + " " + postalCode;
+          address = street + " " + subLocality + " " + locality + " " + postalCode;
         } else {
-          address = street +
-              " " +
-              name +
-              " " +
-              subLocality +
-              " " +
-              locality +
-              " " +
-              postalCode;
+          address = street + " " + name + " " + subLocality + " " + locality + " " + postalCode;
         }
       } catch (exception) {
         // yield EndMyDayFailureState(
@@ -124,11 +109,14 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
       if (response.success) {
         yield EndMyDaySuccessState(endMyDayResponse: response);
       } else {
-        yield EndMyDayFailureState(failureMessage: response.message);
+        if (response.status == "0") {
+          Fluttertoast.showToast(msg: response.message);
+        } else {
+          yield EndMyDayFailureState(message: response.message, data: response.data!);
+        }
       }
     } else {
-      yield EndMyDayFailureState(
-          failureMessage: "Please check your internet connection!");
+      Fluttertoast.showToast(msg: Constants.internetAlert);
     }
   }
 
@@ -142,21 +130,18 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        Fluttertoast.showToast(
-            msg: "Please turn on the location for continue!");
+        Fluttertoast.showToast(msg: "Please turn on the location for continue!");
         return Future.error('Location permissions are denied');
       }
     }
     if (permission == LocationPermission.deniedForever) {
       // Permissions are denied forever, handle appropriately.
 
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
+      return Future.error('Location permissions are permanently denied, we cannot request permissions.');
     }
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
 
-    return await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
   }
 }

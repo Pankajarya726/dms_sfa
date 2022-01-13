@@ -1,0 +1,83 @@
+import 'package:dms/utils/colors.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+import 'focus_sku_tab.dart';
+import 'order_summery_tab.dart';
+
+class OrderConfirmationScreen extends StatefulWidget {
+  const OrderConfirmationScreen({Key? key}) : super(key: key);
+
+  @override
+  _OrderConfirmationScreenState createState() => _OrderConfirmationScreenState();
+}
+
+class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with TickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    _tabController = TabController(length: 2, initialIndex: 0, vsync: this);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 1,
+          title: const Text("Order Confirmation"),
+          actions: [
+            IconButton(
+                onPressed: () {},
+                icon: Container(
+                    decoration: const BoxDecoration(color: MColor.colorSecondary, shape: BoxShape.circle),
+                    padding: const EdgeInsets.all(5),
+                    alignment: Alignment.center,
+                    child: const Icon(
+                      Icons.ten_k,
+                      color: Colors.white,
+                      size: 20,
+                    )))
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MColor.colorPrimary,
+            indicatorWeight: 3,
+            labelPadding: const EdgeInsets.symmetric(horizontal: 15),
+            indicatorPadding: const EdgeInsets.symmetric(horizontal: 15),
+            physics: NeverScrollableScrollPhysics(),
+            tabs: const [
+              Tab(
+                child: Text(
+                  "Focus SKU",
+                  style: TextStyle(color: MColor.textColor),
+                ),
+              ),
+              Tab(
+                child: Text(
+                  "Summary",
+                  style: TextStyle(color: MColor.textColor),
+                ),
+              ),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          physics: NeverScrollableScrollPhysics(),
+          children: [
+            FocusSkyTab(
+              onConfirm: () {
+                _tabController.animateTo(1);
+              },
+            ),
+            const OrderSummery(),
+          ],
+        ),
+      ),
+    );
+  }
+}

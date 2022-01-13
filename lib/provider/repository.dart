@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:dms/main.dart';
+import 'package:dms/model/base_response.dart';
 import 'package:dms/model/get_plan_response.dart';
 import 'package:dms/model/primary_tag_response.dart';
 import 'package:dms/model/secondary_tag_response.dart';
@@ -181,10 +182,7 @@ class ApiRepository {
         message = "Something Went wrong";
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
-      return EndMyDayResponse(
-        success: false,
-        message: message,
-      );
+      return EndMyDayResponse(success: false, message: message, status: "0");
     }
   }
 
@@ -427,6 +425,31 @@ class ApiRepository {
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return AddPlanUpdateDataResponse(
+        success: false,
+        message: message,
+      );
+    }
+  }
+
+  Future<BaseResponse> confirmEndDay(Map input) async {
+    try {
+      Response response = await dio.post(
+        Url.confirmEndDAy,
+        data: input,
+      );
+
+      BaseResponse baseResponse = BaseResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = "Something Went wrong";
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return BaseResponse(
         success: false,
         message: message,
       );

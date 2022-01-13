@@ -12,6 +12,7 @@ class Url {
   static const String getSavedPlan = "getAddPlan";
   static const String startMyDay = "addStartMyDay";
   static const String endMyDay = "endMyDay";
+  static const String confirmEndDAy = "endMyDayConfirm";
   static const String updateAddPlan = "addPlanUpdate";
   static const String getPrimaryTag = "getPrimaryTag";
   static const String getSecondaryTag = "getSecondaryTag";

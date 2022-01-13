@@ -41,9 +41,10 @@ class EndMyDaySuccessState extends StartMyDayStates {
 }
 
 class EndMyDayFailureState extends StartMyDayStates {
-  final String failureMessage;
+  final String message;
+  final StartDayData data;
 
-  EndMyDayFailureState({required this.failureMessage});
+  EndMyDayFailureState({required this.message, required this.data});
   @override
-  List<Object> get props => [failureMessage];
+  List<Object> get props => [message];
 }

@@ -1,6 +1,7 @@
-import 'package:dms/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'bottom_sheet_widget.dart';
 
 class OrderHistoryBottomSheet extends StatefulWidget {
   const OrderHistoryBottomSheet({Key? key}) : super(key: key);
@@ -18,20 +19,12 @@ class _OrderHistoryBottomSheetState extends State<OrderHistoryBottomSheet> {
         return Padding(
           padding: const EdgeInsets.all(15),
           child: Column(
-            children: [
-              heading,
+            children: const [
+              BottomSheetHeading("Summary"),
             ],
           ),
         );
       },
     );
   }
-
-  Widget heading = const Padding(
-    padding: EdgeInsets.all(15.0),
-    child: Text(
-      "Summary",
-      style: TextStyle(color: MColor.colorPrimary, fontSize: 20, letterSpacing: 0.67),
-    ),
-  );
 }

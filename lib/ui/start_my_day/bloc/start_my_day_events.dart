@@ -22,6 +22,7 @@ class StartMyDayEvent extends StartMyDayEvents {
 }
 
 class EndMyDayEvent extends StartMyDayEvents {
+  EndMyDayEvent();
   @override
   List<Object> get props => [];
 }
