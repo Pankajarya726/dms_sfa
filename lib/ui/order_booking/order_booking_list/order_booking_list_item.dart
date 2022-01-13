@@ -1,3 +1,6 @@
+import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
+import 'package:dms/ui/bottom_sheet_widget/product_info_bottom_sheet.dart';
+import 'package:dms/ui/order_booking/order_booking_list/full_screen_image_view.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -38,7 +41,13 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
           customBorder: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          onTap: () {},
+          onTap: () {
+            showModalBottomSheet(
+                context: context,
+                shape: bottomSheetShape,
+                isScrollControlled: true,
+                builder: (context) => const ProductInfoBottomSheet());
+          },
           child: Padding(
             padding:
                 const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
@@ -46,14 +55,23 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
               children: [
                 Row(
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
-                      child: const Image(
-                        width: 80,
-                        height: 80,
-                        fit: BoxFit.fill,
-                        image: NetworkImage(
-                            "https://d29qfl7sjqf9f5.cloudfront.net/uploads/image/image/503094/photo.jpg"),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => FullScreenImageView(
+                                  productImage: widget.flavours.image)),
+                        );
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: Image(
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.fill,
+                          image: NetworkImage(widget.flavours.image),
+                        ),
                       ),
                     ),
                     const SizedBox(

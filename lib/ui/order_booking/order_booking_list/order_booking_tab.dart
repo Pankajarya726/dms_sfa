@@ -93,42 +93,42 @@ class _OrderBookingTabState extends State<OrderBookingTab> {
       mrp: "MRP: 5₹",
       ptr: "PTR: ₹12.5",
       image:
-          "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
+          "https://d29qfl7sjqf9f5.cloudfront.net/uploads/image/image/503094/photo.jpg",
     ));
     flavours.add(Flavours(
       flavourName: "Trumpet Pop Strawberry",
       mrp: "MRP: 15₹",
       ptr: "PTR: ₹15.67",
       image:
-          "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Chocolate_%28blue_background%29.jpg/640px-Chocolate_%28blue_background%29.jpg",
     ));
     flavours.add(Flavours(
       flavourName: "Lollipop Mango Strawberry",
       mrp: "MRP: 25₹",
       ptr: "PTR: ₹27.09",
       image:
-          "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
+          "https://i.pinimg.com/736x/4c/f7/b8/4cf7b8fa13224525d7a0a5480c4cb56d.jpg",
     ));
     flavours.add(Flavours(
       flavourName: "Surprise Egg Dexter's",
       mrp: "MRP: 50₹",
       ptr: "PTR: ₹17.23",
       image:
-          "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
+          "https://thefirstyearblog.com/wp-content/uploads/2015/11/Chocolate-Chocolate-Cake-8.jpg",
     ));
     flavours.add(Flavours(
       flavourName: "Jelly Mix Fruits",
       mrp: "MRP: 100₹",
       ptr: "PTR: ₹24.01",
       image:
-          "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Schokolade-schwarz.jpg/1200px-Schokolade-schwarz.jpg",
     ));
     flavours.add(Flavours(
       flavourName: "Mix Shake",
       mrp: "MRP: 150₹",
       ptr: "PTR: ₹56.08",
       image:
-          "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
+          "https://images.newscientist.com/wp-content/uploads/2021/04/08150421/efr8nf_web.jpg",
     ));
     flavourstreamController.add(flavours);
   }
