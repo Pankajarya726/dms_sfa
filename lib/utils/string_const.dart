@@ -81,3 +81,4 @@ const selectLangFirst = "Select Language 1";
 const selectLangSecond = "Select Language 2";
 const whatsAppSms =
     "Does retailer want to opt-in for Whatsapp message / SMS? *";
+const filter = "Filter";

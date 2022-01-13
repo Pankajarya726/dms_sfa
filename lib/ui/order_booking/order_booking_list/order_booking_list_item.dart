@@ -84,7 +84,7 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                                   widget.flavours.mrp,
                                   style: const TextStyle(
                                     letterSpacing: 0.67,
-                                    color: MColor.backButton,
+                                    color: MColor.textColor,
                                     overflow: TextOverflow.ellipsis,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -93,7 +93,7 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                                   widget.flavours.ptr,
                                   style: const TextStyle(
                                     letterSpacing: 0.67,
-                                    color: MColor.backButton,
+                                    color: MColor.textColor,
                                     overflow: TextOverflow.ellipsis,
                                     fontWeight: FontWeight.bold,
                                   ),
