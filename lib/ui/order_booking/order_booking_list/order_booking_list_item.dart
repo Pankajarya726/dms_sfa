@@ -1,4 +1,5 @@
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
+import 'package:dms/ui/bottom_sheet_widget/box_moq_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/product_info_bottom_sheet.dart';
 import 'package:dms/ui/order_booking/order_booking_list/full_screen_image_view.dart';
 import 'package:dms/utils/colors.dart';
@@ -143,7 +144,10 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
     return InkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: () async {
-        showModalBottomSheet(context: context, shape: bottomSheetShape, builder: (context) => BoxMoqSheet());
+        showModalBottomSheet(
+            context: context,
+            shape: bottomSheetShape,
+            builder: (context) => BoxMoqSheet());
       },
       child: Container(
         height: 28,

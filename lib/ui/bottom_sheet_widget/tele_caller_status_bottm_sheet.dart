@@ -63,7 +63,6 @@ class _TeleCallerStatusSheetState extends State<TeleCallerStatusSheet> {
         status: status,
       ));
     }
-
     setState(() {});
   }
 }
