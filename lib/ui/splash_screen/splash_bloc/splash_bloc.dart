@@ -6,7 +6,9 @@ import 'package:dms/ui/splash_screen/splash_bloc/splash_event.dart';
 import 'package:dms/ui/splash_screen/splash_bloc/splash_state.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
 import 'package:package_info/package_info.dart';
@@ -15,7 +17,8 @@ import '../../../main.dart';
 
 class SplashBloc extends Bloc<SplashEvent, SplashState> {
   SplashBloc() : super(SplashInitialState());
-
+  AppUpdateInfo? _updateInfo;
+  bool _flexibleUpdateAvailable = false;
   @override
   Stream<SplashState> mapEventToState(SplashEvent event) async* {
     if (event is ValidateAppEvent) {
@@ -41,7 +44,10 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
         input["device_type"] = 2;
       }
 
+      checkForUpdate();
+
       SplashResponse response = await repository.validateAppVersion(input);
+
       if (response.success) {
         yield SplashSuccessState(response: response);
       } else {
@@ -50,5 +56,30 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     } else {
       yield SplashNetworkState(message: "Network not connected");
     }
+  }
+
+  Future<void> checkForUpdate() async {
+    InAppUpdate.checkForUpdate().then((info) {
+      debugPrint("info--->${info.toString()}");
+      _updateInfo = info;
+    }).catchError((e) {
+      debugPrint("exception--->$e");
+    });
+  }
+
+  updateFlexible() async {
+    InAppUpdate.startFlexibleUpdate().then((_) {
+      _flexibleUpdateAvailable = true;
+    }).catchError((e) {
+      debugPrint("updateFlexible--->");
+      debugPrint("exception--->$e");
+    });
+  }
+
+  updateImmediate() async {
+    InAppUpdate.performImmediateUpdate().catchError((e) {
+      debugPrint("updateFlexible--->");
+      debugPrint("exception--->$e");
+    });
   }
 }

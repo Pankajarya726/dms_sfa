@@ -40,7 +40,8 @@ dependencies:
   google_fonts:
   flutter_tags_x:
   image_picker:
-  syncfusion_flutter_datepicker:
+  syncfusion_flutter_datepicker: ^19.4.42
+  syncfusion_flutter_datagrid: ^19.4.42
   intl: ^0.17.0
   connectivity:
   fluttertoast:
@@ -58,6 +59,10 @@ dependencies:
   flutter_share:
   dio_http_cache:
   flutter_icons:
+  in_app_update:
+
+
+
   # webview_flutter:
 
 

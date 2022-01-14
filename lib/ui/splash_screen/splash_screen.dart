@@ -10,6 +10,7 @@ import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:store_redirect/store_redirect.dart';
@@ -29,6 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    // checkForUpdate();
     addEvent();
   }
 
@@ -164,9 +166,10 @@ class _SplashScreenState extends State<SplashScreen> {
             MaterialButton(
               child: const Text("Update", style: TextStyle(color: Color(0xfff4511e), fontWeight: FontWeight.w600)),
               onPressed: () async {
-                Navigator.pop(context);
                 StoreRedirect.redirect(androidAppId: "com.vvapps.dms").then((value) {
-                  nextPage(startMyDay, mcontext);
+                  debugPrint("update-->");
+                  SystemNavigator.pop();
+                  // nextPage(startMyDay, mcontext);
                 });
               },
             ),
