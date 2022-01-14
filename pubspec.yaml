@@ -64,6 +64,7 @@ dependencies:
 
 
   # webview_flutter:
+  photo_view: 
 
 
 dev_dependencies:
