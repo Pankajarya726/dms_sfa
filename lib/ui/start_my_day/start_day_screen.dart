@@ -67,6 +67,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
 
   PrimaryTag? primaryTag;
   List<SecondaryTag> secondaryTag = [];
+  GlobalKey globalKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -521,8 +522,17 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide.none),
                               ),
+                              onTap: () async {
+                                await Future.delayed(
+                                    const Duration(milliseconds: 500));
+                                RenderObject? object = globalKey.currentContext!
+                                    .findRenderObject();
+                                object!.showOnScreen();
+                                // globalKey2 = globalKey;
+                              },
                             ),
-                            const SizedBox(
+                            SizedBox(
+                              key: globalKey,
                               height: 15,
                             ),
                           ],
@@ -652,9 +662,9 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                                     height: 60,
                                                     decoration: BoxDecoration(
                                                       color: isMeeting
-                                                          ? const Color
-                                                                  .fromRGBO(255,
-                                                              201, 204, 0.5)
+                                                          ? MColor
+                                                              .colorSecondary
+                                                              .withOpacity(0.5)
                                                           : const Color
                                                                   .fromRGBO(196,
                                                               196, 196, 0.5),
@@ -668,12 +678,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                                       height: 48,
                                                       decoration: BoxDecoration(
                                                         color: isMeeting
-                                                            ? const Color
-                                                                    .fromRGBO(
-                                                                255,
-                                                                201,
-                                                                204,
-                                                                1)
+                                                            ? MColor
+                                                                .colorSecondary
                                                             : const Color
                                                                     .fromRGBO(
                                                                 196,
@@ -861,7 +867,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                     ),
                   ),
                   const SizedBox(
-                    height: 50,
+                    height: 5,
                   )
                 ],
               ),
@@ -869,7 +875,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
           ),
         ),
       ),
-      bottomSheet: MultiBlocProvider(
+      bottomNavigationBar: MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => startMyDayBloc),
           BlocProvider(create: (context) => addPlanBloc),
@@ -899,10 +905,10 @@ class _StartDayScreenState extends State<StartDayScreen> {
                 onPressed: () async {
                   //when leave and holiday selected then if will execute
                   if (primaryTag!.id == "5" || primaryTag!.id == "6") {
-                    if (txtRemarkController.text.trim().isEmpty) {
-                      Fluttertoast.showToast(msg: "Please enter remark");
-                      return;
-                    }
+                    // if (txtRemarkController.text.trim().isEmpty) {
+                    //   Fluttertoast.showToast(msg: "Please enter remark");
+                    //   return;
+                    // }
                     if (txtRemarkController.text.trim().length > 255) {
                       Fluttertoast.showToast(msg: "Word limit-250 characters");
                       return;
@@ -937,10 +943,10 @@ class _StartDayScreenState extends State<StartDayScreen> {
                           msg: "Please select secondary tag");
                       return;
                     }
-                    if (txtRemarkController.text.trim().isEmpty) {
-                      Fluttertoast.showToast(msg: "Please enter remark");
-                      return;
-                    }
+                    // if (txtRemarkController.text.trim().isEmpty) {
+                    //   Fluttertoast.showToast(msg: "Please enter remark");
+                    //   return;
+                    // }
                     if (txtRemarkController.text.trim().length > 255) {
                       Fluttertoast.showToast(msg: "Word limit-250 characters");
                       return;
