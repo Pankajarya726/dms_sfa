@@ -569,6 +569,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                     }
                                     if (state is UserLocationFailureState) {
                                       // EasyLoading.dismiss();
+
                                       currentAddress = state.failureMessage;
                                     }
 
@@ -799,7 +800,6 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                                 is CommonBlocSelectImageState) {
                                               imageFile = state.imageFile;
                                             }
-
                                             return InkWell(
                                               onTap: () {
                                                 selectImage();
