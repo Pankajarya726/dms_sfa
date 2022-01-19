@@ -21,7 +21,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(AppBar().preferredSize.height, context),
+      appBar: _appBar(AppBar().preferredSize.height),
       backgroundColor: const Color(0xffF7F7F7),
       body: CustomScrollView(
         slivers: [
@@ -70,7 +70,12 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                     ),
                   ),
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const EditStoreScreen()));
+                      },
                       padding: EdgeInsets.zero,
                       splashRadius: 13,
                       icon: Container(
@@ -251,32 +256,49 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                 child: Column(
                   children: List.generate(
                       4,
-                      (index) => Container(
-                            margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                            height: 50,
-                            decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xffC5C5C5), width: 0.5))),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Date: ${DateFormat("dd-MM-yyyy").format(DateTime.now())}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    color: Color(0xff555555),
-                                    letterSpacing: 0.67,
-                                    fontSize: 15,
-                                  ),
+                      (index) => Material(
+                            child: InkWell(
+                              onTap: () {
+                                showModalBottomSheet(
+                                    context: context,
+                                    shape: bottomSheetShape,
+                                    builder: (context) =>
+                                        const OrderHistoryBottomSheet());
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(
+                                    vertical: 5, horizontal: 10),
+                                height: 50,
+                                decoration: const BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: Color(0xffC5C5C5),
+                                            width: 0.5))),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Date: ${DateFormat("dd-MM-yyyy").format(DateTime.now())}",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        color: Color(0xff555555),
+                                        letterSpacing: 0.67,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                    const Text(
+                                      "Value: ₹7,200",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        color: Color(0xff555555),
+                                        letterSpacing: 0.67,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const Text(
-                                  "Value: ₹7,200",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    color: Color(0xff555555),
-                                    letterSpacing: 0.67,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           )),
                 ),
@@ -331,7 +353,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
     );
   }
 
-  _appBar(height, context) => PreferredSize(
+  _appBar(height) => PreferredSize(
         preferredSize: Size(MediaQuery.of(context).size.width, height + 60),
         child: Stack(
           children: <Widget>[

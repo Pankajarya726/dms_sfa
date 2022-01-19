@@ -103,7 +103,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
           ],
           child: MultiBlocListener(
             listeners: [
-              BlocListener<StartMyDayBloc, StartMyDayStates>(listener: (context, state) {
+              BlocListener<StartMyDayBloc, StartMyDayStates>(
+                  listener: (context, state) {
                 if (state is GetQuotesAndImagesState) {
                   quoteImage = state.quotesAndImagesResponse.data!.image;
                   quoteText = state.quotesAndImagesResponse.data!.text;
@@ -131,7 +132,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                       if (i == secondaryTag.length - 1) {
                         selectedBeats += secondaryTag[i].name;
                       } else {
-                        selectedBeats += secondaryTag[i].name + ", ";
+                        selectedBeats += secondaryTag[i].locationCode + ", ";
                       }
                     }
                   }
@@ -446,8 +447,17 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                 fillColor: const Color(0xffF2F2F2),
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
                               ),
+                              onTap: () async {
+                                await Future.delayed(
+                                    const Duration(milliseconds: 500));
+                                RenderObject? object = globalKey.currentContext!
+                                    .findRenderObject();
+                                object!.showOnScreen();
+                                // globalKey2 = globalKey;
+                              },
                             ),
-                            const SizedBox(
+                            SizedBox(
+                              key: globalKey,
                               height: 15,
                             ),
                           ],
@@ -481,6 +491,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                     }
                                     if (state is UserLocationFailureState) {
                                       // EasyLoading.dismiss();
+
                                       currentAddress = state.failureMessage;
                                     }
 
@@ -489,13 +500,16 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       onTap: () {
-                                        userLocationBloc.add(GetUserLocationEvent());
+                                        userLocationBloc
+                                            .add(GetUserLocationEvent());
                                       },
                                       child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           const Image(
-                                            image: AssetImage("assets/location.png"),
+                                            image: AssetImage(
+                                                "assets/location.png"),
                                             height: 20,
                                             width: 20,
                                             fit: BoxFit.contain,
@@ -524,11 +538,13 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                   height: 15,
                                 ),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         const Text(
                                           getMeeting,
@@ -542,20 +558,27 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                         const SizedBox(
                                           height: 15,
                                         ),
-                                        BlocBuilder<CommonBloc, CommonBlocStates>(
+                                        BlocBuilder<CommonBloc,
+                                            CommonBlocStates>(
                                           builder: (context, state) {
-                                            if (state is CommonBlocGetMeetingState) {
+                                            if (state
+                                                is CommonBlocGetMeetingState) {
                                               isMeeting = state.getMeeting;
                                             }
 
                                             return Row(
                                               children: [
                                                 InkWell(
-                                                  customBorder: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(30),
+                                                  customBorder:
+                                                      RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            30),
                                                   ),
                                                   onTap: () {
-                                                    commonBloc.add(CommonBlocGetMeetingEvent(getMeeting: true));
+                                                    commonBloc.add(
+                                                        CommonBlocGetMeetingEvent(
+                                                            getMeeting: true));
                                                   },
                                                   child: Container(
                                                     width: 60,
@@ -580,7 +603,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                                         child: Text(
                                                           "Yes",
                                                           style: TextStyle(
-                                                            fontWeight: FontWeight.bold,
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                             letterSpacing: 0.67,
                                                           ),
                                                         ),
@@ -592,20 +616,31 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                                   width: 15,
                                                 ),
                                                 InkWell(
-                                                  customBorder: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(30),
+                                                  customBorder:
+                                                      RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            30),
                                                   ),
                                                   onTap: () {
-                                                    commonBloc.add(CommonBlocGetMeetingEvent(getMeeting: false));
+                                                    commonBloc.add(
+                                                        CommonBlocGetMeetingEvent(
+                                                            getMeeting: false));
                                                   },
                                                   child: Container(
                                                     width: 60,
                                                     height: 60,
                                                     decoration: BoxDecoration(
                                                       color: isMeeting
-                                                          ? const Color.fromRGBO(196, 196, 196, 0.5)
-                                                          : const Color.fromRGBO(255, 201, 204, 0.5),
-                                                      borderRadius: BorderRadius.circular(30),
+                                                          ? const Color
+                                                                  .fromRGBO(196,
+                                                              196, 196, 0.5)
+                                                          : const Color
+                                                                  .fromRGBO(255,
+                                                              201, 204, 0.5),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30),
                                                     ),
                                                     alignment: Alignment.center,
                                                     child: Container(
@@ -613,15 +648,28 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                                       height: 48,
                                                       decoration: BoxDecoration(
                                                         color: isMeeting
-                                                            ? const Color.fromRGBO(196, 196, 196, 1)
-                                                            : const Color.fromRGBO(255, 201, 204, 1),
-                                                        borderRadius: BorderRadius.circular(30),
+                                                            ? const Color
+                                                                    .fromRGBO(
+                                                                196,
+                                                                196,
+                                                                196,
+                                                                1)
+                                                            : const Color
+                                                                    .fromRGBO(
+                                                                255,
+                                                                201,
+                                                                204,
+                                                                1),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(30),
                                                       ),
                                                       child: const Center(
                                                         child: Text(
                                                           "No",
                                                           style: TextStyle(
-                                                            fontWeight: FontWeight.bold,
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                             letterSpacing: 0.67,
                                                           ),
                                                         ),
@@ -636,8 +684,10 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                       ],
                                     ),
                                     Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         const Text(
                                           selfie,
@@ -651,9 +701,11 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                         const SizedBox(
                                           height: 15,
                                         ),
-                                        BlocBuilder<CommonBloc, CommonBlocStates>(
+                                        BlocBuilder<CommonBloc,
+                                            CommonBlocStates>(
                                           builder: (context, state) {
-                                            if (state is CommonBlocSelectImageState) {
+                                            if (state
+                                                is CommonBlocSelectImageState) {
                                               imageFile = state.imageFile;
                                             }
 
@@ -662,29 +714,49 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                                 selectImage();
                                               },
                                               child: Container(
-                                                width: MediaQuery.of(context).size.width / 3,
-                                                height: MediaQuery.of(context).size.width / 3,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    3,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    3,
                                                 decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(8),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
                                                   color: Colors.white,
                                                   border: Border.all(
-                                                    color: const Color.fromRGBO(85, 85, 85, 1),
+                                                    color: const Color.fromRGBO(
+                                                        85, 85, 85, 1),
                                                     width: 1,
                                                   ),
                                                 ),
                                                 child: imageFile == null
                                                     ? Center(
                                                         child: Image(
-                                                          image: const AssetImage("assets/camera_icon.png"),
-                                                          width: MediaQuery.of(context).size.width / 7,
-                                                          height: MediaQuery.of(context).size.width / 7,
+                                                          image: const AssetImage(
+                                                              "assets/camera_icon.png"),
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width /
+                                                              7,
+                                                          height: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width /
+                                                              7,
                                                           fit: BoxFit.contain,
                                                         ),
                                                       )
                                                     : ClipRRect(
-                                                        borderRadius: BorderRadius.circular(7),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(7),
                                                         child: Image(
-                                                          image: FileImage(imageFile!),
+                                                          image: FileImage(
+                                                              imageFile!),
                                                           fit: BoxFit.cover,
                                                         ),
                                                       ),
@@ -712,7 +784,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
           ),
         ),
       ),
-      bottomSheet: MultiBlocProvider(
+      bottomNavigationBar: MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => startMyDayBloc),
           BlocProvider(create: (context) => addPlanBloc),
@@ -770,10 +842,10 @@ class _StartDayScreenState extends State<StartDayScreen> {
                       Fluttertoast.showToast(msg: "Please select secondary tag");
                       return;
                     }
-                    if (txtRemarkController.text.trim().isEmpty) {
-                      Fluttertoast.showToast(msg: "Please enter remark");
-                      return;
-                    }
+                    // if (txtRemarkController.text.trim().isEmpty) {
+                    //   Fluttertoast.showToast(msg: "Please enter remark");
+                    //   return;
+                    // }
                     if (txtRemarkController.text.trim().length > 255) {
                       Fluttertoast.showToast(msg: "Word limit-250 characters");
                       return;

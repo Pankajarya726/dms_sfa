@@ -139,7 +139,10 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
     return InkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: () async {
-        showModalBottomSheet(context: context, shape: bottomSheetShape, builder: (context) => BoxMoqSheet());
+        showModalBottomSheet(
+            context: context,
+            shape: bottomSheetShape,
+            builder: (context) => BoxMoqSheet());
       },
       child: Container(
         height: 28,
