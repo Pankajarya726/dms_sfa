@@ -34,6 +34,7 @@ class _EndDayScreenState extends State<EndDayScreen> {
   TextEditingController edtTc = TextEditingController();
   TextEditingController edtPc = TextEditingController();
   TextEditingController edtTotalSale = TextEditingController();
+  TextEditingController edtAverageSale = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +67,7 @@ class _EndDayScreenState extends State<EndDayScreen> {
               itemBuilder: (index) {
                 return ItemTags(
                   index: index,
-                  title: widget.startDayData.primaryTag.name,
+                  title: widget.startDayData.primaryTag.primaryName,
                   active: true,
                   textActiveColor: Colors.black,
                   textColor: const Color(0xff555555),
@@ -97,7 +98,7 @@ class _EndDayScreenState extends State<EndDayScreen> {
               itemBuilder: (index) {
                 return ItemTags(
                   index: index,
-                  title: widget.startDayData.secondaryTag[index].locationCode,
+                  title: widget.startDayData.secondaryTag[index].name,
                   active: true,
                   pressEnabled: false,
                   textActiveColor: Colors.black,
@@ -163,6 +164,23 @@ class _EndDayScreenState extends State<EndDayScreen> {
             ),
             const Text(
               "Total Sale Amount *",
+              style: TextStyle(letterSpacing: 0.5, fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            TextFormField(
+              controller: edtTotalSale,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+              ],
+              keyboardType: TextInputType.number,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            const Text(
+              "Avg Sale Amount *",
               style: TextStyle(letterSpacing: 0.5, fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(

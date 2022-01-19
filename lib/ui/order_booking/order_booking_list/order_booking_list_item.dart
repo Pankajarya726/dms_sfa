@@ -1,4 +1,5 @@
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
+import 'package:dms/ui/bottom_sheet_widget/box_moq_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/product_info_bottom_sheet.dart';
 import 'package:dms/ui/order_booking/order_booking_list/full_screen_image_view.dart';
 import 'package:dms/utils/colors.dart';
@@ -8,9 +9,7 @@ class OrderBookingListItems extends StatefulWidget {
   final int index;
   final Flavours flavours;
 
-  const OrderBookingListItems(
-      {Key? key, required this.index, required this.flavours})
-      : super(key: key);
+  const OrderBookingListItems({Key? key, required this.index, required this.flavours}) : super(key: key);
 
   @override
   State<OrderBookingListItems> createState() => _OrderBookingListItemsState();
@@ -49,8 +48,7 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                 builder: (context) => const ProductInfoBottomSheet());
           },
           child: Padding(
-            padding:
-                const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
+            padding: const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
             child: Column(
               children: [
                 Row(
@@ -59,9 +57,7 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => FullScreenImageView(
-                                  productImage: widget.flavours.image)),
+                          MaterialPageRoute(builder: (context) => FullScreenImageView(productImage: widget.flavours.image)),
                         );
                       },
                       child: ClipRRect(

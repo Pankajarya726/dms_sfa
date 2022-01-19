@@ -4,8 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:dms/model/primary_tag_response.dart';
-import 'package:dms/model/secondary_tag_response.dart';
+import 'package:dms/model/get_all_tag_response.dart';
 
 class EndMyDayResponse {
   EndMyDayResponse({
@@ -53,7 +52,9 @@ class StartDayData {
   String toJson() => json.encode(toMap());
 
   factory StartDayData.fromMap(Map<String, dynamic> json) => StartDayData(
-        primaryTag: json["primary_tag"] == null ? PrimaryTag(id: "1", name: "Retailing") : PrimaryTag.fromMap(json["primary_tag"]),
+        primaryTag: json["primary_tag"] == null
+            ? PrimaryTag(primaryId: 1, primaryName: "Retailing", secondaryTag: [])
+            : PrimaryTag.fromMap(json["primary_tag"]),
         secondaryTag:
             json["secondary_tag"] == null ? [] : List<SecondaryTag>.from(json["secondary_tag"].map((x) => SecondaryTag.fromMap(x))),
       );

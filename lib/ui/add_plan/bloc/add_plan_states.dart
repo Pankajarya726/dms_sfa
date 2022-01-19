@@ -1,6 +1,5 @@
+import 'package:dms/model/get_all_tag_response.dart';
 import 'package:dms/model/get_plan_response.dart';
-import 'package:dms/model/primary_tag_response.dart';
-import 'package:dms/model/secondary_tag_response.dart';
 import 'package:equatable/equatable.dart';
 
 class AddPlanStates extends Equatable {
@@ -76,29 +75,10 @@ class SelectSecondaryState extends AddPlanStates {
   List<Object> get props => [secondaryTag];
 }
 
-class GetSecondaryTagState extends AddPlanStates {
-  final List<SecondaryTag> secondaryTagList;
-
-  GetSecondaryTagState({required this.secondaryTagList});
-
-  @override
-  List<Object> get props => [secondaryTagList];
-}
-
-class GetSecondaryTagFailureState extends AddPlanStates {
-  final String message;
-
-  GetSecondaryTagFailureState({required this.message});
-
-  @override
-  // TODO: implement props
-  List<Object> get props => [message];
-}
-
-class GetPrimaryTagState extends AddPlanStates {
+class GetTagState extends AddPlanStates {
   final List<PrimaryTag> primaryTagList;
 
-  GetPrimaryTagState({required this.primaryTagList});
+  GetTagState({required this.primaryTagList});
 
   @override
   List<Object> get props => [primaryTagList];

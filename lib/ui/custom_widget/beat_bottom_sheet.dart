@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dms/model/secondary_tag_response.dart';
+import 'package:dms/model/get_all_tag_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -208,9 +208,9 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
     // print(widget.beats);
     beats = widget.beats;
 
-    widget.selectedBeat.forEach((beat) {
+    for (var beat in widget.selectedBeat) {
       beats.singleWhere((element) => element.id == beat.id).check = true;
-    });
+    }
 
     // print(beats);
     controller.add(beats);

@@ -21,7 +21,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(AppBar().preferredSize.height),
+      appBar: _appBar(AppBar().preferredSize.height, context),
       backgroundColor: const Color(0xffF7F7F7),
       body: CustomScrollView(
         slivers: [
@@ -331,7 +331,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
     );
   }
 
-  _appBar(height) => PreferredSize(
+  _appBar(height, context) => PreferredSize(
         preferredSize: Size(MediaQuery.of(context).size.width, height + 60),
         child: Stack(
           children: <Widget>[
@@ -343,7 +343,9 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
                       icon: const Icon(
                         Icons.arrow_back_ios,
                         color: Colors.white,

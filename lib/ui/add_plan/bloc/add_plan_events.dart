@@ -1,5 +1,4 @@
-import 'package:dms/model/primary_tag_response.dart';
-import 'package:dms/model/secondary_tag_response.dart';
+import 'package:dms/model/get_all_tag_response.dart';
 import 'package:equatable/equatable.dart';
 
 class AddPlanEvents extends Equatable {
@@ -38,6 +37,12 @@ class SelectPrimaryEvent extends AddPlanEvents {
 
 class GetPrimaryTagEvent extends AddPlanEvents {
   GetPrimaryTagEvent();
+  @override
+  List<Object> get props => [];
+}
+
+class GetTagEvent extends AddPlanEvents {
+  GetTagEvent();
   @override
   List<Object> get props => [];
 }

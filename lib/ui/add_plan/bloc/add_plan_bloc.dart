@@ -1,7 +1,6 @@
 import 'package:dms/main.dart';
+import 'package:dms/model/get_all_tag_response.dart';
 import 'package:dms/model/get_plan_response.dart';
-import 'package:dms/model/primary_tag_response.dart';
-import 'package:dms/model/secondary_tag_response.dart';
 import 'package:dms/ui/add_plan/bloc/add_plan_states.dart';
 import 'package:dms/ui/add_plan/model/AddPlanUpdateData.dart';
 import 'package:dms/ui/add_plan/model/add_plan_response.dart';
@@ -42,45 +41,59 @@ class AddPlanBloc extends Bloc<AddPlanEvents, AddPlanStates> {
       yield AddPlanLoadingState();
       yield* updatePlan(event);
     }
-    if (event is GetSecondaryTagEvent) {
-      yield AddPlanLoadingState();
-      yield* getSecondaryTag(event);
-    }
+    // if (event is GetSecondaryTagEvent) {
+    //   yield AddPlanLoadingState();
+    //   yield* getSecondaryTag(event);
+    // }
 
-    if (event is GetPrimaryTagEvent) {
+    if (event is GetTagEvent) {
       yield AddPlanLoadingState();
-      yield* getPrimaryTag();
+      yield* getTags();
     }
   }
 
-  Stream<AddPlanStates> getSecondaryTag(GetSecondaryTagEvent event) async* {
+  // Stream<AddPlanStates> getSecondaryTag(GetSecondaryTagEvent event) async* {
+  //   if (await Network.isConnected()) {
+  //     SecondaryTagResponse response = await repository.getSecondaryTag(event.primaryTagId.toString());
+  //
+  //     if (response.success) {
+  //       if (event.primaryTagId == "1") {
+  //         yield GetSecondaryTagState(secondaryTagList: response.data!.location!);
+  //       } else {
+  //         yield GetSecondaryTagState(secondaryTagList: response.data!.jointWorker!);
+  //       }
+  //     } else {
+  //       Utility.showToast(response.message);
+  //       yield GetSecondaryTagFailureState(message: response.message);
+  //     }
+  //   } else {
+  //     Utility.showToast(Constants.internetAlert);
+  //   }
+  // }
+
+  // Stream<AddPlanStates> getPrimaryTag() async* {
+  //   if (await Network.isConnected()) {
+  //     PrimaryTagResponse response = await repository.getPrimaryTag();
+  //
+  //     if (response.success) {
+  //       yield GetPrimaryTagState(primaryTagList: response.data);
+  //     } else {
+  //       Utility.showToast(response.message);
+  //       yield GetSecondaryTagFailureState(message: response.message);
+  //     }
+  //   } else {
+  //     Utility.showToast(Constants.internetAlert);
+  //   }
+  // }
+  Stream<AddPlanStates> getTags() async* {
     if (await Network.isConnected()) {
-      SecondaryTagResponse response = await repository.getSecondaryTag(event.primaryTagId.toString());
+      GetAllTagResponse response = await repository.getAllTags();
 
       if (response.success) {
-        if (event.primaryTagId == "1") {
-          yield GetSecondaryTagState(secondaryTagList: response.data!.location!);
-        } else {
-          yield GetSecondaryTagState(secondaryTagList: response.data!.jointWorker!);
-        }
+        yield GetTagState(primaryTagList: response.data);
       } else {
         Utility.showToast(response.message);
-        yield GetSecondaryTagFailureState(message: response.message);
-      }
-    } else {
-      Utility.showToast(Constants.internetAlert);
-    }
-  }
-
-  Stream<AddPlanStates> getPrimaryTag() async* {
-    if (await Network.isConnected()) {
-      PrimaryTagResponse response = await repository.getPrimaryTag();
-
-      if (response.success) {
-        yield GetPrimaryTagState(primaryTagList: response.data);
-      } else {
-        Utility.showToast(response.message);
-        yield GetSecondaryTagFailureState(message: response.message);
+        // yield GetSecondaryTagFailureState(message: response.message);
       }
     } else {
       Utility.showToast(Constants.internetAlert);

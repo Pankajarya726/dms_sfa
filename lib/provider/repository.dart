@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:dms/main.dart';
 import 'package:dms/model/base_response.dart';
+import 'package:dms/model/get_all_tag_response.dart';
 import 'package:dms/model/get_plan_response.dart';
 import 'package:dms/model/primary_tag_response.dart';
 import 'package:dms/model/secondary_tag_response.dart';
@@ -22,6 +23,7 @@ import 'package:dms/ui/start_my_day/model/end_my_day_response.dart';
 import 'package:dms/ui/start_my_day/model/quotes_and_images_response.dart';
 import 'package:dms/ui/start_my_day/model/start_my_day_response.dart.dart';
 import 'package:dms/utils/shared_preference.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter/cupertino.dart';
 
 class ApiRepository {
@@ -36,7 +38,7 @@ class ApiRepository {
   Future<SplashResponse> validateAppVersion(Map input) async {
     try {
       Response response = await dio.post(Url.validateAppVer,
-          data: input, options: buildCacheOptions(const Duration(days: 7), forceRefresh: true, maxStale: Duration(days: 7)));
+          data: input, options: buildCacheOptions(const Duration(days: 7), forceRefresh: true, maxStale: const Duration(days: 7)));
       SplashResponse result = SplashResponse.fromJson(response.toString());
       return result;
     } catch (error, stacktrace) {
@@ -305,49 +307,49 @@ class ApiRepository {
     }
   }
 
-  Future<PrimaryTagResponse> getPrimaryTag() async {
-    try {
-      Response response = await dio.get(
-        Url.getPrimaryTag,
-      );
-      return PrimaryTagResponse.fromJson(response.toString());
-    } catch (error, stacktrace) {
-      String message = "";
-      if (error is DioError) {
-        ServerError e = ServerError.withError(error: error);
-        message = e.getErrorMessage();
-      } else {
-        message = "Something Went wrong";
-      }
-      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
-      return PrimaryTagResponse(
-        success: false,
-        message: message,
-        data: [],
-      );
-    }
-  }
-
-  Future<SecondaryTagResponse> getSecondaryTag(String primaryTag) async {
-    try {
-      Map input = {"Primary_tag": primaryTag};
-      Response response = await dio.post(Url.getSecondaryTag, data: input);
-      return SecondaryTagResponse.fromJson(response.toString());
-    } catch (error, stacktrace) {
-      String message = "";
-      if (error is DioError) {
-        ServerError e = ServerError.withError(error: error);
-        message = e.getErrorMessage();
-      } else {
-        message = "Something Went wrong";
-      }
-      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
-      return SecondaryTagResponse(
-        success: false,
-        message: message,
-      );
-    }
-  }
+  // Future<PrimaryTagResponse> getPrimaryTag() async {
+  //   try {
+  //     Response response = await dio.get(
+  //       Url.getPrimaryTag,
+  //     );
+  //     return PrimaryTagResponse.fromJson(response.toString());
+  //   } catch (error, stacktrace) {
+  //     String message = "";
+  //     if (error is DioError) {
+  //       ServerError e = ServerError.withError(error: error);
+  //       message = e.getErrorMessage();
+  //     } else {
+  //       message = "Something Went wrong";
+  //     }
+  //     debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+  //     return PrimaryTagResponse(
+  //       success: false,
+  //       message: message,
+  //       data: [],
+  //     );
+  //   }
+  // }
+  //
+  // Future<SecondaryTagResponse> getSecondaryTag(String primaryTag) async {
+  //   try {
+  //     Map input = {"Primary_tag": primaryTag};
+  //     Response response = await dio.post(Url.getSecondaryTag, data: input);
+  //     return SecondaryTagResponse.fromJson(response.toString());
+  //   } catch (error, stacktrace) {
+  //     String message = "";
+  //     if (error is DioError) {
+  //       ServerError e = ServerError.withError(error: error);
+  //       message = e.getErrorMessage();
+  //     } else {
+  //       message = "Something Went wrong";
+  //     }
+  //     debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+  //     return SecondaryTagResponse(
+  //       success: false,
+  //       message: message,
+  //     );
+  //   }
+  // }
 
   Future<GetPlanByDateResponse> getSavedPlan(Map input) async {
     try {
@@ -452,6 +454,33 @@ class ApiRepository {
       return BaseResponse(
         success: false,
         message: message,
+      );
+    }
+  }
+
+  Future<GetAllTagResponse> getAllTags() async {
+    try {
+      Map input = {"user_id": await Utility.getStringPreference(SharedPreference.userId)};
+      Response response = await dio.post(
+        Url.getAllTags,
+        data: input,
+      );
+
+      GetAllTagResponse baseResponse = GetAllTagResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = "Something Went wrong";
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return GetAllTagResponse(
+        success: false,
+        message: message,
+        data: [],
       );
     }
   }

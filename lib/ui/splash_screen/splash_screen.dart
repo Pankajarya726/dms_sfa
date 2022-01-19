@@ -45,13 +45,13 @@ class _SplashScreenState extends State<SplashScreen> {
 
             if (state.response.data!.addPlanButton.addPjpButton == "1") {
               SharedPreference.setBooleanPreference(SharedPreference.showAddPlanButton, true);
-              SharedPreference.setStringPreference(
-                  SharedPreference.fromDate, DateFormat("yyyy-MM-dd").format(state.response.data!.addPlanButton.fromDate));
-              SharedPreference.setStringPreference(
-                  SharedPreference.toDate, DateFormat("yyyy-MM-dd").format(state.response.data!.addPlanButton.toDate));
             } else {
               SharedPreference.setBooleanPreference(SharedPreference.showAddPlanButton, false);
             }
+            SharedPreference.setStringPreference(
+                SharedPreference.fromDate, DateFormat("yyyy-MM-dd").format(state.response.data!.addPlanButton.fromDate));
+            SharedPreference.setStringPreference(
+                SharedPreference.toDate, DateFormat("yyyy-MM-dd").format(state.response.data!.addPlanButton.toDate));
 
             nextPage(state.response.data!.startMyDay, context);
           }
@@ -59,13 +59,14 @@ class _SplashScreenState extends State<SplashScreen> {
           if (state is SplashFailureState) {
             if (state.response.data!.addPlanButton.addPjpButton == "1") {
               SharedPreference.setBooleanPreference(SharedPreference.showAddPlanButton, true);
-              SharedPreference.setStringPreference(
-                  SharedPreference.fromDate, DateFormat("yyyy-MM-dd").format(state.response.data!.addPlanButton.fromDate));
-              SharedPreference.setStringPreference(
-                  SharedPreference.toDate, DateFormat("yyyy-MM-dd").format(state.response.data!.addPlanButton.toDate));
             } else {
               SharedPreference.setBooleanPreference(SharedPreference.showAddPlanButton, false);
             }
+            SharedPreference.setStringPreference(
+                SharedPreference.fromDate, DateFormat("yyyy-MM-dd").format(state.response.data!.addPlanButton.fromDate));
+            SharedPreference.setStringPreference(
+                SharedPreference.toDate, DateFormat("yyyy-MM-dd").format(state.response.data!.addPlanButton.toDate));
+
             showUpdateAlert(
               context,
               state.response.data!.isMandatory,

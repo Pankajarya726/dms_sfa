@@ -199,7 +199,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   if (state is EndMyDaySuccessState) {
                     Fluttertoast.showToast(msg: state.endMyDayResponse.message);
                     controller.close!.call();
-                    Navigator.pop(context);
+                    // Navigator.pop(context);
                   }
                   if (state is EndMyDayFailureState) {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => EndDayScreen(state.data)));

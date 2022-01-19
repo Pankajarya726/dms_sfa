@@ -100,7 +100,7 @@ class _MyPlanState extends State<MyPlan> with TickerProviderStateMixin {
                 actions: [
                   Padding(
                     padding: const EdgeInsets.fromLTRB(14, 13, 17, 14),
-                    child: pjpButton
+                    child: !pjpButton
                         ? ElevatedButton(
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all(MColor.colorSecondary),
@@ -109,6 +109,8 @@ class _MyPlanState extends State<MyPlan> with TickerProviderStateMixin {
                               if (await Network.isConnected()) {
                                 String from = await SharedPreference.getStringPreference(SharedPreference.fromDate);
                                 String to = await SharedPreference.getStringPreference(SharedPreference.toDate);
+                                debugPrint("from-->$from");
+                                debugPrint("to-->$to");
 
                                 DateTime fromDate = DateTime.parse(from);
                                 DateTime toDate = DateTime.parse(to);
