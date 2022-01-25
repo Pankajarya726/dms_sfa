@@ -20,14 +20,14 @@ class UpdateProfileResponse {
   String toJson() => json.encode(toMap());
 
   factory UpdateProfileResponse.fromMap(Map<String, dynamic> json) => UpdateProfileResponse(
-        success: json["success"] == null ? false : json["success"],
-        message: json["message"] == null ? "" : json["message"],
+        success: json["success"] ?? false,
+        message: json["message"] ?? "",
         data: json["data"] == null ? null : User.fromMap(json["data"]),
       );
 
   Map<String, dynamic> toMap() => {
-        "success": success == null ? null : success,
-        "message": message == null ? null : message,
+        "success": success,
+        "message": message,
         "data": data == null ? null : data!.toMap(),
       };
 }
@@ -52,18 +52,18 @@ class User {
   String toJson() => json.encode(toMap());
 
   factory User.fromMap(Map<String, dynamic> json) => User(
-        id: json["id"] == null ? null : json["id"],
-        name: json["name"] == null ? null : json["name"],
-        email: json["email"] == null ? null : json["email"],
-        profilePicture: json["profile_picture"] == null ? null : json["profile_picture"],
-        mobileNumber: json["mobile_number"] == null ? null : json["mobile_number"],
+        id: json["id"],
+        name: json["name"],
+        email: json["email"],
+        profilePicture: json["profile_picture"],
+        mobileNumber: json["mobile_number"],
       );
 
   Map<String, dynamic> toMap() => {
-        "id": id == null ? null : id,
-        "name": name == null ? null : name,
-        "email": email == null ? null : email,
-        "profile_picture": profilePicture == null ? null : profilePicture,
-        "mobile_number": mobileNumber == null ? null : mobileNumber,
+        "id": id,
+        "name": name,
+        "email": email,
+        "profile_picture": profilePicture,
+        "mobile_number": mobileNumber,
       };
 }

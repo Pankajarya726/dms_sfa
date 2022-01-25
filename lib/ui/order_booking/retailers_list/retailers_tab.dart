@@ -28,6 +28,7 @@ class _RetailerTabState extends State<RetailerTab> with AutomaticKeepAliveClient
   }
 
   @override
+  // ignore: must_call_super
   Widget build(BuildContext context) {
     return Column(
       children: [

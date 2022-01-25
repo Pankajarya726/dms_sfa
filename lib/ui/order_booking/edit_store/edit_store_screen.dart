@@ -1,5 +1,5 @@
-import 'dart:developer';
 import 'dart:io';
+
 import 'package:dms/ui/bottom_sheet_widget/select_beat_name_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_city_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_distributor_bottom_sheet.dart';
@@ -23,6 +23,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
+
 import '../../../main.dart';
 
 class EditStoreScreen extends StatefulWidget {
@@ -60,17 +61,13 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
   TextEditingController txtEmailController = TextEditingController();
   TextEditingController txtPicDateController = TextEditingController();
   TextEditingController txtSelectCityController = TextEditingController();
-  TextEditingController txtSelectDistributorController =
-      TextEditingController();
+  TextEditingController txtSelectDistributorController = TextEditingController();
   TextEditingController txtSelectBeatNameController = TextEditingController();
-  TextEditingController txtSelectCallTimeSlotController =
-      TextEditingController();
+  TextEditingController txtSelectCallTimeSlotController = TextEditingController();
   TextEditingController txtSelectLangFirstController = TextEditingController();
   TextEditingController txtSelectLangSecondController = TextEditingController();
-  TextEditingController txtSelectRetailerTypeController =
-      TextEditingController();
-  TextEditingController txtSelectRetailerCategoryController =
-      TextEditingController();
+  TextEditingController txtSelectRetailerTypeController = TextEditingController();
+  TextEditingController txtSelectRetailerCategoryController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -130,8 +127,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                     return Row(
                       children: [
                         radioButtonWidget(selectEnrollmentRadio, 0, retailer),
-                        radioButtonWidget(
-                            selectEnrollmentRadio, 1, teleRetailer),
+                        radioButtonWidget(selectEnrollmentRadio, 1, teleRetailer),
                       ],
                     );
                   },
@@ -166,7 +162,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                 BlocBuilder<UserLocationBloc, UserLocationStates>(
                   bloc: userLocationBloc,
                   builder: (context, state) {
-                    print("state---->$state");
+                    debugPrint("state---->$state");
 
                     if (state is UserLocationInitialState) {
                       userLocationBloc.add(GetUserLocationEvent());
@@ -179,8 +175,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                       txtPincodeController.text = state.pincode;
                     }
                     if (state is UserLocationFailureState) {
-                      Fluttertoast.showToast(
-                          msg: "Please turn on GPS to get current location");
+                      Fluttertoast.showToast(msg: "Please turn on GPS to get current location");
                     }
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -307,8 +302,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                 BlocBuilder<CommonBloc, CommonBlocStates>(
                   builder: (context, state) {
                     if (state is CommonBlocSelectDateState) {
-                      txtPicDateController.text =
-                          DateFormat("yyyy-MM-dd").format(state.dateTime);
+                      txtPicDateController.text = DateFormat("yyyy-MM-dd").format(state.dateTime);
                     }
                     return textFields(txtPicDateController, picDate);
                   },
@@ -397,8 +391,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
             } else if (txtSelectRetailerCategoryController.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please select retailer category");
             } else if (whatsAppSmsRadio == "") {
-              Fluttertoast.showToast(
-                  msg: "Please select opt-in for whatsapp message / SMS");
+              Fluttertoast.showToast(msg: "Please select opt-in for whatsapp message / SMS");
             } else if (outletPhotoFile == null) {
               Fluttertoast.showToast(msg: "Please capture outlet photo");
             } else {
@@ -454,8 +447,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                   lastDate: await NTP.now(),
                 );
                 if (dateTime != null) {
-                  commonBloc
-                      .add(CommonBlocSelectDateEvent(dateTime: dateTime!));
+                  commonBloc.add(CommonBlocSelectDateEvent(dateTime: dateTime!));
                 }
               } else {
                 openBottomSheet(context, txtController);
@@ -518,10 +510,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                     ? TextInputType.emailAddress
                     : TextInputType.text,
             controller: txtController,
-            maxLength: txtController == txtPrimaryMobController ||
-                    txtController == txtSecondaryMobController
-                ? 10
-                : null,
+            maxLength: txtController == txtPrimaryMobController || txtController == txtSecondaryMobController ? 10 : null,
             enabled: txtController == txtLatitudeController ||
                     txtController == txtLongtitudeController ||
                     txtController == txtPincodeController ||
@@ -569,8 +558,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
   Widget radioButtonWidget(groupValue, value, label) {
     void addRadioEvent() {
       if (value == 0 || value == 1) {
-        commonBloc
-            .add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
+        commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
       }
       if (value == 2 || value == 3) {
         commonBloc.add(CommonBlocRetailerRadioEvent(retailerRadioTag: value));
@@ -671,28 +659,20 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
   void selectImage(imageLabel) async {
     try {
       XFile? image = await imagePicker.pickImage(
-          source: ImageSource.camera,
-          maxHeight: 512,
-          maxWidth: 512,
-          preferredCameraDevice: CameraDevice.front);
+          source: ImageSource.camera, maxHeight: 512, maxWidth: 512, preferredCameraDevice: CameraDevice.front);
       if (image != null) {
         if (imageLabel == outletName) {
           outletPhotoFile = File(image.path);
           outletFileName = image.name;
-          commonBloc
-              .add(CommonBlocSelectImageEvent(imageFile: outletPhotoFile!));
+          commonBloc.add(CommonBlocSelectImageEvent(imageFile: outletPhotoFile!));
         } else {
           ownerPhotoFile = File(image.path);
           ownerFileName = image.name;
-          commonBloc
-              .add(CommonBlocSelectOwnerImageEvent(imageFile: ownerPhotoFile!));
+          commonBloc.add(CommonBlocSelectOwnerImageEvent(imageFile: ownerPhotoFile!));
         }
       }
     } catch (exception) {
-      Fluttertoast.showToast(
-          msg:
-              "Permission denied, go to app settings and allow camera permission",
-          toastLength: Toast.LENGTH_LONG);
+      Fluttertoast.showToast(msg: "Permission denied, go to app settings and allow camera permission", toastLength: Toast.LENGTH_LONG);
     }
   }
 
@@ -706,29 +686,21 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
         builder: (context) {
           return txtController == txtSelectCityController
               ? SelectCityBottomSheet(
-                  selectedCityName: txtSelectCityController.text.isEmpty
-                      ? ""
-                      : txtSelectCityController.text,
+                  selectedCityName: txtSelectCityController.text.isEmpty ? "" : txtSelectCityController.text,
                   onCitySelect: (city) {
                     txtSelectCityController.text = city;
                   },
                 )
               : txtController == txtSelectDistributorController
                   ? SelectDistributorBottomSheet(
-                      selectedDistributorName:
-                          txtSelectDistributorController.text.isEmpty
-                              ? ""
-                              : txtSelectDistributorController.text,
+                      selectedDistributorName: txtSelectDistributorController.text.isEmpty ? "" : txtSelectDistributorController.text,
                       onDistributorSelect: (distributor) {
                         txtSelectDistributorController.text = distributor;
                       },
                     )
                   : txtController == txtSelectBeatNameController
                       ? SelectBeatNameBottomSheet(
-                          selectedBeatNameName:
-                              txtSelectBeatNameController.text.isEmpty
-                                  ? ""
-                                  : txtSelectBeatNameController.text,
+                          selectedBeatNameName: txtSelectBeatNameController.text.isEmpty ? "" : txtSelectBeatNameController.text,
                           onBeatNameSelect: (beatName) {
                             txtSelectBeatNameController.text = beatName;
                           },
@@ -736,63 +708,41 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                       : txtController == txtSelectLangFirstController
                           ? SelectLangFirstBottomSheet(
                               selectedLangFirstName:
-                                  txtSelectLangFirstController.text.isEmpty
-                                      ? ""
-                                      : txtSelectLangFirstController.text,
+                                  txtSelectLangFirstController.text.isEmpty ? "" : txtSelectLangFirstController.text,
                               onLangFirstSelect: (languageName) {
-                                txtSelectLangFirstController.text =
-                                    languageName;
+                                txtSelectLangFirstController.text = languageName;
                               },
                             )
                           : txtController == txtSelectLangSecondController
                               ? SelectLangSecondBottomSheet(
                                   selectedLangSecondName:
-                                      txtSelectLangSecondController.text.isEmpty
-                                          ? ""
-                                          : txtSelectLangSecondController.text,
+                                      txtSelectLangSecondController.text.isEmpty ? "" : txtSelectLangSecondController.text,
                                   onLangSecondSelect: (languageName) {
-                                    txtSelectLangSecondController.text =
-                                        languageName;
+                                    txtSelectLangSecondController.text = languageName;
                                   },
                                 )
                               : txtController == txtSelectCallTimeSlotController
                                   ? SelectCallTimeSlotBottomSheet(
                                       selectedCallTimeSlotName:
-                                          txtSelectCallTimeSlotController
-                                                  .text.isEmpty
-                                              ? ""
-                                              : txtSelectCallTimeSlotController
-                                                  .text,
+                                          txtSelectCallTimeSlotController.text.isEmpty ? "" : txtSelectCallTimeSlotController.text,
                                       onCallTimeSlotSelect: (callTimeSlot) {
-                                        txtSelectCallTimeSlotController.text =
-                                            callTimeSlot;
+                                        txtSelectCallTimeSlotController.text = callTimeSlot;
                                       },
                                     )
-                                  : txtController ==
-                                          txtSelectRetailerTypeController
+                                  : txtController == txtSelectRetailerTypeController
                                       ? SelectRetailerTypeBottomSheet(
                                           selectedRetailerTypeName:
-                                              txtSelectRetailerTypeController
-                                                      .text.isEmpty
-                                                  ? ""
-                                                  : txtSelectRetailerTypeController
-                                                      .text,
+                                              txtSelectRetailerTypeController.text.isEmpty ? "" : txtSelectRetailerTypeController.text,
                                           onRetailerTypeSelect: (retailerType) {
-                                            txtSelectRetailerTypeController
-                                                .text = retailerType;
+                                            txtSelectRetailerTypeController.text = retailerType;
                                           },
                                         )
                                       : SelectRetailerCategoryBottomSheet(
-                                          selectedRetailerCategoryName:
-                                              txtSelectRetailerCategoryController
-                                                      .text.isEmpty
-                                                  ? ""
-                                                  : txtSelectRetailerCategoryController
-                                                      .text,
-                                          onRetailerCategorySelect:
-                                              (retailerCategory) {
-                                            txtSelectRetailerCategoryController
-                                                .text = retailerCategory;
+                                          selectedRetailerCategoryName: txtSelectRetailerCategoryController.text.isEmpty
+                                              ? ""
+                                              : txtSelectRetailerCategoryController.text,
+                                          onRetailerCategorySelect: (retailerCategory) {
+                                            txtSelectRetailerCategoryController.text = retailerCategory;
                                           },
                                         );
         });

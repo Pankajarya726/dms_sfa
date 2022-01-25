@@ -16,12 +16,12 @@ class EditProfileResponse {
 
   factory EditProfileResponse.fromMap(Map<String, dynamic> json) =>
       EditProfileResponse(
-        success: json["success"] == null ? null : json["success"],
-        message: json["message"] == null ? null : json["message"],
+        success: json["success"],
+        message: json["message"],
       );
 
   Map<String, dynamic> toMap() => {
-        "success": success == null ? null : success,
-        "message": message == null ? null : message,
+        "success": success,
+        "message": message,
       };
 }

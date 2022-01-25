@@ -67,7 +67,7 @@ class _EndDayScreenState extends State<EndDayScreen> {
               itemBuilder: (index) {
                 return ItemTags(
                   index: index,
-                  title: widget.startDayData.primaryTag.primaryName,
+                  title: widget.startDayData.primaryTag.name,
                   active: true,
                   textActiveColor: Colors.black,
                   textColor: const Color(0xff555555),
@@ -187,7 +187,7 @@ class _EndDayScreenState extends State<EndDayScreen> {
               height: 5,
             ),
             TextFormField(
-              controller: edtTotalSale,
+              controller: edtAverageSale,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
               ],
@@ -244,6 +244,10 @@ class _EndDayScreenState extends State<EndDayScreen> {
       Utility.showToast("Please enter Total sale amount");
       return;
     }
+    if (edtAverageSale.text.isEmpty) {
+      Utility.showToast("Please enter Average sale amount");
+      return;
+    }
     DateTime _ntpTime = await NTP.now();
 
     try {
@@ -271,6 +275,7 @@ class _EndDayScreenState extends State<EndDayScreen> {
       input["total_visit"] = edtTc.text.trim().toString();
       input["total_order"] = edtPc.text.trim().toString();
       input["total_sale_ammount"] = edtTotalSale.text.trim().toString();
+      input["avg_sale_value"] = edtAverageSale.text.trim().toString();
       input["end_day_remark"] = edtRemark.text.trim();
       debugPrint("input-->$input");
       confirmEndDayApi(input);
@@ -288,7 +293,7 @@ class _EndDayScreenState extends State<EndDayScreen> {
       Utility.showToast(response.message);
 
       if (response.success) {
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => DrawerScreen()), (route) => false);
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const DrawerScreen()), (route) => false);
       }
     } else {
       Utility.showToast(Constants.internetAlert);

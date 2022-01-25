@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:dms/utils/utility.dart';
 import 'package:geolocator/geolocator.dart';
 

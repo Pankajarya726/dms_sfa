@@ -1,3 +1,5 @@
+// ignore_for_file: use_key_in_widget_constructors
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_bloc.dart';
 import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_events.dart';
@@ -15,10 +17,11 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'model/get_menus_response.dart';
 
+// ignore: must_be_immutable
 class HomeScreen extends KFDrawerContent {
   final Function(ProfileUpdateListener listener) onInit;
 
-  HomeScreen({Key? key, required this.onInit});
+  HomeScreen({required this.onInit});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -310,23 +313,23 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
   void navigateToHomeItems(index) {
     switch (index) {
       case 0:
-        Fluttertoast.showToast(msg: commingSoon);
+        Fluttertoast.showToast(msg: comingSoon);
         break;
       case 1:
-        Fluttertoast.showToast(msg: commingSoon);
+        Fluttertoast.showToast(msg: comingSoon);
         break;
       case 2:
-        Fluttertoast.showToast(msg: commingSoon);
+        Fluttertoast.showToast(msg: comingSoon);
         break;
       case 3:
-        Fluttertoast.showToast(msg: commingSoon);
+        Fluttertoast.showToast(msg: comingSoon);
         break;
       case 4:
         // Fluttertoast.showToast(msg: commingSoon);
         Navigator.push(context, MaterialPageRoute(builder: (context) => const RetailerListScreen()));
         break;
       case 5:
-        Fluttertoast.showToast(msg: commingSoon);
+        Fluttertoast.showToast(msg: comingSoon);
         break;
     }
   }
@@ -334,13 +337,13 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
   void navigateToBottomBarItems() {
     switch (currentBottomTabIndex) {
       case 0:
-        Fluttertoast.showToast(msg: commingSoon);
+        Fluttertoast.showToast(msg: comingSoon);
         break;
       case 1:
-        Fluttertoast.showToast(msg: commingSoon);
+        Fluttertoast.showToast(msg: comingSoon);
         break;
       case 2:
-        Fluttertoast.showToast(msg: commingSoon);
+        Fluttertoast.showToast(msg: comingSoon);
         break;
       case 3:
         Navigator.push(context, MaterialPageRoute(builder: (context) => const MyPlan()));

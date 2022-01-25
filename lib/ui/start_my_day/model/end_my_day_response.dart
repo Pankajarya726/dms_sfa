@@ -24,16 +24,16 @@ class EndMyDayResponse {
   String toJson() => json.encode(toMap());
 
   factory EndMyDayResponse.fromMap(Map<String, dynamic> json) => EndMyDayResponse(
-        success: json["success"] == null ? false : json["success"],
-        message: json["message"] == null ? "" : json["message"],
+        success: json["success"] ?? false,
+        message: json["message"] ?? "",
         status: json["status"] == null ? "0" : json["status"].toString(),
         data: json["data"] == null ? null : StartDayData.fromMap(json["data"]),
       );
 
   Map<String, dynamic> toMap() => {
-        "success": success == null ? null : success,
-        "message": message == null ? null : message,
-        "status": status == null ? null : status,
+        "success": success,
+        "message": message,
+        "status": status,
         "data": data == null ? null : data!.toMap(),
       };
 }
@@ -52,15 +52,13 @@ class StartDayData {
   String toJson() => json.encode(toMap());
 
   factory StartDayData.fromMap(Map<String, dynamic> json) => StartDayData(
-        primaryTag: json["primary_tag"] == null
-            ? PrimaryTag(primaryId: 1, primaryName: "Retailing", secondaryTag: [])
-            : PrimaryTag.fromMap(json["primary_tag"]),
+        primaryTag: PrimaryTag.fromMap(json["primary_tag"]),
         secondaryTag:
             json["secondary_tag"] == null ? [] : List<SecondaryTag>.from(json["secondary_tag"].map((x) => SecondaryTag.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
-        "primary_tag": primaryTag == null ? null : primaryTag.toMap(),
-        "secondary_tag": secondaryTag == null ? null : List<dynamic>.from(secondaryTag.map((x) => x.toMap())),
+        "primary_tag": primaryTag,
+        "secondary_tag": secondaryTag,
       };
 }

@@ -41,7 +41,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("build---->");
+    debugPrint("build---->");
     return BlocProvider<EditProfileBloc>(
       create: (context) => editProfileBloc,
       child: WillPopScope(

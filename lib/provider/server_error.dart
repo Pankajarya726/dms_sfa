@@ -23,8 +23,8 @@ class ServerError implements Exception {
 
   _handleError(DioError error) async {
     _errorCode = error.response!.statusCode!;
-    print(error);
-    print(error.message);
+    debugPrint(error.toString());
+    debugPrint(error.message);
     switch (error.type) {
       case DioErrorType.cancel:
         _errorMessage = "Request was cancelled";
@@ -41,7 +41,7 @@ class ServerError implements Exception {
       case DioErrorType.response:
         _errorMessage = "Internal server error";
         if (error.response!.statusCode == 401) {
-          print("come here-->");
+          debugPrint("come here-->");
 
           logout();
         }

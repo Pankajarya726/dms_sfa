@@ -24,19 +24,27 @@ class GetAllTagResponse {
   Map<String, dynamic> toMap() => {
         "success": success,
         "message": message,
-        "data": data == null ? null : List<dynamic>.from(data.map((x) => x.toMap())),
+        "data": data,
       };
 }
 
 class PrimaryTag {
   PrimaryTag({
-    required this.primaryId,
-    required this.primaryName,
+    required this.id,
+    required this.selected,
+    required this.canSelect,
+    required this.secondaryTagType,
+    required this.selectionType,
+    required this.name,
     required this.secondaryTag,
   });
 
-  int primaryId;
-  String primaryName;
+  int id;
+  int selected;
+  int canSelect;
+  String secondaryTagType;
+  String selectionType;
+  String name;
   List<SecondaryTag> secondaryTag;
 
   factory PrimaryTag.fromJson(String str) => PrimaryTag.fromMap(json.decode(str));
@@ -44,21 +52,29 @@ class PrimaryTag {
   String toJson() => json.encode(toMap());
 
   factory PrimaryTag.fromMap(Map<String, dynamic> json) => PrimaryTag(
-        primaryId: json["primary_id"] ?? 0,
-        primaryName: json["primary_name"] ?? "",
+        id: json["id"] ?? 0,
+        selected: json["selected"] ?? 0,
+        canSelect: json["can_select"] ?? 0,
+        secondaryTagType: json["secondary_tag_ui_type"] ?? "",
+        selectionType: json["selection_type"] ?? "",
+        name: json["name"] ?? "",
         secondaryTag:
             json["secondary_tag"] == null ? [] : List<SecondaryTag>.from(json["secondary_tag"].map((x) => SecondaryTag.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
-        "primary_id": primaryId,
-        "primary_name": primaryName,
-        "secondary_tag": secondaryTag == null ? null : List<dynamic>.from(secondaryTag.map((x) => x.toMap())),
+        "primary_id": id,
+        "selected": selected,
+        "can_select": canSelect,
+        "secondary_tag_ui_type": secondaryTagType,
+        "selection_type": selectionType,
+        "name": name,
+        "secondary_tag": secondaryTag,
       };
 
   @override
   String toString() {
-    return 'PrimaryTag{primaryId: $primaryId, primaryName: $primaryName, secondaryTag: $secondaryTag}';
+    return 'PrimaryTag{id: $id, selected: $selected, canSelect: $canSelect, secondaryTagType: $secondaryTagType, selectionType: $selectionType, name: $name, secondaryTag: $secondaryTag}';
   }
 }
 

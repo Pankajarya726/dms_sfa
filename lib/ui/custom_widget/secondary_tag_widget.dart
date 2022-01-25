@@ -11,7 +11,7 @@ class SecondaryTagWidget extends StatefulWidget {
   final List<SecondaryTag>? secondaryTagList;
   final String uiType;
 
-  SecondaryTagWidget({Key? key, this.onSelect, this.secondaryTagList, this.uiType = "1"}) : super(key: key);
+  const SecondaryTagWidget({Key? key, this.onSelect, this.secondaryTagList, this.uiType = "1"}) : super(key: key);
 
   @override
   _SecondaryTagWidgetState createState() => _SecondaryTagWidgetState();
@@ -117,7 +117,7 @@ class _SecondaryTagWidgetState extends State<SecondaryTagWidget> {
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))),
         builder: (context) {
           return BeatBottomSheet(
-              selectedBeat: [],
+              selectedBeat: const [],
               beats: secondaryTag,
               onBeatSelect: (List<SecondaryTag> beat) {
                 widget.onSelect!(beat);

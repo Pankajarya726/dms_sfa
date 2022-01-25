@@ -61,10 +61,11 @@ class _StartDayScreenState extends State<StartDayScreen> {
   PlanDataModel? planDateModel;
 
   List<PrimaryTag> primaryTagList = [];
-  List<SecondaryTag> secondaryTagList = [];
+  List<SecondaryTag> selectedSecondaryTags = [];
 
-  PrimaryTag? primaryTag;
-  List<SecondaryTag> secondaryTag = [];
+  PrimaryTag? selectedPrimaryTag;
+
+  GlobalKey globalKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -103,8 +104,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
           ],
           child: MultiBlocListener(
             listeners: [
-              BlocListener<StartMyDayBloc, StartMyDayStates>(
-                  listener: (context, state) {
+              BlocListener<StartMyDayBloc, StartMyDayStates>(listener: (context, state) {
                 if (state is GetQuotesAndImagesState) {
                   quoteImage = state.quotesAndImagesResponse.data!.image;
                   quoteText = state.quotesAndImagesResponse.data!.text;
@@ -119,24 +119,47 @@ class _StartDayScreenState extends State<StartDayScreen> {
                   refreshController.refreshCompleted();
                   planDateModel = state.planDateModel;
                   txtRemarkController.text = state.planDateModel.remark;
-                  primaryTag = PrimaryTag(
-                      primaryId: int.parse(state.planDateModel.primaryTagId),
-                      primaryName: state.planDateModel.primaryTag,
-                      secondaryTag: []);
-                  secondaryTag.clear();
-                  secondaryTag = state.planDateModel.secondaryTags;
-                  // addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.primaryId));
-                  String selectedBeats = "";
-                  if (secondaryTag.isNotEmpty) {
-                    for (int i = 0; i < secondaryTag.length; i++) {
-                      if (i == secondaryTag.length - 1) {
-                        selectedBeats += secondaryTag[i].name;
+                  selectedSecondaryTags = state.planDateModel.secondaryTags;
+                  String selectedBeats = state.planDateModel.secondaryTag;
+                  if (selectedSecondaryTags.isNotEmpty) {
+                    for (int i = 0; i < selectedSecondaryTags.length; i++) {
+                      if (i == selectedSecondaryTags.length - 1) {
+                        selectedBeats += selectedSecondaryTags[i].name;
                       } else {
-                        selectedBeats += secondaryTag[i].locationCode + ", ";
+                        selectedBeats += selectedSecondaryTags[i].name + ", ";
                       }
                     }
                   }
+
                   txtBeatController.text = selectedBeats;
+
+                  List<SecondaryTag> secTag =
+                      primaryTagList.singleWhere((element) => element.id == int.parse(state.planDateModel.primaryTagId)).secondaryTag;
+
+                  for (var element in secTag) {
+                    element.check = false;
+                  }
+
+                  if (state.planDateModel.secondaryTags.isNotEmpty) {
+                    for (var element in state.planDateModel.secondaryTags) {
+                      secTag.singleWhere((tag) => tag.id == element.id).check = true;
+                    }
+                  }
+
+                  selectedPrimaryTag = PrimaryTag(
+                      id: int.parse(state.planDateModel.primaryTagId),
+                      name: state.planDateModel.primaryTag,
+                      selectionType: primaryTagList
+                          .singleWhere((element) => element.id.toString() == state.planDateModel.primaryTagId)
+                          .selectionType,
+                      selected: 1,
+                      canSelect: 1,
+                      secondaryTagType: primaryTagList
+                          .singleWhere((element) => element.id.toString() == state.planDateModel.primaryTagId)
+                          .secondaryTagType,
+                      secondaryTag: secTag);
+
+                  addPlanBloc.add(SelectPrimaryEvent(primaryTag: selectedPrimaryTag!));
                 }
                 //
                 // if (state is GetSecondaryTagState) {
@@ -146,11 +169,14 @@ class _StartDayScreenState extends State<StartDayScreen> {
                   refreshController.refreshCompleted();
                   planDateModel = null;
 
-                  primaryTag = primaryTagList.first;
-                  secondaryTag.clear();
+                  selectedPrimaryTag = primaryTagList.first;
+                  for (var element in selectedPrimaryTag!.secondaryTag) {
+                    element.check = false;
+                  }
+                  selectedSecondaryTags.clear();
                   txtRemarkController.clear();
                   txtBeatController.clear();
-                  addPlanBloc.add(SelectPrimaryEvent(primaryTag: primaryTag!));
+                  addPlanBloc.add(SelectPrimaryEvent(primaryTag: selectedPrimaryTag!));
                 }
                 if (state is AddPlanSuccessState) {
                   // Fluttertoast.showToast(msg: state.successMessage);
@@ -159,11 +185,11 @@ class _StartDayScreenState extends State<StartDayScreen> {
                   Fluttertoast.showToast(msg: state.failureMessage);
                 }
 
-                // if (state is GetPrimaryTagState) {
-                //   primaryTagList = state.primaryTagList;
-                //   primaryTag = primaryTagList.first;
-                //   getCurrentDate();
-                // }
+                if (state is GetTagState) {
+                  primaryTagList = state.primaryTagList;
+                  selectedPrimaryTag = primaryTagList.first;
+                  getCurrentDate();
+                }
               }),
             ],
             child: SingleChildScrollView(
@@ -250,28 +276,25 @@ class _StartDayScreenState extends State<StartDayScreen> {
                             BlocBuilder<AddPlanBloc, AddPlanStates>(
                               builder: (context, state) {
                                 if (state is AddPlanInitialState) {
-                                  addPlanBloc.add(GetPrimaryTagEvent());
+                                  addPlanBloc.add(GetTagEvent());
                                 }
 
                                 if (primaryTagList.isEmpty) {
                                   return Container();
                                 }
                                 if (state is SelectPrimaryTagState) {
-                                  txtRemarkController.clear();
-                                  if (primaryTag != null) {
-                                    if (primaryTag!.primaryId != state.primaryTag.primaryId || secondaryTag.isEmpty) {
-                                      primaryTag = state.primaryTag;
-                                      secondaryTag.clear();
-                                      txtBeatController.clear();
-                                      txtRemarkController.clear();
-                                      addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.primaryId.toString()));
+                                  selectedPrimaryTag = state.primaryTag;
+                                  selectedSecondaryTags = state.primaryTag.secondaryTag.where((element) => element.check).toList();
+                                  if (selectedSecondaryTags.isNotEmpty) {
+                                    String selectedBeats = "";
+                                    for (int i = 0; i < selectedSecondaryTags.length; i++) {
+                                      if (i == selectedSecondaryTags.length - 1) {
+                                        selectedBeats += selectedSecondaryTags[i].name;
+                                      } else {
+                                        selectedBeats += selectedSecondaryTags[i].name + ", ";
+                                      }
                                     }
-                                  } else {
-                                    secondaryTag.clear();
-                                    txtBeatController.clear();
-                                    txtRemarkController.clear();
-                                    primaryTag = state.primaryTag;
-                                    addPlanBloc.add(GetSecondaryTagEvent(primaryTagId: primaryTag!.primaryId.toString()));
+                                    txtBeatController.text = selectedBeats;
                                   }
                                 }
 
@@ -285,8 +308,9 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                       onPressed: (item) {
                                         addPlanBloc.add(SelectPrimaryEvent(primaryTag: item.customData));
                                       },
-                                      active: primaryTag!.primaryId == primaryTagList[index].primaryId,
-                                      title: primaryTagList[index].primaryName,
+                                      pressEnabled: primaryTagList[index].canSelect == 1,
+                                      active: selectedPrimaryTag!.id == primaryTagList[index].id,
+                                      title: primaryTagList[index].name,
                                       textActiveColor: Colors.black,
                                       textColor: const Color(0xff555555),
                                       elevation: 0,
@@ -294,13 +318,13 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                                       index: index,
                                       border: Border.all(
-                                          color: primaryTag!.primaryId == primaryTagList[index].primaryId
+                                          color: selectedPrimaryTag!.id == primaryTagList[index].id
                                               ? MColor.colorPrimary
                                               : const Color.fromRGBO(197, 197, 197, 1)),
-                                      activeColor: primaryTag!.primaryId == primaryTagList[index].primaryId
+                                      activeColor: selectedPrimaryTag!.id == primaryTagList[index].id
                                           ? const Color(0xFFFFC9CC)
                                           : const Color(0xffFAFAFA),
-                                      color: primaryTag!.primaryId == primaryTagList[index].primaryId
+                                      color: selectedPrimaryTag!.id == primaryTagList[index].id
                                           ? const Color(0xFFFFC9CC)
                                           : const Color(0xffFAFAFA),
                                     );
@@ -316,55 +340,53 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                 if (state is AddPlanInitialState) {
                                   return Container();
                                 }
-                                if (primaryTag == null) {
+                                if (selectedPrimaryTag == null) {
                                   return Container();
                                 }
 
-                                // if (state is GetSecondaryTagState) {
-                                //   secondaryTagList = state.secondaryTagList;
-                                // }
                                 if (state is SelectSecondaryState) {
-                                  secondaryTag = state.secondaryTag;
-
+                                  selectedSecondaryTags = state.secondaryTag;
+                                  debugPrint("selectedSecondaryTag--->$selectedSecondaryTags");
                                   String selectedBeats = "";
-                                  if (secondaryTag.isNotEmpty) {
-                                    for (int i = 0; i < secondaryTag.length; i++) {
-                                      if (i == secondaryTag.length - 1) {
-                                        selectedBeats += secondaryTag[i].name;
+                                  if (selectedSecondaryTags.isNotEmpty) {
+                                    for (int i = 0; i < selectedSecondaryTags.length; i++) {
+                                      if (i == selectedSecondaryTags.length - 1) {
+                                        selectedBeats += selectedSecondaryTags[i].name;
                                       } else {
-                                        selectedBeats += secondaryTag[i].name + ", ";
+                                        selectedBeats += selectedSecondaryTags[i].name + ", ";
                                       }
                                     }
                                   }
                                   txtBeatController.text = selectedBeats;
                                 }
-                                if (secondaryTagList.isEmpty) {
+                                if (selectedPrimaryTag!.secondaryTag.isEmpty) {
                                   return Container();
                                 }
+
+                                debugPrint(selectedPrimaryTag!.secondaryTag.toString());
+                                debugPrint(selectedPrimaryTag!.secondaryTagType.toString());
 
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    primaryTag!.primaryId == 1 || primaryTag!.primaryId == 2
-                                        ? const Padding(
-                                            padding: EdgeInsets.symmetric(vertical: 15),
-                                            child: Text(
-                                              "Secondary Tag",
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                                letterSpacing: 0.67,
-                                              ),
-                                            ),
-                                          )
-                                        : Container(),
-                                    primaryTag!.primaryId == 1
+                                    const Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 15),
+                                      child: Text(
+                                        "Secondary Tag",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 0.67,
+                                        ),
+                                      ),
+                                    ),
+                                    selectedPrimaryTag!.secondaryTagType == "drop_down"
                                         ? TextFormField(
                                             scrollPadding: const EdgeInsets.all(0),
                                             readOnly: true,
                                             controller: txtBeatController,
                                             onTap: () {
-                                              selectBeat(context, secondaryTagList);
+                                              selectBeat(context, selectedPrimaryTag!.secondaryTag);
                                             },
                                             decoration: InputDecoration(
                                               contentPadding: const EdgeInsets.all(15),
@@ -378,21 +400,21 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                               // suffixIconConstraints: BoxConstraints(maxWidth: 20, maxHeight: 20)
                                             ),
                                           )
-                                        : primaryTag!.primaryId == 2
+                                        : selectedPrimaryTag!.secondaryTagType == "tags"
                                             ? Tags(
-                                                itemCount: secondaryTagList.length,
+                                                itemCount: selectedPrimaryTag!.secondaryTag.length,
                                                 alignment: WrapAlignment.start,
                                                 itemBuilder: (index) {
                                                   return ItemTags(
                                                     singleItem: true,
-                                                    customData: secondaryTagList[index],
+                                                    customData: selectedPrimaryTag!.secondaryTag[index],
                                                     onPressed: (item) {
                                                       addPlanBloc.add(SelectSecondaryEvent(secondaryTag: [item.customData]));
                                                     },
-                                                    active: secondaryTag.isNotEmpty
-                                                        ? secondaryTag.first.id == secondaryTagList[index].id
+                                                    active: selectedSecondaryTags.isNotEmpty
+                                                        ? selectedSecondaryTags.first.id == selectedPrimaryTag!.secondaryTag[index].id
                                                         : false,
-                                                    title: secondaryTagList[index].name,
+                                                    title: selectedPrimaryTag!.secondaryTag[index].name,
                                                     textActiveColor: Colors.black,
                                                     textColor: const Color(0xff555555),
                                                     elevation: 0,
@@ -400,14 +422,15 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                                     padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                                                     index: index,
                                                     border: Border.all(
-                                                        color: secondaryTag.isNotEmpty
-                                                            ? secondaryTag.first.id == secondaryTagList[index].id
+                                                        color: selectedSecondaryTags.isNotEmpty
+                                                            ? selectedSecondaryTags.first.id ==
+                                                                    selectedPrimaryTag!.secondaryTag[index].id
                                                                 ? MColor.colorPrimary
                                                                 : const Color.fromRGBO(197, 197, 197, 1)
                                                             : const Color.fromRGBO(197, 197, 197, 1)),
                                                     activeColor: const Color(0xFFFFC9CC),
-                                                    color: secondaryTag.isNotEmpty
-                                                        ? secondaryTag.first.id == secondaryTagList[index].id
+                                                    color: selectedSecondaryTags.isNotEmpty
+                                                        ? selectedSecondaryTags.first.id == selectedPrimaryTag!.secondaryTag[index].id
                                                             ? const Color(0xFFFFC9CC)
                                                             : const Color(0xffFAFAFA)
                                                         : const Color(0xffFAFAFA),
@@ -448,10 +471,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
                               ),
                               onTap: () async {
-                                await Future.delayed(
-                                    const Duration(milliseconds: 500));
-                                RenderObject? object = globalKey.currentContext!
-                                    .findRenderObject();
+                                await Future.delayed(const Duration(milliseconds: 500));
+                                RenderObject? object = globalKey.currentContext!.findRenderObject();
                                 object!.showOnScreen();
                                 // globalKey2 = globalKey;
                               },
@@ -464,10 +485,10 @@ class _StartDayScreenState extends State<StartDayScreen> {
                         ),
                         BlocBuilder<AddPlanBloc, AddPlanStates>(
                           builder: (context, snap) {
-                            if (primaryTag == null) {
+                            if (selectedPrimaryTag == null) {
                               return Container();
                             }
-                            if (primaryTag!.primaryId == 5 || primaryTag!.primaryId == 6) {
+                            if (selectedPrimaryTag!.id == 5 || selectedPrimaryTag!.id == 6) {
                               return Container();
                             }
                             return Column(
@@ -500,16 +521,13 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       onTap: () {
-                                        userLocationBloc
-                                            .add(GetUserLocationEvent());
+                                        userLocationBloc.add(GetUserLocationEvent());
                                       },
                                       child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           const Image(
-                                            image: AssetImage(
-                                                "assets/location.png"),
+                                            image: AssetImage("assets/location.png"),
                                             height: 20,
                                             width: 20,
                                             fit: BoxFit.contain,
@@ -538,13 +556,11 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                   height: 15,
                                 ),
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         const Text(
                                           getMeeting,
@@ -558,34 +574,27 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                         const SizedBox(
                                           height: 15,
                                         ),
-                                        BlocBuilder<CommonBloc,
-                                            CommonBlocStates>(
+                                        BlocBuilder<CommonBloc, CommonBlocStates>(
                                           builder: (context, state) {
-                                            if (state
-                                                is CommonBlocGetMeetingState) {
+                                            if (state is CommonBlocGetMeetingState) {
                                               isMeeting = state.getMeeting;
                                             }
 
                                             return Row(
                                               children: [
                                                 InkWell(
-                                                  customBorder:
-                                                      RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            30),
+                                                  customBorder: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(30),
                                                   ),
                                                   onTap: () {
-                                                    commonBloc.add(
-                                                        CommonBlocGetMeetingEvent(
-                                                            getMeeting: true));
+                                                    commonBloc.add(CommonBlocGetMeetingEvent(getMeeting: true));
                                                   },
                                                   child: Container(
                                                     width: 60,
                                                     height: 60,
                                                     decoration: BoxDecoration(
                                                       color: isMeeting
-                                                          ? const Color.fromRGBO(255, 201, 204, 0.5)
+                                                          ? MColor.colorSecondary.withOpacity(0.5)
                                                           : const Color.fromRGBO(196, 196, 196, 0.5),
                                                       borderRadius: BorderRadius.circular(30),
                                                     ),
@@ -595,7 +604,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                                       height: 48,
                                                       decoration: BoxDecoration(
                                                         color: isMeeting
-                                                            ? const Color.fromRGBO(255, 201, 204, 1)
+                                                            ? MColor.colorSecondary.withOpacity(1)
                                                             : const Color.fromRGBO(196, 196, 196, 1),
                                                         borderRadius: BorderRadius.circular(30),
                                                       ),
@@ -603,8 +612,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                                         child: Text(
                                                           "Yes",
                                                           style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
+                                                            fontWeight: FontWeight.bold,
                                                             letterSpacing: 0.67,
                                                           ),
                                                         ),
@@ -616,31 +624,20 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                                   width: 15,
                                                 ),
                                                 InkWell(
-                                                  customBorder:
-                                                      RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            30),
+                                                  customBorder: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(30),
                                                   ),
                                                   onTap: () {
-                                                    commonBloc.add(
-                                                        CommonBlocGetMeetingEvent(
-                                                            getMeeting: false));
+                                                    commonBloc.add(CommonBlocGetMeetingEvent(getMeeting: false));
                                                   },
                                                   child: Container(
                                                     width: 60,
                                                     height: 60,
                                                     decoration: BoxDecoration(
                                                       color: isMeeting
-                                                          ? const Color
-                                                                  .fromRGBO(196,
-                                                              196, 196, 0.5)
-                                                          : const Color
-                                                                  .fromRGBO(255,
-                                                              201, 204, 0.5),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              30),
+                                                          ? const Color.fromRGBO(196, 196, 196, 0.5)
+                                                          : const Color.fromRGBO(255, 201, 204, 0.5),
+                                                      borderRadius: BorderRadius.circular(30),
                                                     ),
                                                     alignment: Alignment.center,
                                                     child: Container(
@@ -648,28 +645,15 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                                       height: 48,
                                                       decoration: BoxDecoration(
                                                         color: isMeeting
-                                                            ? const Color
-                                                                    .fromRGBO(
-                                                                196,
-                                                                196,
-                                                                196,
-                                                                1)
-                                                            : const Color
-                                                                    .fromRGBO(
-                                                                255,
-                                                                201,
-                                                                204,
-                                                                1),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(30),
+                                                            ? const Color.fromRGBO(196, 196, 196, 1)
+                                                            : const Color.fromRGBO(255, 201, 204, 1),
+                                                        borderRadius: BorderRadius.circular(30),
                                                       ),
                                                       child: const Center(
                                                         child: Text(
                                                           "No",
                                                           style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
+                                                            fontWeight: FontWeight.bold,
                                                             letterSpacing: 0.67,
                                                           ),
                                                         ),
@@ -684,10 +668,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                       ],
                                     ),
                                     Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         const Text(
                                           selfie,
@@ -701,11 +683,9 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                         const SizedBox(
                                           height: 15,
                                         ),
-                                        BlocBuilder<CommonBloc,
-                                            CommonBlocStates>(
+                                        BlocBuilder<CommonBloc, CommonBlocStates>(
                                           builder: (context, state) {
-                                            if (state
-                                                is CommonBlocSelectImageState) {
+                                            if (state is CommonBlocSelectImageState) {
                                               imageFile = state.imageFile;
                                             }
 
@@ -714,49 +694,29 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                                 selectImage();
                                               },
                                               child: Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width /
-                                                    3,
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .width /
-                                                    3,
+                                                width: MediaQuery.of(context).size.width / 3,
+                                                height: MediaQuery.of(context).size.width / 3,
                                                 decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
+                                                  borderRadius: BorderRadius.circular(8),
                                                   color: Colors.white,
                                                   border: Border.all(
-                                                    color: const Color.fromRGBO(
-                                                        85, 85, 85, 1),
+                                                    color: const Color.fromRGBO(85, 85, 85, 1),
                                                     width: 1,
                                                   ),
                                                 ),
                                                 child: imageFile == null
                                                     ? Center(
                                                         child: Image(
-                                                          image: const AssetImage(
-                                                              "assets/camera_icon.png"),
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width /
-                                                              7,
-                                                          height: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width /
-                                                              7,
+                                                          image: const AssetImage("assets/camera_icon.png"),
+                                                          width: MediaQuery.of(context).size.width / 7,
+                                                          height: MediaQuery.of(context).size.width / 7,
                                                           fit: BoxFit.contain,
                                                         ),
                                                       )
                                                     : ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(7),
+                                                        borderRadius: BorderRadius.circular(7),
                                                         child: Image(
-                                                          image: FileImage(
-                                                              imageFile!),
+                                                          image: FileImage(imageFile!),
                                                           fit: BoxFit.cover,
                                                         ),
                                                       ),
@@ -799,7 +759,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
           },
           child: BlocBuilder<AddPlanBloc, AddPlanStates>(
             builder: (context, state) {
-              if (primaryTag == null) {
+              if (selectedPrimaryTag == null) {
                 return const SizedBox();
               }
               return MaterialButton(
@@ -809,7 +769,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                 textColor: Colors.white,
                 onPressed: () async {
                   //when leave and holiday selected then if will execute
-                  if (primaryTag!.primaryId == 5 || primaryTag!.primaryId == 7) {
+                  if (selectedPrimaryTag!.id == 5 || selectedPrimaryTag!.id == 6) {
                     if (txtRemarkController.text.trim().isEmpty) {
                       Fluttertoast.showToast(msg: "Please enter remark");
                       return;
@@ -825,20 +785,21 @@ class _StartDayScreenState extends State<StartDayScreen> {
                     input["user_id"] = await SharedPreference.getStringPreference(SharedPreference.userId);
                     input["start_day_date"] = DateFormat("yyyy-MM-dd").format(_ntpTime);
                     input["start_day_time"] = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
-                    input["primary_tag"] = primaryTag!.primaryName;
-                    input["primary_tag_id"] = primaryTag!.primaryId;
+                    input["primary_tag"] = selectedPrimaryTag!.name;
+                    input["primary_tag_id"] = selectedPrimaryTag!.id;
                     input["remark"] = txtRemarkController.text.trim();
 
                     debugPrint("start_my_day_input-->");
                     startMyDayBloc.add(StartMyDayEvent(input: input));
                   }
+
                   //otherwise else will execute
                   else {
-                    if (primaryTag == null) {
+                    if (selectedPrimaryTag == null) {
                       Fluttertoast.showToast(msg: "Please select primary tag");
                       return;
                     }
-                    if ((primaryTag!.primaryId == 1 || primaryTag!.primaryId == 2) && secondaryTag.isEmpty) {
+                    if (selectedPrimaryTag!.secondaryTag.isNotEmpty && selectedSecondaryTags.isEmpty) {
                       Fluttertoast.showToast(msg: "Please select secondary tag");
                       return;
                     }
@@ -868,18 +829,16 @@ class _StartDayScreenState extends State<StartDayScreen> {
                     DateTime _ntpTime = await NTP.now();
                     input["user_id"] = await SharedPreference.getStringPreference(SharedPreference.userId);
                     input["start_day_date"] = DateFormat("yyyy-MM-dd").format(_ntpTime);
-                    input["primary_tag"] = primaryTag!.primaryName;
-                    input["primary_tag_id"] = primaryTag!.primaryId;
-                    if (secondaryTag.isNotEmpty) {
+                    input["primary_tag"] = selectedPrimaryTag!.name;
+                    input["primary_tag_id"] = selectedPrimaryTag!.id;
+                    if (selectedSecondaryTags.isNotEmpty) {
                       String selectedBeats = "";
                       String selectedBeatsId = "";
-                      if (secondaryTag.isNotEmpty) {
-                        for (int i = 0; i < secondaryTag.length; i++) {
-                          if (i == secondaryTag.length - 1) {
-                            selectedBeats += secondaryTag[i].name;
-                          } else {
-                            selectedBeats += secondaryTag[i].name + ", ";
-                          }
+                      for (int i = 0; i < selectedSecondaryTags.length; i++) {
+                        if (i == selectedSecondaryTags.length - 1) {
+                          selectedBeats += selectedSecondaryTags[i].name;
+                        } else {
+                          selectedBeats += selectedSecondaryTags[i].name + ", ";
                         }
                       }
 
@@ -907,7 +866,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    primaryTag!.primaryId == 5 || primaryTag!.primaryId == 6
+                    selectedPrimaryTag!.id == 5 || selectedPrimaryTag!.id == 6
                         ? const Text(
                             confirm,
                             style: TextStyle(
@@ -945,7 +904,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))),
         builder: (context) {
           return BeatBottomSheet(
-              selectedBeat: secondaryTag,
+              selectedBeat: selectedSecondaryTags,
               beats: tags,
               onBeatSelect: (List<SecondaryTag> beat) {
                 String selectedBeats = "";

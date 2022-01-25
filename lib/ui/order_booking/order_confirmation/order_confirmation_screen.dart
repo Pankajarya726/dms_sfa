@@ -48,7 +48,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with 
             indicatorWeight: 3,
             labelPadding: const EdgeInsets.symmetric(horizontal: 15),
             indicatorPadding: const EdgeInsets.symmetric(horizontal: 15),
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             tabs: const [
               Tab(
                 child: Text(
@@ -67,7 +67,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with 
         ),
         body: TabBarView(
           controller: _tabController,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           children: [
             FocusSkyTab(
               onConfirm: () {

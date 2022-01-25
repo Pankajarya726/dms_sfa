@@ -65,8 +65,8 @@ class _PrimaryTagWidgetState extends State<PrimaryTagWidget> {
 
                 streamController.add(selectedTag!.secondaryTag);
               },
-              active: selectedTag!.primaryId == widget.primaryTags[index].primaryId,
-              title: widget.primaryTags[index].primaryName,
+              active: selectedTag!.id == widget.primaryTags[index].id,
+              title: widget.primaryTags[index].name,
               textActiveColor: Colors.black,
               textColor: const Color(0xff555555),
               elevation: 0,
@@ -76,9 +76,8 @@ class _PrimaryTagWidgetState extends State<PrimaryTagWidget> {
               activeColor: const Color(0xffFFC9CC),
               color: const Color(0xffFAFAFA),
               border: Border.all(
-                  color: selectedTag!.primaryId == widget.primaryTags[index].primaryId
-                      ? MColor.colorPrimary
-                      : const Color.fromRGBO(197, 197, 197, 1)),
+                  color:
+                      selectedTag!.id == widget.primaryTags[index].id ? MColor.colorPrimary : const Color.fromRGBO(197, 197, 197, 1)),
             );
           },
         ),
@@ -127,7 +126,7 @@ class _PrimaryTagWidgetState extends State<PrimaryTagWidget> {
         ),
         StreamBuilder<List<SecondaryTag>>(
             stream: streamController.stream,
-            initialData: [],
+            initialData: const [],
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 List<SecondaryTag> tag = snapshot.data!;
@@ -137,11 +136,11 @@ class _PrimaryTagWidgetState extends State<PrimaryTagWidget> {
                   return Container();
                 }
                 debugPrint("tag1-->$tag");
-                debugPrint("secondaryTag-->${tag}");
+                debugPrint("secondaryTag-->$tag");
                 return SecondaryTagWidget(
                   onSelect: (List<SecondaryTag> selected) {},
                   secondaryTagList: tag,
-                  uiType: selectedTag == null ? "1" : selectedTag!.primaryId.toString(),
+                  uiType: selectedTag == null ? "1" : selectedTag!.id.toString(),
                 );
               }
               return Container();
@@ -196,8 +195,8 @@ class _PrimaryWidgetState extends State<PrimaryWidget> {
             widget.onSelect(selectedItem);
             setState(() {});
           },
-          active: selectedItem.primaryId == widget.tags[index].primaryId,
-          title: widget.tags[index].primaryName,
+          active: selectedItem.id == widget.tags[index].id,
+          title: widget.tags[index].name,
           textActiveColor: Colors.black,
           textColor: const Color(0xff555555),
           elevation: 0,
@@ -207,9 +206,7 @@ class _PrimaryWidgetState extends State<PrimaryWidget> {
           activeColor: const Color(0xffFFC9CC),
           color: const Color(0xffFAFAFA),
           border: Border.all(
-              color: selectedItem.primaryId == widget.tags[index].primaryId
-                  ? MColor.colorPrimary
-                  : const Color.fromRGBO(197, 197, 197, 1)),
+              color: selectedItem.id == widget.tags[index].id ? MColor.colorPrimary : const Color.fromRGBO(197, 197, 197, 1)),
         );
       },
     );

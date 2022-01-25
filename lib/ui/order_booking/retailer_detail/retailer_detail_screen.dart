@@ -2,8 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/last_visit_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/no_order_reason_bottom_sheet.dart';
+import 'package:dms/ui/bottom_sheet_widget/order_history_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/task_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/tele_caller_status_bottm_sheet.dart';
+import 'package:dms/ui/order_booking/edit_store/edit_store_screen.dart';
 import 'package:dms/ui/order_booking/order_booking_list/order_booking_list_screen.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/constants.dart';
@@ -71,10 +73,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                   ),
                   IconButton(
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const EditStoreScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const EditStoreScreen()));
                       },
                       padding: EdgeInsets.zero,
                       splashRadius: 13,
@@ -151,7 +150,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                         Container(
                           width: 1,
                           height: 30,
-                          color: Color(0xffC5C5C5),
+                          color: const Color(0xffC5C5C5),
                         ),
                         const SizedBox(
                           width: 5,
@@ -260,23 +259,15 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                             child: InkWell(
                               onTap: () {
                                 showModalBottomSheet(
-                                    context: context,
-                                    shape: bottomSheetShape,
-                                    builder: (context) =>
-                                        const OrderHistoryBottomSheet());
+                                    context: context, shape: bottomSheetShape, builder: (context) => const OrderHistoryBottomSheet());
                               },
                               child: Container(
-                                margin: const EdgeInsets.symmetric(
-                                    vertical: 5, horizontal: 10),
+                                margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                                 height: 50,
-                                decoration: const BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            color: Color(0xffC5C5C5),
-                                            width: 0.5))),
+                                decoration:
+                                    const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xffC5C5C5), width: 0.5))),
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       "Date: ${DateFormat("dd-MM-yyyy").format(DateTime.now())}",
@@ -481,15 +472,18 @@ class _DetailGritItemState extends State<DetailGritItem> {
     return InkWell(
       onTap: () {
         if (widget.type == 1) {
-          showModalBottomSheet(context: context, shape: bottomSheetShape, builder: (context) => LastVisitBottomSheet());
+          showModalBottomSheet(context: context, shape: bottomSheetShape, builder: (context) => const LastVisitBottomSheet());
         }
         if (widget.type == 2) {
           showModalBottomSheet(
-              context: context, isScrollControlled: true, shape: bottomSheetShape, builder: (context) => TaskBottomSheet());
+              context: context, isScrollControlled: true, shape: bottomSheetShape, builder: (context) => const TaskBottomSheet());
         }
         if (widget.type == 3) {
           showModalBottomSheet(
-              context: context, isScrollControlled: true, shape: bottomSheetShape, builder: (context) => TeleCallerStatusSheet());
+              context: context,
+              isScrollControlled: true,
+              shape: bottomSheetShape,
+              builder: (context) => const TeleCallerStatusSheet());
         }
       },
       child: Container(

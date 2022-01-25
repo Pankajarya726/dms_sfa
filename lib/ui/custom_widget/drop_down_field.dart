@@ -39,7 +39,8 @@ class _DropDownFieldState extends State<DropDownField> {
       },
       initialValue: selected,
       onSelected: (item) {
-        print("item---->$item");
+        debugPrint("item---->$item");
+
         selected = item.toString();
         widget.onSelect(item.toString());
         setState(() {});

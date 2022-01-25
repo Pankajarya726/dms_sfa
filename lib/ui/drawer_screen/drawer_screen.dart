@@ -169,7 +169,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
             ListTile(
               onTap: () {
                 // controller.close!.call();
-                Fluttertoast.showToast(msg: commingSoon);
+                Fluttertoast.showToast(msg: comingSoon);
               },
               title: const Text("Script", style: TextStyle(color: Colors.white, fontSize: 18)),
               leading: SvgPicture.asset(
@@ -182,7 +182,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
             ListTile(
               onTap: () {
                 // controller.close!.call();
-                Fluttertoast.showToast(msg: commingSoon);
+                Fluttertoast.showToast(msg: comingSoon);
               },
               title: const Text("Message", style: TextStyle(color: Colors.white, fontSize: 18)),
               leading: SvgPicture.asset(
@@ -253,7 +253,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
             ListTile(
               onTap: () {
                 // controller.close!.call();
-                Fluttertoast.showToast(msg: commingSoon);
+                Fluttertoast.showToast(msg: comingSoon);
               },
               title: const Text("Sync", style: TextStyle(color: Colors.white, fontSize: 18)),
               leading: SvgPicture.asset(

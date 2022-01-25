@@ -108,9 +108,7 @@ class PlanDataModel {
   Map<String, dynamic> toMap() => {
         "id": id,
         "user_id": userId,
-        "add_plan_date": addPlanDate == null
-            ? null
-            : "${addPlanDate.year.toString().padLeft(4, '0')}-${addPlanDate.month.toString().padLeft(2, '0')}-${addPlanDate.day.toString().padLeft(2, '0')}",
+        "add_plan_date": addPlanDate,
         "primary_tag_id": primaryTagId,
         "primary_tag": primaryTag,
         "secondary_tag_id": secondaryTagId,

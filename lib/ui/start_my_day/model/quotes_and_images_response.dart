@@ -15,21 +15,19 @@ class QuotesAndImagesResponse {
   String message;
   Data? data;
 
-  factory QuotesAndImagesResponse.fromJson(String str) =>
-      QuotesAndImagesResponse.fromMap(json.decode(str));
+  factory QuotesAndImagesResponse.fromJson(String str) => QuotesAndImagesResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory QuotesAndImagesResponse.fromMap(Map<String, dynamic> json) =>
-      QuotesAndImagesResponse(
-        success: json["success"] == null ? null : json["success"],
-        message: json["message"] == null ? null : json["message"],
+  factory QuotesAndImagesResponse.fromMap(Map<String, dynamic> json) => QuotesAndImagesResponse(
+        success: json["success"],
+        message: json["message"],
         data: json["data"] == null ? null : Data.fromMap(json["data"]),
       );
 
   Map<String, dynamic> toMap() => {
-        "success": success == null ? null : success,
-        "message": message == null ? null : message,
+        "success": success,
+        "message": message,
         "data": data == null ? null : data!.toMap(),
       };
 }
@@ -50,14 +48,14 @@ class Data {
   String toJson() => json.encode(toMap());
 
   factory Data.fromMap(Map<String, dynamic> json) => Data(
-        id: json["id"] == null ? null : json["id"],
-        image: json["image"] == null ? null : json["image"],
-        text: json["text"] == null ? null : json["text"],
+        id: json["id"],
+        image: json["image"],
+        text: json["text"],
       );
 
   Map<String, dynamic> toMap() => {
-        "id": id == null ? null : id,
-        "image": image == null ? null : image,
-        "text": text == null ? null : text,
+        "id": id,
+        "image": image,
+        "text": text,
       };
 }

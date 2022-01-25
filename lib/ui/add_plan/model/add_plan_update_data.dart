@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-class ChangePassResponse {
-  ChangePassResponse({
+class AddPlanUpdateDataResponse {
+  AddPlanUpdateDataResponse({
     required this.success,
     required this.message,
   });
@@ -9,11 +9,11 @@ class ChangePassResponse {
   bool success;
   String message;
 
-  factory ChangePassResponse.fromJson(String str) => ChangePassResponse.fromMap(json.decode(str));
+  factory AddPlanUpdateDataResponse.fromJson(String str) => AddPlanUpdateDataResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory ChangePassResponse.fromMap(Map<String, dynamic> json) => ChangePassResponse(
+  factory AddPlanUpdateDataResponse.fromMap(Map<String, dynamic> json) => AddPlanUpdateDataResponse(
         success: json["success"],
         message: json["message"],
       );

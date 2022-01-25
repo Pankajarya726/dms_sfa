@@ -70,7 +70,7 @@ class LoginData {
         "token_type": tokenType,
         "is_leader": isLeader,
         "startMyDay": startMyDay,
-        "pjpbutton": pjpButton == null ? null : pjpButton.toMap(),
+        "pjpbutton": pjpButton,
       };
 }
 
@@ -95,13 +95,5 @@ class PjpButton {
         toDate: json["toDate"] == null ? DateTime.now() : DateTime.parse(json["toDate"]),
       );
 
-  Map<String, dynamic> toMap() => {
-        "addpjpbutton": addPjpButton,
-        "fromDate": fromDate == null
-            ? null
-            : "${fromDate.year.toString().padLeft(4, '0')}-${fromDate.month.toString().padLeft(2, '0')}-${fromDate.day.toString().padLeft(2, '0')}",
-        "toDate": toDate == null
-            ? null
-            : "${toDate.year.toString().padLeft(4, '0')}-${toDate.month.toString().padLeft(2, '0')}-${toDate.day.toString().padLeft(2, '0')}",
-      };
+  Map<String, dynamic> toMap() => {"addpjpbutton": addPjpButton, "fromDate": fromDate, "toDate": toDate};
 }

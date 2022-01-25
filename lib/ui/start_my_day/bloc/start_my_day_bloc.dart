@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:dms/ui/start_my_day/bloc/start_my_day_events.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_states.dart';
 import 'package:dms/ui/start_my_day/model/end_my_day_response.dart';

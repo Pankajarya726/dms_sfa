@@ -39,8 +39,7 @@ class _TeleCallerStatusSheetState extends State<TeleCallerStatusSheet> {
     padding: EdgeInsets.all(15.0),
     child: Text(
       "Summary",
-      style: TextStyle(
-          color: MColor.colorPrimary, fontSize: 20, letterSpacing: 0.67),
+      style: TextStyle(color: MColor.colorPrimary, fontSize: 20, letterSpacing: 0.67),
     ),
   );
 
@@ -56,8 +55,7 @@ class _TeleCallerStatusSheetState extends State<TeleCallerStatusSheet> {
                   : "Call Back",
           attempt: i,
           time: "12:15 PM",
-          summery:
-              "Lorem Ipsum is simply dummy text of the printing and typesetting lorem ops industry.");
+          summery: "Lorem Ipsum is simply dummy text of the printing and typesetting lorem ops industry.");
 
       itemList.add(TCStatusWidget(
         status: status,
@@ -75,9 +73,7 @@ class TCStatusWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-          border:
-              Border(bottom: BorderSide(color: Color(0xffC5C5C5), width: 0.5))),
+      decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xffC5C5C5), width: 0.5))),
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       child: Column(
         children: [
@@ -86,13 +82,11 @@ class TCStatusWidget extends StatelessWidget {
             children: [
               Text(
                 "Attempt Number: ${status.attempt}",
-                style: TextStyle(
-                    color: MColor.textColor, fontSize: 14, letterSpacing: 0.67),
+                style: const TextStyle(color: MColor.textColor, fontSize: 14, letterSpacing: 0.67),
               ),
               Text(
-                "${status.status}",
-                style: TextStyle(
-                    color: MColor.textColor, fontSize: 14, letterSpacing: 0.67),
+                status.status,
+                style: const TextStyle(color: MColor.textColor, fontSize: 14, letterSpacing: 0.67),
               ),
             ],
           ),
@@ -101,8 +95,7 @@ class TCStatusWidget extends StatelessWidget {
           ),
           Text(
             "Attempt Number: ${status.summery}",
-            style: const TextStyle(
-                color: MColor.textColor, fontSize: 14, letterSpacing: 0.67),
+            style: const TextStyle(color: MColor.textColor, fontSize: 14, letterSpacing: 0.67),
           ),
           const SizedBox(
             height: 5,
@@ -112,8 +105,7 @@ class TCStatusWidget extends StatelessWidget {
             children: [
               Text(
                 status.time,
-                style: const TextStyle(
-                    color: MColor.textColor, fontSize: 14, letterSpacing: 0.67),
+                style: const TextStyle(color: MColor.textColor, fontSize: 14, letterSpacing: 0.67),
               ),
             ],
           ),
@@ -129,9 +121,5 @@ class TcStatus {
   String time;
   String summery;
 
-  TcStatus(
-      {required this.status,
-      required this.attempt,
-      required this.time,
-      required this.summery});
+  TcStatus({required this.status, required this.attempt, required this.time, required this.summery});
 }

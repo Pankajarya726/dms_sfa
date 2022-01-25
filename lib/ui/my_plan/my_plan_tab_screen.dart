@@ -36,10 +36,11 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen>
   }
 
   @override
+  // ignore: must_call_super
   Widget build(BuildContext context) {
     return FutureBuilder<List<WeeklyPlanModel>>(
         future: getPlans(),
-        initialData: [],
+        initialData: const [],
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -62,9 +63,7 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen>
                       initialData: weeklyPlan.first.planList,
                       builder: (builder, snapshot) {
                         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-
-
-                          snapshot.data!.sort((a,b)=>a.addPlanDate.compareTo(b.addPlanDate));
+                          snapshot.data!.sort((a, b) => a.addPlanDate.compareTo(b.addPlanDate));
 
                           return PlanListWidget(
                             planList: snapshot.data!,

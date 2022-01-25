@@ -17,8 +17,6 @@ import '../../../main.dart';
 
 class SplashBloc extends Bloc<SplashEvent, SplashState> {
   SplashBloc() : super(SplashInitialState());
-  AppUpdateInfo? _updateInfo;
-  bool _flexibleUpdateAvailable = false;
   @override
   Stream<SplashState> mapEventToState(SplashEvent event) async* {
     if (event is ValidateAppEvent) {
@@ -61,16 +59,13 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
   Future<void> checkForUpdate() async {
     InAppUpdate.checkForUpdate().then((info) {
       debugPrint("info--->${info.toString()}");
-      _updateInfo = info;
     }).catchError((e) {
       debugPrint("exception--->$e");
     });
   }
 
   updateFlexible() async {
-    InAppUpdate.startFlexibleUpdate().then((_) {
-      _flexibleUpdateAvailable = true;
-    }).catchError((e) {
+    InAppUpdate.startFlexibleUpdate().then((_) {}).catchError((e) {
       debugPrint("updateFlexible--->");
       debugPrint("exception--->$e");
     });

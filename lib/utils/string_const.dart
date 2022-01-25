@@ -26,7 +26,7 @@ const december = "December";
 const week = "Week";
 const addPlan = "Add Plan";
 const letsBegin = "LET'S BEGIN";
-const _primaryTag = "Primary Tag";
+const primaryTag = "Primary Tag";
 const secondaryTag = "Secondary Tag";
 const remark = "Remark";
 const writeYourRemark = "Write Your Remark";
@@ -35,7 +35,7 @@ const getMeeting = "Gate Meeting";
 const selfie = "Selfie";
 const confirm = "CONFIRM";
 const confirmSmall = "Confirm";
-const commingSoon = "Coming soon...";
+const comingSoon = "Coming soon...";
 const loremIpsum =
     "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text";
 const enrollmentType = "Enrollment Type *";
@@ -80,8 +80,7 @@ const selectCity = "Select City";
 const done = "Done";
 const selectLangFirst = "Select Language 1";
 const selectLangSecond = "Select Language 2";
-const whatsAppSms =
-    "Does retailer want to opt-in for Whatsapp message / SMS? *";
+const whatsAppSms = "Does retailer want to opt-in for Whatsapp message / SMS? *";
 const filter = "Filter";
 const productInfo = "Product Info";
 const schemeInfo = "Scheme Info";

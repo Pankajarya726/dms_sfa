@@ -61,7 +61,7 @@ class Data {
   Map<String, dynamic> toMap() => {
         "isMandatory": isMandatory,
         "StartMyDay": startMyDay,
-        "add_plan_button": addPlanButton == null ? null : addPlanButton.toMap(),
+        "add_plan_button": addPlanButton,
         "pjpbutton": pjpButton,
       };
 }

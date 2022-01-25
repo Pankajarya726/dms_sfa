@@ -7,6 +7,7 @@ import 'package:dms/ui/settings_screen/settings_bloc/settings_bloc.dart';
 import 'package:dms/ui/settings_screen/settings_bloc/settings_event.dart';
 import 'package:dms/ui/settings_screen/settings_bloc/settings_state.dart';
 import 'package:dms/utils/constants.dart';
+import 'package:dms/utils/in_app_review.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
@@ -231,7 +232,11 @@ class _SettingScreenState extends State<SettingsScreen> {
         //         const AboutUsScreen(),
         //   ),
         // );
-        Fluttertoast.showToast(msg: commingSoon);
+        Fluttertoast.showToast(msg: comingSoon);
+        break;
+
+      case 3:
+        rateApp();
         break;
 
       case 4:
@@ -243,7 +248,7 @@ class _SettingScreenState extends State<SettingsScreen> {
         break;
 
       default:
-        Fluttertoast.showToast(msg: commingSoon);
+        Fluttertoast.showToast(msg: comingSoon);
         break;
     }
   }
@@ -294,7 +299,10 @@ class _SettingScreenState extends State<SettingsScreen> {
         title: 'VV SalesMitra',
         text: 'Click the below link to download the app',
         linkUrl: 'https://play.google.com/store/apps/details?id=com.vvapps.dms',
-        // linkUrl: 'https://play.google.com/store/apps/details?id=nic.goi.aarogyasetu',
         chooserTitle: "VV SalesMitra");
+  }
+
+  void rateApp() async {
+    AppRating.openStoreListing();
   }
 }

@@ -20,14 +20,14 @@ class GetMenusResponse {
   String toJson() => json.encode(toMap());
 
   factory GetMenusResponse.fromMap(Map<String, dynamic> json) => GetMenusResponse(
-        success: json["success"] == null ? null : json["success"],
-        message: json["message"] == null ? null : json["message"],
+        success: json["success"],
+        message: json["message"],
         data: json["data"] == null ? null : List<MenuData>.from(json["data"].map((x) => MenuData.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
-        "success": success == null ? null : success,
-        "message": message == null ? null : message,
+        "success": success,
+        "message": message,
         "data": data == null ? null : List<dynamic>.from(data!.map((x) => x.toMap())),
       };
 }
@@ -58,24 +58,24 @@ class MenuData {
   String toJson() => json.encode(toMap());
 
   factory MenuData.fromMap(Map<String, dynamic> json) => MenuData(
-        id: json["id"] == null ? null : json["id"],
-        menuName: json["menu_name"] == null ? null : json["menu_name"],
-        menuDescription: json["menu_description"] == null ? null : json["menu_description"],
-        menuImage: json["menu_image"] == null ? null : json["menu_image"],
-        isActive: json["is_active"] == null ? null : json["is_active"],
-        sort: json["sort"] == null ? null : json["sort"],
-        createdAt: json["created_at"] == null ? null : json["created_at"],
-        updatedAt: json["updated_at"] == null ? null : json["updated_at"],
+        id: json["id"],
+        menuName: json["menu_name"],
+        menuDescription: json["menu_description"],
+        menuImage: json["menu_image"],
+        isActive: json["is_active"],
+        sort: json["sort"],
+        createdAt: json["created_at"],
+        updatedAt: json["updated_at"],
       );
 
   Map<String, dynamic> toMap() => {
-        "id": id == null ? null : id,
-        "menu_name": menuName == null ? null : menuName,
-        "menu_description": menuDescription == null ? null : menuDescription,
-        "menu_image": menuImage == null ? null : menuImage,
-        "is_active": isActive == null ? null : isActive,
-        "sort": sort == null ? null : sort,
-        "created_at": createdAt == null ? null : createdAt,
-        "updated_at": updatedAt == null ? null : updatedAt,
+        "id": id,
+        "menu_name": menuName,
+        "menu_description": menuDescription,
+        "menu_image": menuImage,
+        "is_active": isActive,
+        "sort": sort,
+        "created_at": createdAt,
+        "updated_at": updatedAt,
       };
 }
