@@ -14,6 +14,7 @@ class AppRating {
 
   static Future openStoreListing() async {
     debugPrint("openStoreListing--->");
-    inAppReview.openStoreListing(appStoreId: 'com.vvapps.dms', microsoftStoreId: 'com.vvapps.dms');
+    inAppReview.openStoreListing(
+        appStoreId: 'com.vvapps.dms', microsoftStoreId: 'com.vvapps.dms');
   }
 }
