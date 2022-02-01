@@ -65,8 +65,8 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
 
           if (state is GetTagState) {
             primaryTagList = state.primaryTagList;
-            selectedPrimaryTag = primaryTagList.first;
-            addPlanBloc.add(SelectPrimaryEvent(primaryTag: selectedPrimaryTag!));
+            // selectedPrimaryTag = primaryTagList.firstWhere((element) => element.selected==1);
+            // addPlanBloc.add(SelectPrimaryEvent(primaryTag: selectedPrimaryTag!));
             getInitialDate();
           }
 
@@ -75,21 +75,21 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             planDateModel = state.planDateModel;
             planAlreadyExists = true;
             txtRemarkController.text = state.planDateModel.remark;
-            selectedSecondaryTag = state.planDateModel.secondaryTags;
+            // selectedSecondaryTag = state.planDateModel.secondaryTags;
 
-            String selectedBeats = state.planDateModel.secondaryTag;
-
-            if (selectedSecondaryTag.isNotEmpty) {
-              for (int i = 0; i < selectedSecondaryTag.length; i++) {
-                if (i == selectedSecondaryTag.length - 1) {
-                  selectedBeats += selectedSecondaryTag[i].name;
-                } else {
-                  selectedBeats += selectedSecondaryTag[i].name + ", ";
-                }
-              }
-            }
-
-            txtBeatController.text = selectedBeats;
+            // String selectedBeats = state.planDateModel.secondaryTag;
+            //
+            // if (selectedSecondaryTag.isNotEmpty) {
+            //   for (int i = 0; i < selectedSecondaryTag.length; i++) {
+            //     if (i == selectedSecondaryTag.length - 1) {
+            //       selectedBeats += selectedSecondaryTag[i].name;
+            //     } else {
+            //       selectedBeats += selectedSecondaryTag[i].name + ", ";
+            //     }
+            //   }
+            // }
+            //
+            // txtBeatController.text = selectedBeats;
 
             List<SecondaryTag> secTag =
                 primaryTagList.singleWhere((element) => element.id == int.parse(state.planDateModel.primaryTagId)).secondaryTag;
@@ -103,6 +103,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                 secTag.singleWhere((tag) => tag.id == element.id).check = true;
               }
             }
+            selectedSecondaryTag = secTag.where((element) => element.check).toList();
 
             selectedPrimaryTag = PrimaryTag(
                 id: int.parse(state.planDateModel.primaryTagId),
@@ -117,20 +118,18 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                 secondaryTag: secTag);
 
             addPlanBloc.add(SelectPrimaryEvent(primaryTag: selectedPrimaryTag!));
+            addPlanBloc.add(SelectSecondaryEvent(secondaryTag: secTag.where((element) => element.check).toList()));
           }
 
           if (state is GetAddPlanFailureState) {
             _refreshController.refreshCompleted();
             planDateModel = null;
             planAlreadyExists = false;
-            selectedPrimaryTag = primaryTagList.first;
-            for (var element in selectedPrimaryTag!.secondaryTag) {
-              element.check = false;
-            }
+            selectedPrimaryTag = null;
             selectedSecondaryTag.clear();
             txtRemarkController.text = "";
             txtBeatController.clear();
-            addPlanBloc.add(SelectPrimaryEvent(primaryTag: selectedPrimaryTag!));
+            // addPlanBloc.add(SelectPrimaryEvent(primaryTag: selectedPrimaryTag!));
           }
 
           if (state is AddPlanFailureState) {
@@ -270,20 +269,10 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                             if (state is SelectPrimaryTagState) {
                               selectedPrimaryTag = state.primaryTag;
                               debugPrint("selectedSecondaryTag--->${selectedPrimaryTag!.secondaryTag}");
-                              selectedSecondaryTag = state.primaryTag.secondaryTag.where((element) => element.check).toList();
-                              if (selectedSecondaryTag.isNotEmpty) {
-                                String selectedBeats = "";
-                                for (int i = 0; i < selectedSecondaryTag.length; i++) {
-                                  if (i == selectedSecondaryTag.length - 1) {
-                                    selectedBeats += selectedSecondaryTag[i].name;
-                                  } else {
-                                    selectedBeats += selectedSecondaryTag[i].name + ", ";
-                                  }
-                                }
-                                txtBeatController.text = selectedBeats;
-                              }
+                              selectedSecondaryTag.clear();
+                              txtBeatController.clear();
                             }
-                            selectedPrimaryTag ??= primaryTagList.first;
+                            // selectedPrimaryTag ??= primaryTagList.first;
 
                             return Tags(
                               itemCount: primaryTagList.length,
@@ -302,7 +291,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                                     selectedSecondaryTag.clear();
                                     addPlanBloc.add(SelectPrimaryEvent(primaryTag: tag));
                                   },
-                                  active: selectedPrimaryTag!.id == primaryTagList[index].id,
+                                  active: selectedPrimaryTag == null ? false : selectedPrimaryTag!.id == primaryTagList[index].id,
                                   title: primaryTagList[index].name,
                                   textActiveColor: Colors.black,
                                   textColor: const Color(0xff555555),
@@ -311,15 +300,21 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                                   padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                                   index: index,
                                   border: Border.all(
-                                      color: selectedPrimaryTag!.id == primaryTagList[index].id
-                                          ? MColor.colorPrimary
-                                          : const Color.fromRGBO(197, 197, 197, 1)),
-                                  activeColor: selectedPrimaryTag!.id == primaryTagList[index].id
-                                      ? const Color(0xFFFFC9CC)
-                                      : const Color(0xffFAFAFA),
-                                  color: selectedPrimaryTag!.id == primaryTagList[index].id
-                                      ? const Color(0xFFFFC9CC)
-                                      : const Color(0xffFAFAFA),
+                                      color: selectedPrimaryTag == null
+                                          ? const Color.fromRGBO(197, 197, 197, 1)
+                                          : selectedPrimaryTag!.id == primaryTagList[index].id
+                                              ? MColor.colorPrimary
+                                              : const Color.fromRGBO(197, 197, 197, 1)),
+                                  activeColor: selectedPrimaryTag == null
+                                      ? const Color(0xffFAFAFA)
+                                      : selectedPrimaryTag!.id == primaryTagList[index].id
+                                          ? const Color(0xFFFFC9CC)
+                                          : const Color(0xffFAFAFA),
+                                  color: selectedPrimaryTag == null
+                                      ? const Color(0xffFAFAFA)
+                                      : selectedPrimaryTag!.id == primaryTagList[index].id
+                                          ? const Color(0xFFFFC9CC)
+                                          : const Color(0xffFAFAFA),
                                 );
                               },
                             );
@@ -498,7 +493,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                       Fluttertoast.showToast(msg: "Please select primary tag");
                       return;
                     }
-                    if ((selectedPrimaryTag!.id == 1 || selectedPrimaryTag!.id == 2) && secondaryTag.isEmpty) {
+                    if ((selectedPrimaryTag!.secondaryTag.isNotEmpty) && selectedSecondaryTag.isEmpty) {
                       Fluttertoast.showToast(msg: "Please select secondary tag");
                       return;
                     }

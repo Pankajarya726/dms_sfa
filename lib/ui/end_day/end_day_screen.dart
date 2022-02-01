@@ -43,7 +43,9 @@ class _EndDayScreenState extends State<EndDayScreen> {
         leading: IconButton(
           splashRadius: 15,
           icon: const Icon(CupertinoIcons.back),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
         elevation: 1,
         title: const Text(
@@ -153,6 +155,14 @@ class _EndDayScreenState extends State<EndDayScreen> {
                         controller: edtPc,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         keyboardType: TextInputType.number,
+                        onChanged: (text) {
+                          if (text.trim().isNotEmpty && edtTotalSale.text.trim().isNotEmpty && text.trim() != "0") {
+                            double totalSale = double.parse(edtTotalSale.text.trim());
+                            double profitCall = double.parse(text);
+                            double average = totalSale / profitCall;
+                            edtAverageSale.text = average.toStringAsFixed(2);
+                          }
+                        },
                       )
                     ],
                   ),
@@ -174,6 +184,15 @@ class _EndDayScreenState extends State<EndDayScreen> {
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
               ],
+              onChanged: (text) {
+                if (text.trim().isNotEmpty && edtPc.text.trim().isNotEmpty && edtPc.text.trim() != "0") {
+                  double totalSale = double.parse(text);
+                  double profitCall = double.parse(edtPc.text.trim());
+                  double average = totalSale / profitCall;
+
+                  edtAverageSale.text = average.toStringAsFixed(2);
+                }
+              },
               keyboardType: TextInputType.number,
             ),
             const SizedBox(
@@ -188,6 +207,7 @@ class _EndDayScreenState extends State<EndDayScreen> {
             ),
             TextFormField(
               controller: edtAverageSale,
+              readOnly: true,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
               ],
@@ -240,10 +260,17 @@ class _EndDayScreenState extends State<EndDayScreen> {
       Utility.showToast("Please enter PC");
       return;
     }
+
+    if ((int.parse(edtPc.text.trim().toString())) > (int.parse(edtTc.text.trim().toString()))) {
+      Utility.showToast("PC can not be grater than TC");
+      return;
+    }
+
     if (edtTotalSale.text.isEmpty) {
       Utility.showToast("Please enter Total sale amount");
       return;
     }
+
     if (edtAverageSale.text.isEmpty) {
       Utility.showToast("Please enter Average sale amount");
       return;
