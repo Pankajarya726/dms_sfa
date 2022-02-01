@@ -119,19 +119,19 @@ class _StartDayScreenState extends State<StartDayScreen> {
                   refreshController.refreshCompleted();
                   planDateModel = state.planDateModel;
                   txtRemarkController.text = state.planDateModel.remark;
-                  selectedSecondaryTags = state.planDateModel.secondaryTags;
-                  String selectedBeats = state.planDateModel.secondaryTag;
-                  if (selectedSecondaryTags.isNotEmpty) {
-                    for (int i = 0; i < selectedSecondaryTags.length; i++) {
-                      if (i == selectedSecondaryTags.length - 1) {
-                        selectedBeats += selectedSecondaryTags[i].name;
-                      } else {
-                        selectedBeats += selectedSecondaryTags[i].name + ", ";
-                      }
-                    }
-                  }
-
-                  txtBeatController.text = selectedBeats;
+                  // selectedSecondaryTags = state.planDateModel.secondaryTags;
+                  // String selectedBeats = state.planDateModel.secondaryTag;
+                  // if (selectedSecondaryTags.isNotEmpty) {
+                  //   for (int i = 0; i < selectedSecondaryTags.length; i++) {
+                  //     if (i == selectedSecondaryTags.length - 1) {
+                  //       selectedBeats += selectedSecondaryTags[i].name;
+                  //     } else {
+                  //       selectedBeats += selectedSecondaryTags[i].name + ", ";
+                  //     }
+                  //   }
+                  // }
+                  //
+                  // txtBeatController.text = selectedBeats;
 
                   List<SecondaryTag> secTag =
                       primaryTagList.singleWhere((element) => element.id == int.parse(state.planDateModel.primaryTagId)).secondaryTag;
@@ -160,34 +160,40 @@ class _StartDayScreenState extends State<StartDayScreen> {
                       secondaryTag: secTag);
 
                   addPlanBloc.add(SelectPrimaryEvent(primaryTag: selectedPrimaryTag!));
+                  addPlanBloc.add(SelectSecondaryEvent(secondaryTag: secTag.where((element) => element.check).toList()));
                 }
-                //
-                // if (state is GetSecondaryTagState) {
-                //   secondaryTagList = state.secondaryTagList;
-                // }
+
                 if (state is GetAddPlanFailureState) {
                   refreshController.refreshCompleted();
-                  planDateModel = null;
-
-                  selectedPrimaryTag = primaryTagList.first;
-                  for (var element in selectedPrimaryTag!.secondaryTag) {
-                    element.check = false;
-                  }
                   selectedSecondaryTags.clear();
                   txtRemarkController.clear();
                   txtBeatController.clear();
-                  addPlanBloc.add(SelectPrimaryEvent(primaryTag: selectedPrimaryTag!));
-                }
-                if (state is AddPlanSuccessState) {
-                  // Fluttertoast.showToast(msg: state.successMessage);
-                }
-                if (state is AddPlanFailureState) {
-                  Fluttertoast.showToast(msg: state.failureMessage);
+                  planDateModel = null;
+
+                  try {
+                    selectedPrimaryTag = primaryTagList.firstWhere(
+                      (element) => element.selected == 1,
+                    );
+                    for (var element in selectedPrimaryTag!.secondaryTag) {
+                      element.check = false;
+                    }
+                    addPlanBloc.add(SelectPrimaryEvent(primaryTag: selectedPrimaryTag!));
+                  } catch (exception) {
+                    debugPrint("exception--->$exception");
+                  }
                 }
 
                 if (state is GetTagState) {
                   primaryTagList = state.primaryTagList;
-                  selectedPrimaryTag = primaryTagList.first;
+
+                  try {
+                    selectedPrimaryTag = primaryTagList.firstWhere(
+                      (element) => element.selected == 1,
+                    );
+                  } catch (exception) {
+                    debugPrint("exception--->$exception");
+                  }
+
                   getCurrentDate();
                 }
               }),
@@ -284,18 +290,21 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                 }
                                 if (state is SelectPrimaryTagState) {
                                   selectedPrimaryTag = state.primaryTag;
-                                  selectedSecondaryTags = state.primaryTag.secondaryTag.where((element) => element.check).toList();
-                                  if (selectedSecondaryTags.isNotEmpty) {
-                                    String selectedBeats = "";
-                                    for (int i = 0; i < selectedSecondaryTags.length; i++) {
-                                      if (i == selectedSecondaryTags.length - 1) {
-                                        selectedBeats += selectedSecondaryTags[i].name;
-                                      } else {
-                                        selectedBeats += selectedSecondaryTags[i].name + ", ";
-                                      }
-                                    }
-                                    txtBeatController.text = selectedBeats;
-                                  }
+                                  selectedSecondaryTags.clear();
+                                  txtBeatController.clear();
+
+                                  // selectedSecondaryTags = state.primaryTag.secondaryTag.where((element) => element.check).toList();
+                                  // if (selectedSecondaryTags.isNotEmpty) {
+                                  //   String selectedBeats = "";
+                                  //   for (int i = 0; i < selectedSecondaryTags.length; i++) {
+                                  //     if (i == selectedSecondaryTags.length - 1) {
+                                  //       selectedBeats += selectedSecondaryTags[i].name;
+                                  //     } else {
+                                  //       selectedBeats += selectedSecondaryTags[i].name + ", ";
+                                  //     }
+                                  //   }
+                                  //   txtBeatController.text = selectedBeats;
+                                  // }
                                 }
 
                                 return Tags(
@@ -309,7 +318,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                         addPlanBloc.add(SelectPrimaryEvent(primaryTag: item.customData));
                                       },
                                       pressEnabled: primaryTagList[index].canSelect == 1,
-                                      active: selectedPrimaryTag!.id == primaryTagList[index].id,
+                                      active: selectedPrimaryTag == null ? false : selectedPrimaryTag!.id == primaryTagList[index].id,
                                       title: primaryTagList[index].name,
                                       textActiveColor: Colors.black,
                                       textColor: const Color(0xff555555),
@@ -318,15 +327,21 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                                       index: index,
                                       border: Border.all(
-                                          color: selectedPrimaryTag!.id == primaryTagList[index].id
-                                              ? MColor.colorPrimary
-                                              : const Color.fromRGBO(197, 197, 197, 1)),
-                                      activeColor: selectedPrimaryTag!.id == primaryTagList[index].id
-                                          ? const Color(0xFFFFC9CC)
-                                          : const Color(0xffFAFAFA),
-                                      color: selectedPrimaryTag!.id == primaryTagList[index].id
-                                          ? const Color(0xFFFFC9CC)
-                                          : const Color(0xffFAFAFA),
+                                          color: selectedPrimaryTag == null
+                                              ? const Color.fromRGBO(197, 197, 197, 1)
+                                              : selectedPrimaryTag!.id == primaryTagList[index].id
+                                                  ? MColor.colorPrimary
+                                                  : const Color.fromRGBO(197, 197, 197, 1)),
+                                      activeColor: selectedPrimaryTag == null
+                                          ? const Color(0xffFAFAFA)
+                                          : selectedPrimaryTag!.id == primaryTagList[index].id
+                                              ? const Color(0xFFFFC9CC)
+                                              : const Color(0xffFAFAFA),
+                                      color: selectedPrimaryTag == null
+                                          ? const Color(0xffFAFAFA)
+                                          : selectedPrimaryTag!.id == primaryTagList[index].id
+                                              ? const Color(0xFFFFC9CC)
+                                              : const Color(0xffFAFAFA),
                                     );
                                   },
                                 );
@@ -346,7 +361,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
 
                                 if (state is SelectSecondaryState) {
                                   selectedSecondaryTags = state.secondaryTag;
-                                  debugPrint("selectedSecondaryTag--->$selectedSecondaryTags");
+                                  debugPrint("selectedSecondaryTags--->$selectedSecondaryTags");
                                   String selectedBeats = "";
                                   if (selectedSecondaryTags.isNotEmpty) {
                                     for (int i = 0; i < selectedSecondaryTags.length; i++) {
@@ -359,6 +374,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                   }
                                   txtBeatController.text = selectedBeats;
                                 }
+
                                 if (selectedPrimaryTag!.secondaryTag.isEmpty) {
                                   return Container();
                                 }
@@ -485,12 +501,21 @@ class _StartDayScreenState extends State<StartDayScreen> {
                         ),
                         BlocBuilder<AddPlanBloc, AddPlanStates>(
                           builder: (context, snap) {
+                            debugPrint("state--->$snap");
+
+                            if (snap is SelectPrimaryTagState) {
+                              selectedPrimaryTag = snap.primaryTag;
+                              if (snap.primaryTag.name.trim().toLowerCase() == "holiday" ||
+                                  snap.primaryTag.name.trim().toLowerCase() == "leave") {
+                                return Container();
+                              }
+                            }
+
                             if (selectedPrimaryTag == null) {
+                              debugPrint("selectedPrimaryTag==null");
                               return Container();
                             }
-                            if (selectedPrimaryTag!.id == 5 || selectedPrimaryTag!.id == 6) {
-                              return Container();
-                            }
+
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -769,7 +794,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
                 textColor: Colors.white,
                 onPressed: () async {
                   //when leave and holiday selected then if will execute
-                  if (selectedPrimaryTag!.id == 5 || selectedPrimaryTag!.id == 6) {
+                  if (selectedPrimaryTag!.name.trim().toLowerCase() == "leave" ||
+                      selectedPrimaryTag!.name.trim().toLowerCase() == "holiday") {
                     if (txtRemarkController.text.trim().isEmpty) {
                       Fluttertoast.showToast(msg: "Please enter remark");
                       return;
@@ -837,8 +863,10 @@ class _StartDayScreenState extends State<StartDayScreen> {
                       for (int i = 0; i < selectedSecondaryTags.length; i++) {
                         if (i == selectedSecondaryTags.length - 1) {
                           selectedBeats += selectedSecondaryTags[i].name;
+                          selectedBeatsId += selectedSecondaryTags[i].id.toString();
                         } else {
                           selectedBeats += selectedSecondaryTags[i].name + ", ";
+                          selectedBeatsId += selectedSecondaryTags[i].id.toString() + ", ";
                         }
                       }
 
@@ -925,12 +953,21 @@ class _StartDayScreenState extends State<StartDayScreen> {
   }
 
   void selectImage() async {
-    XFile? image = await imagePicker.pickImage(
-        source: ImageSource.camera, maxHeight: 512, maxWidth: 512, preferredCameraDevice: CameraDevice.front);
-    if (image != null) {
-      imageFile = File(image.path);
-      fileName = image.name;
-      commonBloc.add(CommonBlocSelectImageEvent(imageFile: imageFile!));
+    try {
+      XFile? image = await imagePicker.pickImage(
+        source: ImageSource.camera,
+        // maxHeight: 512,
+        // maxWidth: 512,
+        preferredCameraDevice: CameraDevice.front,
+      );
+
+      if (image != null) {
+        imageFile = File(image.path);
+        fileName = image.name;
+        commonBloc.add(CommonBlocSelectImageEvent(imageFile: imageFile!));
+      }
+    } catch (exception) {
+      debugPrint("exception in image picker---->$exception");
     }
   }
 

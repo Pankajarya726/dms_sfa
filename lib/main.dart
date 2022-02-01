@@ -39,10 +39,8 @@ configLoading() {
 }
 
 void main() {
-  dio.interceptors
-      .add(DioCacheManager(CacheConfig(baseUrl: Url.baseUrl)).interceptor);
-  dio.interceptors.add(LogInterceptor(
-      requestHeader: true, requestBody: true, responseBody: true));
+  dio.interceptors.add(DioCacheManager(CacheConfig(baseUrl: Url.baseUrl)).interceptor);
+  dio.interceptors.add(LogInterceptor(requestHeader: true, requestBody: true, responseBody: true));
   configLoading();
   runApp(const MyApp());
 }
@@ -67,12 +65,7 @@ class MyApp extends StatelessWidget {
     );
 
     return MaterialApp(
-      title: 'VV Sales Mitra'
-          ''
-          ''
-          ''
-          ''
-          '',
+      title: 'VV Sales Mitra',
       debugShowCheckedModeBanner: false,
       builder: EasyLoading.init(),
       navigatorKey: navigationService.navigatorKey,
@@ -98,9 +91,7 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.light,
           inputDecorationTheme: InputDecorationTheme(
             filled: true,
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(25),
-                borderSide: BorderSide.none),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(25), borderSide: BorderSide.none),
             fillColor: const Color(0xFFF2F2F2),
           ),
           appBarTheme: const AppBarTheme(
@@ -108,8 +99,7 @@ class MyApp extends StatelessWidget {
             elevation: 0,
             iconTheme: IconThemeData(color: Colors.black),
             centerTitle: true,
-            titleTextStyle: TextStyle(
-                color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+            titleTextStyle: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
             systemOverlayStyle: SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
               statusBarBrightness: Brightness.light,
