@@ -23,6 +23,7 @@ import 'package:dms/ui/userlocation_bloc/userlocation_states.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -292,6 +293,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                   selectedPrimaryTag = state.primaryTag;
                                   selectedSecondaryTags.clear();
                                   txtBeatController.clear();
+                                  txtRemarkController.clear();
 
                                   // selectedSecondaryTags = state.primaryTag.secondaryTag.where((element) => element.check).toList();
                                   // if (selectedSecondaryTags.isNotEmpty) {
@@ -315,6 +317,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                       customData: primaryTagList[index],
                                       singleItem: true,
                                       onPressed: (item) {
+                                        Utility.hideKeyboard();
                                         addPlanBloc.add(SelectPrimaryEvent(primaryTag: item.customData));
                                       },
                                       pressEnabled: primaryTagList[index].canSelect == 1,
@@ -472,27 +475,29 @@ class _StartDayScreenState extends State<StartDayScreen> {
                             const SizedBox(
                               height: 15,
                             ),
-                            TextFormField(
-                              minLines: 3,
-                              controller: txtRemarkController,
-                              maxLines: 5,
-                              maxLengthEnforcement: MaxLengthEnforcement.none,
-                              decoration: InputDecoration(
-                                hintText: "Write your remark",
-                                hintStyle: const TextStyle(
-                                  color: MColor.backButton,
+                            BlocBuilder<AddPlanBloc, AddPlanStates>(builder: (context, state) {
+                              return TextFormField(
+                                minLines: 3,
+                                controller: txtRemarkController,
+                                maxLines: 5,
+                                maxLengthEnforcement: MaxLengthEnforcement.none,
+                                decoration: InputDecoration(
+                                  hintText: "Write your remark",
+                                  hintStyle: const TextStyle(
+                                    color: MColor.backButton,
+                                  ),
+                                  filled: true,
+                                  fillColor: const Color(0xffF2F2F2),
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
                                 ),
-                                filled: true,
-                                fillColor: const Color(0xffF2F2F2),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
-                              ),
-                              onTap: () async {
-                                await Future.delayed(const Duration(milliseconds: 500));
-                                RenderObject? object = globalKey.currentContext!.findRenderObject();
-                                object!.showOnScreen();
-                                // globalKey2 = globalKey;
-                              },
-                            ),
+                                onTap: () async {
+                                  await Future.delayed(const Duration(milliseconds: 500));
+                                  RenderObject? object = globalKey.currentContext!.findRenderObject();
+                                  object!.showOnScreen();
+                                  // globalKey2 = globalKey;
+                                },
+                              );
+                            }),
                             SizedBox(
                               key: globalKey,
                               height: 15,
@@ -875,8 +880,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
                     }
 
                     input["remark"] = txtRemarkController.text.trim();
-                    input["latitude"] = latitude.toString();
-                    input["longitude"] = longitude.toString();
+                    input["start_day_latitude"] = latitude.toString();
+                    input["start_day_longitude"] = longitude.toString();
                     input["get_meeting"] = isMeeting ? "Yes" : "No";
                     input["start_day_address"] = currentAddress;
                     input["start_day_time"] = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";

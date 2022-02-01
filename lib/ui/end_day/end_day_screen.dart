@@ -133,6 +133,11 @@ class _EndDayScreenState extends State<EndDayScreen> {
                         controller: edtTc,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         keyboardType: TextInputType.number,
+                        onChanged: (text) {
+                          edtPc.text = "0";
+                          edtTotalSale.text = "0";
+                          edtAverageSale.text = "0";
+                        },
                       )
                     ],
                   ),
@@ -156,7 +161,26 @@ class _EndDayScreenState extends State<EndDayScreen> {
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         keyboardType: TextInputType.number,
                         onChanged: (text) {
-                          if (text.trim().isNotEmpty && edtTotalSale.text.trim().isNotEmpty && text.trim() != "0") {
+                          if (edtTc.text.trim().isEmpty) {
+                            Utility.showToast("Please enter TC first");
+                            return;
+                          }
+
+                          if (int.parse(text.trim()) > int.parse(edtTc.text.trim().toString())) {
+                            edtPc.text = edtTc.text;
+                            Utility.showToast("PC can not be created than TC");
+                            return;
+                          }
+
+                          if (text.trim() == "0") {
+                            edtPc.text = "0";
+                            edtAverageSale.text = "0";
+                            edtTotalSale.text = "0";
+                            edtPc.selection = (TextSelection(baseOffset: edtPc.text.length, extentOffset: edtPc.text.length));
+                            return;
+                          }
+
+                          if (text.trim().isNotEmpty && edtTotalSale.text.trim().isNotEmpty && int.parse(text.trim()) != 0) {
                             double totalSale = double.parse(edtTotalSale.text.trim());
                             double profitCall = double.parse(text);
                             double average = totalSale / profitCall;
@@ -185,7 +209,15 @@ class _EndDayScreenState extends State<EndDayScreen> {
                 FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
               ],
               onChanged: (text) {
-                if (text.trim().isNotEmpty && edtPc.text.trim().isNotEmpty && edtPc.text.trim() != "0") {
+                if (edtPc.text.trim().isEmpty || int.parse(edtPc.text.trim()) == 0) {
+                  edtTotalSale.text = "0";
+                  edtAverageSale.text = "0";
+                  Utility.showToast("PC must be greater than 0");
+                  edtTotalSale.selection = TextSelection(baseOffset: edtTotalSale.text.length, extentOffset: edtTotalSale.text.length);
+                  return;
+                }
+
+                if (text.trim().isNotEmpty && edtPc.text.trim().isNotEmpty && int.parse(edtPc.text.trim()) != 0) {
                   double totalSale = double.parse(text);
                   double profitCall = double.parse(edtPc.text.trim());
                   double average = totalSale / profitCall;
@@ -301,7 +333,7 @@ class _EndDayScreenState extends State<EndDayScreen> {
       input["end_day_longitude"] = position.longitude.toString();
       input["total_visit"] = edtTc.text.trim().toString();
       input["total_order"] = edtPc.text.trim().toString();
-      input["total_sale_ammount"] = edtTotalSale.text.trim().toString();
+      input["total_sale_amount"] = edtTotalSale.text.trim().toString();
       input["avg_sale_value"] = edtAverageSale.text.trim().toString();
       input["end_day_remark"] = edtRemark.text.trim();
       debugPrint("input-->$input");
