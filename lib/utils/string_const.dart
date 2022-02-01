@@ -86,3 +86,4 @@ const filter = "Filter";
 const productInfo = "Product Info";
 const schemeInfo = "Scheme Info";
 const summary = "Summary";
+const syncText = "Sync";
