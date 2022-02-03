@@ -133,10 +133,14 @@ class _EndDayScreenState extends State<EndDayScreen> {
                         controller: edtTc,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         keyboardType: TextInputType.number,
+                        maxLength: 10,
+                        decoration: const InputDecoration(counterText: ""),
                         onChanged: (text) {
                           edtPc.text = "0";
                           edtTotalSale.text = "0";
                           edtAverageSale.text = "0";
+                          edtTc.text = int.parse(text.trim()).toString();
+                          edtTc.selection = TextSelection(baseOffset: edtTc.text.length, extentOffset: edtTc.text.length);
                         },
                       )
                     ],
@@ -160,15 +164,23 @@ class _EndDayScreenState extends State<EndDayScreen> {
                         controller: edtPc,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         keyboardType: TextInputType.number,
+                        maxLength: 10,
+                        decoration: const InputDecoration(counterText: ""),
                         onChanged: (text) {
+                          edtPc.text = int.parse(text.trim()).toString();
+                          text = int.parse(text.trim()).toString();
+
                           if (edtTc.text.trim().isEmpty) {
                             Utility.showToast("Please enter TC first");
+                            edtPc.clear();
+                            edtPc.selection = TextSelection(baseOffset: edtPc.text.length, extentOffset: edtPc.text.length);
                             return;
                           }
 
                           if (int.parse(text.trim()) > int.parse(edtTc.text.trim().toString())) {
                             edtPc.text = edtTc.text;
                             Utility.showToast("PC can not be created than TC");
+                            edtPc.selection = TextSelection(baseOffset: edtPc.text.length, extentOffset: edtPc.text.length);
                             return;
                           }
 
@@ -186,6 +198,7 @@ class _EndDayScreenState extends State<EndDayScreen> {
                             double average = totalSale / profitCall;
                             edtAverageSale.text = average.toStringAsFixed(2);
                           }
+                          edtPc.selection = (TextSelection(baseOffset: edtPc.text.length, extentOffset: edtPc.text.length));
                         },
                       )
                     ],
@@ -205,14 +218,19 @@ class _EndDayScreenState extends State<EndDayScreen> {
             ),
             TextFormField(
               controller: edtTotalSale,
+              maxLength: 10,
+              decoration: const InputDecoration(counterText: ""),
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
               ],
               onChanged: (text) {
+                text = int.parse(text.trim()).toString();
+                edtTotalSale.text = int.parse(text.trim()).toString();
+
                 if (edtPc.text.trim().isEmpty || int.parse(edtPc.text.trim()) == 0) {
                   edtTotalSale.text = "0";
                   edtAverageSale.text = "0";
-                  Utility.showToast("PC must be greater than 0");
+                  Utility.showToast("Please enter TC-PC first");
                   edtTotalSale.selection = TextSelection(baseOffset: edtTotalSale.text.length, extentOffset: edtTotalSale.text.length);
                   return;
                 }
@@ -221,9 +239,9 @@ class _EndDayScreenState extends State<EndDayScreen> {
                   double totalSale = double.parse(text);
                   double profitCall = double.parse(edtPc.text.trim());
                   double average = totalSale / profitCall;
-
                   edtAverageSale.text = average.toStringAsFixed(2);
                 }
+                edtTotalSale.selection = TextSelection(baseOffset: edtTotalSale.text.length, extentOffset: edtTotalSale.text.length);
               },
               keyboardType: TextInputType.number,
             ),
@@ -292,13 +310,17 @@ class _EndDayScreenState extends State<EndDayScreen> {
       Utility.showToast("Please enter PC");
       return;
     }
+    if (edtTotalSale.text.isEmpty) {
+      Utility.showToast("Please enter Total sale amount");
+      return;
+    }
 
     if ((int.parse(edtPc.text.trim().toString())) > (int.parse(edtTc.text.trim().toString()))) {
       Utility.showToast("PC can not be grater than TC");
       return;
     }
 
-    if (edtTotalSale.text.isEmpty) {
+    if (int.parse(edtPc.text.trim()) > 0 && edtTotalSale.text.trim() == "0") {
       Utility.showToast("Please enter Total sale amount");
       return;
     }

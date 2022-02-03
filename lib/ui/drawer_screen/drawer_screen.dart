@@ -110,31 +110,35 @@ class _DrawerScreenState extends State<DrawerScreen> {
                         placeholder: (context, url) => Image.asset("assets/placeholder.png"),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(18, 5, 10, 5),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            Constants.name,
-                            style: const TextStyle(fontSize: 21, color: Colors.white, fontWeight: FontWeight.w400),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4)),
-                            child: Padding(
-                              padding: const EdgeInsets.all(2),
-                              child: Text(
-                                " ${Constants.designation} ",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.red,
-                                  fontSize: 15,
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(18, 5, 10, 5),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              Constants.name,
+                              style: const TextStyle(fontSize: 21, color: Colors.white, fontWeight: FontWeight.w400),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4)),
+                              // width: MediaQuery.of(context).size.width*0.45,
+                              child: Padding(
+                                padding: const EdgeInsets.all(2),
+                                child: Text(
+                                  " ${Constants.designation} ",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.red,
+                                    overflow: TextOverflow.ellipsis,
+                                    fontSize: 15,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     )
                   ],

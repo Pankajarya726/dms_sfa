@@ -961,12 +961,14 @@ class _StartDayScreenState extends State<StartDayScreen> {
     try {
       XFile? image = await imagePicker.pickImage(
         source: ImageSource.camera,
-        // maxHeight: 512,
-        // maxWidth: 512,
+        maxHeight: 1024,
+        maxWidth: 1024,
+        // imageQuality: 60,
         preferredCameraDevice: CameraDevice.front,
       );
 
       if (image != null) {
+        debugPrint("image-size---->${await image.length()}");
         imageFile = File(image.path);
         fileName = image.name;
         commonBloc.add(CommonBlocSelectImageEvent(imageFile: imageFile!));
@@ -980,7 +982,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
     imageFile = null;
     commonBloc.add(CommonBlocGetMeetingEvent(getMeeting: false));
     startMyDayBloc.add(GetQuotesAndImagesEvent());
-    addPlanBloc.add(GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(DateTime.now())));
+    // addPlanBloc.add(GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(DateTime.now())));
+    addPlanBloc.add(GetTagEvent());
     userLocationBloc.add(GetUserLocationEvent());
     refreshController.refreshCompleted();
   }

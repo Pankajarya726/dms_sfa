@@ -471,7 +471,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                     ),
                   ),
                   const SizedBox(
-                    height: 30,
+                    height: 60,
                   )
                 ],
               ),

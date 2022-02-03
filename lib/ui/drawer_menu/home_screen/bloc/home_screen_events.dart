@@ -6,6 +6,7 @@ class HomeScreenEvents extends Equatable {
 }
 
 class GetUserDetailsEvent extends HomeScreenEvents {
+  GetUserDetailsEvent();
   @override
   List<Object> get props => [];
 }
