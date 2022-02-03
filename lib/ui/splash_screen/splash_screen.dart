@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     // checkForUpdate();
-    // addEvent();
+    addEvent();
   }
 
   @override

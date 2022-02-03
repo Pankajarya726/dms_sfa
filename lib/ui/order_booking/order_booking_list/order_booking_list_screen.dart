@@ -70,26 +70,6 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
                 image: AssetImage("assets/filter.png"),
               ),
             ),
-            IconButton(
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  shape: bottomSheetShape,
-                  builder: (context) => FilterOrderBookingBottomSheet(
-                    onPriceSelect: (price) {
-                      selectedPrice = price;
-                    },
-                    selectedPrice: selectedPrice,
-                  ),
-                );
-              },
-              icon: const Image(
-                fit: BoxFit.cover,
-                width: 30,
-                image: AssetImage("assets/filter.png"),
-              ),
-            ),
           ],
         ),
         actions: [

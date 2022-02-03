@@ -18,4 +18,5 @@ class Url {
   static const String getSecondaryTag = "getSecondaryTag";
   static const String getMyPlanByMonth = "getMonthWiseAddPlan";
   static const String getAllTags = "getAllTags";
+  static const String getEnrollmentType = "getEnrollmentType";
 }
