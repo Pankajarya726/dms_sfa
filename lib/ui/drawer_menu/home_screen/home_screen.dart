@@ -101,38 +101,41 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
                   const SizedBox(
                     width: 15,
                   ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        Constants.name,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(top: 4),
-                        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF3505A).withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                        child: Text(
-                          Constants.designation,
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          Constants.name,
                           style: const TextStyle(
-                            fontWeight: FontWeight.w500,
                             color: Colors.black,
-                            fontSize: 15,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                      ),
-                    ],
+                        Container(
+                          margin: const EdgeInsets.only(top: 4),
+                          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                          // width: MediaQuery.of(context).size.width * 0.55,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF3505A).withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                          child: Text(
+                            Constants.designation,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                              fontSize: 15,
+                              overflow: TextOverflow.clip,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   )
                 ],
               );
@@ -216,30 +219,31 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
             ],
           ),
         ),
-        body: SmartRefresher(
-          primary: false,
-          controller: refreshController,
-          onRefresh: onRefresh,
-          enablePullDown: true,
-          child: BlocBuilder<HomeScreenBloc, HomeScreenStates>(
-            builder: (context, state) {
-              if (state is HomeScreenInitialState) {
-                homeScreenBloc.add(GetMenusEvent());
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
+        body: BlocBuilder<HomeScreenBloc, HomeScreenStates>(
+          builder: (context, state) {
+            if (state is HomeScreenInitialState) {
+              homeScreenBloc.add(GetMenusEvent());
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
 
-              if (state is GetMenusState) {
-                menu = state.menu;
-              }
+            if (state is GetMenusState) {
+              menu = state.menu;
+            }
 
-              if (state is HomeScreenFailureState) {
-                return Center(
-                  child: Text(state.failureMessage),
-                );
-              }
-              return GridView.count(
+            if (state is HomeScreenFailureState) {
+              return Center(
+                child: Text(state.failureMessage),
+              );
+            }
+            return SmartRefresher(
+              primary: false,
+              controller: refreshController,
+              onRefresh: onRefresh,
+              enablePullDown: true,
+              header: const MaterialClassicHeader(),
+              child: GridView.count(
                 crossAxisCount: 2,
                 crossAxisSpacing: 20,
                 mainAxisSpacing: 20,
@@ -302,9 +306,9 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
                     ),
                   );
                 }),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -361,6 +365,7 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
 
   void onRefresh() async {
     homeScreenBloc.add(GetMenusEvent());
+    homeScreenBloc.add(GetUserDetailsEvent());
     refreshController.refreshCompleted();
   }
 

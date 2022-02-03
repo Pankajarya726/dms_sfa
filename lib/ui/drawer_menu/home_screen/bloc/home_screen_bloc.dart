@@ -27,70 +27,38 @@ class HomeScreenBloc extends Bloc<HomeScreenEvents, HomeScreenStates> {
   Stream<HomeScreenStates> getUserDetails(GetUserDetailsEvent event) async* {
     var userId = await SharedPreference.getStringPreference(SharedPreference.userId);
 
-    if (userId.isNotEmpty) {
-      Constants.name = await SharedPreference.getStringPreference(
-        SharedPreference.name,
-      );
-      Constants.email = await SharedPreference.getStringPreference(
-        SharedPreference.email,
-      );
-      Constants.image = await SharedPreference.getStringPreference(
-        SharedPreference.userImage,
-      );
-      Constants.mobile = await SharedPreference.getStringPreference(
-        SharedPreference.mobileNumber,
-      );
-      Constants.designation = await SharedPreference.getStringPreference(
-        SharedPreference.userDesignation,
-      );
+    if (await Network.isConnected()) {
+      GetUserResponse response = await repository.getUserDetailsByUserId(userId);
+      if (response.success) {
+        await SharedPreference.setStringPreference(SharedPreference.name, response.data!.name);
+        await SharedPreference.setStringPreference(SharedPreference.email, response.data!.email);
+        await SharedPreference.setStringPreference(SharedPreference.userImage, response.data!.image);
+        await SharedPreference.setStringPreference(SharedPreference.mobileNumber, response.data!.mobileNumber);
+        await SharedPreference.setStringPreference(SharedPreference.mobileNumber, response.data!.designation);
+        Constants.name = response.data!.name;
+        Constants.email = response.data!.email;
+        Constants.image = response.data!.image;
+        Constants.mobile = response.data!.mobileNumber;
+        Constants.designation = response.data!.designation;
 
-      UserDetails user = UserDetails(
-          id: int.parse(userId),
-          name: Constants.name,
-          email: Constants.email,
-          image: Constants.image,
-          mobileNumber: Constants.mobile,
-          clockInOutData: [],
-          startMyDay: '',
-          pjpDescription: '',
-          pjpButton: '',
-          designation: Constants.designation);
+        UserDetails user = UserDetails(
+            id: int.parse(userId),
+            name: Constants.name,
+            email: Constants.email,
+            image: Constants.image,
+            mobileNumber: Constants.mobile,
+            clockInOutData: [],
+            startMyDay: '',
+            pjpDescription: '',
+            pjpButton: '',
+            designation: Constants.designation);
 
-      yield GetUserDetailsSuccessState(userDetails: user);
-    } else {
-      if (await Network.isConnected()) {
-        GetUserResponse response = await repository.getUserDetailsByUserId(userId);
-        if (response.success) {
-          await SharedPreference.setStringPreference(SharedPreference.name, response.data!.name);
-          await SharedPreference.setStringPreference(SharedPreference.email, response.data!.email);
-          await SharedPreference.setStringPreference(SharedPreference.userImage, response.data!.image);
-          await SharedPreference.setStringPreference(SharedPreference.mobileNumber, response.data!.mobileNumber);
-          await SharedPreference.setStringPreference(SharedPreference.mobileNumber, response.data!.designation);
-          Constants.name = response.data!.name;
-          Constants.email = response.data!.email;
-          Constants.image = response.data!.image;
-          Constants.mobile = response.data!.mobileNumber;
-          Constants.designation = response.data!.designation;
-
-          UserDetails user = UserDetails(
-              id: int.parse(userId),
-              name: Constants.name,
-              email: Constants.email,
-              image: Constants.image,
-              mobileNumber: Constants.mobile,
-              clockInOutData: [],
-              startMyDay: '',
-              pjpDescription: '',
-              pjpButton: '',
-              designation: Constants.designation);
-
-          yield GetUserDetailsSuccessState(userDetails: user);
-        } else {
-          yield HomeScreenFailureState(failureMessage: response.message);
-        }
+        yield GetUserDetailsSuccessState(userDetails: user);
       } else {
-        yield HomeScreenFailureState(failureMessage: "Please check your internet connection!");
+        yield HomeScreenFailureState(failureMessage: response.message);
       }
+    } else {
+      yield HomeScreenFailureState(failureMessage: "Please check your internet connection!");
     }
   }
 

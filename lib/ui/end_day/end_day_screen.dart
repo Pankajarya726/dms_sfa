@@ -133,6 +133,15 @@ class _EndDayScreenState extends State<EndDayScreen> {
                         controller: edtTc,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         keyboardType: TextInputType.number,
+                        maxLength: 10,
+                        decoration: const InputDecoration(counterText: ""),
+                        onChanged: (text) {
+                          edtPc.text = "0";
+                          edtTotalSale.text = "0";
+                          edtAverageSale.text = "0";
+                          edtTc.text = int.parse(text.trim()).toString();
+                          edtTc.selection = TextSelection(baseOffset: edtTc.text.length, extentOffset: edtTc.text.length);
+                        },
                       )
                     ],
                   ),
@@ -155,13 +164,41 @@ class _EndDayScreenState extends State<EndDayScreen> {
                         controller: edtPc,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         keyboardType: TextInputType.number,
+                        maxLength: 10,
+                        decoration: const InputDecoration(counterText: ""),
                         onChanged: (text) {
-                          if (text.trim().isNotEmpty && edtTotalSale.text.trim().isNotEmpty && text.trim() != "0") {
+                          edtPc.text = int.parse(text.trim()).toString();
+                          text = int.parse(text.trim()).toString();
+
+                          if (edtTc.text.trim().isEmpty) {
+                            Utility.showToast("Please enter TC first");
+                            edtPc.clear();
+                            edtPc.selection = TextSelection(baseOffset: edtPc.text.length, extentOffset: edtPc.text.length);
+                            return;
+                          }
+
+                          if (int.parse(text.trim()) > int.parse(edtTc.text.trim().toString())) {
+                            edtPc.text = edtTc.text;
+                            Utility.showToast("PC can not be created than TC");
+                            edtPc.selection = TextSelection(baseOffset: edtPc.text.length, extentOffset: edtPc.text.length);
+                            return;
+                          }
+
+                          if (text.trim() == "0") {
+                            edtPc.text = "0";
+                            edtAverageSale.text = "0";
+                            edtTotalSale.text = "0";
+                            edtPc.selection = (TextSelection(baseOffset: edtPc.text.length, extentOffset: edtPc.text.length));
+                            return;
+                          }
+
+                          if (text.trim().isNotEmpty && edtTotalSale.text.trim().isNotEmpty && int.parse(text.trim()) != 0) {
                             double totalSale = double.parse(edtTotalSale.text.trim());
                             double profitCall = double.parse(text);
                             double average = totalSale / profitCall;
                             edtAverageSale.text = average.toStringAsFixed(2);
                           }
+                          edtPc.selection = (TextSelection(baseOffset: edtPc.text.length, extentOffset: edtPc.text.length));
                         },
                       )
                     ],
@@ -181,17 +218,30 @@ class _EndDayScreenState extends State<EndDayScreen> {
             ),
             TextFormField(
               controller: edtTotalSale,
+              maxLength: 10,
+              decoration: const InputDecoration(counterText: ""),
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
               ],
               onChanged: (text) {
-                if (text.trim().isNotEmpty && edtPc.text.trim().isNotEmpty && edtPc.text.trim() != "0") {
+                text = int.parse(text.trim()).toString();
+                edtTotalSale.text = int.parse(text.trim()).toString();
+
+                if (edtPc.text.trim().isEmpty || int.parse(edtPc.text.trim()) == 0) {
+                  edtTotalSale.text = "0";
+                  edtAverageSale.text = "0";
+                  Utility.showToast("Please enter TC-PC first");
+                  edtTotalSale.selection = TextSelection(baseOffset: edtTotalSale.text.length, extentOffset: edtTotalSale.text.length);
+                  return;
+                }
+
+                if (text.trim().isNotEmpty && edtPc.text.trim().isNotEmpty && int.parse(edtPc.text.trim()) != 0) {
                   double totalSale = double.parse(text);
                   double profitCall = double.parse(edtPc.text.trim());
                   double average = totalSale / profitCall;
-
                   edtAverageSale.text = average.toStringAsFixed(2);
                 }
+                edtTotalSale.selection = TextSelection(baseOffset: edtTotalSale.text.length, extentOffset: edtTotalSale.text.length);
               },
               keyboardType: TextInputType.number,
             ),
@@ -260,13 +310,17 @@ class _EndDayScreenState extends State<EndDayScreen> {
       Utility.showToast("Please enter PC");
       return;
     }
+    if (edtTotalSale.text.isEmpty) {
+      Utility.showToast("Please enter Total sale amount");
+      return;
+    }
 
     if ((int.parse(edtPc.text.trim().toString())) > (int.parse(edtTc.text.trim().toString()))) {
       Utility.showToast("PC can not be grater than TC");
       return;
     }
 
-    if (edtTotalSale.text.isEmpty) {
+    if (int.parse(edtPc.text.trim()) > 0 && edtTotalSale.text.trim() == "0") {
       Utility.showToast("Please enter Total sale amount");
       return;
     }
@@ -301,7 +355,7 @@ class _EndDayScreenState extends State<EndDayScreen> {
       input["end_day_longitude"] = position.longitude.toString();
       input["total_visit"] = edtTc.text.trim().toString();
       input["total_order"] = edtPc.text.trim().toString();
-      input["total_sale_ammount"] = edtTotalSale.text.trim().toString();
+      input["total_sale_amount"] = edtTotalSale.text.trim().toString();
       input["avg_sale_value"] = edtAverageSale.text.trim().toString();
       input["end_day_remark"] = edtRemark.text.trim();
       debugPrint("input-->$input");
