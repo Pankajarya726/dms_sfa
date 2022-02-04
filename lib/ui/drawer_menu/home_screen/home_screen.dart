@@ -338,10 +338,10 @@ class _HomeScreenState extends State<HomeScreen>
         break;
       case 4:
         Fluttertoast.showToast(msg: comingSoon);
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const RetailerListScreen()));
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => const RetailerListScreen()));
         break;
       case 5:
         Fluttertoast.showToast(msg: comingSoon);
