@@ -14,3 +14,13 @@ class SelectLanguageTypeEvent extends EditStoreEvents {
   @override
   List<Object> get props => [];
 }
+
+class SelectRetailerTypeEvent extends EditStoreEvents {
+  @override
+  List<Object> get props => [];
+}
+
+class SelectRetailerCategoryEvent extends EditStoreEvents {
+  @override
+  List<Object> get props => [];
+}

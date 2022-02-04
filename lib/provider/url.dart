@@ -20,4 +20,6 @@ class Url {
   static const String getAllTags = "getAllTags";
   static const String getEnrollmentType = "getEnrollmentType";
   static const String selectLanguage = "getLanguage";
+  static const String selectRetailerType = "getRetailerType";
+  static const String selectRetailerCategory = "getRetailerCategory";
 }

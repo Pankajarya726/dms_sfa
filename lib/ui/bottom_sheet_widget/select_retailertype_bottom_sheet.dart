@@ -1,6 +1,10 @@
 import 'package:dms/ui/common_bloc/common_bloc.dart';
 import 'package:dms/ui/common_bloc/common_bloc_events.dart';
 import 'package:dms/ui/common_bloc/common_bloc_states.dart';
+import 'package:dms/ui/order_booking/edit_store/bloc/edit_store_bloc.dart';
+import 'package:dms/ui/order_booking/edit_store/bloc/edit_store_events.dart';
+import 'package:dms/ui/order_booking/edit_store/bloc/edit_store_states.dart';
+import 'package:dms/ui/order_booking/edit_store/model/select_retailer_type_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
@@ -22,18 +26,19 @@ class SelectRetailerTypeBottomSheet extends StatefulWidget {
 
 class _SelectRetailerTypeBottomSheetState
     extends State<SelectRetailerTypeBottomSheet> {
-  List<String> names = [
-    "Super Market",
-    "Grocery Store",
-    "Pharmacy / Chemist",
-    "Bakery",
-    "Dairy",
-    "Namkeen / Sweet Shop",
-    "Cosmetics",
-  ];
+  // List<String> names = [
+  //   "Super Market",
+  //   "Grocery Store",
+  //   "Pharmacy / Chemist",
+  //   "Bakery",
+  //   "Dairy",
+  //   "Namkeen / Sweet Shop",
+  //   "Cosmetics",
+  // ];
   Object selectRetailerTypeRadio = "";
   String selectedRetailerType = "";
   CommonBloc commonBloc = CommonBloc();
+  SelectRetailerTypeResponse? selectRetailerTypeResponse;
 
   @override
   void initState() {
@@ -53,80 +58,113 @@ class _SelectRetailerTypeBottomSheetState
           topLeft: Radius.circular(25),
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            retailerType,
-            style: TextStyle(
-              fontSize: 19,
-              color: MColor.colorPrimary,
-              letterSpacing: 0.67,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Flexible(
-            child: ListView.builder(
-              controller: ScrollController(keepScrollOffset: false),
-              itemCount: names.length,
-              itemBuilder: (context, index) {
-                return BlocProvider(
-                  create: (context) => commonBloc,
-                  child: BlocBuilder<CommonBloc, CommonBlocStates>(
-                    builder: (context, state) {
-                      if (state is CommonBlocInitialState) {
-                        if (selectRetailerTypeRadio == names[index]) {
-                          commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                              enrollmentRadioTag: index));
-                        }
-                      }
-                      if (state is CommonBlocEnrollRadioTagState) {
-                        selectRetailerTypeRadio = state.enrollmentRadioTag;
-                      }
-                      return radioButtonWidget(
-                          selectRetailerTypeRadio, index, names[index]);
+      child: BlocProvider(
+        create: (context) => EditStoreBloc(),
+        child: BlocBuilder<EditStoreBloc, EditStoreStates>(
+          builder: (context, state) {
+            if (state is EditStoreInitialState) {
+              BlocProvider.of<EditStoreBloc>(context)
+                  .add(SelectRetailerTypeEvent());
+            }
+            if (state is EditStoreILoadingState) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (state is SelectRetailerTypeState) {
+              selectRetailerTypeResponse = state.selectRetailerTypeResponse;
+            }
+            if (state is EditStoreFailureState) {
+              return Center(
+                child: Text(state.failureMessage),
+              );
+            }
+            if (selectRetailerTypeResponse == null) {
+              return Container();
+            }
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  retailerType,
+                  style: TextStyle(
+                    fontSize: 19,
+                    color: MColor.colorPrimary,
+                    letterSpacing: 0.67,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Flexible(
+                  child: ListView.builder(
+                    controller: ScrollController(keepScrollOffset: false),
+                    itemCount: selectRetailerTypeResponse!.data!.length,
+                    itemBuilder: (context, index) {
+                      return BlocProvider(
+                        create: (context) => commonBloc,
+                        child: BlocBuilder<CommonBloc, CommonBlocStates>(
+                          builder: (context, state) {
+                            if (state is CommonBlocInitialState) {
+                              if (selectRetailerTypeRadio ==
+                                  selectRetailerTypeResponse!
+                                      .data![index].name) {
+                                commonBloc.add(CommonBlocEnrollTypeRadioEvent(
+                                    enrollmentRadioTag: index));
+                              }
+                            }
+                            if (state is CommonBlocEnrollRadioTagState) {
+                              selectRetailerTypeRadio =
+                                  state.enrollmentRadioTag;
+                            }
+                            return radioButtonWidget(
+                                selectRetailerTypeRadio,
+                                index,
+                                selectRetailerTypeResponse!.data![index].name);
+                          },
+                        ),
+                      );
                     },
                   ),
-                );
-              },
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                widget.onRetailerTypeSelect(selectedRetailerType);
-                Navigator.pop(context);
-              },
-              style: ButtonStyle(
-                fixedSize: MaterialStateProperty.all(const Size(220, 60)),
-                backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
-                elevation: MaterialStateProperty.all(0),
-                shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      widget.onRetailerTypeSelect(selectedRetailerType);
+                      Navigator.pop(context);
+                    },
+                    style: ButtonStyle(
+                      fixedSize: MaterialStateProperty.all(const Size(220, 60)),
+                      backgroundColor:
+                          MaterialStateProperty.all(MColor.colorPrimary),
+                      elevation: MaterialStateProperty.all(0),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                    ),
+                    child: const Text(
+                      done,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              child: const Text(
-                done,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+                const SizedBox(
+                  height: 10,
                 ),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-        ],
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -136,7 +174,7 @@ class _SelectRetailerTypeBottomSheetState
       onTap: () {
         commonBloc
             .add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-        selectedRetailerType = names[value];
+        selectedRetailerType = selectRetailerTypeResponse!.data![value].name;
       },
       child: Row(
         children: [
@@ -150,7 +188,8 @@ class _SelectRetailerTypeBottomSheetState
               onChanged: (value) {
                 commonBloc.add(
                     CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-                selectedRetailerType = names[value].toString();
+                selectedRetailerType =
+                    selectRetailerTypeResponse!.data![value].name.toString();
               },
             ),
           ),
