@@ -78,8 +78,8 @@ const picDate = "Pic your date";
 const selectHint = "Select";
 const selectCity = "Select City";
 const done = "Done";
-const selectLangFirst = "Select Language 1";
-const selectLangSecond = "Select Language 2";
+const selectLangFirst = "Select Language ";
+const selectLangSecond = "Select Language ";
 const whatsAppSms =
     "Does retailer want to opt-in for Whatsapp message / SMS? *";
 const filter = "Filter";

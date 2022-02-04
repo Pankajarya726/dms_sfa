@@ -1,11 +1,11 @@
 // To parse this JSON data, do
 //
-//     final GetEnrollTypeResponse = GetEnrollTypeResponseFromMap(jsonString);
+//     final selectLanguageResponse = selectLanguageResponseFromMap(jsonString);
 
 import 'dart:convert';
 
-class GetEnrollTypeResponse {
-  GetEnrollTypeResponse({
+class SelectLanguageResponse {
+  SelectLanguageResponse({
     required this.success,
     required this.message,
     this.data,
@@ -15,17 +15,17 @@ class GetEnrollTypeResponse {
   String message;
   List<Datum>? data;
 
-  factory GetEnrollTypeResponse.fromJson(String str) =>
-      GetEnrollTypeResponse.fromMap(json.decode(str));
+  factory SelectLanguageResponse.fromJson(String str) =>
+      SelectLanguageResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory GetEnrollTypeResponse.fromMap(Map<String, dynamic> json) =>
-      GetEnrollTypeResponse(
+  factory SelectLanguageResponse.fromMap(Map<String, dynamic> json) =>
+      SelectLanguageResponse(
         success: json["success"] == null ? null : json["success"],
         message: json["message"] == null ? null : json["message"],
         data: json["data"] == null
-            ? []
+            ? null
             : List<Datum>.from(json["data"].map((x) => Datum.fromMap(x))),
       );
 
@@ -40,11 +40,11 @@ class GetEnrollTypeResponse {
 class Datum {
   Datum({
     required this.id,
-    required this.enrollmentType,
+    required this.languageName,
   });
 
   int id;
-  String enrollmentType;
+  String languageName;
 
   factory Datum.fromJson(String str) => Datum.fromMap(json.decode(str));
 
@@ -52,12 +52,12 @@ class Datum {
 
   factory Datum.fromMap(Map<String, dynamic> json) => Datum(
         id: json["id"] == null ? null : json["id"],
-        enrollmentType:
-            json["enrollment_type"] == null ? null : json["enrollment_type"],
+        languageName:
+            json["language_name"] == null ? null : json["language_name"],
       );
 
   Map<String, dynamic> toMap() => {
         "id": id == null ? null : id,
-        "enrollment_type": enrollmentType == null ? null : enrollmentType,
+        "language_name": languageName == null ? null : languageName,
       };
 }

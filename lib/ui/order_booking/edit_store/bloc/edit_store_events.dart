@@ -5,7 +5,12 @@ class EditStoreEvents extends Equatable {
   List<Object> get props => [];
 }
 
-class EditStoreGetEnrolmentTypeEvent extends EditStoreEvents {
+class GetEnrolmentTypeEvent extends EditStoreEvents {
+  @override
+  List<Object> get props => [];
+}
+
+class SelectLanguageTypeEvent extends EditStoreEvents {
   @override
   List<Object> get props => [];
 }

@@ -17,6 +17,7 @@ import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart'
 import 'package:dms/ui/edit_profile/model/update_profile_response.dart';
 import 'package:dms/ui/login_screen/login_model/login_response.dart';
 import 'package:dms/ui/order_booking/edit_store/model/editstore_getenroll_type_response.dart';
+import 'package:dms/ui/order_booking/edit_store/model/select_language_response.dart';
 import 'package:dms/ui/splash_screen/model/splash_model.dart';
 import 'package:dms/ui/start_my_day/model/end_my_day_response.dart';
 import 'package:dms/ui/start_my_day/model/quotes_and_images_response.dart';
@@ -503,11 +504,11 @@ class ApiRepository {
     }
   }
 
-  Future<EditStoreGetEnrollTypeResponse> getEnrolmentType() async {
+  Future<GetEnrollTypeResponse> getEnrolmentType() async {
     try {
       Response response = await dio.get(Url.getEnrollmentType);
-      EditStoreGetEnrollTypeResponse baseResponse =
-          EditStoreGetEnrollTypeResponse.fromJson(response.toString());
+      GetEnrollTypeResponse baseResponse =
+          GetEnrollTypeResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -515,10 +516,32 @@ class ApiRepository {
         ServerError e = ServerError.withError(error: error);
         message = e.getErrorMessage();
       } else {
-        message = "Something went wrong";
+        message = "Something went wrong!";
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
-      return EditStoreGetEnrollTypeResponse(
+      return GetEnrollTypeResponse(
+        success: false,
+        message: message,
+      );
+    }
+  }
+
+  Future<SelectLanguageResponse> selectLanguage() async {
+    try {
+      Response response = await dio.get(Url.selectLanguage);
+      SelectLanguageResponse baseResponse =
+          SelectLanguageResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = "Something went wrong!";
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return SelectLanguageResponse(
         success: false,
         message: message,
       );
