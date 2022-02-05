@@ -35,6 +35,13 @@ class _EndDayScreenState extends State<EndDayScreen> {
   TextEditingController edtPc = TextEditingController();
   TextEditingController edtTotalSale = TextEditingController();
   TextEditingController edtAverageSale = TextEditingController();
+  @override
+  void initState() {
+    // TODO: implement initState
+    // widget.startDayData.secondaryTag.add(SecondaryTag(id: 1, name: "asdfadsf "));
+    // widget.startDayData.secondaryTag.add(SecondaryTag(id: 1, name: "asdfadsf "));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,6 +104,7 @@ class _EndDayScreenState extends State<EndDayScreen> {
             ),
             Tags(
               itemCount: widget.startDayData.secondaryTag.length,
+              alignment: WrapAlignment.start,
               itemBuilder: (index) {
                 return ItemTags(
                   index: index,
@@ -178,8 +186,8 @@ class _EndDayScreenState extends State<EndDayScreen> {
                           }
 
                           if (int.parse(text.trim()) > int.parse(edtTc.text.trim().toString())) {
-                            edtPc.text = edtTc.text;
-                            Utility.showToast("PC can not be created than TC");
+                            edtPc.text = "0";
+                            Utility.showToast("PC can not be greater than TC");
                             edtPc.selection = TextSelection(baseOffset: edtPc.text.length, extentOffset: edtPc.text.length);
                             return;
                           }
@@ -226,7 +234,6 @@ class _EndDayScreenState extends State<EndDayScreen> {
               onChanged: (text) {
                 text = int.parse(text.trim()).toString();
                 edtTotalSale.text = int.parse(text.trim()).toString();
-
                 if (edtPc.text.trim().isEmpty || int.parse(edtPc.text.trim()) == 0) {
                   edtTotalSale.text = "0";
                   edtAverageSale.text = "0";
@@ -234,7 +241,6 @@ class _EndDayScreenState extends State<EndDayScreen> {
                   edtTotalSale.selection = TextSelection(baseOffset: edtTotalSale.text.length, extentOffset: edtTotalSale.text.length);
                   return;
                 }
-
                 if (text.trim().isNotEmpty && edtPc.text.trim().isNotEmpty && int.parse(edtPc.text.trim()) != 0) {
                   double totalSale = double.parse(text);
                   double profitCall = double.parse(edtPc.text.trim());
@@ -259,7 +265,7 @@ class _EndDayScreenState extends State<EndDayScreen> {
               controller: edtAverageSale,
               readOnly: true,
               inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,5}')),
               ],
               keyboardType: TextInputType.number,
             ),
@@ -276,6 +282,10 @@ class _EndDayScreenState extends State<EndDayScreen> {
             TextFormField(
               controller: edtRemark,
               keyboardType: TextInputType.text,
+              minLines: 3,
+              maxLines: 5,
+              maxLength: 250,
+              decoration: const InputDecoration(counterText: ""),
             )
           ],
         ),

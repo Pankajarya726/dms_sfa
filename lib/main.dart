@@ -85,6 +85,9 @@ class MyApp extends StatelessWidget {
               900: Color(0xFFB71C1C),
             },
           ),
+          textSelectionTheme: const TextSelectionThemeData(
+            selectionHandleColor: Colors.transparent,
+          ),
           scaffoldBackgroundColor: Colors.white,
           primaryColor: MColor.colorPrimary,
           visualDensity: VisualDensity.adaptivePlatformDensity,

@@ -70,135 +70,127 @@ class _StartDayScreenState extends State<StartDayScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          // splashRadius: 12,
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: MColor.backButton,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => startMyDayBloc),
+        BlocProvider(create: (context) => addPlanBloc),
+        BlocProvider(create: (context) => userLocationBloc),
+        BlocProvider(create: (context) => commonBloc),
+      ],
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<StartMyDayBloc, StartMyDayStates>(listener: (context, state) {
+            if (state is GetQuotesAndImagesState) {
+              quoteImage = state.quotesAndImagesResponse.data!.image;
+              quoteText = state.quotesAndImagesResponse.data!.text;
+              dateTime = DateTime.parse(state.currentDate);
+            }
+            if (state is StartMyDaySuccessState) {
+              Fluttertoast.showToast(msg: state.successMessage);
+              SharedPreference.setStringPreference(SharedPreference.startMyDay, "hide");
+              SharedPreference.setBooleanPreference(SharedPreference.showAddPlanButton, false);
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const DrawerScreen()), (route) => false);
+            }
+            if (state is StartMyDayFailureState) {
+              Fluttertoast.showToast(msg: state.failureMessage);
+            }
+          }),
+          BlocListener<AddPlanBloc, AddPlanStates>(listener: (context, state) {
+            if (state is GetSavedPlanState) {
+              refreshController.refreshCompleted();
+              planDateModel = state.planDateModel;
+              txtRemarkController.text = state.planDateModel.remark;
+
+              List<SecondaryTag> secTag =
+                  primaryTagList.singleWhere((element) => element.id == int.parse(state.planDateModel.primaryTagId)).secondaryTag;
+
+              for (var element in secTag) {
+                element.check = false;
+              }
+
+              if (state.planDateModel.secondaryTags.isNotEmpty) {
+                for (var element in state.planDateModel.secondaryTags) {
+                  secTag.singleWhere((tag) => tag.id == element.id).check = true;
+                }
+              }
+
+              selectedPrimaryTag = PrimaryTag(
+                  id: int.parse(state.planDateModel.primaryTagId),
+                  name: state.planDateModel.primaryTag,
+                  selectionType:
+                      primaryTagList.singleWhere((element) => element.id.toString() == state.planDateModel.primaryTagId).selectionType,
+                  selected: 1,
+                  canSelect: 1,
+                  secondaryTagType: primaryTagList
+                      .singleWhere((element) => element.id.toString() == state.planDateModel.primaryTagId)
+                      .secondaryTagType,
+                  secondaryTag: secTag);
+
+              addPlanBloc.add(SelectPrimaryEvent(primaryTag: selectedPrimaryTag!));
+              addPlanBloc.add(SelectSecondaryEvent(secondaryTag: secTag.where((element) => element.check).toList()));
+            }
+
+            if (state is GetAddPlanFailureState) {
+              refreshController.refreshCompleted();
+              selectedSecondaryTags.clear();
+              txtRemarkController.clear();
+              txtBeatController.clear();
+              planDateModel = null;
+
+              try {
+                selectedPrimaryTag = primaryTagList.firstWhere(
+                  (element) => element.selected == 1,
+                );
+                for (var element in selectedPrimaryTag!.secondaryTag) {
+                  element.check = false;
+                }
+                addPlanBloc.add(SelectPrimaryEvent(primaryTag: selectedPrimaryTag!));
+              } catch (exception) {
+                debugPrint("exception--->$exception");
+              }
+            }
+
+            if (state is GetTagState) {
+              primaryTagList = state.primaryTagList;
+
+              try {
+                selectedPrimaryTag = primaryTagList.firstWhere(
+                  (element) => element.selected == 1,
+                );
+              } catch (exception) {
+                debugPrint("exception--->$exception");
+              }
+
+              getCurrentDate();
+            }
+          }),
+        ],
+        child: Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              // splashRadius: 12,
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: MColor.backButton,
+              ),
+            ),
+            title: const Text(
+              startMyDay,
+              style: TextStyle(
+                color: MColor.backButton,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.67,
+              ),
+            ),
           ),
-        ),
-        title: const Text(
-          startMyDay,
-          style: TextStyle(
-            color: MColor.backButton,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.67,
-          ),
-        ),
-      ),
-      body: SmartRefresher(
-        primary: false,
-        controller: refreshController,
-        onRefresh: onRefresh,
-        enablePullDown: true,
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider(create: (context) => startMyDayBloc),
-            BlocProvider(create: (context) => addPlanBloc),
-            BlocProvider(create: (context) => userLocationBloc),
-            BlocProvider(create: (context) => commonBloc),
-          ],
-          child: MultiBlocListener(
-            listeners: [
-              BlocListener<StartMyDayBloc, StartMyDayStates>(listener: (context, state) {
-                if (state is GetQuotesAndImagesState) {
-                  quoteImage = state.quotesAndImagesResponse.data!.image;
-                  quoteText = state.quotesAndImagesResponse.data!.text;
-                  dateTime = DateTime.parse(state.currentDate);
-                }
-                if (state is StartMyDayFailureState) {
-                  Fluttertoast.showToast(msg: state.failureMessage);
-                }
-              }),
-              BlocListener<AddPlanBloc, AddPlanStates>(listener: (context, state) {
-                if (state is GetSavedPlanState) {
-                  refreshController.refreshCompleted();
-                  planDateModel = state.planDateModel;
-                  txtRemarkController.text = state.planDateModel.remark;
-                  // selectedSecondaryTags = state.planDateModel.secondaryTags;
-                  // String selectedBeats = state.planDateModel.secondaryTag;
-                  // if (selectedSecondaryTags.isNotEmpty) {
-                  //   for (int i = 0; i < selectedSecondaryTags.length; i++) {
-                  //     if (i == selectedSecondaryTags.length - 1) {
-                  //       selectedBeats += selectedSecondaryTags[i].name;
-                  //     } else {
-                  //       selectedBeats += selectedSecondaryTags[i].name + ", ";
-                  //     }
-                  //   }
-                  // }
-                  //
-                  // txtBeatController.text = selectedBeats;
-
-                  List<SecondaryTag> secTag =
-                      primaryTagList.singleWhere((element) => element.id == int.parse(state.planDateModel.primaryTagId)).secondaryTag;
-
-                  for (var element in secTag) {
-                    element.check = false;
-                  }
-
-                  if (state.planDateModel.secondaryTags.isNotEmpty) {
-                    for (var element in state.planDateModel.secondaryTags) {
-                      secTag.singleWhere((tag) => tag.id == element.id).check = true;
-                    }
-                  }
-
-                  selectedPrimaryTag = PrimaryTag(
-                      id: int.parse(state.planDateModel.primaryTagId),
-                      name: state.planDateModel.primaryTag,
-                      selectionType: primaryTagList
-                          .singleWhere((element) => element.id.toString() == state.planDateModel.primaryTagId)
-                          .selectionType,
-                      selected: 1,
-                      canSelect: 1,
-                      secondaryTagType: primaryTagList
-                          .singleWhere((element) => element.id.toString() == state.planDateModel.primaryTagId)
-                          .secondaryTagType,
-                      secondaryTag: secTag);
-
-                  addPlanBloc.add(SelectPrimaryEvent(primaryTag: selectedPrimaryTag!));
-                  addPlanBloc.add(SelectSecondaryEvent(secondaryTag: secTag.where((element) => element.check).toList()));
-                }
-
-                if (state is GetAddPlanFailureState) {
-                  refreshController.refreshCompleted();
-                  selectedSecondaryTags.clear();
-                  txtRemarkController.clear();
-                  txtBeatController.clear();
-                  planDateModel = null;
-
-                  try {
-                    selectedPrimaryTag = primaryTagList.firstWhere(
-                      (element) => element.selected == 1,
-                    );
-                    for (var element in selectedPrimaryTag!.secondaryTag) {
-                      element.check = false;
-                    }
-                    addPlanBloc.add(SelectPrimaryEvent(primaryTag: selectedPrimaryTag!));
-                  } catch (exception) {
-                    debugPrint("exception--->$exception");
-                  }
-                }
-
-                if (state is GetTagState) {
-                  primaryTagList = state.primaryTagList;
-
-                  try {
-                    selectedPrimaryTag = primaryTagList.firstWhere(
-                      (element) => element.selected == 1,
-                    );
-                  } catch (exception) {
-                    debugPrint("exception--->$exception");
-                  }
-
-                  getCurrentDate();
-                }
-              }),
-            ],
+          body: SmartRefresher(
+            primary: false,
+            controller: refreshController,
+            onRefresh: onRefresh,
+            enablePullDown: true,
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -291,22 +283,16 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                 }
                                 if (state is SelectPrimaryTagState) {
                                   selectedPrimaryTag = state.primaryTag;
+
                                   selectedSecondaryTags.clear();
                                   txtBeatController.clear();
                                   txtRemarkController.clear();
 
-                                  // selectedSecondaryTags = state.primaryTag.secondaryTag.where((element) => element.check).toList();
-                                  // if (selectedSecondaryTags.isNotEmpty) {
-                                  //   String selectedBeats = "";
-                                  //   for (int i = 0; i < selectedSecondaryTags.length; i++) {
-                                  //     if (i == selectedSecondaryTags.length - 1) {
-                                  //       selectedBeats += selectedSecondaryTags[i].name;
-                                  //     } else {
-                                  //       selectedBeats += selectedSecondaryTags[i].name + ", ";
-                                  //     }
-                                  //   }
-                                  //   txtBeatController.text = selectedBeats;
-                                  // }
+                                  if (selectedPrimaryTag!.secondaryTag.isNotEmpty) {
+                                    selectedPrimaryTag!.secondaryTag.forEach((element) {
+                                      element.check = false;
+                                    });
+                                  }
                                 }
 
                                 return Tags(
@@ -323,7 +309,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                       pressEnabled: primaryTagList[index].canSelect == 1,
                                       active: selectedPrimaryTag == null ? false : selectedPrimaryTag!.id == primaryTagList[index].id,
                                       title: primaryTagList[index].name,
-                                      textActiveColor: Colors.black,
+                                      textActiveColor: const Color(0xff555555),
                                       textColor: const Color(0xff555555),
                                       elevation: 0,
                                       textStyle: const TextStyle(fontSize: 16),
@@ -371,7 +357,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                       if (i == selectedSecondaryTags.length - 1) {
                                         selectedBeats += selectedSecondaryTags[i].name;
                                       } else {
-                                        selectedBeats += selectedSecondaryTags[i].name + ", ";
+                                        selectedBeats += selectedSecondaryTags[i].name + ",  ";
                                       }
                                     }
                                   }
@@ -518,6 +504,11 @@ class _StartDayScreenState extends State<StartDayScreen> {
 
                             if (selectedPrimaryTag == null) {
                               debugPrint("selectedPrimaryTag==null");
+                              return Container();
+                            }
+
+                            if (selectedPrimaryTag!.name.trim().toLowerCase() == "holiday" ||
+                                selectedPrimaryTag!.name.trim().toLowerCase() == "leave") {
                               return Container();
                             }
 
@@ -772,23 +763,11 @@ class _StartDayScreenState extends State<StartDayScreen> {
               ),
             ),
           ),
-        ),
-      ),
-      bottomNavigationBar: MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (context) => startMyDayBloc),
-          BlocProvider(create: (context) => addPlanBloc),
-        ],
-        child: BlocListener<StartMyDayBloc, StartMyDayStates>(
-          listener: (context, state) {
-            if (state is StartMyDaySuccessState) {
-              Fluttertoast.showToast(msg: state.successMessage);
-              SharedPreference.setStringPreference(SharedPreference.startMyDay, "hide");
-              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const DrawerScreen()), (route) => false);
-            }
-          },
-          child: BlocBuilder<AddPlanBloc, AddPlanStates>(
+          bottomNavigationBar: BlocBuilder<AddPlanBloc, AddPlanStates>(
             builder: (context, state) {
+              if (state is SelectPrimaryTagState) {
+                selectedPrimaryTag = state.primaryTag;
+              }
               if (selectedPrimaryTag == null) {
                 return const SizedBox();
               }
@@ -798,108 +777,13 @@ class _StartDayScreenState extends State<StartDayScreen> {
                 color: MColor.colorSecondary,
                 textColor: Colors.white,
                 onPressed: () async {
-                  //when leave and holiday selected then if will execute
-                  if (selectedPrimaryTag!.name.trim().toLowerCase() == "leave" ||
-                      selectedPrimaryTag!.name.trim().toLowerCase() == "holiday") {
-                    if (txtRemarkController.text.trim().isEmpty) {
-                      Fluttertoast.showToast(msg: "Please enter remark");
-                      return;
-                    }
-                    if (txtRemarkController.text.trim().length > 255) {
-                      Fluttertoast.showToast(msg: "Word limit-250 characters");
-                      return;
-                    }
-                    debugPrint("remark fields ok ");
-                    Map<String, dynamic> input = HashMap<String, dynamic>();
-
-                    DateTime _ntpTime = await NTP.now();
-                    input["user_id"] = await SharedPreference.getStringPreference(SharedPreference.userId);
-                    input["start_day_date"] = DateFormat("yyyy-MM-dd").format(_ntpTime);
-                    input["start_day_time"] = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
-                    input["primary_tag"] = selectedPrimaryTag!.name;
-                    input["primary_tag_id"] = selectedPrimaryTag!.id;
-                    input["remark"] = txtRemarkController.text.trim();
-
-                    debugPrint("start_my_day_input-->");
-                    startMyDayBloc.add(StartMyDayEvent(input: input));
-                  }
-
-                  //otherwise else will execute
-                  else {
-                    if (selectedPrimaryTag == null) {
-                      Fluttertoast.showToast(msg: "Please select primary tag");
-                      return;
-                    }
-                    if (selectedPrimaryTag!.secondaryTag.isNotEmpty && selectedSecondaryTags.isEmpty) {
-                      Fluttertoast.showToast(msg: "Please select secondary tag");
-                      return;
-                    }
-                    // if (txtRemarkController.text.trim().isEmpty) {
-                    //   Fluttertoast.showToast(msg: "Please enter remark");
-                    //   return;
-                    // }
-                    if (txtRemarkController.text.trim().length > 255) {
-                      Fluttertoast.showToast(msg: "Word limit-250 characters");
-                      return;
-                    }
-                    if (latitude == 0.0 && longitude == 0.0) {
-                      Fluttertoast.showToast(msg: "Could not fetch your location, Please try again later");
-                      userLocationBloc.add(GetUserLocationEvent());
-                      return;
-                    }
-                    if (currentAddress.isEmpty) {
-                      Fluttertoast.showToast(
-                          msg:
-                              "Could not proceed, because we are not able to fetch your area detail. Please allow location permission to continue");
-                      userLocationBloc.add(GetUserLocationEvent());
-                      return;
-                    }
-                    debugPrint("all fields ok ");
-                    Map<String, dynamic> input = HashMap<String, dynamic>();
-
-                    DateTime _ntpTime = await NTP.now();
-                    input["user_id"] = await SharedPreference.getStringPreference(SharedPreference.userId);
-                    input["start_day_date"] = DateFormat("yyyy-MM-dd").format(_ntpTime);
-                    input["primary_tag"] = selectedPrimaryTag!.name;
-                    input["primary_tag_id"] = selectedPrimaryTag!.id;
-                    if (selectedSecondaryTags.isNotEmpty) {
-                      String selectedBeats = "";
-                      String selectedBeatsId = "";
-                      for (int i = 0; i < selectedSecondaryTags.length; i++) {
-                        if (i == selectedSecondaryTags.length - 1) {
-                          selectedBeats += selectedSecondaryTags[i].name;
-                          selectedBeatsId += selectedSecondaryTags[i].id.toString();
-                        } else {
-                          selectedBeats += selectedSecondaryTags[i].name + ", ";
-                          selectedBeatsId += selectedSecondaryTags[i].id.toString() + ", ";
-                        }
-                      }
-
-                      input["secondary_tag"] = selectedBeats;
-                      input["secondary_tag_id"] = selectedBeatsId;
-                    }
-
-                    input["remark"] = txtRemarkController.text.trim();
-                    input["start_day_latitude"] = latitude.toString();
-                    input["start_day_longitude"] = longitude.toString();
-                    input["get_meeting"] = isMeeting ? "Yes" : "No";
-                    input["start_day_address"] = currentAddress;
-                    input["start_day_time"] = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
-
-                    if (imageFile != null) {
-                      input["start_day_image"] = await MultipartFile.fromFile(
-                        imageFile!.path,
-                        filename: fileName,
-                      );
-                    }
-                    debugPrint("start_my_day_input-->");
-                    startMyDayBloc.add(StartMyDayEvent(input: input));
-                  } //end of else
+                  submit();
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    selectedPrimaryTag!.id == 5 || selectedPrimaryTag!.id == 6
+                    selectedPrimaryTag!.name.trim().toString().toLowerCase() == "leave" ||
+                            selectedPrimaryTag!.name.trim().toString().toLowerCase() == "holiday"
                         ? const Text(
                             confirm,
                             style: TextStyle(
@@ -947,7 +831,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                     if (i == beat.length - 1) {
                       selectedBeats += beat[i].name;
                     } else {
-                      selectedBeats += beat[i].name + ", ";
+                      selectedBeats += beat[i].name + ",  ";
                     }
                   }
                 }
@@ -980,6 +864,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
 
   void onRefresh() async {
     imageFile = null;
+    selectedPrimaryTag = null;
+    selectedSecondaryTags.clear();
     commonBloc.add(CommonBlocGetMeetingEvent(getMeeting: false));
     startMyDayBloc.add(GetQuotesAndImagesEvent());
     // addPlanBloc.add(GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(DateTime.now())));
@@ -990,5 +876,103 @@ class _StartDayScreenState extends State<StartDayScreen> {
 
   void getCurrentDate() async {
     addPlanBloc.add(GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(await NTP.now())));
+  }
+
+  void submit() async {
+    //when leave and holiday selected then if will execute
+    if (selectedPrimaryTag!.name.trim().toLowerCase() == "leave" || selectedPrimaryTag!.name.trim().toLowerCase() == "holiday") {
+      if (txtRemarkController.text.trim().isEmpty) {
+        Fluttertoast.showToast(msg: "Please enter remark");
+        return;
+      }
+      if (txtRemarkController.text.trim().length > 255) {
+        Fluttertoast.showToast(msg: "Word limit-250 characters");
+        return;
+      }
+      debugPrint("remark fields ok ");
+      Map<String, dynamic> input = HashMap<String, dynamic>();
+
+      DateTime _ntpTime = await NTP.now();
+      input["user_id"] = await SharedPreference.getStringPreference(SharedPreference.userId);
+      input["start_day_date"] = DateFormat("yyyy-MM-dd").format(_ntpTime);
+      input["start_day_time"] = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
+      input["primary_tag"] = selectedPrimaryTag!.name;
+      input["primary_tag_id"] = selectedPrimaryTag!.id;
+      input["remark"] = txtRemarkController.text.trim();
+
+      debugPrint("start_my_day_input-->");
+      startMyDayBloc.add(StartMyDayEvent(input: input));
+    }
+
+    //otherwise else will execute
+    else {
+      if (selectedPrimaryTag == null) {
+        Fluttertoast.showToast(msg: "Please select primary tag");
+        return;
+      }
+      if (selectedPrimaryTag!.secondaryTag.isNotEmpty && selectedSecondaryTags.isEmpty) {
+        Fluttertoast.showToast(msg: "Please select secondary tag");
+        return;
+      }
+      // if (txtRemarkController.text.trim().isEmpty) {
+      //   Fluttertoast.showToast(msg: "Please enter remark");
+      //   return;
+      // }
+      if (txtRemarkController.text.trim().length > 255) {
+        Fluttertoast.showToast(msg: "Word limit-250 characters");
+        return;
+      }
+      if (latitude == 0.0 && longitude == 0.0) {
+        Fluttertoast.showToast(msg: "Could not fetch your location, Please try again later");
+        userLocationBloc.add(GetUserLocationEvent());
+        return;
+      }
+      if (currentAddress.isEmpty) {
+        Fluttertoast.showToast(
+            msg: "Could not proceed, because we are not able to fetch your area detail. Please allow location permission to continue");
+        userLocationBloc.add(GetUserLocationEvent());
+        return;
+      }
+      debugPrint("all fields ok ");
+      Map<String, dynamic> input = HashMap<String, dynamic>();
+
+      DateTime _ntpTime = await NTP.now();
+      input["user_id"] = await SharedPreference.getStringPreference(SharedPreference.userId);
+      input["start_day_date"] = DateFormat("yyyy-MM-dd").format(_ntpTime);
+      input["primary_tag"] = selectedPrimaryTag!.name;
+      input["primary_tag_id"] = selectedPrimaryTag!.id;
+      if (selectedSecondaryTags.isNotEmpty) {
+        String selectedBeats = "";
+        String selectedBeatsId = "";
+        for (int i = 0; i < selectedSecondaryTags.length; i++) {
+          if (i == selectedSecondaryTags.length - 1) {
+            selectedBeats += selectedSecondaryTags[i].name;
+            selectedBeatsId += selectedSecondaryTags[i].id.toString();
+          } else {
+            selectedBeats += selectedSecondaryTags[i].name + ", ";
+            selectedBeatsId += selectedSecondaryTags[i].id.toString() + ", ";
+          }
+        }
+
+        input["secondary_tag"] = selectedBeats;
+        input["secondary_tag_id"] = selectedBeatsId;
+      }
+
+      input["remark"] = txtRemarkController.text.trim();
+      input["start_day_latitude"] = latitude.toString();
+      input["start_day_longitude"] = longitude.toString();
+      input["get_meeting"] = isMeeting ? "Yes" : "No";
+      input["start_day_address"] = currentAddress;
+      input["start_day_time"] = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
+
+      if (imageFile != null) {
+        input["start_day_image"] = await MultipartFile.fromFile(
+          imageFile!.path,
+          filename: fileName,
+        );
+      }
+      debugPrint("start_my_day_input-->");
+      startMyDayBloc.add(StartMyDayEvent(input: input));
+    } //end of else
   }
 }

@@ -35,7 +35,6 @@ class AddPlanScreen extends StatefulWidget {
 
 class _AddPlanScreenState extends State<AddPlanScreen> {
   int week = 1;
-
   AddPlanBloc addPlanBloc = AddPlanBloc();
   TextEditingController txtRemarkController = TextEditingController();
   TextEditingController txtBeatController = TextEditingController();
@@ -61,8 +60,6 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
       child: BlocListener<AddPlanBloc, AddPlanStates>(
         bloc: addPlanBloc,
         listener: (context, state) {
-          debugPrint("state----->$state");
-
           if (state is GetTagState) {
             primaryTagList = state.primaryTagList;
             // selectedPrimaryTag = primaryTagList.firstWhere((element) => element.selected==1);
@@ -127,7 +124,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             planAlreadyExists = false;
             selectedPrimaryTag = null;
             selectedSecondaryTag.clear();
-            txtRemarkController.text = "";
+            txtRemarkController.clear();
             txtBeatController.clear();
             // addPlanBloc.add(SelectPrimaryEvent(primaryTag: selectedPrimaryTag!));
           }
@@ -139,8 +136,15 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             planAlreadyExists = true;
             planDateModel = state.planDataModel;
           }
+          if (state is SelectPrimaryTagState) {
+            selectedPrimaryTag = state.primaryTag;
+            selectedSecondaryTag.clear();
+            txtRemarkController.clear();
+            txtBeatController.clear();
+          }
         },
         child: Scaffold(
+          resizeToAvoidBottomInset: true,
           appBar: AppBar(
             leading: IconButton(
               onPressed: () {
@@ -192,9 +196,11 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                       headerHeight: 0,
                       showTodayButton: false,
                       selectionMode: DateRangePickerSelectionMode.single,
-                      navigationMode: DateRangePickerNavigationMode.none,
+                      navigationMode: DateRangePickerNavigationMode.scroll,
                       minDate: widget.fromDate,
-                      maxDate: widget.toDate,
+                      maxDate: widget.fromDate == widget.toDate
+                          ? DateTime(widget.fromDate.year, widget.fromDate.month, widget.fromDate.day + 1)
+                          : widget.toDate,
                       initialDisplayDate: widget.fromDate,
                       monthCellStyle: DateRangePickerMonthCellStyle(
                         textStyle: const TextStyle(fontWeight: FontWeight.w600, color: Colors.black, fontSize: 16),
@@ -263,15 +269,11 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                         ),
                         BlocBuilder<AddPlanBloc, AddPlanStates>(
                           builder: (context, state) {
+                            debugPrint("state---->$state");
                             if (primaryTagList.isEmpty) {
                               return Container();
                             }
-                            if (state is SelectPrimaryTagState) {
-                              selectedPrimaryTag = state.primaryTag;
-                              debugPrint("selectedSecondaryTag--->${selectedPrimaryTag!.secondaryTag}");
-                              selectedSecondaryTag.clear();
-                              txtBeatController.clear();
-                            }
+
                             // selectedPrimaryTag ??= primaryTagList.first;
 
                             return Tags(
@@ -293,7 +295,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                                   },
                                   active: selectedPrimaryTag == null ? false : selectedPrimaryTag!.id == primaryTagList[index].id,
                                   title: primaryTagList[index].name,
-                                  textActiveColor: Colors.black,
+                                  textActiveColor: const Color(0xff555555),
                                   textColor: const Color(0xff555555),
                                   elevation: 0,
                                   textStyle: const TextStyle(fontSize: 16),
@@ -334,7 +336,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
 
                             if (state is SelectSecondaryState) {
                               selectedSecondaryTag = state.secondaryTag;
-                              debugPrint("selectedSecondaryTag--->$selectedSecondaryTag");
+                              debugPrint("selectedSecondaryTag1--->$selectedSecondaryTag");
                               String selectedBeats = "";
                               if (selectedSecondaryTag.isNotEmpty) {
                                 for (int i = 0; i < selectedSecondaryTag.length; i++) {
@@ -453,6 +455,9 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                               minLines: 3,
                               maxLines: 5,
                               maxLength: 255,
+
+                              enableInteractiveSelection: false,
+                              // selectionControls: MaterialTextSelectionControls,
                               controller: txtRemarkController,
                               decoration: InputDecoration(
                                 hintText: "Enter remark",
@@ -470,109 +475,103 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(
-                    height: 60,
-                  )
                 ],
               ),
             ),
           ),
-          bottomSheet: BlocProvider(
-            create: (context) => addPlanBloc,
-            child: BlocBuilder<AddPlanBloc, AddPlanStates>(
-              builder: (context, state) {
-                return MaterialButton(
-                  height: 50,
-                  minWidth: MediaQuery.of(context).size.width,
-                  // padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                  color: MColor.colorSecondary,
-                  textColor: Colors.white,
-                  onPressed: () async {
-                    Utility.hideKeyboard();
-                    if (selectedPrimaryTag == null) {
-                      Fluttertoast.showToast(msg: "Please select primary tag");
-                      return;
-                    }
-                    if ((selectedPrimaryTag!.secondaryTag.isNotEmpty) && selectedSecondaryTag.isEmpty) {
-                      Fluttertoast.showToast(msg: "Please select secondary tag");
-                      return;
-                    }
-                    if (txtRemarkController.text.isEmpty) {
-                      Fluttertoast.showToast(msg: "Please enter remark");
-                      return;
-                    }
+          bottomNavigationBar: Container(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: MaterialButton(
+              height: 50,
+              minWidth: MediaQuery.of(context).size.width,
+              // padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+              color: MColor.colorSecondary,
+              textColor: Colors.white,
+              onPressed: () async {
+                Utility.hideKeyboard();
+                if (selectedPrimaryTag == null) {
+                  Fluttertoast.showToast(msg: "Please select primary tag");
+                  return;
+                }
+                if ((selectedPrimaryTag!.secondaryTag.isNotEmpty) && selectedSecondaryTag.isEmpty) {
+                  Fluttertoast.showToast(msg: "Please select secondary tag");
+                  return;
+                }
+                if (txtRemarkController.text.isEmpty) {
+                  Fluttertoast.showToast(msg: "Please enter remark");
+                  return;
+                }
 
-                    Map<String, dynamic> input = HashMap<String, dynamic>();
-                    input["user_id"] = await SharedPreference.getStringPreference(SharedPreference.userId);
-                    input["add_plan_date"] = dateTime == null ? "" : DateFormat("yyyy-MM-dd").format(dateTime!);
-                    if (selectedPrimaryTag != null) {
-                      input["primary_tag"] = selectedPrimaryTag!.name;
-                      input["primary_tag_id"] = selectedPrimaryTag!.id;
+                Map<String, dynamic> input = HashMap<String, dynamic>();
+                input["user_id"] = await SharedPreference.getStringPreference(SharedPreference.userId);
+                input["add_plan_date"] = dateTime == null ? "" : DateFormat("yyyy-MM-dd").format(dateTime!);
+                if (selectedPrimaryTag != null) {
+                  input["primary_tag"] = selectedPrimaryTag!.name;
+                  input["primary_tag_id"] = selectedPrimaryTag!.id;
 
-                      if (selectedPrimaryTag!.secondaryTag.isNotEmpty) {
-                        String secondaryTagName = "";
-                        String secondaryTagId = "";
+                  if (selectedPrimaryTag!.secondaryTag.isNotEmpty) {
+                    String secondaryTagName = "";
+                    String secondaryTagId = "";
 
-                        debugPrint("selectedSecondaryTag--->$selectedSecondaryTag");
-                        if (selectedSecondaryTag.isNotEmpty) {
-                          for (int i = 0; i < selectedSecondaryTag.length; i++) {
-                            if (i == selectedSecondaryTag.length - 1) {
-                              secondaryTagName += selectedSecondaryTag[i].name;
-                              secondaryTagId += selectedSecondaryTag[i].id.toString();
-                            } else {
-                              secondaryTagName += selectedSecondaryTag[i].name + ",";
-                              secondaryTagId += selectedSecondaryTag[i].id.toString() + ",";
-                            }
-                          }
+                    if (selectedSecondaryTag.isNotEmpty) {
+                      for (int i = 0; i < selectedSecondaryTag.length; i++) {
+                        if (i == selectedSecondaryTag.length - 1) {
+                          secondaryTagName += selectedSecondaryTag[i].name;
+                          secondaryTagId += selectedSecondaryTag[i].id.toString();
+                        } else {
+                          secondaryTagName += selectedSecondaryTag[i].name + ",";
+                          secondaryTagId += selectedSecondaryTag[i].id.toString() + ",";
                         }
-                        input["secondary_tag"] = secondaryTagName;
-                        input["secondary_tag_id"] = secondaryTagId;
-                      } else {
-                        input["secondary_tag"] = '';
-                        input["secondary_tag_id"] = "";
                       }
                     }
-                    input["remark"] = txtRemarkController.text.trim();
-                    input["week"] = week;
+                    input["secondary_tag"] = secondaryTagName;
+                    input["secondary_tag_id"] = secondaryTagId;
+                  } else {
+                    input["secondary_tag"] = '';
+                    input["secondary_tag_id"] = "";
+                  }
+                }
+                input["remark"] = txtRemarkController.text.trim();
+                input["week"] = week;
 
-                    debugPrint("input---->$input");
-                    // return;
+                debugPrint("input---->$input");
+                // return;
 
-                    if (planAlreadyExists) {
-                      input["id"] = planDateModel!.id;
-                      addPlanBloc.add(
-                        UpdatePlanEvent(input: input),
-                      );
-                    } else {
-                      addPlanBloc.add(
-                        AddPlanEvent(input: input),
-                      );
-                    }
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        confirm,
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                      SizedBox(
-                        width: 20,
-                        height: 15,
-                        child: SvgPicture.asset(
-                          "assets/arrow_right.svg",
-                          height: 20,
-                          fit: BoxFit.contain,
-                          width: 15,
-                          allowDrawingOutsideViewBox: false,
-                          matchTextDirection: true,
-                        ),
-                      ),
-                      // Icon(Icons.arrow_forward_outlined)
-                    ],
-                  ),
-                );
+                if (planAlreadyExists) {
+                  input["id"] = planDateModel!.id;
+                  addPlanBloc.add(
+                    UpdatePlanEvent(input: input),
+                  );
+                } else {
+                  addPlanBloc.add(
+                    AddPlanEvent(input: input),
+                  );
+                }
               },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    confirm,
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                  SizedBox(
+                    width: 20,
+                    height: 15,
+                    child: SvgPicture.asset(
+                      "assets/arrow_right.svg",
+                      height: 20,
+                      fit: BoxFit.contain,
+                      width: 15,
+                      allowDrawingOutsideViewBox: false,
+                      matchTextDirection: true,
+                    ),
+                  ),
+                  // Icon(Icons.arrow_forward_outlined)
+                ],
+              ),
             ),
           ),
         ),
@@ -627,19 +626,5 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                 addPlanBloc.add(SelectSecondaryEvent(secondaryTag: beat));
               });
         });
-  }
-}
-
-extension DateTimeExtension on DateTime {
-  int get weekOfMonth {
-    var wom = 0;
-    var date = this;
-
-    while (date.month == month) {
-      wom++;
-      date = date.subtract(const Duration(days: 7));
-    }
-
-    return wom;
   }
 }

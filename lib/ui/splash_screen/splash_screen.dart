@@ -242,7 +242,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
       if (startMyDay == "show") {
         Timer(
-          const Duration(seconds: 7),
+          const Duration(seconds: 3),
           () => Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (BuildContext context) => const ScreenAfterLogin(),
@@ -251,7 +251,7 @@ class _SplashScreenState extends State<SplashScreen> {
         );
       } else {
         Timer(
-          const Duration(seconds: 7),
+          const Duration(seconds: 3),
           () => Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (BuildContext context) => const DrawerScreen(),
@@ -261,7 +261,7 @@ class _SplashScreenState extends State<SplashScreen> {
       }
     } else {
       Timer(
-        const Duration(seconds: 7),
+        const Duration(seconds: 3),
         () => Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (BuildContext context) => const LoginScreen(),
