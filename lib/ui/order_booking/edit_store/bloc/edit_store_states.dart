@@ -1,4 +1,7 @@
+import 'package:dms/ui/order_booking/edit_store/model/call_time_slot_response.dart';
 import 'package:dms/ui/order_booking/edit_store/model/editstore_getenroll_type_response.dart';
+import 'package:dms/ui/order_booking/edit_store/model/select_city_response.dart';
+import 'package:dms/ui/order_booking/edit_store/model/select_distributor_response.dart';
 import 'package:dms/ui/order_booking/edit_store/model/select_language_response.dart';
 import 'package:dms/ui/order_booking/edit_store/model/select_retailer_category_response.dart';
 import 'package:dms/ui/order_booking/edit_store/model/select_retailer_type_response.dart';
@@ -46,4 +49,25 @@ class SelectRetailerCategoryState extends EditStoreStates {
   SelectRetailerCategoryState({required this.selectRetailerCategoryResponse});
   @override
   List<Object> get props => [selectRetailerCategoryResponse];
+}
+
+class SelectCityState extends EditStoreStates {
+  final SelectCityResponse selectCityResponse;
+  SelectCityState({required this.selectCityResponse});
+  @override
+  List<Object> get props => [selectCityResponse];
+}
+
+class SelectDistributorState extends EditStoreStates {
+  final SelectDistributorResponse selectDistributorResponse;
+  SelectDistributorState({required this.selectDistributorResponse});
+  @override
+  List<Object> get props => [selectDistributorResponse];
+}
+
+class SelectCallTimeSlotState extends EditStoreStates {
+  final CallTimeSlotResponse callTimeSlotResponse;
+  SelectCallTimeSlotState({required this.callTimeSlotResponse});
+  @override
+  List<Object> get props => [callTimeSlotResponse];
 }

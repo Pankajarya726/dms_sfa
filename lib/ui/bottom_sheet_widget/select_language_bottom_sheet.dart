@@ -40,7 +40,7 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
   Object selectLanguageRadio = "";
   String selectedLanguage = "";
   CommonBloc commonBloc = CommonBloc();
-  SelectLanguageResponse? selectLanguageResponse;
+  List<LanguageModel>? languageModel = [];
 
   @override
   void initState() {
@@ -74,14 +74,14 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
               );
             }
             if (state is SelectLanguageTypeState) {
-              selectLanguageResponse = state.selectLanguageResponse;
+              languageModel = state.selectLanguageResponse.data;
             }
             if (state is EditStoreFailureState) {
               return Center(
                 child: Text(state.failureMessage),
               );
             }
-            if (selectLanguageResponse == null) {
+            if (languageModel == null) {
               return Container();
             }
             return Column(
@@ -99,41 +99,11 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
                 const SizedBox(
                   height: 10,
                 ),
-                Flexible(
-                  child: ListView.builder(
-                    controller: ScrollController(keepScrollOffset: false),
-                    itemCount: selectLanguageResponse!.data!.length,
-                    itemBuilder: (context, index) {
-                      return BlocProvider(
-                        create: (context) => commonBloc,
-                        child: BlocBuilder<CommonBloc, CommonBlocStates>(
-                          builder: (context, state) {
-                            if (state is CommonBlocInitialState) {
-                              if (selectLanguageRadio ==
-                                  selectLanguageResponse!
-                                      .data![index].languageName) {
-                                commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                                    enrollmentRadioTag: index));
-                              }
-                            }
-                            if (state is CommonBlocEnrollRadioTagState) {
-                              selectLanguageRadio = state.enrollmentRadioTag;
-                            }
-                            if (selectLanguageResponse!
-                                    .data![index].languageName ==
-                                widget.previousSelectedLang) {
-                              return Container();
-                            }
-
-                            return radioButtonWidget(
-                                selectLanguageRadio,
-                                index,
-                                selectLanguageResponse!
-                                    .data![index].languageName);
-                          },
-                        ),
-                      );
-                    },
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: radioButtonWidget(),
+                    ),
                   ),
                 ),
                 const SizedBox(
@@ -177,48 +147,72 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
     );
   }
 
-  Widget radioButtonWidget(groupValue, value, label) {
-    return GestureDetector(
-      onTap: () {
-        commonBloc
-            .add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-        // selectedLangFirst = names[value];
-        selectedLanguage = selectLanguageResponse!.data![value].languageName;
-      },
-      child: Row(
-        children: [
-          SizedBox(
-            width: 18,
-            child: Radio<dynamic>(
-              value: value,
-              groupValue: groupValue,
-              activeColor: MColor.colorPrimary,
-              fillColor: MaterialStateProperty.all(MColor.colorPrimary),
-              onChanged: (value) {
-                commonBloc.add(
-                    CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-                // selectedLangFirst = names[value].toString();
-                selectedLanguage =
-                    selectLanguageResponse!.data![value].languageName;
-              },
-            ),
+  List<Widget> radioButtonWidget() {
+    List<Widget> widgets = [];
+    for (LanguageModel language in languageModel!) {
+      widgets.add(
+        BlocProvider(
+          create: (context) => commonBloc,
+          child: BlocBuilder<CommonBloc, CommonBlocStates>(
+            builder: (context, state) {
+              if (state is CommonBlocInitialState) {
+                if (selectLanguageRadio == language.languageName) {
+                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(
+                      enrollmentRadioTag: language.id));
+                }
+              }
+
+              if (state is CommonBlocEnrollRadioTagState) {
+                selectLanguageRadio = state.enrollmentRadioTag;
+              }
+              if (language.languageName == widget.previousSelectedLang) {
+                return Container();
+              }
+              return GestureDetector(
+                onTap: () {
+                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(
+                      enrollmentRadioTag: language.id));
+                  selectedLanguage = language.languageName;
+                },
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 18,
+                      child: Radio<dynamic>(
+                        value: language.id,
+                        groupValue: selectLanguageRadio,
+                        activeColor: MColor.colorPrimary,
+                        fillColor:
+                            MaterialStateProperty.all(MColor.colorPrimary),
+                        onChanged: (value) {
+                          commonBloc.add(CommonBlocEnrollTypeRadioEvent(
+                              enrollmentRadioTag: value));
+                          selectedLanguage = language.languageName;
+                        },
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      language.languageName,
+                      style: const TextStyle(
+                        fontSize: 17.0,
+                        color: MColor.backButton,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
-          const SizedBox(
-            width: 10,
-          ),
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 17.0,
-              color: MColor.backButton,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(
-            width: 15,
-          ),
-        ],
-      ),
-    );
+        ),
+      );
+    }
+    return widgets;
   }
 }

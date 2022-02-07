@@ -19,7 +19,10 @@ class Url {
   static const String getMyPlanByMonth = "getMonthWiseAddPlan";
   static const String getAllTags = "getAllTags";
   static const String getEnrollmentType = "getEnrollmentType";
-  static const String selectLanguage = "getLanguage";
-  static const String selectRetailerType = "getRetailerType";
-  static const String selectRetailerCategory = "getRetailerCategory";
+  static const String getLanguage = "getLanguage";
+  static const String getRetailerType = "getRetailerType";
+  static const String getRetailerCategory = "getRetailerCategory";
+  static const String getCity = "getCity";
+  static const String getDistributor = "getDistibutors";
+  static const String getCallTimeSlot = "getCallTimeSlot";
 }

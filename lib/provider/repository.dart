@@ -16,7 +16,10 @@ import 'package:dms/ui/drawer_menu/home_screen/model/get_menus_response.dart';
 import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart';
 import 'package:dms/ui/edit_profile/model/update_profile_response.dart';
 import 'package:dms/ui/login_screen/login_model/login_response.dart';
+import 'package:dms/ui/order_booking/edit_store/model/call_time_slot_response.dart';
 import 'package:dms/ui/order_booking/edit_store/model/editstore_getenroll_type_response.dart';
+import 'package:dms/ui/order_booking/edit_store/model/select_city_response.dart';
+import 'package:dms/ui/order_booking/edit_store/model/select_distributor_response.dart';
 import 'package:dms/ui/order_booking/edit_store/model/select_language_response.dart';
 import 'package:dms/ui/order_booking/edit_store/model/select_retailer_category_response.dart';
 import 'package:dms/ui/order_booking/edit_store/model/select_retailer_type_response.dart';
@@ -25,6 +28,7 @@ import 'package:dms/ui/start_my_day/model/end_my_day_response.dart';
 import 'package:dms/ui/start_my_day/model/quotes_and_images_response.dart';
 import 'package:dms/ui/start_my_day/model/start_my_day_response.dart.dart';
 import 'package:dms/utils/shared_preference.dart';
+import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -530,7 +534,7 @@ class ApiRepository {
 
   Future<SelectLanguageResponse> selectLanguage() async {
     try {
-      Response response = await dio.get(Url.selectLanguage);
+      Response response = await dio.get(Url.getLanguage);
       SelectLanguageResponse baseResponse =
           SelectLanguageResponse.fromJson(response.toString());
       return baseResponse;
@@ -552,7 +556,7 @@ class ApiRepository {
 
   Future<SelectRetailerTypeResponse> selectRetailerType() async {
     try {
-      Response response = await dio.get(Url.selectRetailerType);
+      Response response = await dio.get(Url.getRetailerType);
       SelectRetailerTypeResponse baseResponse =
           SelectRetailerTypeResponse.fromJson(response.toString());
       return baseResponse;
@@ -574,7 +578,7 @@ class ApiRepository {
 
   Future<SelectRetailerCategoryResponse> selectRetailerCategory() async {
     try {
-      Response response = await dio.get(Url.selectRetailerCategory);
+      Response response = await dio.get(Url.getRetailerCategory);
       SelectRetailerCategoryResponse baseResponse =
           SelectRetailerCategoryResponse.fromJson(response.toString());
       return baseResponse;
@@ -588,6 +592,72 @@ class ApiRepository {
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return SelectRetailerCategoryResponse(
+        success: false,
+        message: message,
+      );
+    }
+  }
+
+  Future<SelectCityResponse> selectCity() async {
+    try {
+      Response response = await dio.get(Url.getCity);
+      SelectCityResponse baseResponse =
+          SelectCityResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = "Something went wrong!";
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return SelectCityResponse(
+        success: false,
+        message: message,
+      );
+    }
+  }
+
+  Future<SelectDistributorResponse> selectDistributor() async {
+    try {
+      Response response = await dio.get(Url.getDistributor);
+      SelectDistributorResponse baseResponse =
+          SelectDistributorResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return SelectDistributorResponse(
+        success: false,
+        message: message,
+      );
+    }
+  }
+
+  Future<CallTimeSlotResponse> selectCallTimeslot() async {
+    try {
+      Response response = await dio.get(Url.getCallTimeSlot);
+      CallTimeSlotResponse baseResponse =
+          CallTimeSlotResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return CallTimeSlotResponse(
         success: false,
         message: message,
       );

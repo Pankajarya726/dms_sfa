@@ -4,41 +4,39 @@ import 'package:dms/ui/common_bloc/common_bloc_states.dart';
 import 'package:dms/ui/order_booking/edit_store/bloc/edit_store_bloc.dart';
 import 'package:dms/ui/order_booking/edit_store/bloc/edit_store_events.dart';
 import 'package:dms/ui/order_booking/edit_store/bloc/edit_store_states.dart';
-import 'package:dms/ui/order_booking/edit_store/model/select_city_response.dart';
+import 'package:dms/ui/order_booking/edit_store/model/call_time_slot_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SelectCityBottomSheet extends StatefulWidget {
-  final Function(String selectedCity) onCitySelect;
-  final String selectedCityName;
-  const SelectCityBottomSheet(
-      {Key? key, required this.onCitySelect, required this.selectedCityName})
+class SelectCallTimeSlotBottomSheet extends StatefulWidget {
+  final Function(String selectedCallTimeSlot) onCallTimeSlotSelect;
+  final String selectedCallTimeSlotName;
+  const SelectCallTimeSlotBottomSheet(
+      {Key? key,
+      required this.onCallTimeSlotSelect,
+      required this.selectedCallTimeSlotName})
       : super(key: key);
 
   @override
-  _SelectCityBottomSheetState createState() => _SelectCityBottomSheetState();
+  _SelectCallTimeSlotBottomSheetState createState() =>
+      _SelectCallTimeSlotBottomSheetState();
 }
 
-class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
-  // List<String> names = [
-  //   "Indore",
-  //   "Bhopal",
-  //   "Delhi",
-  //   "Surat",
-  //   "Banglore",
-  // ];
-  Object selectCityRadio = "";
-  String selectedCity = "";
+class _SelectCallTimeSlotBottomSheetState
+    extends State<SelectCallTimeSlotBottomSheet> {
+  String time = "";
+  Object selectCallTimeSlotRadio = "";
+  String selectedCallTimeSlot = "";
   CommonBloc commonBloc = CommonBloc();
-  List<CityModel>? cityModel = [];
+  List<CallTimeSlotModel>? callTimeSlotModel = [];
 
   @override
   void initState() {
     super.initState();
-    selectCityRadio = widget.selectedCityName;
-    selectedCity = widget.selectedCityName;
+    selectCallTimeSlotRadio = widget.selectedCallTimeSlotName;
+    selectedCallTimeSlot = widget.selectedCallTimeSlotName;
   }
 
   @override
@@ -57,29 +55,30 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
         child: BlocBuilder<EditStoreBloc, EditStoreStates>(
           builder: (context, state) {
             if (state is EditStoreInitialState) {
-              BlocProvider.of<EditStoreBloc>(context).add(SelectCityEvent());
+              BlocProvider.of<EditStoreBloc>(context)
+                  .add(SelectCallTimeSlotEvent());
             }
             if (state is EditStoreILoadingState) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
-            if (state is SelectCityState) {
-              cityModel = state.selectCityResponse.data;
+            if (state is SelectCallTimeSlotState) {
+              callTimeSlotModel = state.callTimeSlotResponse.data;
             }
             if (state is EditStoreFailureState) {
               return Center(
                 child: Text(state.failureMessage),
               );
             }
-            if (cityModel == null) {
+            if (callTimeSlotModel == null) {
               return Container();
             }
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  selectCity,
+                  callTimeSlot,
                   style: TextStyle(
                     fontSize: 19,
                     color: MColor.colorPrimary,
@@ -93,7 +92,6 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: radioButtonWidget(),
                     ),
                   ),
@@ -104,7 +102,7 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      widget.onCitySelect(selectedCity);
+                      widget.onCallTimeSlotSelect(selectedCallTimeSlot);
                       Navigator.pop(context);
                     },
                     style: ButtonStyle(
@@ -141,42 +139,43 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
 
   List<Widget> radioButtonWidget() {
     List<Widget> widgets = [];
-    for (CityModel cities in cityModel!) {
+    for (CallTimeSlotModel callTimeSlot in callTimeSlotModel!) {
+      time = callTimeSlot.from + " to " + callTimeSlot.to;
       widgets.add(
         BlocProvider(
           create: (context) => commonBloc,
           child: BlocBuilder<CommonBloc, CommonBlocStates>(
             builder: (context, state) {
               if (state is CommonBlocInitialState) {
-                if (selectCityRadio == cities.name) {
+                if (selectCallTimeSlotRadio == time) {
                   commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                      enrollmentRadioTag: cities.id));
+                      enrollmentRadioTag: callTimeSlot.id));
                 }
               }
 
               if (state is CommonBlocEnrollRadioTagState) {
-                selectCityRadio = state.enrollmentRadioTag;
+                selectCallTimeSlotRadio = state.enrollmentRadioTag;
               }
               return GestureDetector(
                 onTap: () {
                   commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                      enrollmentRadioTag: cities.id));
-                  selectedCity = cities.name;
+                      enrollmentRadioTag: callTimeSlot.id));
+                  selectedCallTimeSlot = time;
                 },
                 child: Row(
                   children: [
                     SizedBox(
                       width: 18,
                       child: Radio<dynamic>(
-                        value: cities.id,
-                        groupValue: selectCityRadio,
+                        value: callTimeSlot.id,
+                        groupValue: selectCallTimeSlotRadio,
                         activeColor: MColor.colorPrimary,
                         fillColor:
                             MaterialStateProperty.all(MColor.colorPrimary),
                         onChanged: (value) {
                           commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                               enrollmentRadioTag: value));
-                          selectedCity = cities.name;
+                          selectedCallTimeSlot = time;
                         },
                       ),
                     ),
@@ -184,7 +183,7 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
                       width: 10,
                     ),
                     Text(
-                      cities.name,
+                      time,
                       style: const TextStyle(
                         fontSize: 17.0,
                         color: MColor.backButton,

@@ -13,7 +13,7 @@ class SelectLanguageResponse {
 
   bool success;
   String message;
-  List<Datum>? data;
+  List<LanguageModel>? data;
 
   factory SelectLanguageResponse.fromJson(String str) =>
       SelectLanguageResponse.fromMap(json.decode(str));
@@ -26,7 +26,8 @@ class SelectLanguageResponse {
         message: json["message"] == null ? null : json["message"],
         data: json["data"] == null
             ? null
-            : List<Datum>.from(json["data"].map((x) => Datum.fromMap(x))),
+            : List<LanguageModel>.from(
+                json["data"].map((x) => LanguageModel.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -37,8 +38,8 @@ class SelectLanguageResponse {
       };
 }
 
-class Datum {
-  Datum({
+class LanguageModel {
+  LanguageModel({
     required this.id,
     required this.languageName,
   });
@@ -46,11 +47,12 @@ class Datum {
   int id;
   String languageName;
 
-  factory Datum.fromJson(String str) => Datum.fromMap(json.decode(str));
+  factory LanguageModel.fromJson(String str) =>
+      LanguageModel.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory Datum.fromMap(Map<String, dynamic> json) => Datum(
+  factory LanguageModel.fromMap(Map<String, dynamic> json) => LanguageModel(
         id: json["id"] == null ? null : json["id"],
         languageName:
             json["language_name"] == null ? null : json["language_name"],
