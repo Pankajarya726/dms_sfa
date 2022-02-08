@@ -4,6 +4,7 @@ class Url {
   static const String validateAppVer = "validateAppVersion";
   static const String login = "login";
   static const String getQuotesAndImages = "getQuotesWithImage";
+
   static const String getMenus = "getApiMenus";
   static const String editProfile = "profileEdit";
   static const String changePassword = "resetPassword";
