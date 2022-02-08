@@ -285,7 +285,7 @@ class _EndDayScreenState extends State<EndDayScreen> {
               minLines: 3,
               maxLines: 5,
               maxLength: 250,
-              decoration: const InputDecoration(counterText: ""),
+              // decoration: const InputDecoration(counterText: ""),
             )
           ],
         ),

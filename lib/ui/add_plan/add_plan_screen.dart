@@ -454,14 +454,14 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                             return TextFormField(
                               minLines: 3,
                               maxLines: 5,
-                              maxLength: 255,
+                              maxLength: 250,
 
                               enableInteractiveSelection: false,
                               // selectionControls: MaterialTextSelectionControls,
                               controller: txtRemarkController,
                               decoration: InputDecoration(
                                 hintText: "Enter remark",
-                                counter: Container(),
+                                // counter: Container(),
                                 filled: true,
                                 fillColor: const Color(0xffF2F2F2),
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
@@ -499,7 +499,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                   Fluttertoast.showToast(msg: "Please select secondary tag");
                   return;
                 }
-                if (txtRemarkController.text.isEmpty) {
+                if (txtRemarkController.text.trim().isEmpty) {
                   Fluttertoast.showToast(msg: "Please enter remark");
                   return;
                 }

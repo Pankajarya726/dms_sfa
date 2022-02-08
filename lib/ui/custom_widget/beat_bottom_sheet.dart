@@ -130,7 +130,7 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
                                 // Navigator.pop(context);
                               },
                               contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                              leading: Text(snapshot.data![index].name.toString().toUpperCase()),
+                              title: Text(snapshot.data![index].name.toString().toUpperCase()),
                               trailing: Checkbox(
                                 value: snapshot.data![index].check,
                                 onChanged: (value) {
@@ -213,6 +213,7 @@ class _BeatBottomSheetState extends State<BeatBottomSheet> {
     }
 
     // print(beats);
+    beats.sort((a, b) => a.name.compareTo(b.name));
     controller.add(beats);
   }
 }

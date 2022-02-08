@@ -192,6 +192,11 @@ class MyPlanBottomSheet extends StatefulWidget {
 
 class _MyPlanBottomSheetState extends State<MyPlanBottomSheet> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return IntrinsicHeight(
       child: Container(
@@ -239,6 +244,7 @@ class _MyPlanBottomSheetState extends State<MyPlanBottomSheet> {
               Text(
                 widget.planModel.secondaryTag,
                 overflow: TextOverflow.ellipsis,
+                maxLines: 10,
                 style: const TextStyle(
                   letterSpacing: 0.67,
                   overflow: TextOverflow.ellipsis,
@@ -256,7 +262,7 @@ class _MyPlanBottomSheetState extends State<MyPlanBottomSheet> {
                   letterSpacing: 0.67,
                   color: Color(0xff555555),
                   fontSize: 16,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(

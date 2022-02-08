@@ -25,7 +25,6 @@ import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -289,9 +288,9 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                   txtRemarkController.clear();
 
                                   if (selectedPrimaryTag!.secondaryTag.isNotEmpty) {
-                                    selectedPrimaryTag!.secondaryTag.forEach((element) {
+                                    for (var element in selectedPrimaryTag!.secondaryTag) {
                                       element.check = false;
-                                    });
+                                    }
                                   }
                                 }
 
@@ -466,7 +465,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                 minLines: 3,
                                 controller: txtRemarkController,
                                 maxLines: 5,
-                                maxLengthEnforcement: MaxLengthEnforcement.none,
+                                // maxLengthEnforcement: MaxLengthEnforcement.none,
+                                maxLength: 250,
                                 decoration: InputDecoration(
                                   hintText: "Write your remark",
                                   hintStyle: const TextStyle(
@@ -496,6 +496,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
 
                             if (snap is SelectPrimaryTagState) {
                               selectedPrimaryTag = snap.primaryTag;
+                              selectedSecondaryTags.clear();
                               if (snap.primaryTag.name.trim().toLowerCase() == "holiday" ||
                                   snap.primaryTag.name.trim().toLowerCase() == "leave") {
                                 return Container();
@@ -767,6 +768,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
             builder: (context, state) {
               if (state is SelectPrimaryTagState) {
                 selectedPrimaryTag = state.primaryTag;
+                selectedSecondaryTags.clear();
               }
               if (selectedPrimaryTag == null) {
                 return const SizedBox();
@@ -914,10 +916,11 @@ class _StartDayScreenState extends State<StartDayScreen> {
         Fluttertoast.showToast(msg: "Please select secondary tag");
         return;
       }
-      // if (txtRemarkController.text.trim().isEmpty) {
-      //   Fluttertoast.showToast(msg: "Please enter remark");
-      //   return;
-      // }
+
+      if (selectedSecondaryTags.isEmpty && txtRemarkController.text.trim().isEmpty) {
+        Fluttertoast.showToast(msg: "Please enter remark");
+        return;
+      }
       if (txtRemarkController.text.trim().length > 255) {
         Fluttertoast.showToast(msg: "Word limit-250 characters");
         return;

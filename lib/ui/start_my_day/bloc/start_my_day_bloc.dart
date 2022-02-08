@@ -8,6 +8,7 @@ import 'package:dms/ui/start_my_day/model/start_my_day_response.dart.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -64,7 +65,8 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
         yield StartMyDayFailureState(failureMessage: response.message);
       }
     } else {
-      yield StartMyDayFailureState(failureMessage: "Please check your internet connection!");
+      Utility.showToast("Please check your internet connection!");
+      // yield StartMyDayFailureState(failureMessage: "Please check your internet connection!");
     }
   }
 
