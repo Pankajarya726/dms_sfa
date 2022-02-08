@@ -1,6 +1,6 @@
 class Url {
-  // static const String baseUrl = "http://dmsapp.tekzee.in/api/";
-  static const String baseUrl = "http://sfa.vyapaar-vistaar.in/api/";
+  static const String baseUrl = "http://dmsapp.tekzee.in/api/";
+  // static const String baseUrl = "http://sfa.vyapaar-vistaar.in/api/";
   static const String validateAppVer = "validateAppVersion";
   static const String login = "login";
   static const String getQuotesAndImages = "getQuotesWithImage";
@@ -19,4 +19,7 @@ class Url {
   static const String getMyPlanByMonth = "getMonthWiseAddPlan";
   static const String getAllTags = "getAllTags";
   static const String getEnrollmentType = "getEnrollmentType";
+  static const String selectLanguage = "getLanguage";
+  static const String selectRetailerType = "getRetailerType";
+  static const String selectRetailerCategory = "getRetailerCategory";
 }

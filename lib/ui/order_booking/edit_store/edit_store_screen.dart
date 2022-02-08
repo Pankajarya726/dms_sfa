@@ -1,12 +1,10 @@
 // ignore_for_file: unrelated_type_equality_checks
 
 import 'dart:io';
-
 import 'package:dms/ui/bottom_sheet_widget/select_beat_name_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_city_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_distributor_bottom_sheet.dart';
-import 'package:dms/ui/bottom_sheet_widget/select_lang_first_bottom_sheet.dart';
-import 'package:dms/ui/bottom_sheet_widget/select_lang_second_bottom_sheet.dart';
+import 'package:dms/ui/bottom_sheet_widget/select_language_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_retailercategory_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_retailertype_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_visittime_bottom_sheet.dart';
@@ -16,19 +14,19 @@ import 'package:dms/ui/common_bloc/common_bloc_states.dart';
 import 'package:dms/ui/order_booking/edit_store/bloc/edit_store_bloc.dart';
 import 'package:dms/ui/order_booking/edit_store/bloc/edit_store_events.dart';
 import 'package:dms/ui/order_booking/edit_store/bloc/edit_store_states.dart';
+import 'package:dms/ui/order_booking/edit_store/model/editstore_getenroll_type_response.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_bloc.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_events.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_states.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
-
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../../main.dart';
 
 class EditStoreScreen extends StatefulWidget {
@@ -78,6 +76,9 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
       TextEditingController();
   TextEditingController txtSelectRetailerCategoryController =
       TextEditingController();
+  GetEnrollTypeResponse? getEnrollTypeResponse;
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   Widget build(BuildContext context) {
@@ -121,275 +122,301 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
             ),
           ],
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(15, 15, 15, 60),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                textWidget(enrollmentType),
-                sizedBoxWidget(5.0),
-                BlocBuilder<EditStoreBloc, EditStoreStates>(
+        body: SmartRefresher(
+          primary: false,
+          controller: refreshController,
+          onRefresh: onRefresh,
+          enablePullDown: true,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(15, 15, 15, 60),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  textWidget(enrollmentType),
+                  sizedBoxWidget(5.0),
+                  BlocBuilder<EditStoreBloc, EditStoreStates>(
+                      builder: (context, state) {
+                    if (state is EditStoreInitialState) {
+                      editStoreBloc.add(GetEnrolmentTypeEvent());
+                    }
+                    if (state is EditStoreILoadingState) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    if (state is GetEnrolmentTypeState) {
+                      getEnrollTypeResponse = state.getEnrollTypeResponse;
+                    }
+
+                    if (state is EditStoreFailureState) {
+                      Fluttertoast.showToast(msg: state.failureMessage);
+                    }
+
+                    if (getEnrollTypeResponse == null) {
+                      return Container();
+                    }
+                    return BlocBuilder<CommonBloc, CommonBlocStates>(
+                      builder: (context, state) {
+                        if (state is CommonBlocEnrollRadioTagState) {
+                          selectEnrollmentRadio = state.enrollmentRadioTag;
+                          debugPrint("$selectEnrollmentRadio");
+                        }
+                        return SizedBox(
+                          height: 46,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: getEnrollTypeResponse!.data!.length,
+                            itemBuilder: (context, index) {
+                              return radioButtonWidget(
+                                  selectEnrollmentRadio,
+                                  index,
+                                  getEnrollTypeResponse!
+                                      .data![index].enrollmentType);
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  }),
+                  sizedBoxWidget(5.0),
+                  textWidget(city),
+                  sizedBoxWidget(12.0),
+                  textFields(txtSelectCityController, selectHint),
+                  sizedBoxWidget(20.0),
+                  textWidget(distributor),
+                  sizedBoxWidget(12.0),
+                  textFields(txtSelectDistributorController, selectHint),
+                  sizedBoxWidget(20.0),
+                  textWidget(beatNameMandatory),
+                  sizedBoxWidget(12.0),
+                  textFields(txtSelectBeatNameController, selectHint),
+                  sizedBoxWidget(20.0),
+                  textWidget(orderBookingDay),
+                  sizedBoxWidget(12.0),
+                  textFields(txtOrderBookingController, day),
+                  sizedBoxWidget(20.0),
+                  textWidget(outletName),
+                  sizedBoxWidget(12.0),
+                  textFields(txtOutletNameController, enterHere),
+                  sizedBoxWidget(20.0),
+                  textWidget(ownerName),
+                  sizedBoxWidget(12.0),
+                  textFields(txtOwnerNameController, enterHere),
+                  sizedBoxWidget(20.0),
+                  textWidget(latitude),
+                  sizedBoxWidget(12.0),
+                  BlocBuilder<UserLocationBloc, UserLocationStates>(
+                    bloc: userLocationBloc,
                     builder: (context, state) {
-                  if (state is EditStoreInitialState) {
-                    editStoreBloc.add(EditStoreGetEnrolmentTypeEvent());
-                  }
-                  if (state is EditStoreGetEnrolmentTypeState) {
-                    print(state.editStoreGetEnrollTypeResponse);
-                  }
-                  if (state is EditStoreFailureState) {}
-                  return BlocBuilder<CommonBloc, CommonBlocStates>(
-                    builder: (context, state) {
-                      if (state is CommonBlocEnrollRadioTagState) {
-                        selectEnrollmentRadio = state.enrollmentRadioTag;
-                        debugPrint("$selectEnrollmentRadio");
+                      debugPrint("state---->$state");
+
+                      if (state is UserLocationInitialState) {
+                        userLocationBloc.add(GetUserLocationEvent());
                       }
-                      return Row(
+
+                      if (state is GetUserLocationState) {
+                        if (txtLatitudeController.text !=
+                                state.latitude.toString() &&
+                            txtLongtitudeController.text !=
+                                state.longitude.toString()) {
+                          txtLatitudeController.text =
+                              state.latitude.toString();
+                          txtLongtitudeController.text =
+                              state.longitude.toString();
+                          txtAddressController.text = state.currentAddress;
+                          txtPincodeController.text = state.pincode;
+                        }
+                      }
+
+                      if (state is UserLocationFailureState) {
+                        Fluttertoast.showToast(
+                            msg: "Please turn on GPS to get current location");
+                      }
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          radioButtonWidget(selectEnrollmentRadio, 0, retailer),
-                          radioButtonWidget(
-                              selectEnrollmentRadio, 1, teleRetailer),
+                          textFields(txtLatitudeController, enterHere),
+                          sizedBoxWidget(17.0),
+                          textWidget(longitude),
+                          sizedBoxWidget(12.0),
+                          textFields(txtLongtitudeController, enterHere),
+                          sizedBoxWidget(17.0),
+                          textWidget(address),
+                          sizedBoxWidget(12.0),
+                          textFields(txtAddressController, enterHere),
+                          sizedBoxWidget(17.0),
+                          textWidget(landmark),
+                          sizedBoxWidget(12.0),
+                          textFields(txtLandmarkController, enterHere),
+                          sizedBoxWidget(17.0),
+                          textWidget(pincode),
+                          sizedBoxWidget(12.0),
+                          textFields(txtPincodeController, enterHere),
                         ],
                       );
                     },
-                  );
-                }),
-                sizedBoxWidget(5.0),
-                textWidget(city),
-                sizedBoxWidget(12.0),
-                textFields(txtSelectCityController, selectHint),
-                sizedBoxWidget(20.0),
-                textWidget(distributor),
-                sizedBoxWidget(12.0),
-                textFields(txtSelectDistributorController, selectHint),
-                sizedBoxWidget(20.0),
-                textWidget(beatNameMandatory),
-                sizedBoxWidget(12.0),
-                textFields(txtSelectBeatNameController, selectHint),
-                sizedBoxWidget(20.0),
-                textWidget(orderBookingDay),
-                sizedBoxWidget(12.0),
-                textFields(txtOrderBookingController, day),
-                sizedBoxWidget(20.0),
-                textWidget(outletName),
-                sizedBoxWidget(12.0),
-                textFields(txtOutletNameController, enterHere),
-                sizedBoxWidget(20.0),
-                textWidget(ownerName),
-                sizedBoxWidget(12.0),
-                textFields(txtOwnerNameController, enterHere),
-                sizedBoxWidget(20.0),
-                textWidget(latitude),
-                sizedBoxWidget(12.0),
-                BlocBuilder<UserLocationBloc, UserLocationStates>(
-                  bloc: userLocationBloc,
-                  builder: (context, state) {
-                    debugPrint("state---->$state");
-
-                    if (state is UserLocationInitialState) {
-                      userLocationBloc.add(GetUserLocationEvent());
-                    }
-
-                    if (state is GetUserLocationState) {
-                      if (txtLatitudeController.text !=
-                              state.latitude.toString() &&
-                          txtLongtitudeController.text !=
-                              state.longitude.toString()) {
-                        txtLatitudeController.text = state.latitude.toString();
-                        txtLongtitudeController.text =
-                            state.longitude.toString();
-                        txtAddressController.text = state.currentAddress;
-                        txtPincodeController.text = state.pincode;
+                  ),
+                  sizedBoxWidget(20.0),
+                  textWidget(primaryMobile),
+                  sizedBoxWidget(12.0),
+                  textFields(txtPrimaryMobController, enterHere),
+                  sizedBoxWidget(20.0),
+                  textWidget(secondaryMobile),
+                  sizedBoxWidget(12.0),
+                  textFields(txtSecondaryMobController, enterHere),
+                  sizedBoxWidget(20.0),
+                  textWidget(existingRetailer),
+                  sizedBoxWidget(5.0),
+                  BlocBuilder<CommonBloc, CommonBlocStates>(
+                    builder: (context, state) {
+                      if (state is CommonBlocRetailerRadioState) {
+                        existingRetailerRadio = state.retailerRadioTag;
+                        debugPrint("$existingRetailerRadio");
                       }
-                    }
-
-                    if (state is UserLocationFailureState) {
-                      Fluttertoast.showToast(
-                          msg: "Please turn on GPS to get current location");
-                    }
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        textFields(txtLatitudeController, enterHere),
-                        sizedBoxWidget(17.0),
-                        textWidget(longitude),
-                        sizedBoxWidget(12.0),
-                        textFields(txtLongtitudeController, enterHere),
-                        sizedBoxWidget(17.0),
-                        textWidget(address),
-                        sizedBoxWidget(12.0),
-                        textFields(txtAddressController, enterHere),
-                        sizedBoxWidget(17.0),
-                        textWidget(landmark),
-                        sizedBoxWidget(12.0),
-                        textFields(txtLandmarkController, enterHere),
-                        sizedBoxWidget(17.0),
-                        textWidget(pincode),
-                        sizedBoxWidget(12.0),
-                        textFields(txtPincodeController, enterHere),
-                      ],
-                    );
-                  },
-                ),
-                sizedBoxWidget(20.0),
-                textWidget(primaryMobile),
-                sizedBoxWidget(12.0),
-                textFields(txtPrimaryMobController, enterHere),
-                sizedBoxWidget(20.0),
-                textWidget(secondaryMobile),
-                sizedBoxWidget(12.0),
-                textFields(txtSecondaryMobController, enterHere),
-                sizedBoxWidget(20.0),
-                textWidget(existingRetailer),
-                sizedBoxWidget(5.0),
-                BlocBuilder<CommonBloc, CommonBlocStates>(
-                  builder: (context, state) {
-                    if (state is CommonBlocRetailerRadioState) {
-                      existingRetailerRadio = state.retailerRadioTag;
-                      debugPrint("$existingRetailerRadio");
-                    }
-                    return Row(
-                      children: [
-                        radioButtonWidget(existingRetailerRadio, 2, yes),
-                        radioButtonWidget(existingRetailerRadio, 3, no),
-                      ],
-                    );
-                  },
-                ),
-                sizedBoxWidget(5.0),
-                textWidget(callTimeSlot),
-                sizedBoxWidget(12.0),
-                textFields(txtSelectCallTimeSlotController, selectHint),
-                sizedBoxWidget(20.0),
-                textWidget(languageFirst),
-                sizedBoxWidget(12.0),
-                textFields(txtSelectLangFirstController, selectHint),
-                sizedBoxWidget(20.0),
-                textWidget(languageSecond),
-                sizedBoxWidget(12.0),
-                textFields(txtSelectLangSecondController, selectHint),
-                sizedBoxWidget(20.0),
-                textWidget(retailerType),
-                sizedBoxWidget(12.0),
-                textFields(txtSelectRetailerTypeController, selectHint),
-                sizedBoxWidget(20.0),
-                textWidget(retailerCategory),
-                sizedBoxWidget(12.0),
-                textFields(txtSelectRetailerCategoryController, selectHint),
-                sizedBoxWidget(20.0),
-                textWidget(whatsAppSms),
-                sizedBoxWidget(5.0),
-                BlocBuilder<CommonBloc, CommonBlocStates>(
-                  builder: (context, state) {
-                    if (state is CommonBlocWhatsAppRadioState) {
-                      whatsAppSmsRadio = state.whatsAppRadioTag;
-                      debugPrint("$whatsAppSmsRadio");
-                    }
-                    return Row(
-                      children: [
-                        radioButtonWidget(whatsAppSmsRadio, 4, yes),
-                        radioButtonWidget(whatsAppSmsRadio, 5, no),
-                      ],
-                    );
-                  },
-                ),
-                sizedBoxWidget(5.0),
-                textWidget(isKRO),
-                sizedBoxWidget(5.0),
-                BlocBuilder<CommonBloc, CommonBlocStates>(
-                  builder: (context, state) {
-                    if (state is CommonBlocIsKRORadioState) {
-                      isKRORadio = state.isKRORadioTag;
-                      debugPrint("$isKRORadio");
-                    }
-                    return Row(
-                      children: [
-                        radioButtonWidget(isKRORadio, 6, yes),
-                        radioButtonWidget(isKRORadio, 7, no),
-                      ],
-                    );
-                  },
-                ),
-                sizedBoxWidget(5.0),
-                textWidget(gstNo),
-                sizedBoxWidget(12.0),
-                textFields(txtGSTController, enterHere),
-                sizedBoxWidget(20.0),
-                textWidget(pan),
-                sizedBoxWidget(12.0),
-                textFields(txtPANController, enterHere),
-                sizedBoxWidget(20.0),
-                textWidget(adharNumber),
-                sizedBoxWidget(12.0),
-                textFields(txtAdharNumberController, enterHere),
-                sizedBoxWidget(20.0),
-                textWidget(email),
-                sizedBoxWidget(12.0),
-                textFields(txtEmailController, enterHere),
-                sizedBoxWidget(20.0),
-                textWidget(birthday),
-                sizedBoxWidget(12.0),
-                BlocBuilder<CommonBloc, CommonBlocStates>(
-                  builder: (context, state) {
-                    if (state is CommonBlocSelectDateState) {
-                      txtPicDateController.text =
-                          DateFormat("yyyy-MM-dd").format(state.dateTime);
-                    }
-                    return textFields(txtPicDateController, picDate);
-                  },
-                ),
-                sizedBoxWidget(5.0),
-                Row(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        sizedBoxWidget(17.0),
-                        textWidget(outletPhoto),
-                        sizedBoxWidget(12.0),
-                        BlocBuilder<CommonBloc, CommonBlocStates>(
-                          builder: (context, state) {
-                            if (state is CommonBlocSelectImageState) {
-                              outletPhotoFile = state.imageFile;
-                            }
-                            return InkWell(
-                              onTap: () {
-                                selectImage(outletName);
-                              },
-                              child: selectImageWidget(outletName),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 40,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        sizedBoxWidget(17.0),
-                        textWidget(ownerPhoto),
-                        sizedBoxWidget(12.0),
-                        BlocBuilder<CommonBloc, CommonBlocStates>(
-                          builder: (context, state) {
-                            if (state is CommonBlocSelectOwnerImageState) {
-                              ownerPhotoFile = state.imageFile;
-                            }
-                            return InkWell(
-                              onTap: () {
-                                selectImage(ownerName);
-                              },
-                              child: selectImageWidget(ownerName),
-                            );
-                          },
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-                sizedBoxWidget(10.0),
-              ],
+                      return Row(
+                        children: [
+                          radioButtonWidget(existingRetailerRadio, 2, yes),
+                          radioButtonWidget(existingRetailerRadio, 3, no),
+                        ],
+                      );
+                    },
+                  ),
+                  sizedBoxWidget(5.0),
+                  textWidget(callTimeSlot),
+                  sizedBoxWidget(12.0),
+                  textFields(txtSelectCallTimeSlotController, selectHint),
+                  sizedBoxWidget(20.0),
+                  textWidget(languageFirst),
+                  sizedBoxWidget(12.0),
+                  textFields(txtSelectLangFirstController, selectHint),
+                  sizedBoxWidget(20.0),
+                  textWidget(languageSecond),
+                  sizedBoxWidget(12.0),
+                  textFields(txtSelectLangSecondController, selectHint),
+                  sizedBoxWidget(20.0),
+                  textWidget(retailerType),
+                  sizedBoxWidget(12.0),
+                  textFields(txtSelectRetailerTypeController, selectHint),
+                  sizedBoxWidget(20.0),
+                  textWidget(retailerCategory),
+                  sizedBoxWidget(12.0),
+                  textFields(txtSelectRetailerCategoryController, selectHint),
+                  sizedBoxWidget(20.0),
+                  textWidget(whatsAppSms),
+                  sizedBoxWidget(5.0),
+                  BlocBuilder<CommonBloc, CommonBlocStates>(
+                    builder: (context, state) {
+                      if (state is CommonBlocWhatsAppRadioState) {
+                        whatsAppSmsRadio = state.whatsAppRadioTag;
+                        debugPrint("$whatsAppSmsRadio");
+                      }
+                      return Row(
+                        children: [
+                          radioButtonWidget(whatsAppSmsRadio, 4, yes),
+                          radioButtonWidget(whatsAppSmsRadio, 5, no),
+                        ],
+                      );
+                    },
+                  ),
+                  sizedBoxWidget(5.0),
+                  textWidget(isKRO),
+                  sizedBoxWidget(5.0),
+                  BlocBuilder<CommonBloc, CommonBlocStates>(
+                    builder: (context, state) {
+                      if (state is CommonBlocIsKRORadioState) {
+                        isKRORadio = state.isKRORadioTag;
+                        debugPrint("$isKRORadio");
+                      }
+                      return Row(
+                        children: [
+                          radioButtonWidget(isKRORadio, 6, yes),
+                          radioButtonWidget(isKRORadio, 7, no),
+                        ],
+                      );
+                    },
+                  ),
+                  sizedBoxWidget(5.0),
+                  textWidget(gstNo),
+                  sizedBoxWidget(12.0),
+                  textFields(txtGSTController, enterHere),
+                  sizedBoxWidget(20.0),
+                  textWidget(pan),
+                  sizedBoxWidget(12.0),
+                  textFields(txtPANController, enterHere),
+                  sizedBoxWidget(20.0),
+                  textWidget(adharNumber),
+                  sizedBoxWidget(12.0),
+                  textFields(txtAdharNumberController, enterHere),
+                  sizedBoxWidget(20.0),
+                  textWidget(email),
+                  sizedBoxWidget(12.0),
+                  textFields(txtEmailController, enterHere),
+                  sizedBoxWidget(20.0),
+                  textWidget(birthday),
+                  sizedBoxWidget(12.0),
+                  BlocBuilder<CommonBloc, CommonBlocStates>(
+                    builder: (context, state) {
+                      if (state is CommonBlocSelectDateState) {
+                        txtPicDateController.text =
+                            DateFormat("yyyy-MM-dd").format(state.dateTime);
+                      }
+                      return textFields(txtPicDateController, picDate);
+                    },
+                  ),
+                  sizedBoxWidget(5.0),
+                  Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          sizedBoxWidget(17.0),
+                          textWidget(outletPhoto),
+                          sizedBoxWidget(12.0),
+                          BlocBuilder<CommonBloc, CommonBlocStates>(
+                            builder: (context, state) {
+                              if (state is CommonBlocSelectImageState) {
+                                outletPhotoFile = state.imageFile;
+                              }
+                              return InkWell(
+                                onTap: () {
+                                  selectImage(outletName);
+                                },
+                                child: selectImageWidget(outletName),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        width: 40,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          sizedBoxWidget(17.0),
+                          textWidget(ownerPhoto),
+                          sizedBoxWidget(12.0),
+                          BlocBuilder<CommonBloc, CommonBlocStates>(
+                            builder: (context, state) {
+                              if (state is CommonBlocSelectOwnerImageState) {
+                                ownerPhotoFile = state.imageFile;
+                              }
+                              return InkWell(
+                                onTap: () {
+                                  selectImage(ownerName);
+                                },
+                                child: selectImageWidget(ownerName),
+                              );
+                            },
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                  sizedBoxWidget(10.0),
+                ],
+              ),
             ),
           ),
         ),
@@ -759,26 +786,32 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                           },
                         )
                       : txtController == txtSelectLangFirstController
-                          ? SelectLangFirstBottomSheet(
-                              selectedLangFirstName:
+                          ? SelectLanguageBottomSheet(
+                              selectedLanguageName:
                                   txtSelectLangFirstController.text.isEmpty
                                       ? ""
                                       : txtSelectLangFirstController.text,
-                              onLangFirstSelect: (languageName) {
+                              onLanguageSelect: (languageName) {
                                 txtSelectLangFirstController.text =
                                     languageName;
                               },
+                              bottomSheetHeading: "1",
+                              previousSelectedLang:
+                                  txtSelectLangSecondController.text,
                             )
                           : txtController == txtSelectLangSecondController
-                              ? SelectLangSecondBottomSheet(
-                                  selectedLangSecondName:
+                              ? SelectLanguageBottomSheet(
+                                  selectedLanguageName:
                                       txtSelectLangSecondController.text.isEmpty
                                           ? ""
                                           : txtSelectLangSecondController.text,
-                                  onLangSecondSelect: (languageName) {
+                                  onLanguageSelect: (languageName) {
                                     txtSelectLangSecondController.text =
                                         languageName;
                                   },
+                                  bottomSheetHeading: "2",
+                                  previousSelectedLang:
+                                      txtSelectLangFirstController.text,
                                 )
                               : txtController == txtSelectCallTimeSlotController
                                   ? SelectCallTimeSlotBottomSheet(
@@ -821,5 +854,11 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                                           },
                                         );
         });
+  }
+
+  void onRefresh() async {
+    editStoreBloc.add(GetEnrolmentTypeEvent());
+    userLocationBloc.add(GetUserLocationEvent());
+    refreshController.refreshCompleted();
   }
 }

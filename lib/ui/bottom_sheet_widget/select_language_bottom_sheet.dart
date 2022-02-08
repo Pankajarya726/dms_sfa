@@ -4,47 +4,49 @@ import 'package:dms/ui/common_bloc/common_bloc_states.dart';
 import 'package:dms/ui/order_booking/edit_store/bloc/edit_store_bloc.dart';
 import 'package:dms/ui/order_booking/edit_store/bloc/edit_store_events.dart';
 import 'package:dms/ui/order_booking/edit_store/bloc/edit_store_states.dart';
-import 'package:dms/ui/order_booking/edit_store/model/select_retailer_type_response.dart';
+import 'package:dms/ui/order_booking/edit_store/model/select_language_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SelectRetailerTypeBottomSheet extends StatefulWidget {
-  final Function(String selectedRetailerType) onRetailerTypeSelect;
-  final String selectedRetailerTypeName;
-  const SelectRetailerTypeBottomSheet(
+class SelectLanguageBottomSheet extends StatefulWidget {
+  final Function(String selectedLanguage) onLanguageSelect;
+  final String selectedLanguageName;
+  final String bottomSheetHeading;
+  final String previousSelectedLang;
+  const SelectLanguageBottomSheet(
       {Key? key,
-      required this.onRetailerTypeSelect,
-      required this.selectedRetailerTypeName})
+      required this.onLanguageSelect,
+      required this.selectedLanguageName,
+      required this.bottomSheetHeading,
+      required this.previousSelectedLang})
       : super(key: key);
 
   @override
-  _SelectRetailerTypeBottomSheetState createState() =>
-      _SelectRetailerTypeBottomSheetState();
+  _SelectLanguageBottomSheetState createState() =>
+      _SelectLanguageBottomSheetState();
 }
 
-class _SelectRetailerTypeBottomSheetState
-    extends State<SelectRetailerTypeBottomSheet> {
+class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
   // List<String> names = [
-  //   "Super Market",
-  //   "Grocery Store",
-  //   "Pharmacy / Chemist",
-  //   "Bakery",
-  //   "Dairy",
-  //   "Namkeen / Sweet Shop",
-  //   "Cosmetics",
+  //   "English",
+  //   "Hindi",
+  //   "Tamil",
+  //   "Urdu",
+  //   "Telgu",
+  //   "Marathi",
   // ];
-  Object selectRetailerTypeRadio = "";
-  String selectedRetailerType = "";
+  Object selectLanguageRadio = "";
+  String selectedLanguage = "";
   CommonBloc commonBloc = CommonBloc();
-  SelectRetailerTypeResponse? selectRetailerTypeResponse;
+  SelectLanguageResponse? selectLanguageResponse;
 
   @override
   void initState() {
     super.initState();
-    selectRetailerTypeRadio = widget.selectedRetailerTypeName;
-    selectedRetailerType = widget.selectedRetailerTypeName;
+    selectLanguageRadio = widget.selectedLanguageName;
+    selectedLanguage = widget.selectedLanguageName;
   }
 
   @override
@@ -64,30 +66,30 @@ class _SelectRetailerTypeBottomSheetState
           builder: (context, state) {
             if (state is EditStoreInitialState) {
               BlocProvider.of<EditStoreBloc>(context)
-                  .add(SelectRetailerTypeEvent());
+                  .add(SelectLanguageTypeEvent());
             }
             if (state is EditStoreILoadingState) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
-            if (state is SelectRetailerTypeState) {
-              selectRetailerTypeResponse = state.selectRetailerTypeResponse;
+            if (state is SelectLanguageTypeState) {
+              selectLanguageResponse = state.selectLanguageResponse;
             }
             if (state is EditStoreFailureState) {
               return Center(
                 child: Text(state.failureMessage),
               );
             }
-            if (selectRetailerTypeResponse == null) {
+            if (selectLanguageResponse == null) {
               return Container();
             }
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  retailerType,
-                  style: TextStyle(
+                Text(
+                  selectLangFirst + widget.bottomSheetHeading,
+                  style: const TextStyle(
                     fontSize: 19,
                     color: MColor.colorPrimary,
                     letterSpacing: 0.67,
@@ -100,28 +102,34 @@ class _SelectRetailerTypeBottomSheetState
                 Flexible(
                   child: ListView.builder(
                     controller: ScrollController(keepScrollOffset: false),
-                    itemCount: selectRetailerTypeResponse!.data!.length,
+                    itemCount: selectLanguageResponse!.data!.length,
                     itemBuilder: (context, index) {
                       return BlocProvider(
                         create: (context) => commonBloc,
                         child: BlocBuilder<CommonBloc, CommonBlocStates>(
                           builder: (context, state) {
                             if (state is CommonBlocInitialState) {
-                              if (selectRetailerTypeRadio ==
-                                  selectRetailerTypeResponse!
-                                      .data![index].name) {
+                              if (selectLanguageRadio ==
+                                  selectLanguageResponse!
+                                      .data![index].languageName) {
                                 commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                                     enrollmentRadioTag: index));
                               }
                             }
                             if (state is CommonBlocEnrollRadioTagState) {
-                              selectRetailerTypeRadio =
-                                  state.enrollmentRadioTag;
+                              selectLanguageRadio = state.enrollmentRadioTag;
                             }
+                            if (selectLanguageResponse!
+                                    .data![index].languageName ==
+                                widget.previousSelectedLang) {
+                              return Container();
+                            }
+
                             return radioButtonWidget(
-                                selectRetailerTypeRadio,
+                                selectLanguageRadio,
                                 index,
-                                selectRetailerTypeResponse!.data![index].name);
+                                selectLanguageResponse!
+                                    .data![index].languageName);
                           },
                         ),
                       );
@@ -134,7 +142,7 @@ class _SelectRetailerTypeBottomSheetState
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      widget.onRetailerTypeSelect(selectedRetailerType);
+                      widget.onLanguageSelect(selectedLanguage);
                       Navigator.pop(context);
                     },
                     style: ButtonStyle(
@@ -174,7 +182,8 @@ class _SelectRetailerTypeBottomSheetState
       onTap: () {
         commonBloc
             .add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-        selectedRetailerType = selectRetailerTypeResponse!.data![value].name;
+        // selectedLangFirst = names[value];
+        selectedLanguage = selectLanguageResponse!.data![value].languageName;
       },
       child: Row(
         children: [
@@ -188,8 +197,9 @@ class _SelectRetailerTypeBottomSheetState
               onChanged: (value) {
                 commonBloc.add(
                     CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-                selectedRetailerType =
-                    selectRetailerTypeResponse!.data![value].name.toString();
+                // selectedLangFirst = names[value].toString();
+                selectedLanguage =
+                    selectLanguageResponse!.data![value].languageName;
               },
             ),
           ),

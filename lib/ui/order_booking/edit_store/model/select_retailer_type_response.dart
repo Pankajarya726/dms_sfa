@@ -1,11 +1,7 @@
-// To parse this JSON data, do
-//
-//     final GetEnrollTypeResponse = GetEnrollTypeResponseFromMap(jsonString);
-
 import 'dart:convert';
 
-class GetEnrollTypeResponse {
-  GetEnrollTypeResponse({
+class SelectRetailerTypeResponse {
+  SelectRetailerTypeResponse({
     required this.success,
     required this.message,
     this.data,
@@ -15,13 +11,13 @@ class GetEnrollTypeResponse {
   String message;
   List<Datum>? data;
 
-  factory GetEnrollTypeResponse.fromJson(String str) =>
-      GetEnrollTypeResponse.fromMap(json.decode(str));
+  factory SelectRetailerTypeResponse.fromJson(String str) =>
+      SelectRetailerTypeResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory GetEnrollTypeResponse.fromMap(Map<String, dynamic> json) =>
-      GetEnrollTypeResponse(
+  factory SelectRetailerTypeResponse.fromMap(Map<String, dynamic> json) =>
+      SelectRetailerTypeResponse(
         success: json["success"] == null ? null : json["success"],
         message: json["message"] == null ? null : json["message"],
         data: json["data"] == null
@@ -40,11 +36,11 @@ class GetEnrollTypeResponse {
 class Datum {
   Datum({
     required this.id,
-    required this.enrollmentType,
+    required this.name,
   });
 
   int id;
-  String enrollmentType;
+  String name;
 
   factory Datum.fromJson(String str) => Datum.fromMap(json.decode(str));
 
@@ -52,12 +48,11 @@ class Datum {
 
   factory Datum.fromMap(Map<String, dynamic> json) => Datum(
         id: json["id"] == null ? null : json["id"],
-        enrollmentType:
-            json["enrollment_type"] == null ? null : json["enrollment_type"],
+        name: json["name"] == null ? null : json["name"],
       );
 
   Map<String, dynamic> toMap() => {
         "id": id == null ? null : id,
-        "enrollment_type": enrollmentType == null ? null : enrollmentType,
+        "name": name == null ? null : name,
       };
 }
