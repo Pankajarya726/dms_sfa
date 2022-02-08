@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SelectDistributorBottomSheet extends StatefulWidget {
-  final Function(String selectedDistributor) onDistributorSelect;
+  final Function(String selectedDistributor, int? selectedDistributorId)
+      onDistributorSelect;
   final String selectedDistributorName;
   const SelectDistributorBottomSheet(
       {Key? key,
@@ -26,18 +27,19 @@ class SelectDistributorBottomSheet extends StatefulWidget {
 
 class _SelectDistributorBottomSheetState
     extends State<SelectDistributorBottomSheet> {
-  List<String> names = [
-    "Murtuza",
-    "Himanshu",
-    "Vaibhav",
-    "Pankaj",
-    "Rishabh",
-    "Chandan",
-    "Atul",
-    "Aakash",
-  ];
+  // List<String> names = [
+  //   "Murtuza",
+  //   "Himanshu",
+  //   "Vaibhav",
+  //   "Pankaj",
+  //   "Rishabh",
+  //   "Chandan",
+  //   "Atul",
+  //   "Aakash",
+  // ];
   Object selectDistributorRadio = "";
   String selectedDistributor = "";
+  int? selectedDistributorId;
   CommonBloc commonBloc = CommonBloc();
   List<DistributorModel>? distributorModel = [];
 
@@ -111,7 +113,8 @@ class _SelectDistributorBottomSheetState
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      widget.onDistributorSelect(selectedDistributor);
+                      widget.onDistributorSelect(
+                          selectedDistributor, selectedDistributorId);
                       Navigator.pop(context);
                     },
                     style: ButtonStyle(
@@ -169,6 +172,7 @@ class _SelectDistributorBottomSheetState
                   commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                       enrollmentRadioTag: distributor.id));
                   selectedDistributor = distributor.name;
+                  selectedDistributorId = distributor.id;
                 },
                 child: Row(
                   children: [
@@ -184,6 +188,7 @@ class _SelectDistributorBottomSheetState
                           commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                               enrollmentRadioTag: value));
                           selectedDistributor = distributor.name;
+                          selectedDistributorId = distributor.id;
                         },
                       ),
                     ),

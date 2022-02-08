@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SelectLanguageBottomSheet extends StatefulWidget {
-  final Function(String selectedLanguage) onLanguageSelect;
+  final Function(String selectedLanguage, int? selectedLangId) onLanguageSelect;
   final String selectedLanguageName;
   final String bottomSheetHeading;
   final String previousSelectedLang;
@@ -39,6 +39,7 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
   // ];
   Object selectLanguageRadio = "";
   String selectedLanguage = "";
+  int? selectedLanguageId;
   CommonBloc commonBloc = CommonBloc();
   List<LanguageModel>? languageModel = [];
 
@@ -112,7 +113,8 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      widget.onLanguageSelect(selectedLanguage);
+                      widget.onLanguageSelect(
+                          selectedLanguage, selectedLanguageId);
                       Navigator.pop(context);
                     },
                     style: ButtonStyle(
@@ -173,6 +175,7 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
                   commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                       enrollmentRadioTag: language.id));
                   selectedLanguage = language.languageName;
+                  selectedLanguageId = language.id;
                 },
                 child: Row(
                   children: [
@@ -188,6 +191,7 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
                           commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                               enrollmentRadioTag: value));
                           selectedLanguage = language.languageName;
+                          selectedLanguageId = language.id;
                         },
                       ),
                     ),

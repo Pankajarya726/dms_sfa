@@ -19,6 +19,7 @@ import 'package:dms/ui/userlocation_bloc/userlocation_bloc.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_events.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_states.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -43,8 +44,8 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
   Object isKRORadio = "";
   File? outletPhotoFile;
   File? ownerPhotoFile;
-  String outletFileName = "outlet.jpg";
-  String ownerFileName = "owner.jpg";
+  String? outletFileName;
+  String? ownerFileName;
   DateTime? dateTime;
   CommonBloc commonBloc = CommonBloc();
   UserLocationBloc userLocationBloc = UserLocationBloc();
@@ -76,9 +77,21 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
       TextEditingController();
   TextEditingController txtSelectRetailerCategoryController =
       TextEditingController();
-  GetEnrollTypeResponse? getEnrollTypeResponse;
+  List<EnrolmentTypeModel>? enrolmentTypeModel = [];
   RefreshController refreshController =
       RefreshController(initialRefresh: false);
+  int? enrollmentTypeId;
+  int? cityId;
+  int? distributorId;
+  int? beatId;
+  int? orderBookingDayId;
+  int? callTimeSlotId;
+  int? primaryLangId;
+  String? primaryLangCode;
+  int? secondaryLangId;
+  String? secondaryLangCode;
+  int? retailerTypeId;
+  int? retailerCategoryId;
 
   @override
   Widget build(BuildContext context) {
@@ -146,14 +159,14 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                       );
                     }
                     if (state is GetEnrolmentTypeState) {
-                      getEnrollTypeResponse = state.getEnrollTypeResponse;
+                      enrolmentTypeModel = state.getEnrollTypeResponse.data;
                     }
 
                     if (state is EditStoreFailureState) {
                       Fluttertoast.showToast(msg: state.failureMessage);
                     }
 
-                    if (getEnrollTypeResponse == null) {
+                    if (enrolmentTypeModel == null) {
                       return Container();
                     }
                     return BlocBuilder<CommonBloc, CommonBlocStates>(
@@ -166,13 +179,12 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                           height: 46,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
-                            itemCount: getEnrollTypeResponse!.data!.length,
+                            itemCount: enrolmentTypeModel!.length,
                             itemBuilder: (context, index) {
                               return radioButtonWidget(
                                   selectEnrollmentRadio,
                                   index,
-                                  getEnrollTypeResponse!
-                                      .data![index].enrollmentType);
+                                  enrolmentTypeModel![index].enrollmentType);
                             },
                           ),
                         );
@@ -456,6 +468,55 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
             } else {
               Fluttertoast.showToast(msg: "Store added successful");
             }
+
+            String userId = await SharedPreference.getStringPreference(
+                SharedPreference.userId);
+            debugPrint("edit store userId $userId");
+            debugPrint("edit store enrollmentTypeId $enrollmentTypeId");
+            debugPrint("edit store cityId $cityId");
+            debugPrint("edit store distributorId $distributorId");
+            debugPrint("edit store beatId $beatId");
+            debugPrint("edit store orderBookingDayId $orderBookingDayId");
+            debugPrint("edit store outletName ${txtOutletNameController.text}");
+            debugPrint("edit store ownerName ${txtOwnerNameController.text}");
+            debugPrint("edit store latitude ${txtLatitudeController.text}");
+            debugPrint("edit store longitude ${txtLongtitudeController.text}");
+            debugPrint("edit store address ${txtAddressController.text}");
+            debugPrint("edit store landmark ${txtLandmarkController.text}");
+            debugPrint("edit store pincode ${txtPincodeController.text}");
+            debugPrint(
+                "edit store primaryMobile ${txtPrimaryMobController.text}");
+            debugPrint(
+                "edit store secondaryMobile ${txtSecondaryMobController.text}");
+            if (existingRetailerRadio == yes) {
+              debugPrint("edit store existingRetailer $yes");
+            } else {
+              debugPrint("edit store existingRetailer $no");
+            }
+
+            debugPrint("edit store callTimeSlotId $callTimeSlotId");
+            debugPrint("edit store primaryLangId $primaryLangId");
+            debugPrint("edit store secondaryLangId $secondaryLangId");
+            debugPrint("edit store retailerTypeId $retailerTypeId");
+            debugPrint("edit store retailerCategoryId $retailerCategoryId");
+            if (whatsAppSmsRadio == yes) {
+              debugPrint("edit store whatsAppMessage $yes");
+            } else {
+              debugPrint("edit store whatsAppMessage $no");
+            }
+            if (isKRORadio == yes) {
+              debugPrint("edit store isKRO $yes");
+            } else {
+              debugPrint("edit store isKRO $no");
+            }
+
+            debugPrint("edit store gstNo ${txtGSTController.text}");
+            debugPrint("edit store panNo ${txtPANController.text}");
+            debugPrint("edit store aadhar ${txtAdharNumberController.text}");
+            debugPrint("edit store email ${txtEmailController.text}");
+            debugPrint("edit store birthday ${txtPicDateController.text}");
+            debugPrint("edit store outletphoto $outletFileName");
+            debugPrint("edit store ownerPhoto $ownerFileName");
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -623,6 +684,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
       if (value == 0 || value == 1) {
         commonBloc
             .add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
+        enrollmentTypeId = value + 1;
       }
       if (value == 2 || value == 3) {
         commonBloc.add(CommonBlocRetailerRadioEvent(retailerRadioTag: value));
@@ -761,8 +823,11 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                   selectedCityName: txtSelectCityController.text.isEmpty
                       ? ""
                       : txtSelectCityController.text,
-                  onCitySelect: (city) {
+                  onCitySelect: (city, id) {
                     txtSelectCityController.text = city;
+                    if (id != null) {
+                      cityId = id;
+                    }
                   },
                 )
               : txtController == txtSelectDistributorController
@@ -771,8 +836,11 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                           txtSelectDistributorController.text.isEmpty
                               ? ""
                               : txtSelectDistributorController.text,
-                      onDistributorSelect: (distributor) {
+                      onDistributorSelect: (distributor, id) {
                         txtSelectDistributorController.text = distributor;
+                        if (id != null) {
+                          distributorId = id;
+                        }
                       },
                     )
                   : txtController == txtSelectBeatNameController
@@ -783,6 +851,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                                   : txtSelectBeatNameController.text,
                           onBeatNameSelect: (beatName) {
                             txtSelectBeatNameController.text = beatName;
+                            // txtOrderBookingController.text = beatName;
                           },
                         )
                       : txtController == txtSelectLangFirstController
@@ -791,9 +860,12 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                                   txtSelectLangFirstController.text.isEmpty
                                       ? ""
                                       : txtSelectLangFirstController.text,
-                              onLanguageSelect: (languageName) {
+                              onLanguageSelect: (languageName, id) {
                                 txtSelectLangFirstController.text =
                                     languageName;
+                                if (id != null) {
+                                  primaryLangId = id;
+                                }
                               },
                               bottomSheetHeading: "1",
                               previousSelectedLang:
@@ -805,9 +877,12 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                                       txtSelectLangSecondController.text.isEmpty
                                           ? ""
                                           : txtSelectLangSecondController.text,
-                                  onLanguageSelect: (languageName) {
+                                  onLanguageSelect: (languageName, id) {
                                     txtSelectLangSecondController.text =
                                         languageName;
+                                    if (id != null) {
+                                      secondaryLangId = id;
+                                    }
                                   },
                                   bottomSheetHeading: "2",
                                   previousSelectedLang:
@@ -821,9 +896,12 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                                               ? ""
                                               : txtSelectCallTimeSlotController
                                                   .text,
-                                      onCallTimeSlotSelect: (callTimeSlot) {
+                                      onCallTimeSlotSelect: (callTimeSlot, id) {
                                         txtSelectCallTimeSlotController.text =
                                             callTimeSlot;
+                                        if (id != null) {
+                                          callTimeSlotId = id;
+                                        }
                                       },
                                     )
                                   : txtController ==
@@ -835,9 +913,13 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                                                   ? ""
                                                   : txtSelectRetailerTypeController
                                                       .text,
-                                          onRetailerTypeSelect: (retailerType) {
+                                          onRetailerTypeSelect:
+                                              (retailerType, id) {
                                             txtSelectRetailerTypeController
                                                 .text = retailerType;
+                                            if (id != null) {
+                                              retailerTypeId = id;
+                                            }
                                           },
                                         )
                                       : SelectRetailerCategoryBottomSheet(
@@ -848,9 +930,12 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                                                   : txtSelectRetailerCategoryController
                                                       .text,
                                           onRetailerCategorySelect:
-                                              (retailerCategory) {
+                                              (retailerCategory, id) {
                                             txtSelectRetailerCategoryController
                                                 .text = retailerCategory;
+                                            if (id != null) {
+                                              retailerCategoryId = id;
+                                            }
                                           },
                                         );
         });

@@ -11,7 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SelectRetailerCategoryBottomSheet extends StatefulWidget {
-  final Function(String selectedRetailerCategory) onRetailerCategorySelect;
+  final Function(
+          String selectedRetailerCategory, int? selectedRetailerCategoryId)
+      onRetailerCategorySelect;
   final String selectedRetailerCategoryName;
   const SelectRetailerCategoryBottomSheet(
       {Key? key,
@@ -26,9 +28,10 @@ class SelectRetailerCategoryBottomSheet extends StatefulWidget {
 
 class _SelectRetailerCategoryBottomSheetState
     extends State<SelectRetailerCategoryBottomSheet> {
-  List<String>? retailerCategoryModel = [];
+  List<RetailerCategoryModel>? retailerCategoryModel = [];
   Object selectRetailerCategoryRadio = "";
   String selectedRetailerCategory = "";
+  int? selectedRetailerCategoryId;
   CommonBloc commonBloc = CommonBloc();
 
   @override
@@ -101,7 +104,8 @@ class _SelectRetailerCategoryBottomSheetState
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      widget.onRetailerCategorySelect(selectedRetailerCategory);
+                      widget.onRetailerCategorySelect(
+                          selectedRetailerCategory, selectedRetailerCategoryId);
                       Navigator.pop(context);
                     },
                     style: ButtonStyle(
@@ -138,16 +142,16 @@ class _SelectRetailerCategoryBottomSheetState
 
   List<Widget> radioButtonWidget() {
     List<Widget> widgets = [];
-    for (String retailerCategory in retailerCategoryModel!) {
+    for (RetailerCategoryModel retailerCategory in retailerCategoryModel!) {
       widgets.add(
         BlocProvider(
           create: (context) => commonBloc,
           child: BlocBuilder<CommonBloc, CommonBlocStates>(
             builder: (context, state) {
               if (state is CommonBlocInitialState) {
-                if (selectRetailerCategoryRadio == retailerCategory) {
+                if (selectRetailerCategoryRadio == retailerCategory.category) {
                   commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                      enrollmentRadioTag: retailerCategory));
+                      enrollmentRadioTag: retailerCategory.id));
                 }
               }
 
@@ -157,15 +161,16 @@ class _SelectRetailerCategoryBottomSheetState
               return GestureDetector(
                 onTap: () {
                   commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                      enrollmentRadioTag: retailerCategory));
-                  selectedRetailerCategory = retailerCategory;
+                      enrollmentRadioTag: retailerCategory.id));
+                  selectedRetailerCategory = retailerCategory.category;
+                  selectedRetailerCategoryId = retailerCategory.id;
                 },
                 child: Row(
                   children: [
                     SizedBox(
                       width: 18,
                       child: Radio<dynamic>(
-                        value: retailerCategory,
+                        value: retailerCategory.id,
                         groupValue: selectRetailerCategoryRadio,
                         activeColor: MColor.colorPrimary,
                         fillColor:
@@ -173,7 +178,8 @@ class _SelectRetailerCategoryBottomSheetState
                         onChanged: (value) {
                           commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                               enrollmentRadioTag: value));
-                          selectedRetailerCategory = retailerCategory;
+                          selectedRetailerCategory = retailerCategory.category;
+                          selectedRetailerCategoryId = retailerCategory.id;
                         },
                       ),
                     ),
@@ -181,7 +187,7 @@ class _SelectRetailerCategoryBottomSheetState
                       width: 10,
                     ),
                     Text(
-                      retailerCategory,
+                      retailerCategory.category,
                       style: const TextStyle(
                         fontSize: 17.0,
                         color: MColor.backButton,

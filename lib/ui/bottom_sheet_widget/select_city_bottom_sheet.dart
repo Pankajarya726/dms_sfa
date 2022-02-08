@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SelectCityBottomSheet extends StatefulWidget {
-  final Function(String selectedCity) onCitySelect;
+  final Function(String selectedCity, int? selectedCityId) onCitySelect;
   final String selectedCityName;
   const SelectCityBottomSheet(
       {Key? key, required this.onCitySelect, required this.selectedCityName})
@@ -31,6 +31,7 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
   // ];
   Object selectCityRadio = "";
   String selectedCity = "";
+  int? selectedCityId;
   CommonBloc commonBloc = CommonBloc();
   List<CityModel>? cityModel = [];
 
@@ -104,7 +105,7 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      widget.onCitySelect(selectedCity);
+                      widget.onCitySelect(selectedCity, selectedCityId!);
                       Navigator.pop(context);
                     },
                     style: ButtonStyle(
@@ -162,6 +163,7 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
                   commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                       enrollmentRadioTag: cities.id));
                   selectedCity = cities.name;
+                  selectedCityId = cities.id;
                 },
                 child: Row(
                   children: [
@@ -177,6 +179,7 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
                           commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                               enrollmentRadioTag: value));
                           selectedCity = cities.name;
+                          selectedCityId = cities.id;
                         },
                       ),
                     ),

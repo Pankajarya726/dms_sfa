@@ -54,12 +54,11 @@ class LanguageModel {
 
   factory LanguageModel.fromMap(Map<String, dynamic> json) => LanguageModel(
         id: json["id"] == null ? null : json["id"],
-        languageName:
-            json["language_name"] == null ? null : json["language_name"],
+        languageName: json["name"] == null ? null : json["name"],
       );
 
   Map<String, dynamic> toMap() => {
         "id": id == null ? null : id,
-        "language_name": languageName == null ? null : languageName,
+        "name": languageName == null ? null : languageName,
       };
 }

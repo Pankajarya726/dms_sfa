@@ -13,7 +13,7 @@ class GetEnrollTypeResponse {
 
   bool success;
   String message;
-  List<Datum>? data;
+  List<EnrolmentTypeModel>? data;
 
   factory GetEnrollTypeResponse.fromJson(String str) =>
       GetEnrollTypeResponse.fromMap(json.decode(str));
@@ -26,7 +26,8 @@ class GetEnrollTypeResponse {
         message: json["message"] == null ? null : json["message"],
         data: json["data"] == null
             ? []
-            : List<Datum>.from(json["data"].map((x) => Datum.fromMap(x))),
+            : List<EnrolmentTypeModel>.from(
+                json["data"].map((x) => EnrolmentTypeModel.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -37,8 +38,8 @@ class GetEnrollTypeResponse {
       };
 }
 
-class Datum {
-  Datum({
+class EnrolmentTypeModel {
+  EnrolmentTypeModel({
     required this.id,
     required this.enrollmentType,
   });
@@ -46,18 +47,19 @@ class Datum {
   int id;
   String enrollmentType;
 
-  factory Datum.fromJson(String str) => Datum.fromMap(json.decode(str));
+  factory EnrolmentTypeModel.fromJson(String str) =>
+      EnrolmentTypeModel.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory Datum.fromMap(Map<String, dynamic> json) => Datum(
+  factory EnrolmentTypeModel.fromMap(Map<String, dynamic> json) =>
+      EnrolmentTypeModel(
         id: json["id"] == null ? null : json["id"],
-        enrollmentType:
-            json["enrollment_type"] == null ? null : json["enrollment_type"],
+        enrollmentType: json["type"] == null ? null : json["type"],
       );
 
   Map<String, dynamic> toMap() => {
         "id": id == null ? null : id,
-        "enrollment_type": enrollmentType == null ? null : enrollmentType,
+        "type": enrollmentType == null ? null : enrollmentType,
       };
 }

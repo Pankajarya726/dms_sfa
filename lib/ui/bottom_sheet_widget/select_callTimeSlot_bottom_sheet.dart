@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SelectCallTimeSlotBottomSheet extends StatefulWidget {
-  final Function(String selectedCallTimeSlot) onCallTimeSlotSelect;
+  final Function(String selectedCallTimeSlot, int? selectedCallTimeSlotId)
+      onCallTimeSlotSelect;
   final String selectedCallTimeSlotName;
   const SelectCallTimeSlotBottomSheet(
       {Key? key,
@@ -29,6 +30,7 @@ class _SelectCallTimeSlotBottomSheetState
   String time = "";
   Object selectCallTimeSlotRadio = "";
   String selectedCallTimeSlot = "";
+  int? selectedCallTimeSlotId;
   CommonBloc commonBloc = CommonBloc();
   List<CallTimeSlotModel>? callTimeSlotModel = [];
 
@@ -102,7 +104,8 @@ class _SelectCallTimeSlotBottomSheetState
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      widget.onCallTimeSlotSelect(selectedCallTimeSlot);
+                      widget.onCallTimeSlotSelect(
+                          selectedCallTimeSlot, selectedCallTimeSlotId);
                       Navigator.pop(context);
                     },
                     style: ButtonStyle(
@@ -161,6 +164,7 @@ class _SelectCallTimeSlotBottomSheetState
                   commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                       enrollmentRadioTag: callTimeSlot.id));
                   selectedCallTimeSlot = time;
+                  selectedCallTimeSlotId = callTimeSlot.id;
                 },
                 child: Row(
                   children: [
@@ -176,6 +180,7 @@ class _SelectCallTimeSlotBottomSheetState
                           commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                               enrollmentRadioTag: value));
                           selectedCallTimeSlot = time;
+                          selectedCallTimeSlotId = callTimeSlot.id;
                         },
                       ),
                     ),
