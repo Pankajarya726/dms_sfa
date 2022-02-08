@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-class SelectRetailerTypeResponse {
-  SelectRetailerTypeResponse({
+class SelectDistributorResponse {
+  SelectDistributorResponse({
     required this.success,
     required this.message,
     this.data,
@@ -9,21 +9,21 @@ class SelectRetailerTypeResponse {
 
   bool success;
   String message;
-  List<RetailerTypeModel>? data;
+  List<DistributorModel>? data;
 
-  factory SelectRetailerTypeResponse.fromJson(String str) =>
-      SelectRetailerTypeResponse.fromMap(json.decode(str));
+  factory SelectDistributorResponse.fromJson(String str) =>
+      SelectDistributorResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory SelectRetailerTypeResponse.fromMap(Map<String, dynamic> json) =>
-      SelectRetailerTypeResponse(
+  factory SelectDistributorResponse.fromMap(Map<String, dynamic> json) =>
+      SelectDistributorResponse(
         success: json["success"] == null ? null : json["success"],
         message: json["message"] == null ? null : json["message"],
         data: json["data"] == null
             ? []
-            : List<RetailerTypeModel>.from(
-                json["data"].map((x) => RetailerTypeModel.fromMap(x))),
+            : List<DistributorModel>.from(
+                json["data"].map((x) => DistributorModel.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -34,8 +34,8 @@ class SelectRetailerTypeResponse {
       };
 }
 
-class RetailerTypeModel {
-  RetailerTypeModel({
+class DistributorModel {
+  DistributorModel({
     required this.id,
     required this.name,
   });
@@ -43,13 +43,13 @@ class RetailerTypeModel {
   int id;
   String name;
 
-  factory RetailerTypeModel.fromJson(String str) =>
-      RetailerTypeModel.fromMap(json.decode(str));
+  factory DistributorModel.fromJson(String str) =>
+      DistributorModel.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory RetailerTypeModel.fromMap(Map<String, dynamic> json) =>
-      RetailerTypeModel(
+  factory DistributorModel.fromMap(Map<String, dynamic> json) =>
+      DistributorModel(
         id: json["id"] == null ? null : json["id"],
         name: json["name"] == null ? null : json["name"],
       );

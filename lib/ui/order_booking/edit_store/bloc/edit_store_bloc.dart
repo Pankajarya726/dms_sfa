@@ -2,11 +2,15 @@ import 'package:dio/dio.dart';
 import 'package:dms/main.dart';
 import 'package:dms/ui/order_booking/edit_store/bloc/edit_store_events.dart';
 import 'package:dms/ui/order_booking/edit_store/bloc/edit_store_states.dart';
+import 'package:dms/ui/order_booking/edit_store/model/call_time_slot_response.dart';
 import 'package:dms/ui/order_booking/edit_store/model/editstore_getenroll_type_response.dart';
+import 'package:dms/ui/order_booking/edit_store/model/select_city_response.dart';
+import 'package:dms/ui/order_booking/edit_store/model/select_distributor_response.dart';
 import 'package:dms/ui/order_booking/edit_store/model/select_language_response.dart';
 import 'package:dms/ui/order_booking/edit_store/model/select_retailer_category_response.dart';
 import 'package:dms/ui/order_booking/edit_store/model/select_retailer_type_response.dart';
 import 'package:dms/utils/network.dart';
+import 'package:dms/utils/string_const.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class EditStoreBloc extends Bloc<EditStoreEvents, EditStoreStates> {
@@ -30,6 +34,18 @@ class EditStoreBloc extends Bloc<EditStoreEvents, EditStoreStates> {
       yield EditStoreILoadingState();
       yield* selectRetailerCategory(event);
     }
+    if (event is SelectCityEvent) {
+      yield EditStoreILoadingState();
+      yield* selectCity(event);
+    }
+    if (event is SelectDistributorEvent) {
+      yield EditStoreILoadingState();
+      yield* selectDistributor(event);
+    }
+    if (event is SelectCallTimeSlotEvent) {
+      yield EditStoreILoadingState();
+      yield* selectCallTimeSlot(event);
+    }
   }
 
   Stream<EditStoreStates> getEnrolmentType(GetEnrolmentTypeEvent event) async* {
@@ -41,8 +57,7 @@ class EditStoreBloc extends Bloc<EditStoreEvents, EditStoreStates> {
         yield EditStoreFailureState(failureMessage: response.message);
       }
     } else {
-      yield EditStoreFailureState(
-          failureMessage: "Please check your internet connection!");
+      yield EditStoreFailureState(failureMessage: internetCheck);
     }
   }
 
@@ -55,8 +70,7 @@ class EditStoreBloc extends Bloc<EditStoreEvents, EditStoreStates> {
         yield EditStoreFailureState(failureMessage: response.message);
       }
     } else {
-      yield EditStoreFailureState(
-          failureMessage: "Please check your internet connection!");
+      yield EditStoreFailureState(failureMessage: internetCheck);
     }
   }
 
@@ -71,8 +85,7 @@ class EditStoreBloc extends Bloc<EditStoreEvents, EditStoreStates> {
         yield EditStoreFailureState(failureMessage: response.message);
       }
     } else {
-      yield EditStoreFailureState(
-          failureMessage: "Please check your internet connection!");
+      yield EditStoreFailureState(failureMessage: internetCheck);
     }
   }
 
@@ -88,8 +101,48 @@ class EditStoreBloc extends Bloc<EditStoreEvents, EditStoreStates> {
         yield EditStoreFailureState(failureMessage: response.message);
       }
     } else {
-      yield EditStoreFailureState(
-          failureMessage: "Please check your internet connection!");
+      yield EditStoreFailureState(failureMessage: internetCheck);
+    }
+  }
+
+  Stream<EditStoreStates> selectCity(SelectCityEvent event) async* {
+    if (await Network.isConnected()) {
+      SelectCityResponse response = await repository.selectCity();
+      if (response.success) {
+        yield SelectCityState(selectCityResponse: response);
+      } else {
+        yield EditStoreFailureState(failureMessage: response.message);
+      }
+    } else {
+      yield EditStoreFailureState(failureMessage: internetCheck);
+    }
+  }
+
+  Stream<EditStoreStates> selectDistributor(
+      SelectDistributorEvent event) async* {
+    if (await Network.isConnected()) {
+      SelectDistributorResponse response = await repository.selectDistributor();
+      if (response.success) {
+        yield SelectDistributorState(selectDistributorResponse: response);
+      } else {
+        yield EditStoreFailureState(failureMessage: response.message);
+      }
+    } else {
+      yield EditStoreFailureState(failureMessage: internetCheck);
+    }
+  }
+
+  Stream<EditStoreStates> selectCallTimeSlot(
+      SelectCallTimeSlotEvent event) async* {
+    if (await Network.isConnected()) {
+      CallTimeSlotResponse response = await repository.selectCallTimeslot();
+      if (response.success) {
+        yield SelectCallTimeSlotState(callTimeSlotResponse: response);
+      } else {
+        yield EditStoreFailureState(failureMessage: response.message);
+      }
+    } else {
+      yield EditStoreFailureState(failureMessage: internetCheck);
     }
   }
 }

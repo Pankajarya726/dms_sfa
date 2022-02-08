@@ -7,7 +7,7 @@ import 'package:dms/ui/bottom_sheet_widget/select_distributor_bottom_sheet.dart'
 import 'package:dms/ui/bottom_sheet_widget/select_language_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_retailercategory_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_retailertype_bottom_sheet.dart';
-import 'package:dms/ui/bottom_sheet_widget/select_visittime_bottom_sheet.dart';
+import 'package:dms/ui/bottom_sheet_widget/select_callTimeSlot_bottom_sheet.dart';
 import 'package:dms/ui/common_bloc/common_bloc.dart';
 import 'package:dms/ui/common_bloc/common_bloc_events.dart';
 import 'package:dms/ui/common_bloc/common_bloc_states.dart';
@@ -283,7 +283,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                     },
                   ),
                   sizedBoxWidget(5.0),
-                  textWidget(callTimeSlot),
+                  textWidget(callTimeSlotMand),
                   sizedBoxWidget(12.0),
                   textFields(txtSelectCallTimeSlotController, selectHint),
                   sizedBoxWidget(20.0),
@@ -295,11 +295,11 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                   sizedBoxWidget(12.0),
                   textFields(txtSelectLangSecondController, selectHint),
                   sizedBoxWidget(20.0),
-                  textWidget(retailerType),
+                  textWidget(retailerTypeMand),
                   sizedBoxWidget(12.0),
                   textFields(txtSelectRetailerTypeController, selectHint),
                   sizedBoxWidget(20.0),
-                  textWidget(retailerCategory),
+                  textWidget(retailerCategoryMand),
                   sizedBoxWidget(12.0),
                   textFields(txtSelectRetailerCategoryController, selectHint),
                   sizedBoxWidget(20.0),

@@ -24,3 +24,18 @@ class SelectRetailerCategoryEvent extends EditStoreEvents {
   @override
   List<Object> get props => [];
 }
+
+class SelectCityEvent extends EditStoreEvents {
+  @override
+  List<Object> get props => [];
+}
+
+class SelectDistributorEvent extends EditStoreEvents {
+  @override
+  List<Object> get props => [];
+}
+
+class SelectCallTimeSlotEvent extends EditStoreEvents {
+  @override
+  List<Object> get props => [];
+}

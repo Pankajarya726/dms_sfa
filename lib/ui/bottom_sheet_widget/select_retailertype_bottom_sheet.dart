@@ -38,7 +38,7 @@ class _SelectRetailerTypeBottomSheetState
   Object selectRetailerTypeRadio = "";
   String selectedRetailerType = "";
   CommonBloc commonBloc = CommonBloc();
-  SelectRetailerTypeResponse? selectRetailerTypeResponse;
+  List<RetailerTypeModel>? retailerTypeModel = [];
 
   @override
   void initState() {
@@ -72,14 +72,14 @@ class _SelectRetailerTypeBottomSheetState
               );
             }
             if (state is SelectRetailerTypeState) {
-              selectRetailerTypeResponse = state.selectRetailerTypeResponse;
+              retailerTypeModel = state.selectRetailerTypeResponse.data;
             }
             if (state is EditStoreFailureState) {
               return Center(
                 child: Text(state.failureMessage),
               );
             }
-            if (selectRetailerTypeResponse == null) {
+            if (retailerTypeModel == null) {
               return Container();
             }
             return Column(
@@ -97,35 +97,11 @@ class _SelectRetailerTypeBottomSheetState
                 const SizedBox(
                   height: 10,
                 ),
-                Flexible(
-                  child: ListView.builder(
-                    controller: ScrollController(keepScrollOffset: false),
-                    itemCount: selectRetailerTypeResponse!.data!.length,
-                    itemBuilder: (context, index) {
-                      return BlocProvider(
-                        create: (context) => commonBloc,
-                        child: BlocBuilder<CommonBloc, CommonBlocStates>(
-                          builder: (context, state) {
-                            if (state is CommonBlocInitialState) {
-                              if (selectRetailerTypeRadio ==
-                                  selectRetailerTypeResponse!
-                                      .data![index].name) {
-                                commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                                    enrollmentRadioTag: index));
-                              }
-                            }
-                            if (state is CommonBlocEnrollRadioTagState) {
-                              selectRetailerTypeRadio =
-                                  state.enrollmentRadioTag;
-                            }
-                            return radioButtonWidget(
-                                selectRetailerTypeRadio,
-                                index,
-                                selectRetailerTypeResponse!.data![index].name);
-                          },
-                        ),
-                      );
-                    },
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: radioButtonWidget(),
+                    ),
                   ),
                 ),
                 const SizedBox(
@@ -169,46 +145,69 @@ class _SelectRetailerTypeBottomSheetState
     );
   }
 
-  Widget radioButtonWidget(groupValue, value, label) {
-    return GestureDetector(
-      onTap: () {
-        commonBloc
-            .add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-        selectedRetailerType = selectRetailerTypeResponse!.data![value].name;
-      },
-      child: Row(
-        children: [
-          SizedBox(
-            width: 18,
-            child: Radio<dynamic>(
-              value: value,
-              groupValue: groupValue,
-              activeColor: MColor.colorPrimary,
-              fillColor: MaterialStateProperty.all(MColor.colorPrimary),
-              onChanged: (value) {
-                commonBloc.add(
-                    CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-                selectedRetailerType =
-                    selectRetailerTypeResponse!.data![value].name.toString();
-              },
-            ),
+  List<Widget> radioButtonWidget() {
+    List<Widget> widgets = [];
+    for (RetailerTypeModel retailerType in retailerTypeModel!) {
+      widgets.add(
+        BlocProvider(
+          create: (context) => commonBloc,
+          child: BlocBuilder<CommonBloc, CommonBlocStates>(
+            builder: (context, state) {
+              if (state is CommonBlocInitialState) {
+                if (selectRetailerTypeRadio == retailerType.name) {
+                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(
+                      enrollmentRadioTag: retailerType.id));
+                }
+              }
+
+              if (state is CommonBlocEnrollRadioTagState) {
+                selectRetailerTypeRadio = state.enrollmentRadioTag;
+              }
+              return GestureDetector(
+                onTap: () {
+                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(
+                      enrollmentRadioTag: retailerType.id));
+                  selectedRetailerType = retailerType.name;
+                },
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 18,
+                      child: Radio<dynamic>(
+                        value: retailerType.id,
+                        groupValue: selectRetailerTypeRadio,
+                        activeColor: MColor.colorPrimary,
+                        fillColor:
+                            MaterialStateProperty.all(MColor.colorPrimary),
+                        onChanged: (value) {
+                          commonBloc.add(CommonBlocEnrollTypeRadioEvent(
+                              enrollmentRadioTag: value));
+                          selectedRetailerType = retailerType.name;
+                        },
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      retailerType.name,
+                      style: const TextStyle(
+                        fontSize: 17.0,
+                        color: MColor.backButton,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
-          const SizedBox(
-            width: 10,
-          ),
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 17.0,
-              color: MColor.backButton,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(
-            width: 15,
-          ),
-        ],
-      ),
-    );
+        ),
+      );
+    }
+    return widgets;
   }
 }

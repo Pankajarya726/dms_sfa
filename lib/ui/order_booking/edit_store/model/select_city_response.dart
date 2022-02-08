@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-class SelectRetailerTypeResponse {
-  SelectRetailerTypeResponse({
+class SelectCityResponse {
+  SelectCityResponse({
     required this.success,
     required this.message,
     this.data,
@@ -9,21 +9,21 @@ class SelectRetailerTypeResponse {
 
   bool success;
   String message;
-  List<RetailerTypeModel>? data;
+  List<CityModel>? data;
 
-  factory SelectRetailerTypeResponse.fromJson(String str) =>
-      SelectRetailerTypeResponse.fromMap(json.decode(str));
+  factory SelectCityResponse.fromJson(String str) =>
+      SelectCityResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory SelectRetailerTypeResponse.fromMap(Map<String, dynamic> json) =>
-      SelectRetailerTypeResponse(
+  factory SelectCityResponse.fromMap(Map<String, dynamic> json) =>
+      SelectCityResponse(
         success: json["success"] == null ? null : json["success"],
         message: json["message"] == null ? null : json["message"],
         data: json["data"] == null
             ? []
-            : List<RetailerTypeModel>.from(
-                json["data"].map((x) => RetailerTypeModel.fromMap(x))),
+            : List<CityModel>.from(
+                json["data"].map((x) => CityModel.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -34,8 +34,8 @@ class SelectRetailerTypeResponse {
       };
 }
 
-class RetailerTypeModel {
-  RetailerTypeModel({
+class CityModel {
+  CityModel({
     required this.id,
     required this.name,
   });
@@ -43,13 +43,11 @@ class RetailerTypeModel {
   int id;
   String name;
 
-  factory RetailerTypeModel.fromJson(String str) =>
-      RetailerTypeModel.fromMap(json.decode(str));
+  factory CityModel.fromJson(String str) => CityModel.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory RetailerTypeModel.fromMap(Map<String, dynamic> json) =>
-      RetailerTypeModel(
+  factory CityModel.fromMap(Map<String, dynamic> json) => CityModel(
         id: json["id"] == null ? null : json["id"],
         name: json["name"] == null ? null : json["name"],
       );

@@ -26,6 +26,11 @@ class _LoginScreenState extends State<LoginScreen> {
   final mobileNumber = TextEditingController();
   final password = TextEditingController();
   String startMyDay = "";
+
+
+
+
+
   LoginBloc loginBloc = LoginBloc();
   GlobalKey globalKey = GlobalKey();
 

@@ -26,16 +26,10 @@ class SelectRetailerCategoryBottomSheet extends StatefulWidget {
 
 class _SelectRetailerCategoryBottomSheetState
     extends State<SelectRetailerCategoryBottomSheet> {
-  // List<String> names = [
-  //   "A",
-  //   "B",
-  //   "C",
-  //   "D",
-  // ];
+  List<String>? retailerCategoryModel = [];
   Object selectRetailerCategoryRadio = "";
   String selectedRetailerCategory = "";
   CommonBloc commonBloc = CommonBloc();
-  SelectRetailerCategoryResponse? selectRetailerCategoryResponse;
 
   @override
   void initState() {
@@ -69,15 +63,14 @@ class _SelectRetailerCategoryBottomSheetState
               );
             }
             if (state is SelectRetailerCategoryState) {
-              selectRetailerCategoryResponse =
-                  state.selectRetailerCategoryResponse;
+              retailerCategoryModel = state.selectRetailerCategoryResponse.data;
             }
             if (state is EditStoreFailureState) {
               return Center(
                 child: Text(state.failureMessage),
               );
             }
-            if (selectRetailerCategoryResponse == null) {
+            if (retailerCategoryModel == null) {
               return Container();
             }
             return Column(
@@ -95,35 +88,11 @@ class _SelectRetailerCategoryBottomSheetState
                 const SizedBox(
                   height: 10,
                 ),
-                Flexible(
-                  child: ListView.builder(
-                    controller: ScrollController(keepScrollOffset: false),
-                    itemCount: selectRetailerCategoryResponse!.data!.length,
-                    itemBuilder: (context, index) {
-                      return BlocProvider(
-                        create: (context) => commonBloc,
-                        child: BlocBuilder<CommonBloc, CommonBlocStates>(
-                          builder: (context, state) {
-                            if (state is CommonBlocInitialState) {
-                              if (selectRetailerCategoryRadio ==
-                                  selectRetailerCategoryResponse!
-                                      .data![index]) {
-                                commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                                    enrollmentRadioTag: index));
-                              }
-                            }
-                            if (state is CommonBlocEnrollRadioTagState) {
-                              selectRetailerCategoryRadio =
-                                  state.enrollmentRadioTag;
-                            }
-                            return radioButtonWidget(
-                                selectRetailerCategoryRadio,
-                                index,
-                                selectRetailerCategoryResponse!.data![index]);
-                          },
-                        ),
-                      );
-                    },
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: radioButtonWidget(),
+                    ),
                   ),
                 ),
                 const SizedBox(
@@ -167,46 +136,69 @@ class _SelectRetailerCategoryBottomSheetState
     );
   }
 
-  Widget radioButtonWidget(groupValue, value, label) {
-    return GestureDetector(
-      onTap: () {
-        commonBloc
-            .add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-        selectedRetailerCategory = selectRetailerCategoryResponse!.data![value];
-      },
-      child: Row(
-        children: [
-          SizedBox(
-            width: 18,
-            child: Radio<dynamic>(
-              value: value,
-              groupValue: groupValue,
-              activeColor: MColor.colorPrimary,
-              fillColor: MaterialStateProperty.all(MColor.colorPrimary),
-              onChanged: (value) {
-                commonBloc.add(
-                    CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-                selectedRetailerCategory =
-                    selectRetailerCategoryResponse!.data![value].toString();
-              },
-            ),
+  List<Widget> radioButtonWidget() {
+    List<Widget> widgets = [];
+    for (String retailerCategory in retailerCategoryModel!) {
+      widgets.add(
+        BlocProvider(
+          create: (context) => commonBloc,
+          child: BlocBuilder<CommonBloc, CommonBlocStates>(
+            builder: (context, state) {
+              if (state is CommonBlocInitialState) {
+                if (selectRetailerCategoryRadio == retailerCategory) {
+                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(
+                      enrollmentRadioTag: retailerCategory));
+                }
+              }
+
+              if (state is CommonBlocEnrollRadioTagState) {
+                selectRetailerCategoryRadio = state.enrollmentRadioTag;
+              }
+              return GestureDetector(
+                onTap: () {
+                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(
+                      enrollmentRadioTag: retailerCategory));
+                  selectedRetailerCategory = retailerCategory;
+                },
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 18,
+                      child: Radio<dynamic>(
+                        value: retailerCategory,
+                        groupValue: selectRetailerCategoryRadio,
+                        activeColor: MColor.colorPrimary,
+                        fillColor:
+                            MaterialStateProperty.all(MColor.colorPrimary),
+                        onChanged: (value) {
+                          commonBloc.add(CommonBlocEnrollTypeRadioEvent(
+                              enrollmentRadioTag: value));
+                          selectedRetailerCategory = retailerCategory;
+                        },
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      retailerCategory,
+                      style: const TextStyle(
+                        fontSize: 17.0,
+                        color: MColor.backButton,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
-          const SizedBox(
-            width: 10,
-          ),
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 17.0,
-              color: MColor.backButton,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(
-            width: 15,
-          ),
-        ],
-      ),
-    );
+        ),
+      );
+    }
+    return widgets;
   }
 }
