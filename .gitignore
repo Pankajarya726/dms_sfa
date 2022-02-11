@@ -44,3 +44,4 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/Users/mac/Desktop/pankaj/git/dms_app/android/app/build.gradle
