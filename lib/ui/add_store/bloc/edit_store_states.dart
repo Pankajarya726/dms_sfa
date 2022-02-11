@@ -1,10 +1,10 @@
-import 'package:dms/ui/order_booking/edit_store/model/call_time_slot_response.dart';
-import 'package:dms/ui/order_booking/edit_store/model/editstore_getenroll_type_response.dart';
-import 'package:dms/ui/order_booking/edit_store/model/select_city_response.dart';
-import 'package:dms/ui/order_booking/edit_store/model/select_distributor_response.dart';
-import 'package:dms/ui/order_booking/edit_store/model/select_language_response.dart';
-import 'package:dms/ui/order_booking/edit_store/model/select_retailer_category_response.dart';
-import 'package:dms/ui/order_booking/edit_store/model/select_retailer_type_response.dart';
+import 'package:dms/ui/add_store/model/call_time_slot_response.dart';
+import 'package:dms/ui/add_store/model/editstore_getenroll_type_response.dart';
+import 'package:dms/ui/add_store/model/select_city_response.dart';
+import 'package:dms/ui/add_store/model/select_distributor_response.dart';
+import 'package:dms/ui/add_store/model/select_language_response.dart';
+import 'package:dms/ui/add_store/model/select_retailer_category_response.dart';
+import 'package:dms/ui/add_store/model/select_retailer_type_response.dart';
 import 'package:equatable/equatable.dart';
 
 class EditStoreStates extends Equatable {

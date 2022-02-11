@@ -1,10 +1,10 @@
+import 'package:dms/ui/add_store/bloc/edit_store_bloc.dart';
+import 'package:dms/ui/add_store/bloc/edit_store_events.dart';
+import 'package:dms/ui/add_store/bloc/edit_store_states.dart';
+import 'package:dms/ui/add_store/model/select_retailer_category_response.dart';
 import 'package:dms/ui/common_bloc/common_bloc.dart';
 import 'package:dms/ui/common_bloc/common_bloc_events.dart';
 import 'package:dms/ui/common_bloc/common_bloc_states.dart';
-import 'package:dms/ui/order_booking/edit_store/bloc/edit_store_bloc.dart';
-import 'package:dms/ui/order_booking/edit_store/bloc/edit_store_events.dart';
-import 'package:dms/ui/order_booking/edit_store/bloc/edit_store_states.dart';
-import 'package:dms/ui/order_booking/edit_store/model/select_retailer_category_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';

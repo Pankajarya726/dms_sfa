@@ -11,10 +11,6 @@ import 'package:dms/ui/bottom_sheet_widget/select_callTimeSlot_bottom_sheet.dart
 import 'package:dms/ui/common_bloc/common_bloc.dart';
 import 'package:dms/ui/common_bloc/common_bloc_events.dart';
 import 'package:dms/ui/common_bloc/common_bloc_states.dart';
-import 'package:dms/ui/order_booking/edit_store/bloc/edit_store_bloc.dart';
-import 'package:dms/ui/order_booking/edit_store/bloc/edit_store_events.dart';
-import 'package:dms/ui/order_booking/edit_store/bloc/edit_store_states.dart';
-import 'package:dms/ui/order_booking/edit_store/model/editstore_getenroll_type_response.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_bloc.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_events.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_states.dart';
@@ -28,7 +24,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import '../../../main.dart';
+import '../../main.dart';
+import 'bloc/edit_store_bloc.dart';
+import 'bloc/edit_store_events.dart';
+import 'bloc/edit_store_states.dart';
+import 'model/editstore_getenroll_type_response.dart';
 
 class EditStoreScreen extends StatefulWidget {
   const EditStoreScreen({Key? key}) : super(key: key);
@@ -175,17 +175,10 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                           selectEnrollmentRadio = state.enrollmentRadioTag;
                           debugPrint("$selectEnrollmentRadio");
                         }
-                        return SizedBox(
-                          height: 46,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: enrolmentTypeModel!.length,
-                            itemBuilder: (context, index) {
-                              return radioButtonWidget(
-                                  selectEnrollmentRadio,
-                                  index,
-                                  enrolmentTypeModel![index].enrollmentType);
-                            },
+                        return SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: radioButtonWidgetList(),
                           ),
                         );
                       },
@@ -288,8 +281,8 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                       }
                       return Row(
                         children: [
-                          radioButtonWidget(existingRetailerRadio, 2, yes),
-                          radioButtonWidget(existingRetailerRadio, 3, no),
+                          radioButtonWidget(existingRetailerRadio, 1, yes),
+                          radioButtonWidget(existingRetailerRadio, 2, no),
                         ],
                       );
                     },
@@ -325,8 +318,8 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                       }
                       return Row(
                         children: [
-                          radioButtonWidget(whatsAppSmsRadio, 4, yes),
-                          radioButtonWidget(whatsAppSmsRadio, 5, no),
+                          radioButtonWidget(whatsAppSmsRadio, 3, yes),
+                          radioButtonWidget(whatsAppSmsRadio, 4, no),
                         ],
                       );
                     },
@@ -342,8 +335,8 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                       }
                       return Row(
                         children: [
-                          radioButtonWidget(isKRORadio, 6, yes),
-                          radioButtonWidget(isKRORadio, 7, no),
+                          radioButtonWidget(isKRORadio, 5, yes),
+                          radioButtonWidget(isKRORadio, 6, no),
                         ],
                       );
                     },
@@ -681,18 +674,13 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
 
   Widget radioButtonWidget(groupValue, value, label) {
     void addRadioEvent() {
-      if (value == 0 || value == 1) {
-        commonBloc
-            .add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-        enrollmentTypeId = value + 1;
-      }
-      if (value == 2 || value == 3) {
+      if (value == 1 || value == 2) {
         commonBloc.add(CommonBlocRetailerRadioEvent(retailerRadioTag: value));
       }
-      if (value == 4 || value == 5) {
+      if (value == 3 || value == 4) {
         commonBloc.add(CommonBlocWhatsAppRadioEvent(whatsAppRadioTag: value));
       }
-      if (value == 6 || value == 7) {
+      if (value == 5 || value == 6) {
         commonBloc.add(CommonBlocIsKRORadioEvent(isKRORadioTag: value));
       }
     }
@@ -732,6 +720,52 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
         ],
       ),
     );
+  }
+
+  List<Widget> radioButtonWidgetList() {
+    List<Widget> widgets = [];
+    for (EnrolmentTypeModel enrolmentType in enrolmentTypeModel!) {
+      widgets.add(GestureDetector(
+        onTap: () {
+          commonBloc.add(CommonBlocEnrollTypeRadioEvent(
+              enrollmentRadioTag: enrolmentType.id));
+          enrollmentTypeId = enrolmentType.id;
+        },
+        child: Row(
+          children: [
+            SizedBox(
+              width: 18,
+              child: Radio<dynamic>(
+                value: enrolmentType.id,
+                groupValue: selectEnrollmentRadio,
+                activeColor: MColor.colorPrimary,
+                fillColor: MaterialStateProperty.all(MColor.colorPrimary),
+                onChanged: (value) {
+                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(
+                      enrollmentRadioTag: value));
+                  enrollmentTypeId = enrolmentType.id;
+                },
+              ),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Text(
+              enrolmentType.enrollmentType,
+              style: const TextStyle(
+                fontSize: 17.0,
+                color: MColor.backButton,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(
+              width: 15,
+            ),
+          ],
+        ),
+      ));
+    }
+    return widgets;
   }
 
   Widget selectImageWidget(imageLabel) {

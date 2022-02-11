@@ -5,7 +5,7 @@ import 'package:dms/ui/bottom_sheet_widget/no_order_reason_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/order_history_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/task_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/tele_caller_status_bottm_sheet.dart';
-import 'package:dms/ui/order_booking/edit_store/edit_store_screen.dart';
+import 'package:dms/ui/add_store/edit_store_screen.dart';
 import 'package:dms/ui/order_booking/order_booking_list/order_booking_list_screen.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/constants.dart';
@@ -55,11 +55,15 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                 ),
               ]),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, childAspectRatio: 2.6, mainAxisSpacing: 15, crossAxisSpacing: 0)),
+                  crossAxisCount: 2,
+                  childAspectRatio: 2.6,
+                  mainAxisSpacing: 15,
+                  crossAxisSpacing: 0)),
           SliverList(
               delegate: SliverChildListDelegate([
             Padding(
-              padding: const EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 10),
+              padding: const EdgeInsets.only(
+                  left: 15, right: 10, bottom: 0, top: 10),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -73,15 +77,20 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                   ),
                   IconButton(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const EditStoreScreen()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const EditStoreScreen()));
                       },
                       padding: EdgeInsets.zero,
                       splashRadius: 13,
                       icon: Container(
                         height: 25,
                         width: 25,
-                        decoration:
-                            const BoxDecoration(color: MColor.colorSecondary, borderRadius: BorderRadius.all(Radius.circular(15))),
+                        decoration: const BoxDecoration(
+                            color: MColor.colorSecondary,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(15))),
                         child: const Center(
                             child: Icon(
                           Icons.edit,
@@ -95,13 +104,17 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-                decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10)), boxShadow: [
-                  BoxShadow(
-                    color: Color.fromRGBO(237, 237, 237, 0.25),
-                    blurRadius: 10,
-                  )
-                ]),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color.fromRGBO(237, 237, 237, 0.25),
+                        blurRadius: 10,
+                      )
+                    ]),
                 child: Column(
                   children: [
                     Row(
@@ -169,7 +182,8 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                       height: 15,
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 0, vertical: 5),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -188,7 +202,10 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                             children: [
                               const Text(
                                 "Address",
-                                style: TextStyle(color: Color(0xff303030), fontSize: 15, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    color: Color(0xff303030),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -198,7 +215,10 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                                 child: const Text(
                                   "Major District Rd, depalpur road | near by payal kirana store",
                                   overflow: TextOverflow.clip,
-                                  style: TextStyle(color: Color(0xff555555), fontSize: 14, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      color: Color(0xff555555),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ],
@@ -221,7 +241,8 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 5),
+              padding:
+                  const EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 5),
               child: TextFormField(
                 maxLines: 5,
                 minLines: 3,
@@ -229,7 +250,9 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                 decoration: const InputDecoration(
                     filled: true,
                     fillColor: Colors.white,
-                    border: UnderlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10)), borderSide: BorderSide.none)),
+                    border: UnderlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        borderSide: BorderSide.none)),
               ),
             ),
             const Padding(
@@ -243,15 +266,20 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 5),
+              padding:
+                  const EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 5),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-                decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10)), boxShadow: [
-                  BoxShadow(
-                    color: Color.fromRGBO(237, 237, 237, 0.25),
-                    blurRadius: 10,
-                  )
-                ]),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color.fromRGBO(237, 237, 237, 0.25),
+                        blurRadius: 10,
+                      )
+                    ]),
                 child: Column(
                   children: List.generate(
                       4,
@@ -259,15 +287,23 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                             child: InkWell(
                               onTap: () {
                                 showModalBottomSheet(
-                                    context: context, shape: bottomSheetShape, builder: (context) => const OrderHistoryBottomSheet());
+                                    context: context,
+                                    shape: bottomSheetShape,
+                                    builder: (context) =>
+                                        const OrderHistoryBottomSheet());
                               },
                               child: Container(
-                                margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                margin: const EdgeInsets.symmetric(
+                                    vertical: 5, horizontal: 10),
                                 height: 50,
-                                decoration:
-                                    const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xffC5C5C5), width: 0.5))),
+                                decoration: const BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: Color(0xffC5C5C5),
+                                            width: 0.5))),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       "Date: ${DateFormat("dd-MM-yyyy").format(DateTime.now())}",
@@ -317,7 +353,10 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
               shape: const RoundedRectangleBorder(),
               child: const Text(
                 "NO ORDER",
-                style: TextStyle(color: Color(0xffFFFFFF), fontSize: 20, letterSpacing: 0.72),
+                style: TextStyle(
+                    color: Color(0xffFFFFFF),
+                    fontSize: 20,
+                    letterSpacing: 0.72),
               ),
               color: const Color(0xff3D8FFF),
               height: 50,
@@ -326,12 +365,18 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
             ),
             MaterialButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const OrderBookingListScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const OrderBookingListScreen()));
               },
               shape: const RoundedRectangleBorder(),
               child: const Text(
                 "ORDER",
-                style: TextStyle(color: Color(0xffFFFFFF), fontSize: 20, letterSpacing: 0.72),
+                style: TextStyle(
+                    color: Color(0xffFFFFFF),
+                    fontSize: 20,
+                    letterSpacing: 0.72),
               ),
               color: MColor.colorSecondary,
               height: 50,
@@ -390,7 +435,8 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
               child: AppBar(
                   elevation: 5,
                   toolbarHeight: 60,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5)),
                   backgroundColor: Colors.white,
                   primary: false,
                   automaticallyImplyLeading: false,
@@ -411,8 +457,10 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                               fit: BoxFit.cover,
                             );
                           },
-                          errorWidget: (context, url, error) => Image.asset("assets/placeholder.png"),
-                          placeholder: (context, url) => Image.asset("assets/placeholder.png"),
+                          errorWidget: (context, url, error) =>
+                              Image.asset("assets/placeholder.png"),
+                          placeholder: (context, url) =>
+                              Image.asset("assets/placeholder.png"),
                         ),
                       ),
                       const SizedBox(
@@ -460,7 +508,13 @@ class DetailGritItem extends StatefulWidget {
   final String value;
   final int type;
 
-  const DetailGritItem({Key? key, required this.image, required this.name, required this.value, required this.type}) : super(key: key);
+  const DetailGritItem(
+      {Key? key,
+      required this.image,
+      required this.name,
+      required this.value,
+      required this.type})
+      : super(key: key);
 
   @override
   _DetailGritItemState createState() => _DetailGritItemState();
@@ -472,11 +526,17 @@ class _DetailGritItemState extends State<DetailGritItem> {
     return InkWell(
       onTap: () {
         if (widget.type == 1) {
-          showModalBottomSheet(context: context, shape: bottomSheetShape, builder: (context) => const LastVisitBottomSheet());
+          showModalBottomSheet(
+              context: context,
+              shape: bottomSheetShape,
+              builder: (context) => const LastVisitBottomSheet());
         }
         if (widget.type == 2) {
           showModalBottomSheet(
-              context: context, isScrollControlled: true, shape: bottomSheetShape, builder: (context) => const TaskBottomSheet());
+              context: context,
+              isScrollControlled: true,
+              shape: bottomSheetShape,
+              builder: (context) => const TaskBottomSheet());
         }
         if (widget.type == 3) {
           showModalBottomSheet(
@@ -489,12 +549,15 @@ class _DetailGritItemState extends State<DetailGritItem> {
       child: Container(
         margin: const EdgeInsets.only(left: 10, right: 10),
         padding: const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
-        decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10)), boxShadow: [
-          BoxShadow(
-            color: Color.fromRGBO(237, 237, 237, 0.25),
-            blurRadius: 10,
-          )
-        ]),
+        decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            boxShadow: [
+              BoxShadow(
+                color: Color.fromRGBO(237, 237, 237, 0.25),
+                blurRadius: 10,
+              )
+            ]),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -514,14 +577,20 @@ class _DetailGritItemState extends State<DetailGritItem> {
               children: [
                 Text(
                   widget.name,
-                  style: const TextStyle(color: Color(0xff303030), fontSize: 15, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      color: Color(0xff303030),
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(
                   height: 5,
                 ),
                 Text(
                   widget.value,
-                  style: const TextStyle(color: Color(0xff555555), fontSize: 14, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      color: Color(0xff555555),
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold),
                 ),
               ],
             )
@@ -538,7 +607,12 @@ class RetailerDetailItem extends StatefulWidget {
   final String value;
   final int type;
 
-  const RetailerDetailItem({Key? key, required this.image, required this.name, required this.value, required this.type})
+  const RetailerDetailItem(
+      {Key? key,
+      required this.image,
+      required this.name,
+      required this.value,
+      required this.type})
       : super(key: key);
 
   @override
@@ -569,7 +643,10 @@ class _RetailerDetailItemState extends State<RetailerDetailItem> {
             children: [
               Text(
                 widget.name,
-                style: const TextStyle(color: Color(0xff303030), fontSize: 15, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    color: Color(0xff303030),
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold),
               ),
               const SizedBox(
                 height: 5,
@@ -579,7 +656,10 @@ class _RetailerDetailItemState extends State<RetailerDetailItem> {
                 child: Text(
                   widget.value,
                   overflow: TextOverflow.clip,
-                  style: const TextStyle(color: Color(0xff555555), fontSize: 14, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      color: Color(0xff555555),
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ],

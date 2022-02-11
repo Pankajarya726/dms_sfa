@@ -1,6 +1,6 @@
+import 'package:dms/ui/add_store/edit_store_screen.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/filter_retailer_bottom_sheet.dart';
-import 'package:dms/ui/order_booking/edit_store/edit_store_screen.dart';
 import 'package:dms/ui/order_booking/retailers_list/retailers_tab.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
