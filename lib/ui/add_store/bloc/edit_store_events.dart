@@ -25,7 +25,7 @@ class SelectRetailerCategoryEvent extends EditStoreEvents {
   List<Object> get props => [];
 }
 
-class SelectCityEvent extends EditStoreEvents {
+class SelectDistrictEvent extends EditStoreEvents {
   @override
   List<Object> get props => [];
 }

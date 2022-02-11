@@ -13,8 +13,8 @@ import 'package:dms/ui/add_plan/model/add_plan_response.dart';
 import 'package:dms/ui/add_plan/model/add_plan_update_data.dart';
 import 'package:dms/ui/add_store/model/call_time_slot_response.dart';
 import 'package:dms/ui/add_store/model/editstore_getenroll_type_response.dart';
-import 'package:dms/ui/add_store/model/select_city_response.dart';
 import 'package:dms/ui/add_store/model/select_distributor_response.dart';
+import 'package:dms/ui/add_store/model/select_district_response.dart';
 import 'package:dms/ui/add_store/model/select_language_response.dart';
 import 'package:dms/ui/add_store/model/select_retailer_category_response.dart';
 import 'package:dms/ui/add_store/model/select_retailer_type_response.dart';
@@ -598,11 +598,11 @@ class ApiRepository {
     }
   }
 
-  Future<SelectCityResponse> selectCity() async {
+  Future<SelectDistrictResponse> selectCity() async {
     try {
       Response response = await dio.get(Url.getCity);
-      SelectCityResponse baseResponse =
-          SelectCityResponse.fromJson(response.toString());
+      SelectDistrictResponse baseResponse =
+          SelectDistrictResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -613,7 +613,7 @@ class ApiRepository {
         message = "Something went wrong!";
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
-      return SelectCityResponse(
+      return SelectDistrictResponse(
         success: false,
         message: message,
       );

@@ -2,8 +2,8 @@
 
 import 'dart:io';
 import 'package:dms/ui/bottom_sheet_widget/select_beat_name_bottom_sheet.dart';
-import 'package:dms/ui/bottom_sheet_widget/select_city_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_distributor_bottom_sheet.dart';
+import 'package:dms/ui/bottom_sheet_widget/select_district_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_language_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_retailercategory_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_retailertype_bottom_sheet.dart';
@@ -853,11 +853,11 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
         ),
         builder: (context) {
           return txtController == txtSelectCityController
-              ? SelectCityBottomSheet(
-                  selectedCityName: txtSelectCityController.text.isEmpty
+              ? SelectDistrictBottomSheet(
+                  selectedDistrictName: txtSelectCityController.text.isEmpty
                       ? ""
                       : txtSelectCityController.text,
-                  onCitySelect: (city, id) {
+                  onDistrictSelect: (city, id) {
                     txtSelectCityController.text = city;
                     if (id != null) {
                       cityId = id;
