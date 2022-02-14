@@ -3,6 +3,7 @@ import 'package:dms/ui/add_store/bloc/edit_store_bloc.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_events.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_states.dart';
 import 'package:dms/ui/add_store/model/editstore_getenroll_type_response.dart';
+import 'package:dms/ui/add_store/owner_information/owner_information.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_beat_name_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_distributor_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_district_bottom_sheet.dart';
@@ -370,6 +371,10 @@ class _OutletInformationState extends State<OutletInformation> {
 
             debugPrint("edit store gstNo ${txtGSTController.text}");
             debugPrint("edit store outletphoto $outletFileName");
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const OwnerInformation()),
+            );
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -668,6 +673,7 @@ class _OutletInformationState extends State<OutletInformation> {
                       districtId = id;
                       txtSelectDistributorController.text = "";
                       txtSelectBeatNameController.text = "";
+                      txtOrderBookingController.text = "";
                     }
                   },
                 )
@@ -682,6 +688,7 @@ class _OutletInformationState extends State<OutletInformation> {
                         if (id != null) {
                           distributorId = id;
                           txtSelectBeatNameController.text = "";
+                          txtOrderBookingController.text = "";
                         }
                       },
                     )
