@@ -60,9 +60,16 @@ class CommonBlocIsKRORadioState extends CommonBlocStates {
   List<Object> get props => [isKRORadioTag];
 }
 
-class CommonBlocSelectDateState extends CommonBlocStates {
+class CommonBlocBirthdayState extends CommonBlocStates {
   final DateTime dateTime;
-  CommonBlocSelectDateState({required this.dateTime});
+  CommonBlocBirthdayState({required this.dateTime});
+  @override
+  List<Object> get props => [dateTime];
+}
+
+class CommonBlocAnniversaryState extends CommonBlocStates {
+  final DateTime dateTime;
+  CommonBlocAnniversaryState({required this.dateTime});
   @override
   List<Object> get props => [dateTime];
 }

@@ -110,8 +110,10 @@ class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      widget.onDistrictSelect(
-                          selectedDistrict, selectedDistrictId!);
+                      if (selectedDistrictId != null) {
+                        widget.onDistrictSelect(
+                            selectedDistrict, selectedDistrictId!);
+                      }
                       Navigator.pop(context);
                     },
                     style: ButtonStyle(

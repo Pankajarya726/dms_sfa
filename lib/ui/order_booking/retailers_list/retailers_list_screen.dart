@@ -1,4 +1,5 @@
 import 'package:dms/ui/add_store/edit_store_screen.dart';
+import 'package:dms/ui/add_store/outlet_information/outlet_information.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/filter_retailer_bottom_sheet.dart';
 import 'package:dms/ui/order_booking/retailers_list/retailers_tab.dart';
@@ -55,7 +56,7 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const EditStoreScreen(),
+                      builder: (context) => const OutletInformation(),
                     ),
                   );
                 },

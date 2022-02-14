@@ -362,7 +362,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                   sizedBoxWidget(12.0),
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
-                      if (state is CommonBlocSelectDateState) {
+                      if (state is CommonBlocBirthdayState) {
                         txtPicDateController.text =
                             DateFormat("yyyy-MM-dd").format(state.dateTime);
                       }
@@ -560,8 +560,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                   lastDate: await NTP.now(),
                 );
                 if (dateTime != null) {
-                  commonBloc
-                      .add(CommonBlocSelectDateEvent(dateTime: dateTime!));
+                  commonBloc.add(CommonBlocBirthdayEvent(dateTime: dateTime!));
                 }
               } else {
                 openBottomSheet(context, txtController);

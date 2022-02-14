@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:io';
 import 'package:dms/ui/add_store/bloc/edit_store_bloc.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_events.dart';
@@ -123,7 +124,15 @@ class _OutletInformationState extends State<OutletInformation> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  textWidget(enrollmentType),
+                  Row(
+                    children: [
+                      Image.asset("assets/docs.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(enrollmentType),
+                    ],
+                  ),
                   sizedBoxWidget(5.0, ""),
                   BlocBuilder<EditStoreBloc, EditStoreStates>(
                       builder: (context, state) {
@@ -162,23 +171,63 @@ class _OutletInformationState extends State<OutletInformation> {
                     );
                   }),
                   sizedBoxWidget(5.0, ""),
-                  textWidget(district),
+                  Row(
+                    children: [
+                      Image.asset("assets/building.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(district),
+                    ],
+                  ),
                   sizedBoxWidget(12.0, ""),
                   textFields(txtSelectDistrictController, selectHint),
                   sizedBoxWidget(20.0, ""),
-                  textWidget(distributor),
+                  Row(
+                    children: [
+                      Image.asset("assets/truck.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(distributor),
+                    ],
+                  ),
                   sizedBoxWidget(12.0, ""),
                   textFields(txtSelectDistributorController, selectHint),
                   sizedBoxWidget(20.0, ""),
-                  textWidget(beatNameMandatory),
+                  Row(
+                    children: [
+                      Image.asset("assets/map.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(beatNameMandatory),
+                    ],
+                  ),
                   sizedBoxWidget(12.0, ""),
                   textFields(txtSelectBeatNameController, selectHint),
                   sizedBoxWidget(20.0, ""),
-                  textWidget(orderBookingDay),
+                  Row(
+                    children: [
+                      Image.asset("assets/calendar.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(orderBookingDay),
+                    ],
+                  ),
                   sizedBoxWidget(12.0, ""),
                   textFields(txtOrderBookingController, day),
                   sizedBoxWidget(12.0, ""),
-                  textWidget(outletName),
+                  Row(
+                    children: [
+                      Image.asset("assets/store.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(outletName),
+                    ],
+                  ),
                   sizedBoxWidget(12.0, ""),
                   textFields(txtOutletNameController, enterHere),
                   sizedBoxWidget(12.0, ""),
@@ -212,19 +261,51 @@ class _OutletInformationState extends State<OutletInformation> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          textWidget(latitude),
+                          Row(
+                            children: [
+                              Image.asset("assets/lat_long.png"),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              textWidget(latitude),
+                            ],
+                          ),
                           sizedBoxWidget(12.0, txtOutletNameController),
                           textFields(txtLatitudeController, enterHere),
                           sizedBoxWidget(12.0, ""),
-                          textWidget(longitude),
+                          Row(
+                            children: [
+                              Image.asset("assets/lat_long.png"),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              textWidget(longitude),
+                            ],
+                          ),
                           sizedBoxWidget(12.0, ""),
                           textFields(txtLongtitudeController, enterHere),
                           sizedBoxWidget(12.0, ""),
-                          textWidget(address),
+                          Row(
+                            children: [
+                              Image.asset("assets/address.png"),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              textWidget(address),
+                            ],
+                          ),
                           sizedBoxWidget(12.0, ""),
                           textFields(txtAddressController, enterHere),
                           sizedBoxWidget(12.0, ""),
-                          textWidget(pincode),
+                          Row(
+                            children: [
+                              Image.asset("assets/pin_code.png"),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              textWidget(pincode),
+                            ],
+                          ),
                           sizedBoxWidget(12.0, txtAddressController),
                           textFields(txtPincodeController, enterHere),
                           sizedBoxWidget(12.0, ""),
@@ -232,11 +313,27 @@ class _OutletInformationState extends State<OutletInformation> {
                       );
                     },
                   ),
-                  textWidget(landmark),
+                  Row(
+                    children: [
+                      Image.asset("assets/landmark.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(landmark),
+                    ],
+                  ),
                   sizedBoxWidget(12.0, ""),
                   textFields(txtLandmarkController, enterHere),
                   sizedBoxWidget(12.0, ""),
-                  textWidget(existingRetailer),
+                  Row(
+                    children: [
+                      Image.asset("assets/user.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(existingRetailer),
+                    ],
+                  ),
                   sizedBoxWidget(5.0, ""),
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
@@ -254,15 +351,39 @@ class _OutletInformationState extends State<OutletInformation> {
                     },
                   ),
                   sizedBoxWidget(5.0, ""),
-                  textWidget(retailerTypeMand),
+                  Row(
+                    children: [
+                      Image.asset("assets/store.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(retailerTypeMand),
+                    ],
+                  ),
                   sizedBoxWidget(12.0, ""),
                   textFields(txtSelectRetailerTypeController, selectHint),
                   sizedBoxWidget(20.0, ""),
-                  textWidget(retailerCategoryMand),
+                  Row(
+                    children: [
+                      Image.asset("assets/categories.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(retailerCategoryMand),
+                    ],
+                  ),
                   sizedBoxWidget(12.0, ""),
                   textFields(txtSelectRetailerCategoryController, selectHint),
                   sizedBoxWidget(20.0, ""),
-                  textWidget(isKRO),
+                  Row(
+                    children: [
+                      Image.asset("assets/question.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(isKRO),
+                    ],
+                  ),
                   sizedBoxWidget(5.0, ""),
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
@@ -279,15 +400,30 @@ class _OutletInformationState extends State<OutletInformation> {
                     },
                   ),
                   sizedBoxWidget(5.0, ""),
-                  textWidget(gstNo),
+                  Row(
+                    children: [
+                      Image.asset("assets/document.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(gstNo),
+                    ],
+                  ),
                   sizedBoxWidget(12.0, ""),
                   textFields(txtGSTController, enterHere),
-                  sizedBoxWidget(5.0, ""),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      sizedBoxWidget(17.0, ""),
-                      textWidget(outletPhoto),
+                      sizedBoxWidget(12.0, ""),
+                      Row(
+                        children: [
+                          Image.asset("assets/gallery.png"),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          textWidget(outletPhoto),
+                        ],
+                      ),
                       sizedBoxWidget(12.0, txtGSTController),
                       BlocBuilder<CommonBloc, CommonBlocStates>(
                         builder: (context, state) {
@@ -307,7 +443,7 @@ class _OutletInformationState extends State<OutletInformation> {
                   const SizedBox(
                     width: 40,
                   ),
-                  sizedBoxWidget(10.0, ""),
+                  sizedBoxWidget(5.0, ""),
                 ],
               ),
             ),
@@ -371,9 +507,15 @@ class _OutletInformationState extends State<OutletInformation> {
 
             debugPrint("edit store gstNo ${txtGSTController.text}");
             debugPrint("edit store outletphoto $outletFileName");
+
+            Map<String, dynamic> input = HashMap<String, dynamic>();
+            input["user_id"] = await SharedPreference.getStringPreference(
+                SharedPreference.userId);
+            input["enrolment_type"] = enrollmentTypeId;
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const OwnerInformation()),
+              MaterialPageRoute(
+                  builder: (context) => OwnerInformation(input: input)),
             );
           },
           child: Row(

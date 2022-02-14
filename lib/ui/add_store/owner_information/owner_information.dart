@@ -16,7 +16,8 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../../main.dart';
 
 class OwnerInformation extends StatefulWidget {
-  const OwnerInformation({Key? key}) : super(key: key);
+  final Map<String, dynamic> input;
+  const OwnerInformation({Key? key, required this.input}) : super(key: key);
 
   @override
   State<OwnerInformation> createState() => _OwnerInformationState();
@@ -26,7 +27,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
   File? ownerPhotoFile;
   String? ownerFileName;
   Object whatsAppSmsRadio = "";
-  DateTime? dateTime;
+  DateTime? dateTimeBirth;
+  DateTime? dateTimeAnniversary;
   CommonBloc commonBloc = CommonBloc();
   TextEditingController txtOwnerNameController = TextEditingController();
   TextEditingController txtPrimaryMobController = TextEditingController();
@@ -47,11 +49,20 @@ class _OwnerInformationState extends State<OwnerInformation> {
   String? secondaryLangCode;
   RefreshController refreshController =
       RefreshController(initialRefresh: false);
+  GlobalKey globalKey = GlobalKey();
+  TextEditingController selectedController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    var inp = widget.input["user_id"];
+    print("passed input = $inp");
     return BlocProvider(
-      create: (context) => CommonBloc(),
+      create: (context) => commonBloc,
       child: Scaffold(
         appBar: AppBar(
           elevation: 5,
@@ -85,85 +96,194 @@ class _OwnerInformationState extends State<OwnerInformation> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  textWidget(ownerName),
-                  sizedBoxWidget(12.0),
+                  Row(
+                    children: [
+                      Image.asset("assets/owner.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(ownerName),
+                    ],
+                  ),
+                  sizedBoxWidget(12.0, ""),
                   textFields(txtOwnerNameController, enterHere),
-                  sizedBoxWidget(20.0),
-                  textWidget(primaryMobile),
-                  sizedBoxWidget(12.0),
+                  sizedBoxWidget(14.0, ""),
+                  Row(
+                    children: [
+                      Image.asset("assets/phone_call.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(primaryMobile),
+                    ],
+                  ),
+                  sizedBoxWidget(12.0, ""),
                   textFields(txtPrimaryMobController, enterHere),
-                  sizedBoxWidget(20.0),
-                  textWidget(secondaryMobile),
-                  sizedBoxWidget(12.0),
+                  sizedBoxWidget(14.0, ""),
+                  Row(
+                    children: [
+                      Image.asset("assets/phone_call.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(secondaryMobile),
+                    ],
+                  ),
+                  sizedBoxWidget(12.0, ""),
                   textFields(txtSecondaryMobController, enterHere),
-                  sizedBoxWidget(20.0),
-                  textWidget(callTimeSlotMand),
-                  sizedBoxWidget(12.0),
+                  sizedBoxWidget(14.0, ""),
+                  Row(
+                    children: [
+                      Image.asset("assets/phone_call.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(helperMobile),
+                    ],
+                  ),
+                  sizedBoxWidget(12.0, txtSecondaryMobController),
+                  textFields(txtHelperMobController, enterHere),
+                  sizedBoxWidget(14.0, ""),
+                  Row(
+                    children: [
+                      Image.asset("assets/headphones.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(callTimeSlotMand),
+                    ],
+                  ),
+                  sizedBoxWidget(12.0, txtHelperMobController),
                   textFields(txtSelectCallTimeSlotController, selectHint),
-                  sizedBoxWidget(20.0),
-                  textWidget(languageFirst),
-                  sizedBoxWidget(12.0),
+                  sizedBoxWidget(20.0, ""),
+                  Row(
+                    children: [
+                      Image.asset("assets/languages.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(languageFirst),
+                    ],
+                  ),
+                  sizedBoxWidget(12.0, ""),
                   textFields(txtSelectLangFirstController, selectHint),
-                  sizedBoxWidget(20.0),
-                  textWidget(languageSecond),
-                  sizedBoxWidget(12.0),
+                  sizedBoxWidget(20.0, ""),
+                  Row(
+                    children: [
+                      Image.asset("assets/languages.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(languageSecond),
+                    ],
+                  ),
+                  sizedBoxWidget(12.0, ""),
                   textFields(txtSelectLangSecondController, selectHint),
-                  sizedBoxWidget(20.0),
-                  textWidget(whatsAppSms),
-                  sizedBoxWidget(5.0),
+                  sizedBoxWidget(20.0, ""),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Image.asset("assets/whatsapp.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Flexible(child: textWidget(whatsAppSms)),
+                    ],
+                  ),
+                  sizedBoxWidget(5.0, ""),
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
                       if (state is CommonBlocWhatsAppRadioState) {
                         whatsAppSmsRadio = state.whatsAppRadioTag;
-                        debugPrint("");
+                        debugPrint("$whatsAppSmsRadio");
                       }
                       return Row(
                         children: [
-                          radioButtonWidget(whatsAppSmsRadio, 1, yes),
-                          radioButtonWidget(whatsAppSmsRadio, 2, no),
+                          radioButtonWidget(whatsAppSmsRadio, yes, yes),
+                          radioButtonWidget(whatsAppSmsRadio, no, no),
                         ],
                       );
                     },
                   ),
-                  sizedBoxWidget(5.0),
-                  textWidget(pan),
-                  sizedBoxWidget(12.0),
+                  sizedBoxWidget(5.0, ""),
+                  Row(
+                    children: [
+                      Image.asset("assets/pan.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(pan),
+                    ],
+                  ),
+                  sizedBoxWidget(12.0, ""),
                   textFields(txtPANController, enterHere),
-                  sizedBoxWidget(20.0),
-                  textWidget(adharNumber),
-                  sizedBoxWidget(12.0),
+                  sizedBoxWidget(14.0, ""),
+                  Row(
+                    children: [
+                      Image.asset("assets/identity.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(adharNumber),
+                    ],
+                  ),
+                  sizedBoxWidget(12.0, txtPANController),
                   textFields(txtAdharNumberController, enterHere),
-                  sizedBoxWidget(20.0),
-                  textWidget(birthday),
-                  sizedBoxWidget(12.0),
+                  sizedBoxWidget(14.0, ""),
+                  Row(
+                    children: [
+                      Image.asset("assets/cake.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(birthday),
+                    ],
+                  ),
+                  sizedBoxWidget(12.0, txtAdharNumberController),
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
-                      if (state is CommonBlocSelectDateState) {
+                      if (state is CommonBlocBirthdayState) {
                         txtPicDateController.text =
                             DateFormat("yyyy-MM-dd").format(state.dateTime);
                       }
                       return textFields(txtPicDateController, picDate);
                     },
                   ),
-                  sizedBoxWidget(5.0),
-                  textWidget(anniversary),
-                  sizedBoxWidget(12.0),
+                  sizedBoxWidget(20.0, ""),
+                  Row(
+                    children: [
+                      Image.asset("assets/confetti.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(anniversary),
+                    ],
+                  ),
+                  sizedBoxWidget(12.0, ""),
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
-                      if (state is CommonBlocSelectDateState) {
+                      if (state is CommonBlocAnniversaryState) {
                         txtAnniversaryController.text =
                             DateFormat("yyyy-MM-dd").format(state.dateTime);
                       }
                       return textFields(txtAnniversaryController, picDate);
                     },
                   ),
-                  sizedBoxWidget(5.0),
+                  sizedBoxWidget(5.0, ""),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      sizedBoxWidget(17.0),
-                      textWidget(ownerPhoto),
-                      sizedBoxWidget(12.0),
+                      sizedBoxWidget(17.0, ""),
+                      Row(
+                        children: [
+                          Image.asset("assets/gallery.png"),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          textWidget(ownerPhoto),
+                        ],
+                      ),
+                      sizedBoxWidget(12.0, ""),
                       BlocBuilder<CommonBloc, CommonBlocStates>(
                         builder: (context, state) {
                           if (state is CommonBlocSelectOwnerImageState) {
@@ -173,13 +293,13 @@ class _OwnerInformationState extends State<OwnerInformation> {
                             onTap: () {
                               selectImage();
                             },
-                            child: selectImageWidget(ownerName),
+                            child: selectImageWidget(),
                           );
                         },
                       ),
                     ],
                   ),
-                  sizedBoxWidget(10.0),
+                  sizedBoxWidget(5.0, ""),
                 ],
               ),
             ),
@@ -188,7 +308,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
         bottomSheet: MaterialButton(
           height: 50,
           minWidth: MediaQuery.of(context).size.width,
-          color: MColor.colorSecondary,
+          color: MColor.colorPrimary,
           textColor: Colors.white,
           onPressed: () async {
             if (txtOwnerNameController.text.isEmpty) {
@@ -208,36 +328,31 @@ class _OwnerInformationState extends State<OwnerInformation> {
             // String userId = await SharedPreference.getStringPreference(
             //     SharedPreference.userId);
             debugPrint("edit store userId ");
-            debugPrint("edit store enrollmentTypeId ");
-            debugPrint("edit store cityId ");
-            debugPrint("edit store distributorId ");
-            debugPrint("edit store beatId ");
-            debugPrint("edit store orderBookingDayId ");
             debugPrint("edit store ownerName ${txtOwnerNameController.text}");
             debugPrint(
                 "edit store primaryMobile ${txtPrimaryMobController.text}");
             debugPrint(
                 "edit store secondaryMobile ${txtSecondaryMobController.text}");
-            debugPrint("edit store callTimeSlotId ");
-            debugPrint("edit store primaryLangId ");
-            debugPrint("edit store secondaryLangId ");
-            debugPrint("edit store retailerTypeId ");
-            debugPrint("edit store retailerCategoryId ");
-            if (whatsAppSmsRadio == yes) {
-              debugPrint("edit store whatsAppMessage ");
-            } else {
-              debugPrint("edit store whatsAppMessage ");
-            }
+            debugPrint(
+                "edit store helperMobile ${txtHelperMobController.text}");
+            debugPrint("edit store callTimeSlotId $callTimeSlotId");
+            debugPrint("edit store primaryLangId $primaryLangId");
+            debugPrint("edit store secondaryLangId $secondaryLangId");
+
+            debugPrint("edit store whatsAppMessage $whatsAppSmsRadio");
+
             debugPrint("edit store panNo ${txtPANController.text}");
             debugPrint("edit store aadhar ${txtAdharNumberController.text}");
             debugPrint("edit store birthday ${txtPicDateController.text}");
+            debugPrint(
+                "edit store anniversary ${txtAnniversaryController.text}");
             debugPrint("edit store ownerPhoto $ownerFileName");
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
               Text(
-                updateCaps,
+                nextCaps,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w500,
@@ -255,35 +370,20 @@ class _OwnerInformationState extends State<OwnerInformation> {
     );
   }
 
-  Widget sizedBoxWidget(boxHeight) {
+  Widget sizedBoxWidget(boxHeight, txtController) {
     return SizedBox(
+      key: selectedController == txtController ? globalKey : null,
       height: boxHeight,
     );
   }
 
   Widget textFields(txtController, textHint) {
-    return txtController == txtPicDateController ||
-            txtController == txtAnniversaryController ||
-            txtController == txtSelectCallTimeSlotController ||
+    return txtController == txtSelectCallTimeSlotController ||
             txtController == txtSelectLangFirstController ||
             txtController == txtSelectLangSecondController
         ? GestureDetector(
             onTap: () async {
-              if (txtController == txtPicDateController) {
-                dateTime ??= await NTP.now();
-                dateTime = await showDatePicker(
-                  context: context,
-                  initialDate: dateTime!,
-                  firstDate: DateTime(1950),
-                  lastDate: await NTP.now(),
-                );
-                if (dateTime != null) {
-                  commonBloc
-                      .add(CommonBlocSelectDateEvent(dateTime: dateTime!));
-                }
-              } else {
-                openBottomSheet(context, txtController);
-              }
+              openBottomSheet(context, txtController);
             },
             child: TextFormField(
               enabled: false,
@@ -295,7 +395,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
               ),
               controller: txtController,
               decoration: InputDecoration(
-                suffixIcon: txtController == txtPicDateController
+                suffixIcon: txtController == txtPicDateController ||
+                        txtController == txtAnniversaryController
                     ? const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Align(
@@ -332,43 +433,134 @@ class _OwnerInformationState extends State<OwnerInformation> {
               ),
             ),
           )
-        : TextFormField(
-            keyboardType: txtController == txtPrimaryMobController ||
-                    txtController == txtSecondaryMobController ||
-                    txtController == txtHelperMobController ||
-                    txtController == txtAdharNumberController
-                ? TextInputType.number
-                : TextInputType.text,
-            controller: txtController,
-            maxLength: txtController == txtPrimaryMobController ||
-                    txtController == txtSecondaryMobController ||
-                    txtController == txtHelperMobController
-                ? 10
-                : null,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.67,
-              color: MColor.backButton,
-            ),
-            decoration: InputDecoration(
-              hintText: textHint,
-              hintStyle: const TextStyle(
-                color: MColor.backButton,
-                letterSpacing: 0.67,
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-              ),
-              contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-              filled: true,
-              fillColor: const Color(0xffF2F2F2),
-              counter: Container(),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          );
+        : txtController == txtPicDateController ||
+                txtController == txtAnniversaryController
+            ? GestureDetector(
+                onTap: () async {
+                  if (txtController == txtPicDateController) {
+                    if (txtController == txtPicDateController) {
+                      dateTimeBirth ??= await NTP.now();
+                      dateTimeBirth = await showDatePicker(
+                        context: context,
+                        initialDate: dateTimeBirth!,
+                        firstDate: DateTime(1950),
+                        lastDate: await NTP.now(),
+                      );
+                      if (dateTimeBirth != null) {
+                        commonBloc.add(
+                            CommonBlocBirthdayEvent(dateTime: dateTimeBirth!));
+                      }
+                    }
+                  }
+                  if (txtController == txtAnniversaryController) {
+                    dateTimeAnniversary ??= await NTP.now();
+                    dateTimeAnniversary = await showDatePicker(
+                      context: context,
+                      initialDate: dateTimeAnniversary!,
+                      firstDate: DateTime(1950),
+                      lastDate: await NTP.now(),
+                    );
+                    if (dateTimeAnniversary != null) {
+                      commonBloc.add(CommonBlocAnniversaryEvent(
+                          dateTime: dateTimeAnniversary!));
+                    }
+                  }
+                },
+                child: TextFormField(
+                  enabled: false,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.67,
+                    color: MColor.backButton,
+                  ),
+                  controller: txtController,
+                  decoration: InputDecoration(
+                    suffixIcon: txtController == txtPicDateController ||
+                            txtController == txtAnniversaryController
+                        ? const Padding(
+                            padding: EdgeInsets.only(right: 20),
+                            child: Align(
+                              widthFactor: 1,
+                              alignment: Alignment.centerRight,
+                              child: Image(
+                                width: 22,
+                                image: AssetImage("assets/calendar_icon.png"),
+                              ),
+                            ),
+                          )
+                        : const Padding(
+                            padding: EdgeInsets.only(right: 15),
+                            child: Icon(
+                              Icons.keyboard_arrow_down_outlined,
+                              color: MColor.backButton,
+                              size: 30,
+                            ),
+                          ),
+                    hintText: textHint,
+                    hintStyle: const TextStyle(
+                      color: MColor.backButton,
+                      letterSpacing: 0.67,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                    contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                    filled: true,
+                    fillColor: const Color(0xffF2F2F2),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+              )
+            : TextFormField(
+                onFieldSubmitted: (value) {
+                  selectedController = TextEditingController();
+                },
+                onTap: () async {
+                  selectedController = txtController;
+                  await Future.delayed(const Duration(milliseconds: 500));
+                  RenderObject? object =
+                      globalKey.currentContext!.findRenderObject();
+                  object!.showOnScreen();
+                },
+                keyboardType: txtController == txtPrimaryMobController ||
+                        txtController == txtSecondaryMobController ||
+                        txtController == txtHelperMobController ||
+                        txtController == txtAdharNumberController
+                    ? TextInputType.number
+                    : TextInputType.text,
+                controller: txtController,
+                maxLength: txtController == txtPrimaryMobController ||
+                        txtController == txtSecondaryMobController ||
+                        txtController == txtHelperMobController
+                    ? 10
+                    : null,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.67,
+                  color: MColor.backButton,
+                ),
+                decoration: InputDecoration(
+                  hintText: textHint,
+                  hintStyle: const TextStyle(
+                    color: MColor.backButton,
+                    letterSpacing: 0.67,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                  contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                  filled: true,
+                  fillColor: const Color(0xffF2F2F2),
+                  counter: Container(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              );
   }
 
   Widget textWidget(currentText) {
@@ -384,15 +576,9 @@ class _OwnerInformationState extends State<OwnerInformation> {
   }
 
   Widget radioButtonWidget(groupValue, value, label) {
-    void addRadioEvent() {
-      if (value == 1 || value == 2) {
-        commonBloc.add(CommonBlocRetailerRadioEvent(retailerRadioTag: value));
-      }
-    }
-
     return GestureDetector(
       onTap: () {
-        addRadioEvent();
+        commonBloc.add(CommonBlocWhatsAppRadioEvent(whatsAppRadioTag: value));
       },
       child: Row(
         children: [
@@ -404,7 +590,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
               activeColor: MColor.colorPrimary,
               fillColor: MaterialStateProperty.all(MColor.colorPrimary),
               onChanged: (value) {
-                addRadioEvent();
+                commonBloc
+                    .add(CommonBlocWhatsAppRadioEvent(whatsAppRadioTag: value));
               },
             ),
           ),
@@ -427,7 +614,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
     );
   }
 
-  Widget selectImageWidget(imageLabel) {
+  Widget selectImageWidget() {
     return Container(
       width: MediaQuery.of(context).size.width / 3,
       height: MediaQuery.of(context).size.width / 3,
