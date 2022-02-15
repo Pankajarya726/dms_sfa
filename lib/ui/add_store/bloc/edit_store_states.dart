@@ -1,7 +1,7 @@
 import 'package:dms/ui/add_store/model/call_time_slot_response.dart';
 import 'package:dms/ui/add_store/model/editstore_getenroll_type_response.dart';
-import 'package:dms/ui/add_store/model/select_city_response.dart';
 import 'package:dms/ui/add_store/model/select_distributor_response.dart';
+import 'package:dms/ui/add_store/model/select_district_response.dart';
 import 'package:dms/ui/add_store/model/select_language_response.dart';
 import 'package:dms/ui/add_store/model/select_retailer_category_response.dart';
 import 'package:dms/ui/add_store/model/select_retailer_type_response.dart';
@@ -51,11 +51,11 @@ class SelectRetailerCategoryState extends EditStoreStates {
   List<Object> get props => [selectRetailerCategoryResponse];
 }
 
-class SelectCityState extends EditStoreStates {
-  final SelectCityResponse selectCityResponse;
-  SelectCityState({required this.selectCityResponse});
+class SelectDistrictState extends EditStoreStates {
+  final SelectDistrictResponse selectDistrictResponse;
+  SelectDistrictState({required this.selectDistrictResponse});
   @override
-  List<Object> get props => [selectCityResponse];
+  List<Object> get props => [selectDistrictResponse];
 }
 
 class SelectDistributorState extends EditStoreStates {

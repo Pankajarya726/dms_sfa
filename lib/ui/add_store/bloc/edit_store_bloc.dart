@@ -3,8 +3,8 @@ import 'package:dms/ui/add_store/bloc/edit_store_events.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_states.dart';
 import 'package:dms/ui/add_store/model/call_time_slot_response.dart';
 import 'package:dms/ui/add_store/model/editstore_getenroll_type_response.dart';
-import 'package:dms/ui/add_store/model/select_city_response.dart';
 import 'package:dms/ui/add_store/model/select_distributor_response.dart';
+import 'package:dms/ui/add_store/model/select_district_response.dart';
 import 'package:dms/ui/add_store/model/select_language_response.dart';
 import 'package:dms/ui/add_store/model/select_retailer_category_response.dart';
 import 'package:dms/ui/add_store/model/select_retailer_type_response.dart';
@@ -33,9 +33,9 @@ class EditStoreBloc extends Bloc<EditStoreEvents, EditStoreStates> {
       yield EditStoreILoadingState();
       yield* selectRetailerCategory(event);
     }
-    if (event is SelectCityEvent) {
+    if (event is SelectDistrictEvent) {
       yield EditStoreILoadingState();
-      yield* selectCity(event);
+      yield* selectDistrict(event);
     }
     if (event is SelectDistributorEvent) {
       yield EditStoreILoadingState();
@@ -104,11 +104,11 @@ class EditStoreBloc extends Bloc<EditStoreEvents, EditStoreStates> {
     }
   }
 
-  Stream<EditStoreStates> selectCity(SelectCityEvent event) async* {
+  Stream<EditStoreStates> selectDistrict(SelectDistrictEvent event) async* {
     if (await Network.isConnected()) {
-      SelectCityResponse response = await repository.selectCity();
+      SelectDistrictResponse response = await repository.selectCity();
       if (response.success) {
-        yield SelectCityState(selectCityResponse: response);
+        yield SelectDistrictState(selectDistrictResponse: response);
       } else {
         yield EditStoreFailureState(failureMessage: response.message);
       }

@@ -35,9 +35,13 @@ class CommonBloc extends Bloc<CommonBlocEvents, CommonBlocStates> {
       yield CommonBlocLoadingState();
       yield* isKRORadioTag(event);
     }
-    if (event is CommonBlocSelectDateEvent) {
+    if (event is CommonBlocBirthdayEvent) {
       yield CommonBlocLoadingState();
-      yield* selectDate(event);
+      yield* selectDateBirthday(event);
+    }
+    if (event is CommonBlocAnniversaryEvent) {
+      yield CommonBlocLoadingState();
+      yield* selectDateAnniversary(event);
     }
   }
 
@@ -78,7 +82,13 @@ class CommonBloc extends Bloc<CommonBlocEvents, CommonBlocStates> {
     yield CommonBlocIsKRORadioState(isKRORadioTag: event.isKRORadioTag);
   }
 
-  Stream<CommonBlocStates> selectDate(CommonBlocSelectDateEvent event) async* {
-    yield CommonBlocSelectDateState(dateTime: event.dateTime);
+  Stream<CommonBlocStates> selectDateBirthday(
+      CommonBlocBirthdayEvent event) async* {
+    yield CommonBlocBirthdayState(dateTime: event.dateTime);
+  }
+
+  Stream<CommonBlocStates> selectDateAnniversary(
+      CommonBlocAnniversaryEvent event) async* {
+    yield CommonBlocAnniversaryState(dateTime: event.dateTime);
   }
 }

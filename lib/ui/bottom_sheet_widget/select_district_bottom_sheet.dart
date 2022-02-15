@@ -1,7 +1,7 @@
 import 'package:dms/ui/add_store/bloc/edit_store_bloc.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_events.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_states.dart';
-import 'package:dms/ui/add_store/model/select_city_response.dart';
+import 'package:dms/ui/add_store/model/select_district_response.dart';
 import 'package:dms/ui/common_bloc/common_bloc.dart';
 import 'package:dms/ui/common_bloc/common_bloc_events.dart';
 import 'package:dms/ui/common_bloc/common_bloc_states.dart';
@@ -10,18 +10,22 @@ import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SelectCityBottomSheet extends StatefulWidget {
-  final Function(String selectedCity, int? selectedCityId) onCitySelect;
-  final String selectedCityName;
-  const SelectCityBottomSheet(
-      {Key? key, required this.onCitySelect, required this.selectedCityName})
+class SelectDistrictBottomSheet extends StatefulWidget {
+  final Function(String selectedDistrict, int? selectedDistrictId)
+      onDistrictSelect;
+  final String selectedDistrictName;
+  const SelectDistrictBottomSheet(
+      {Key? key,
+      required this.onDistrictSelect,
+      required this.selectedDistrictName})
       : super(key: key);
 
   @override
-  _SelectCityBottomSheetState createState() => _SelectCityBottomSheetState();
+  _SelectDistrictBottomSheetState createState() =>
+      _SelectDistrictBottomSheetState();
 }
 
-class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
+class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
   // List<String> names = [
   //   "Indore",
   //   "Bhopal",
@@ -29,17 +33,17 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
   //   "Surat",
   //   "Banglore",
   // ];
-  Object selectCityRadio = "";
-  String selectedCity = "";
-  int? selectedCityId;
+  Object selectDistrictRadio = "";
+  String selectedDistrict = "";
+  int? selectedDistrictId;
   CommonBloc commonBloc = CommonBloc();
-  List<CityModel>? cityModel = [];
+  List<DistrictModel>? districtModel = [];
 
   @override
   void initState() {
     super.initState();
-    selectCityRadio = widget.selectedCityName;
-    selectedCity = widget.selectedCityName;
+    selectDistrictRadio = widget.selectedDistrictName;
+    selectedDistrict = widget.selectedDistrictName;
   }
 
   @override
@@ -58,29 +62,30 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
         child: BlocBuilder<EditStoreBloc, EditStoreStates>(
           builder: (context, state) {
             if (state is EditStoreInitialState) {
-              BlocProvider.of<EditStoreBloc>(context).add(SelectCityEvent());
+              BlocProvider.of<EditStoreBloc>(context)
+                  .add(SelectDistrictEvent());
             }
             if (state is EditStoreILoadingState) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
-            if (state is SelectCityState) {
-              cityModel = state.selectCityResponse.data;
+            if (state is SelectDistrictState) {
+              districtModel = state.selectDistrictResponse.data;
             }
             if (state is EditStoreFailureState) {
               return Center(
                 child: Text(state.failureMessage),
               );
             }
-            if (cityModel == null) {
+            if (districtModel == null) {
               return Container();
             }
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  selectCity,
+                  selectDistrict,
                   style: TextStyle(
                     fontSize: 19,
                     color: MColor.colorPrimary,
@@ -105,7 +110,10 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      widget.onCitySelect(selectedCity, selectedCityId!);
+                      if (selectedDistrictId != null) {
+                        widget.onDistrictSelect(
+                            selectedDistrict, selectedDistrictId!);
+                      }
                       Navigator.pop(context);
                     },
                     style: ButtonStyle(
@@ -142,28 +150,28 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
 
   List<Widget> radioButtonWidget() {
     List<Widget> widgets = [];
-    for (CityModel cities in cityModel!) {
+    for (DistrictModel cities in districtModel!) {
       widgets.add(
         BlocProvider(
           create: (context) => commonBloc,
           child: BlocBuilder<CommonBloc, CommonBlocStates>(
             builder: (context, state) {
               if (state is CommonBlocInitialState) {
-                if (selectCityRadio == cities.name) {
+                if (selectDistrictRadio == cities.name) {
                   commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                       enrollmentRadioTag: cities.id));
                 }
               }
 
               if (state is CommonBlocEnrollRadioTagState) {
-                selectCityRadio = state.enrollmentRadioTag;
+                selectDistrictRadio = state.enrollmentRadioTag;
               }
               return GestureDetector(
                 onTap: () {
                   commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                       enrollmentRadioTag: cities.id));
-                  selectedCity = cities.name;
-                  selectedCityId = cities.id;
+                  selectedDistrict = cities.name;
+                  selectedDistrictId = cities.id;
                 },
                 child: Row(
                   children: [
@@ -171,15 +179,15 @@ class _SelectCityBottomSheetState extends State<SelectCityBottomSheet> {
                       width: 18,
                       child: Radio<dynamic>(
                         value: cities.id,
-                        groupValue: selectCityRadio,
+                        groupValue: selectDistrictRadio,
                         activeColor: MColor.colorPrimary,
                         fillColor:
                             MaterialStateProperty.all(MColor.colorPrimary),
                         onChanged: (value) {
                           commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                               enrollmentRadioTag: value));
-                          selectedCity = cities.name;
-                          selectedCityId = cities.id;
+                          selectedDistrict = cities.name;
+                          selectedDistrictId = cities.id;
                         },
                       ),
                     ),
