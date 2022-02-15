@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dms/ui/add_store/outlet_information/outlet_information.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/last_visit_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/no_order_reason_bottom_sheet.dart';
@@ -80,7 +81,8 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const EditStoreScreen()));
+                                builder: (context) =>
+                                    const OutletInformation()));
                       },
                       padding: EdgeInsets.zero,
                       splashRadius: 13,

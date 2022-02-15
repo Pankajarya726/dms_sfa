@@ -508,14 +508,32 @@ class _OutletInformationState extends State<OutletInformation> {
             debugPrint("edit store gstNo ${txtGSTController.text}");
             debugPrint("edit store outletphoto $outletFileName");
 
-            Map<String, dynamic> input = HashMap<String, dynamic>();
-            input["user_id"] = await SharedPreference.getStringPreference(
+            Map<String, dynamic> outletInfo = HashMap<String, dynamic>();
+            outletInfo["user_id"] = await SharedPreference.getStringPreference(
                 SharedPreference.userId);
-            input["enrolment_type"] = enrollmentTypeId;
+            outletInfo["enrolment_type"] = enrollmentTypeId;
+            outletInfo["district_id"] = districtId;
+            outletInfo["distributor_id"] = distributorId;
+            outletInfo["beat_id"] = beatId;
+            outletInfo["order_booking_day_id"] = orderBookingDayId;
+            outletInfo["outlet_name"] = txtOutletNameController.text;
+            outletInfo["latitude"] = txtLatitudeController.text;
+            outletInfo["longitude"] = txtLongtitudeController.text;
+            outletInfo["address"] = txtAddressController.text;
+            outletInfo["pincode"] = txtPincodeController.text;
+            outletInfo["landmark"] = txtLandmarkController.text;
+            outletInfo["existing_retailer"] = existingRetailerRadio;
+            outletInfo["retailer_type"] = txtSelectRetailerTypeController.text;
+            outletInfo["retailer_category"] =
+                txtSelectRetailerCategoryController.text;
+            outletInfo["is_kro"] = isKRORadio;
+            outletInfo["gst_number"] = txtGSTController.text;
+            outletInfo["outlet_photo"] = outletPhotoFile;
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => OwnerInformation(input: input)),
+                  builder: (context) =>
+                      OwnerInformation(outletInfo: outletInfo)),
             );
           },
           child: Row(

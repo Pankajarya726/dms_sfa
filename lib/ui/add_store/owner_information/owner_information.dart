@@ -1,4 +1,6 @@
+import 'dart:collection';
 import 'dart:io';
+import 'package:dms/ui/add_store/product_information/product_information.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_callTimeSlot_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_language_bottom_sheet.dart';
 import 'package:dms/ui/common_bloc/common_bloc.dart';
@@ -16,8 +18,9 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../../main.dart';
 
 class OwnerInformation extends StatefulWidget {
-  final Map<String, dynamic> input;
-  const OwnerInformation({Key? key, required this.input}) : super(key: key);
+  final Map<String, dynamic> outletInfo;
+  const OwnerInformation({Key? key, required this.outletInfo})
+      : super(key: key);
 
   @override
   State<OwnerInformation> createState() => _OwnerInformationState();
@@ -59,8 +62,6 @@ class _OwnerInformationState extends State<OwnerInformation> {
 
   @override
   Widget build(BuildContext context) {
-    var inp = widget.input["user_id"];
-    print("passed input = $inp");
     return BlocProvider(
       create: (context) => commonBloc,
       child: Scaffold(
@@ -325,8 +326,6 @@ class _OwnerInformationState extends State<OwnerInformation> {
             } else {
               Fluttertoast.showToast(msg: "Store added successful");
             }
-            // String userId = await SharedPreference.getStringPreference(
-            //     SharedPreference.userId);
             debugPrint("edit store userId ");
             debugPrint("edit store ownerName ${txtOwnerNameController.text}");
             debugPrint(
@@ -338,15 +337,34 @@ class _OwnerInformationState extends State<OwnerInformation> {
             debugPrint("edit store callTimeSlotId $callTimeSlotId");
             debugPrint("edit store primaryLangId $primaryLangId");
             debugPrint("edit store secondaryLangId $secondaryLangId");
-
             debugPrint("edit store whatsAppMessage $whatsAppSmsRadio");
-
             debugPrint("edit store panNo ${txtPANController.text}");
             debugPrint("edit store aadhar ${txtAdharNumberController.text}");
             debugPrint("edit store birthday ${txtPicDateController.text}");
             debugPrint(
                 "edit store anniversary ${txtAnniversaryController.text}");
             debugPrint("edit store ownerPhoto $ownerFileName");
+            Map<String, dynamic> ownerInfo = HashMap<String, dynamic>();
+            ownerInfo["owner_name"] = txtOwnerNameController.text;
+            ownerInfo["primary_mobile"] = txtPrimaryMobController.text;
+            ownerInfo["secondary_mobile"] = txtSecondaryMobController.text;
+            ownerInfo["helper_mobile"] = txtHelperMobController.text;
+            ownerInfo["call_time_slot"] = txtSelectCallTimeSlotController.text;
+            ownerInfo["lang_first"] = txtSelectLangFirstController.text;
+            ownerInfo["lang_second"] = txtSelectLangSecondController.text;
+            ownerInfo["whats_app_msg"] = whatsAppSmsRadio;
+            ownerInfo["pan_number"] = txtPANController.text;
+            ownerInfo["aadhar_number"] = txtAdharNumberController.text;
+            ownerInfo["birthday"] = txtPicDateController.text;
+            ownerInfo["anniversary"] = txtAnniversaryController.text;
+            ownerInfo["owner_photo"] = ownerPhotoFile;
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProductInformation(
+                    outletInfo: widget.outletInfo, ownerInfo: ownerInfo),
+              ),
+            );
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,

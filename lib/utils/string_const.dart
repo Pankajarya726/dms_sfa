@@ -3,6 +3,7 @@ const startMyDayCaps = "START MY DAY";
 const exploreCaps = "EXPLORE";
 const updateCaps = "UPDATE";
 const nextCaps = "NEXT";
+const submitCaps = "SUBMIT";
 const retailers = "Retailers";
 const retailer = "Retailer";
 const login = "Login";
