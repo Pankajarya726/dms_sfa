@@ -472,69 +472,71 @@ class _OutletInformationState extends State<OutletInformation> {
             } else if (outletPhotoFile == null) {
               Fluttertoast.showToast(msg: "Please capture outlet photo");
             } else {
-              Fluttertoast.showToast(msg: "Store added successful");
+              String userId = await SharedPreference.getStringPreference(
+                  SharedPreference.userId);
+              debugPrint("edit store userId $userId");
+              debugPrint("edit store enrollmentTypeId $enrollmentTypeId");
+              debugPrint("edit store cityId $districtId");
+              debugPrint("edit store distributorId $distributorId");
+              debugPrint("edit store beatId $beatId");
+              debugPrint("edit store orderBookingDayId $orderBookingDayId");
+              debugPrint(
+                  "edit store outletName ${txtOutletNameController.text}");
+              debugPrint("edit store latitude ${txtLatitudeController.text}");
+              debugPrint(
+                  "edit store longitude ${txtLongtitudeController.text}");
+              debugPrint("edit store address ${txtAddressController.text}");
+              debugPrint("edit store landmark ${txtLandmarkController.text}");
+              debugPrint("edit store pincode ${txtPincodeController.text}");
+
+              if (existingRetailerRadio == yes) {
+                debugPrint("edit store existingRetailer $yes");
+              } else {
+                debugPrint("edit store existingRetailer $no");
+              }
+
+              debugPrint("edit store retailerTypeId $retailerTypeId");
+              debugPrint("edit store retailerCategoryId $retailerCategoryId");
+
+              if (isKRORadio == yes) {
+                debugPrint("edit store isKRO $yes");
+              } else {
+                debugPrint("edit store isKRO $no");
+              }
+
+              debugPrint("edit store gstNo ${txtGSTController.text}");
+              debugPrint("edit store outletphoto $outletFileName");
+
+              Map<String, dynamic> outletInfo = HashMap<String, dynamic>();
+              outletInfo["user_id"] =
+                  await SharedPreference.getStringPreference(
+                      SharedPreference.userId);
+              outletInfo["enrolment_type"] = enrollmentTypeId;
+              outletInfo["district_id"] = districtId;
+              outletInfo["distributor_id"] = distributorId;
+              outletInfo["beat_id"] = beatId;
+              outletInfo["order_booking_day_id"] = orderBookingDayId;
+              outletInfo["outlet_name"] = txtOutletNameController.text;
+              outletInfo["latitude"] = txtLatitudeController.text;
+              outletInfo["longitude"] = txtLongtitudeController.text;
+              outletInfo["address"] = txtAddressController.text;
+              outletInfo["pincode"] = txtPincodeController.text;
+              outletInfo["landmark"] = txtLandmarkController.text;
+              outletInfo["existing_retailer"] = existingRetailerRadio;
+              outletInfo["retailer_type"] =
+                  txtSelectRetailerTypeController.text;
+              outletInfo["retailer_category"] =
+                  txtSelectRetailerCategoryController.text;
+              outletInfo["is_kro"] = isKRORadio;
+              outletInfo["gst_number"] = txtGSTController.text;
+              outletInfo["outlet_photo"] = outletPhotoFile;
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        OwnerInformation(outletInfo: outletInfo)),
+              );
             }
-
-            String userId = await SharedPreference.getStringPreference(
-                SharedPreference.userId);
-            debugPrint("edit store userId $userId");
-            debugPrint("edit store enrollmentTypeId $enrollmentTypeId");
-            debugPrint("edit store cityId $districtId");
-            debugPrint("edit store distributorId $distributorId");
-            debugPrint("edit store beatId $beatId");
-            debugPrint("edit store orderBookingDayId $orderBookingDayId");
-            debugPrint("edit store outletName ${txtOutletNameController.text}");
-            debugPrint("edit store latitude ${txtLatitudeController.text}");
-            debugPrint("edit store longitude ${txtLongtitudeController.text}");
-            debugPrint("edit store address ${txtAddressController.text}");
-            debugPrint("edit store landmark ${txtLandmarkController.text}");
-            debugPrint("edit store pincode ${txtPincodeController.text}");
-
-            if (existingRetailerRadio == yes) {
-              debugPrint("edit store existingRetailer $yes");
-            } else {
-              debugPrint("edit store existingRetailer $no");
-            }
-
-            debugPrint("edit store retailerTypeId $retailerTypeId");
-            debugPrint("edit store retailerCategoryId $retailerCategoryId");
-
-            if (isKRORadio == yes) {
-              debugPrint("edit store isKRO $yes");
-            } else {
-              debugPrint("edit store isKRO $no");
-            }
-
-            debugPrint("edit store gstNo ${txtGSTController.text}");
-            debugPrint("edit store outletphoto $outletFileName");
-
-            Map<String, dynamic> outletInfo = HashMap<String, dynamic>();
-            outletInfo["user_id"] = await SharedPreference.getStringPreference(
-                SharedPreference.userId);
-            outletInfo["enrolment_type"] = enrollmentTypeId;
-            outletInfo["district_id"] = districtId;
-            outletInfo["distributor_id"] = distributorId;
-            outletInfo["beat_id"] = beatId;
-            outletInfo["order_booking_day_id"] = orderBookingDayId;
-            outletInfo["outlet_name"] = txtOutletNameController.text;
-            outletInfo["latitude"] = txtLatitudeController.text;
-            outletInfo["longitude"] = txtLongtitudeController.text;
-            outletInfo["address"] = txtAddressController.text;
-            outletInfo["pincode"] = txtPincodeController.text;
-            outletInfo["landmark"] = txtLandmarkController.text;
-            outletInfo["existing_retailer"] = existingRetailerRadio;
-            outletInfo["retailer_type"] = txtSelectRetailerTypeController.text;
-            outletInfo["retailer_category"] =
-                txtSelectRetailerCategoryController.text;
-            outletInfo["is_kro"] = isKRORadio;
-            outletInfo["gst_number"] = txtGSTController.text;
-            outletInfo["outlet_photo"] = outletPhotoFile;
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      OwnerInformation(outletInfo: outletInfo)),
-            );
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,

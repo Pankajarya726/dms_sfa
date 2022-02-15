@@ -1,3 +1,4 @@
+import 'package:dms/ui/bottom_sheet_widget/otp_bottom_sheet.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
@@ -56,6 +57,15 @@ class _ProductInformationState extends State<ProductInformation> {
         color: MColor.colorSecondary,
         textColor: Colors.white,
         onPressed: () async {
+          showModalBottomSheet(
+              context: context,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+              ),
+              builder: (context) {
+                return const SelectOtpNumberBottomSheet();
+              });
+
           // debugPrint("edit store userId ");
           // debugPrint("edit store ownerName ${txtOwnerNameController.text}");
           // debugPrint(
