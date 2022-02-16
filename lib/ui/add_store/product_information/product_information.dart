@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dms/ui/bottom_sheet_widget/otp_bottom_sheet.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,9 @@ class ProductInformation extends StatefulWidget {
   final Map<String, dynamic> outletInfo;
   final Map<String, dynamic> ownerInfo;
 
-  const ProductInformation({Key? key, required this.outletInfo, required this.ownerInfo}) : super(key: key);
+  const ProductInformation(
+      {Key? key, required this.outletInfo, required this.ownerInfo})
+      : super(key: key);
 
   @override
   State<ProductInformation> createState() => _ProductInformationState();
@@ -42,6 +45,15 @@ class _ProductInformationState extends State<ProductInformation> {
         color: MColor.colorSecondary,
         textColor: Colors.white,
         onPressed: () async {
+          showModalBottomSheet(
+              context: context,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+              ),
+              builder: (context) {
+                return const SelectOtpNumberBottomSheet();
+              });
+
           // debugPrint("edit store userId ");
           // debugPrint("edit store ownerName ${txtOwnerNameController.text}");
           // debugPrint(
@@ -97,9 +109,15 @@ class _ProductInformationState extends State<ProductInformation> {
   getProduct() async {
     for (int i = 0; i < 10; i++) {
       productInfo.add(ProductsInfo(
-          icons: "https://dms-upload.s3.ap-southeast-1.amazonaws.com/apimenu_images/61cc431b22fbe.png",
+          icons:
+              "https://dms-upload.s3.ap-southeast-1.amazonaws.com/apimenu_images/61cc431b22fbe.png",
           productName: "product$i",
-          brands: [Brand(name: "brand1"), Brand(name: "brand2"), Brand(name: "brand3"), Brand(name: "brand4")]));
+          brands: [
+            Brand(name: "brand1"),
+            Brand(name: "brand2"),
+            Brand(name: "brand3"),
+            Brand(name: "brand4")
+          ]));
     }
     setState(() {});
   }
@@ -111,7 +129,8 @@ class ProductsInfo {
   bool check = false;
   List<Brand> brands;
 
-  ProductsInfo({required this.icons, required this.productName, required this.brands});
+  ProductsInfo(
+      {required this.icons, required this.productName, required this.brands});
 }
 
 class Brand {
@@ -124,7 +143,8 @@ class Brand {
 class ProductListItem extends StatefulWidget {
   final ProductsInfo productsInfo;
 
-  const ProductListItem({Key? key, required this.productsInfo}) : super(key: key);
+  const ProductListItem({Key? key, required this.productsInfo})
+      : super(key: key);
 
   @override
   _ProductListItemState createState() => _ProductListItemState();
@@ -155,7 +175,11 @@ class _ProductListItemState extends State<ProductListItem> {
             ),
             title: Text(
               widget.productsInfo.productName,
-              style: const TextStyle(color: MColor.textColor, letterSpacing: 0.5, fontWeight: FontWeight.bold, fontSize: 18),
+              style: const TextStyle(
+                  color: MColor.textColor,
+                  letterSpacing: 0.5,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18),
             ),
             trailing: Checkbox(
               value: checked,
@@ -180,12 +204,14 @@ class _ProductListItemState extends State<ProductListItem> {
                       elevation: 0,
                       pressEnabled: true,
                       onPressed: (item) {
-                        widget.productsInfo.brands[index].check = item.customData.check;
+                        widget.productsInfo.brands[index].check =
+                            item.customData.check;
                         setState(() {});
                       },
                       customData: widget.productsInfo.brands[index],
                       textStyle: const TextStyle(fontSize: 17),
-                      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 10),
                       title: widget.productsInfo.brands[index].name,
                       active: widget.productsInfo.brands[index].check,
                       textActiveColor: MColor.activeTextColor,
@@ -193,7 +219,9 @@ class _ProductListItemState extends State<ProductListItem> {
                       color: MColor.disableBgColor,
                       activeColor: MColor.enableBgColor,
                       border: Border.all(
-                          color: widget.productsInfo.brands[index].check ? MColor.enableBorderColor : MColor.disableBorderColor),
+                          color: widget.productsInfo.brands[index].check
+                              ? MColor.enableBorderColor
+                              : MColor.disableBorderColor),
                     );
                   },
                 )

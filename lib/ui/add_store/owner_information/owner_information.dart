@@ -314,17 +314,19 @@ class _OwnerInformationState extends State<OwnerInformation> {
           onPressed: () async {
             if (txtOwnerNameController.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please enter owner name");
-            } else if (txtPrimaryMobController.text.isEmpty) {
+            }
+            if (txtPrimaryMobController.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please enter primary mobile");
-            } else if (txtSelectCallTimeSlotController.text.isEmpty) {
+            }
+            if (txtSelectCallTimeSlotController.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please select call time slot");
-            } else if (txtSelectLangFirstController.text.isEmpty) {
+            }
+            if (txtSelectLangFirstController.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please select language 1st");
-            } else if (whatsAppSmsRadio == "") {
+            }
+            if (whatsAppSmsRadio == "") {
               Fluttertoast.showToast(
                   msg: "Please select opt-in for whatsapp message / SMS");
-            } else {
-              Fluttertoast.showToast(msg: "Store added successful");
             }
             debugPrint("edit store userId ");
             debugPrint("edit store ownerName ${txtOwnerNameController.text}");
