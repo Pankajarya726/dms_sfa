@@ -188,11 +188,9 @@ class _BeatWidgetState extends State<BeatWidget> {
           textActiveColor: Colors.black,
           textColor: const Color(0xff555555),
           elevation: 0,
-          textStyle: const TextStyle(fontSize: 16),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          border: Border.all(
-            color: widget.tags[index] == tag ? MColor.colorPrimary : const Color(0xffC5C5C5),
-          ),
+          border: Border.all(color: widget.tags[index] == tag ? MColor.colorPrimary : const Color(0xffC5C5C5), width: 1.5),
           singleItem: true,
           activeColor: widget.tags[index] == tag ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
           color: widget.tags[index] == tag ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
