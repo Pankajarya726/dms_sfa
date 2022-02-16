@@ -61,13 +61,13 @@ class _OutletInformationState extends State<OutletInformation> {
   List<EnrolmentTypeModel>? enrolmentTypeModel = [];
   RefreshController refreshController =
       RefreshController(initialRefresh: false);
-  int? enrollmentTypeId;
-  int? districtId;
-  int? distributorId;
-  int? beatId;
-  int? orderBookingDayId;
-  int? retailerTypeId;
-  int? retailerCategoryId;
+  String? enrollmentTypeId;
+  String? districtId;
+  String? distributorId;
+  String? beatId;
+  String? orderBookingDayId;
+  String? retailerTypeId;
+  String? retailerCategoryId;
   GlobalKey globalKey = GlobalKey();
   TextEditingController selectedController = TextEditingController();
 
@@ -393,8 +393,8 @@ class _OutletInformationState extends State<OutletInformation> {
                       }
                       return Row(
                         children: [
-                          radioButtonWidget(isKRORadio, 5, yes),
-                          radioButtonWidget(isKRORadio, 6, no),
+                          radioButtonWidget(isKRORadio, 3, yes),
+                          radioButtonWidget(isKRORadio, 4, no),
                         ],
                       );
                     },
@@ -489,19 +489,19 @@ class _OutletInformationState extends State<OutletInformation> {
               debugPrint("edit store landmark ${txtLandmarkController.text}");
               debugPrint("edit store pincode ${txtPincodeController.text}");
 
-              if (existingRetailerRadio == yes) {
-                debugPrint("edit store existingRetailer $yes");
+              if (existingRetailerRadio == 1) {
+                debugPrint("edit store existingRetailer 1");
               } else {
-                debugPrint("edit store existingRetailer $no");
+                debugPrint("edit store existingRetailer 0");
               }
 
               debugPrint("edit store retailerTypeId $retailerTypeId");
               debugPrint("edit store retailerCategoryId $retailerCategoryId");
 
-              if (isKRORadio == yes) {
-                debugPrint("edit store isKRO $yes");
+              if (isKRORadio == 3) {
+                debugPrint("edit store isKRO 1");
               } else {
-                debugPrint("edit store isKRO $no");
+                debugPrint("edit store isKRO 0");
               }
 
               debugPrint("edit store gstNo ${txtGSTController.text}");
@@ -522,12 +522,11 @@ class _OutletInformationState extends State<OutletInformation> {
               outletInfo["address"] = txtAddressController.text;
               outletInfo["pincode"] = txtPincodeController.text;
               outletInfo["landmark"] = txtLandmarkController.text;
-              outletInfo["existing_retailer"] = existingRetailerRadio;
-              outletInfo["retailer_type"] =
-                  txtSelectRetailerTypeController.text;
-              outletInfo["retailer_category"] =
-                  txtSelectRetailerCategoryController.text;
-              outletInfo["is_kro"] = isKRORadio;
+              outletInfo["existing_retailer"] =
+                  existingRetailerRadio == 1 ? "1" : "0";
+              outletInfo["retailer_type"] = retailerTypeId;
+              outletInfo["retailer_category"] = retailerCategoryId;
+              outletInfo["is_kro"] = isKRORadio == 3 ? "1" : "0";
               outletInfo["gst_number"] = txtGSTController.text;
               outletInfo["outlet_photo"] = outletPhotoFile;
               Navigator.push(
@@ -675,9 +674,6 @@ class _OutletInformationState extends State<OutletInformation> {
         commonBloc.add(CommonBlocRetailerRadioEvent(retailerRadioTag: value));
       }
       if (value == 3 || value == 4) {
-        commonBloc.add(CommonBlocWhatsAppRadioEvent(whatsAppRadioTag: value));
-      }
-      if (value == 5 || value == 6) {
         commonBloc.add(CommonBlocIsKRORadioEvent(isKRORadioTag: value));
       }
     }
@@ -726,7 +722,7 @@ class _OutletInformationState extends State<OutletInformation> {
         onTap: () {
           commonBloc.add(CommonBlocEnrollTypeRadioEvent(
               enrollmentRadioTag: enrolmentType.id));
-          enrollmentTypeId = enrolmentType.id;
+          enrollmentTypeId = enrolmentType.id.toString();
         },
         child: Row(
           children: [
@@ -740,7 +736,7 @@ class _OutletInformationState extends State<OutletInformation> {
                 onChanged: (value) {
                   commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                       enrollmentRadioTag: value));
-                  enrollmentTypeId = enrolmentType.id;
+                  enrollmentTypeId = enrolmentType.id.toString();
                 },
               ),
             ),

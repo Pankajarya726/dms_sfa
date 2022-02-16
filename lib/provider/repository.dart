@@ -598,9 +598,9 @@ class ApiRepository {
     }
   }
 
-  Future<SelectDistrictResponse> selectCity() async {
+  Future<SelectDistrictResponse> selectDistrict() async {
     try {
-      Response response = await dio.get(Url.getCity);
+      Response response = await dio.post(Url.getDistrict);
       SelectDistrictResponse baseResponse =
           SelectDistrictResponse.fromJson(response.toString());
       return baseResponse;

@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SelectLanguageBottomSheet extends StatefulWidget {
-  final Function(String selectedLanguage, int? selectedLangId) onLanguageSelect;
+  final Function(String selectedLanguage, String? selectedLangId)
+      onLanguageSelect;
   final String selectedLanguageName;
   final String bottomSheetHeading;
   final String previousSelectedLang;
@@ -39,7 +40,7 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
   // ];
   Object selectLanguageRadio = "";
   String selectedLanguage = "";
-  int? selectedLanguageId;
+  String? selectedLanguageId;
   CommonBloc commonBloc = CommonBloc();
   List<LanguageModel>? languageModel = [];
 
@@ -175,7 +176,7 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
                   commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                       enrollmentRadioTag: language.id));
                   selectedLanguage = language.languageName;
-                  selectedLanguageId = language.id;
+                  selectedLanguageId = language.id.toString();
                 },
                 child: Row(
                   children: [
@@ -191,7 +192,7 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
                           commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                               enrollmentRadioTag: value));
                           selectedLanguage = language.languageName;
-                          selectedLanguageId = language.id;
+                          selectedLanguageId = language.id.toString();
                         },
                       ),
                     ),

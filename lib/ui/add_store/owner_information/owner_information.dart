@@ -45,10 +45,10 @@ class _OwnerInformationState extends State<OwnerInformation> {
   TextEditingController txtAdharNumberController = TextEditingController();
   TextEditingController txtPicDateController = TextEditingController();
   TextEditingController txtAnniversaryController = TextEditingController();
-  int? callTimeSlotId;
-  int? primaryLangId;
+  String? callTimeSlotId;
+  String? primaryLangId;
   String? primaryLangCode;
-  int? secondaryLangId;
+  String? secondaryLangId;
   String? secondaryLangCode;
   RefreshController refreshController =
       RefreshController(initialRefresh: false);
@@ -200,8 +200,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       }
                       return Row(
                         children: [
-                          radioButtonWidget(whatsAppSmsRadio, yes, yes),
-                          radioButtonWidget(whatsAppSmsRadio, no, no),
+                          radioButtonWidget(whatsAppSmsRadio, 1, yes),
+                          radioButtonWidget(whatsAppSmsRadio, 2, no),
                         ],
                       );
                     },
@@ -314,59 +314,60 @@ class _OwnerInformationState extends State<OwnerInformation> {
           onPressed: () async {
             if (txtOwnerNameController.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please enter owner name");
-            }
-            if (txtPrimaryMobController.text.isEmpty) {
+            } else if (txtPrimaryMobController.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please enter primary mobile");
-            }
-            if (txtSelectCallTimeSlotController.text.isEmpty) {
+            } else if (txtSelectCallTimeSlotController.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please select call time slot");
-            }
-            if (txtSelectLangFirstController.text.isEmpty) {
+            } else if (txtSelectLangFirstController.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please select language 1st");
-            }
-            if (whatsAppSmsRadio == "") {
+            } else if (whatsAppSmsRadio == "") {
               Fluttertoast.showToast(
                   msg: "Please select opt-in for whatsapp message / SMS");
+            } else {
+              debugPrint("edit store ownerName ${txtOwnerNameController.text}");
+              debugPrint(
+                  "edit store primaryMobile ${txtPrimaryMobController.text}");
+              debugPrint(
+                  "edit store secondaryMobile ${txtSecondaryMobController.text}");
+              debugPrint(
+                  "edit store helperMobile ${txtHelperMobController.text}");
+              debugPrint("edit store callTimeSlotId $callTimeSlotId");
+              debugPrint("edit store primaryLangId $primaryLangId");
+              debugPrint("edit store secondaryLangId $secondaryLangId");
+              if (whatsAppSmsRadio == 1) {
+                debugPrint("edit store whatsAppMessage 1");
+              } else {
+                debugPrint("edit store whatsAppMessage 0");
+              }
+              debugPrint("edit store panNo ${txtPANController.text}");
+              debugPrint("edit store aadhar ${txtAdharNumberController.text}");
+              debugPrint("edit store birthday ${txtPicDateController.text}");
+              debugPrint(
+                  "edit store anniversary ${txtAnniversaryController.text}");
+              debugPrint("edit store ownerPhoto $ownerFileName");
+
+              Map<String, dynamic> ownerInfo = HashMap<String, dynamic>();
+              ownerInfo["owner_name"] = txtOwnerNameController.text;
+              ownerInfo["primary_mobile"] = txtPrimaryMobController.text;
+              ownerInfo["secondary_mobile"] = txtSecondaryMobController.text;
+              ownerInfo["helper_mobile"] = txtHelperMobController.text;
+              ownerInfo["call_time_slot"] = callTimeSlotId;
+              ownerInfo["lang_first"] = primaryLangId;
+              ownerInfo["lang_second"] = secondaryLangId;
+              ownerInfo["whats_app_msg"] = whatsAppSmsRadio == 1 ? "1" : "0";
+              ownerInfo["pan_number"] = txtPANController.text;
+              ownerInfo["aadhar_number"] = txtAdharNumberController.text;
+              ownerInfo["birthday"] = txtPicDateController.text;
+              ownerInfo["anniversary"] = txtAnniversaryController.text;
+              ownerInfo["owner_photo"] = ownerPhotoFile;
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProductInformation(
+                      outletInfo: widget.outletInfo, ownerInfo: ownerInfo),
+                ),
+              );
             }
-            debugPrint("edit store userId ");
-            debugPrint("edit store ownerName ${txtOwnerNameController.text}");
-            debugPrint(
-                "edit store primaryMobile ${txtPrimaryMobController.text}");
-            debugPrint(
-                "edit store secondaryMobile ${txtSecondaryMobController.text}");
-            debugPrint(
-                "edit store helperMobile ${txtHelperMobController.text}");
-            debugPrint("edit store callTimeSlotId $callTimeSlotId");
-            debugPrint("edit store primaryLangId $primaryLangId");
-            debugPrint("edit store secondaryLangId $secondaryLangId");
-            debugPrint("edit store whatsAppMessage $whatsAppSmsRadio");
-            debugPrint("edit store panNo ${txtPANController.text}");
-            debugPrint("edit store aadhar ${txtAdharNumberController.text}");
-            debugPrint("edit store birthday ${txtPicDateController.text}");
-            debugPrint(
-                "edit store anniversary ${txtAnniversaryController.text}");
-            debugPrint("edit store ownerPhoto $ownerFileName");
-            Map<String, dynamic> ownerInfo = HashMap<String, dynamic>();
-            ownerInfo["owner_name"] = txtOwnerNameController.text;
-            ownerInfo["primary_mobile"] = txtPrimaryMobController.text;
-            ownerInfo["secondary_mobile"] = txtSecondaryMobController.text;
-            ownerInfo["helper_mobile"] = txtHelperMobController.text;
-            ownerInfo["call_time_slot"] = txtSelectCallTimeSlotController.text;
-            ownerInfo["lang_first"] = txtSelectLangFirstController.text;
-            ownerInfo["lang_second"] = txtSelectLangSecondController.text;
-            ownerInfo["whats_app_msg"] = whatsAppSmsRadio;
-            ownerInfo["pan_number"] = txtPANController.text;
-            ownerInfo["aadhar_number"] = txtAdharNumberController.text;
-            ownerInfo["birthday"] = txtPicDateController.text;
-            ownerInfo["anniversary"] = txtAnniversaryController.text;
-            ownerInfo["owner_photo"] = ownerPhotoFile;
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ProductInformation(
-                    outletInfo: widget.outletInfo, ownerInfo: ownerInfo),
-              ),
-            );
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,

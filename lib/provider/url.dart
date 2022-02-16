@@ -23,7 +23,7 @@ class Url {
   static const String getLanguage = "getLanguage";
   static const String getRetailerType = "getRetailerType";
   static const String getRetailerCategory = "getRetailerCategory";
-  static const String getCity = "getCity";
+  static const String getDistrict = "getDistrictsRoleWise";
   static const String getDistributor = "getDistibutors";
   static const String getCallTimeSlot = "getCallTimeSlot";
 }

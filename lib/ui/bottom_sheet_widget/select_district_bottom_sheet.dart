@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SelectDistrictBottomSheet extends StatefulWidget {
-  final Function(String selectedDistrict, int? selectedDistrictId)
+  final Function(String selectedDistrict, String? selectedDistrictId)
       onDistrictSelect;
   final String selectedDistrictName;
   const SelectDistrictBottomSheet(
@@ -35,7 +35,7 @@ class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
   // ];
   Object selectDistrictRadio = "";
   String selectedDistrict = "";
-  int? selectedDistrictId;
+  String? selectedDistrictId;
   CommonBloc commonBloc = CommonBloc();
   List<DistrictModel>? districtModel = [];
 
@@ -171,7 +171,7 @@ class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
                   commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                       enrollmentRadioTag: cities.id));
                   selectedDistrict = cities.name;
-                  selectedDistrictId = cities.id;
+                  selectedDistrictId = cities.id.toString();
                 },
                 child: Row(
                   children: [
@@ -187,7 +187,7 @@ class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
                           commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                               enrollmentRadioTag: value));
                           selectedDistrict = cities.name;
-                          selectedDistrictId = cities.id;
+                          selectedDistrictId = cities.id.toString();
                         },
                       ),
                     ),
