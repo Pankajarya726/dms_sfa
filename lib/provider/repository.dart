@@ -7,6 +7,7 @@ import 'package:dms/main.dart';
 import 'package:dms/model/base_response.dart';
 import 'package:dms/model/get_all_tag_response.dart';
 import 'package:dms/model/get_plan_response.dart';
+import 'package:dms/model/get_survey_product.dart';
 import 'package:dms/provider/server_error.dart';
 import 'package:dms/provider/url.dart';
 import 'package:dms/ui/add_plan/model/add_plan_response.dart';
@@ -44,9 +45,7 @@ class ApiRepository {
   Future<SplashResponse> validateAppVersion(Map input) async {
     try {
       Response response = await dio.post(Url.validateAppVer,
-          data: input,
-          options: buildCacheOptions(const Duration(days: 7),
-              forceRefresh: true, maxStale: const Duration(days: 7)));
+          data: input, options: buildCacheOptions(const Duration(days: 7), forceRefresh: true, maxStale: const Duration(days: 7)));
       SplashResponse result = SplashResponse.fromJson(response.toString());
       return result;
     } catch (error, stacktrace) {
@@ -63,10 +62,7 @@ class ApiRepository {
   }
 
   Future<LoginResponse> login(String mobileNumber, String password) async {
-    Map<String, dynamic> data = {
-      "mobile_number": mobileNumber,
-      "password": password
-    };
+    Map<String, dynamic> data = {"mobile_number": mobileNumber, "password": password};
 
     try {
       Response response = await dio.post(
@@ -92,8 +88,7 @@ class ApiRepository {
     try {
       Response response = await dio.get(Url.getQuotesAndImages);
 
-      QuotesAndImagesResponse quotesAndImagesResponse =
-          QuotesAndImagesResponse.fromJson(response.toString());
+      QuotesAndImagesResponse quotesAndImagesResponse = QuotesAndImagesResponse.fromJson(response.toString());
       return quotesAndImagesResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -118,8 +113,7 @@ class ApiRepository {
     try {
       Response response = await dio.post(Url.startMyDay, data: formData);
 
-      StartMyDayResponse startMyDayResponse =
-          StartMyDayResponse.fromJson(response.toString());
+      StartMyDayResponse startMyDayResponse = StartMyDayResponse.fromJson(response.toString());
       return startMyDayResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -186,8 +180,7 @@ class ApiRepository {
     try {
       Response response = await dio.post(Url.endMyDay, data: data);
 
-      EndMyDayResponse endMyDayResponse =
-          EndMyDayResponse.fromJson(response.toString());
+      EndMyDayResponse endMyDayResponse = EndMyDayResponse.fromJson(response.toString());
       return endMyDayResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -226,18 +219,16 @@ class ApiRepository {
     }
   }
 
-  Future<UpdateProfileResponse> editProfile(
-      String name, String email, File? imgFile) async {
+  Future<UpdateProfileResponse> editProfile(String name, String email, File? imgFile) async {
     Map<String, dynamic> params = HashMap<String, dynamic>();
 
-    params["user_id"] =
-        await SharedPreference.getStringPreference(SharedPreference.userId);
+    params["user_id"] = await SharedPreference.getStringPreference(SharedPreference.userId);
     params["name"] = name;
     params["email"] = email;
 
     if (imgFile != null) {
-      params["profile_picture"] = await MultipartFile.fromFile(imgFile.path,
-          filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
+      params["profile_picture"] =
+          await MultipartFile.fromFile(imgFile.path, filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
     }
     debugPrint("params-->$params");
 
@@ -248,8 +239,7 @@ class ApiRepository {
         data: data,
       );
 
-      UpdateProfileResponse result =
-          UpdateProfileResponse.fromJson(response.toString());
+      UpdateProfileResponse result = UpdateProfileResponse.fromJson(response.toString());
       return result;
     } catch (error, stacktrace) {
       String message = "";
@@ -267,8 +257,7 @@ class ApiRepository {
     }
   }
 
-  Future<ChangePassResponse> changePassword(String id, String currPassword,
-      String newPassword, String confPassword) async {
+  Future<ChangePassResponse> changePassword(String id, String currPassword, String newPassword, String confPassword) async {
     Map<String, dynamic> params = {
       "current_password": currPassword,
       "new_password": newPassword,
@@ -282,8 +271,7 @@ class ApiRepository {
         data: params,
       );
 
-      ChangePassResponse result =
-          ChangePassResponse.fromJson(response.toString());
+      ChangePassResponse result = ChangePassResponse.fromJson(response.toString());
       return result;
     } catch (error, stacktrace) {
       String message = "";
@@ -308,8 +296,7 @@ class ApiRepository {
         data: input,
       );
 
-      AddPlanResponse addPlanResponse =
-          AddPlanResponse.fromJson(response.toString());
+      AddPlanResponse addPlanResponse = AddPlanResponse.fromJson(response.toString());
       return addPlanResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -409,8 +396,7 @@ class ApiRepository {
         Url.getMyPlanByMonth,
         data: data,
       );
-      GetPlanResponse getAddPlanDataResponse =
-          GetPlanResponse.fromJson(response.toString());
+      GetPlanResponse getAddPlanDataResponse = GetPlanResponse.fromJson(response.toString());
       return getAddPlanDataResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -436,8 +422,7 @@ class ApiRepository {
         data: input,
       );
 
-      AddPlanUpdateDataResponse getAddPlanDataResponse =
-          AddPlanUpdateDataResponse.fromJson(response.toString());
+      AddPlanUpdateDataResponse getAddPlanDataResponse = AddPlanUpdateDataResponse.fromJson(response.toString());
       return getAddPlanDataResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -482,16 +467,13 @@ class ApiRepository {
 
   Future<GetAllTagResponse> getAllTags() async {
     try {
-      Map input = {
-        "user_id": await Utility.getStringPreference(SharedPreference.userId)
-      };
+      Map input = {"user_id": await Utility.getStringPreference(SharedPreference.userId)};
       Response response = await dio.post(
         Url.getAllTags,
         data: input,
       );
 
-      GetAllTagResponse baseResponse =
-          GetAllTagResponse.fromJson(response.toString());
+      GetAllTagResponse baseResponse = GetAllTagResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -513,8 +495,7 @@ class ApiRepository {
   Future<GetEnrollTypeResponse> getEnrolmentType() async {
     try {
       Response response = await dio.get(Url.getEnrollmentType);
-      GetEnrollTypeResponse baseResponse =
-          GetEnrollTypeResponse.fromJson(response.toString());
+      GetEnrollTypeResponse baseResponse = GetEnrollTypeResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -535,8 +516,7 @@ class ApiRepository {
   Future<SelectLanguageResponse> selectLanguage() async {
     try {
       Response response = await dio.get(Url.getLanguage);
-      SelectLanguageResponse baseResponse =
-          SelectLanguageResponse.fromJson(response.toString());
+      SelectLanguageResponse baseResponse = SelectLanguageResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -557,8 +537,7 @@ class ApiRepository {
   Future<SelectRetailerTypeResponse> selectRetailerType() async {
     try {
       Response response = await dio.get(Url.getRetailerType);
-      SelectRetailerTypeResponse baseResponse =
-          SelectRetailerTypeResponse.fromJson(response.toString());
+      SelectRetailerTypeResponse baseResponse = SelectRetailerTypeResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -579,8 +558,7 @@ class ApiRepository {
   Future<SelectRetailerCategoryResponse> selectRetailerCategory() async {
     try {
       Response response = await dio.get(Url.getRetailerCategory);
-      SelectRetailerCategoryResponse baseResponse =
-          SelectRetailerCategoryResponse.fromJson(response.toString());
+      SelectRetailerCategoryResponse baseResponse = SelectRetailerCategoryResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -601,8 +579,7 @@ class ApiRepository {
   Future<SelectDistrictResponse> selectCity() async {
     try {
       Response response = await dio.get(Url.getCity);
-      SelectDistrictResponse baseResponse =
-          SelectDistrictResponse.fromJson(response.toString());
+      SelectDistrictResponse baseResponse = SelectDistrictResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -623,8 +600,7 @@ class ApiRepository {
   Future<SelectDistributorResponse> selectDistributor() async {
     try {
       Response response = await dio.get(Url.getDistributor);
-      SelectDistributorResponse baseResponse =
-          SelectDistributorResponse.fromJson(response.toString());
+      SelectDistributorResponse baseResponse = SelectDistributorResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -645,8 +621,7 @@ class ApiRepository {
   Future<CallTimeSlotResponse> selectCallTimeslot() async {
     try {
       Response response = await dio.get(Url.getCallTimeSlot);
-      CallTimeSlotResponse baseResponse =
-          CallTimeSlotResponse.fromJson(response.toString());
+      CallTimeSlotResponse baseResponse = CallTimeSlotResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -660,6 +635,28 @@ class ApiRepository {
       return CallTimeSlotResponse(
         success: false,
         message: message,
+      );
+    }
+  }
+
+  Future<GetSurveyProduct> getSurveyProduct() async {
+    try {
+      Response response = await dio.get(Url.getRetailerProducts);
+      GetSurveyProduct getSurveyProduct = GetSurveyProduct.fromJson(response.toString());
+      return getSurveyProduct;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return GetSurveyProduct(
+        success: false,
+        message: message,
+        data: [],
       );
     }
   }

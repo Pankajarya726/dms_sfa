@@ -26,4 +26,5 @@ class Url {
   static const String getCity = "getCity";
   static const String getDistributor = "getDistibutors";
   static const String getCallTimeSlot = "getCallTimeSlot";
+  static const String getRetailerProducts = "getRetailerProducts";
 }
