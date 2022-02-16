@@ -28,16 +28,12 @@ class _ProductInformationState extends State<ProductInformation> {
 
   @override
   Widget build(BuildContext context) {
-    var inp1 = widget.outletInfo;
-    var inp2 = widget.ownerInfo;
-    debugPrint("passed input = $inp1");
-    debugPrint("passed input = $inp2");
     return Scaffold(
       appBar: AppBar(),
       body: ListView.separated(
         itemCount: productInfo.length,
         separatorBuilder: (context, index) {
-          return Divider();
+          return const Divider();
         },
         itemBuilder: (context, index) {
           return ProductListItem(productsInfo: productInfo[index]);
