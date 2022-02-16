@@ -22,7 +22,8 @@ import '../../../main.dart';
 
 class OwnerInformation extends StatefulWidget {
   final Map<String, dynamic> outletInfo;
-  const OwnerInformation({Key? key, required this.outletInfo}) : super(key: key);
+  const OwnerInformation({Key? key, required this.outletInfo})
+      : super(key: key);
 
   @override
   State<OwnerInformation> createState() => _OwnerInformationState();
@@ -39,19 +40,21 @@ class _OwnerInformationState extends State<OwnerInformation> {
   TextEditingController txtPrimaryMobController = TextEditingController();
   TextEditingController txtSecondaryMobController = TextEditingController();
   TextEditingController txtHelperMobController = TextEditingController();
-  TextEditingController txtSelectCallTimeSlotController = TextEditingController();
+  TextEditingController txtSelectCallTimeSlotController =
+      TextEditingController();
   TextEditingController txtSelectLangFirstController = TextEditingController();
   TextEditingController txtSelectLangSecondController = TextEditingController();
   TextEditingController txtPANController = TextEditingController();
   TextEditingController txtAdharNumberController = TextEditingController();
   TextEditingController txtPicDateController = TextEditingController();
   TextEditingController txtAnniversaryController = TextEditingController();
-  int? callTimeSlotId;
-  int? primaryLangId;
+  String? callTimeSlotId;
+  String? primaryLangId;
   String? primaryLangCode;
-  int? secondaryLangId;
+  String? secondaryLangId;
   String? secondaryLangCode;
-  RefreshController refreshController = RefreshController(initialRefresh: false);
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
   GlobalKey globalKey = GlobalKey();
   TextEditingController selectedController = TextEditingController();
 
@@ -200,8 +203,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       }
                       return Row(
                         children: [
-                          radioButtonWidget(whatsAppSmsRadio, yes, yes),
-                          radioButtonWidget(whatsAppSmsRadio, no, no),
+                          radioButtonWidget(whatsAppSmsRadio, 1, yes),
+                          radioButtonWidget(whatsAppSmsRadio, 2, no),
                         ],
                       );
                     },
@@ -244,7 +247,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
                       if (state is CommonBlocBirthdayState) {
-                        txtPicDateController.text = DateFormat("yyyy-MM-dd").format(state.dateTime);
+                        txtPicDateController.text =
+                            DateFormat("yyyy-MM-dd").format(state.dateTime);
                       }
                       return textFields(txtPicDateController, picDate);
                     },
@@ -263,7 +267,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
                       if (state is CommonBlocAnniversaryState) {
-                        txtAnniversaryController.text = DateFormat("yyyy-MM-dd").format(state.dateTime);
+                        txtAnniversaryController.text =
+                            DateFormat("yyyy-MM-dd").format(state.dateTime);
                       }
                       return textFields(txtAnniversaryController, picDate);
                     },
@@ -314,53 +319,60 @@ class _OwnerInformationState extends State<OwnerInformation> {
             FocusScope.of(context).unfocus();
             if (txtOwnerNameController.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please enter owner name");
-            }
-            if (txtPrimaryMobController.text.isEmpty) {
+            } else if (txtPrimaryMobController.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please enter primary mobile");
-            }
-            if (txtSelectCallTimeSlotController.text.isEmpty) {
+            } else if (txtSelectCallTimeSlotController.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please select call time slot");
-            }
-            if (txtSelectLangFirstController.text.isEmpty) {
+            } else if (txtSelectLangFirstController.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please select language 1st");
+            } else if (whatsAppSmsRadio == "") {
+              Fluttertoast.showToast(
+                  msg: "Please select opt-in for whatsapp message / SMS");
+            } else {
+              debugPrint("edit store ownerName ${txtOwnerNameController.text}");
+              debugPrint(
+                  "edit store primaryMobile ${txtPrimaryMobController.text}");
+              debugPrint(
+                  "edit store secondaryMobile ${txtSecondaryMobController.text}");
+              debugPrint(
+                  "edit store helperMobile ${txtHelperMobController.text}");
+              debugPrint("edit store callTimeSlotId $callTimeSlotId");
+              debugPrint("edit store primaryLangId $primaryLangId");
+              debugPrint("edit store secondaryLangId $secondaryLangId");
+              if (whatsAppSmsRadio == 1) {
+                debugPrint("edit store whatsAppMessage 1");
+              } else {
+                debugPrint("edit store whatsAppMessage 0");
+              }
+              debugPrint("edit store panNo ${txtPANController.text}");
+              debugPrint("edit store aadhar ${txtAdharNumberController.text}");
+              debugPrint("edit store birthday ${txtPicDateController.text}");
+              debugPrint(
+                  "edit store anniversary ${txtAnniversaryController.text}");
+              debugPrint("edit store ownerPhoto $ownerFileName");
+
+              Map<String, dynamic> ownerInfo = HashMap<String, dynamic>();
+              ownerInfo["owner_name"] = txtOwnerNameController.text;
+              ownerInfo["primary_mobile"] = txtPrimaryMobController.text;
+              ownerInfo["secondary_mobile"] = txtSecondaryMobController.text;
+              ownerInfo["helper_mobile"] = txtHelperMobController.text;
+              ownerInfo["call_time_slot"] = callTimeSlotId;
+              ownerInfo["lang_first"] = primaryLangId;
+              ownerInfo["lang_second"] = secondaryLangId;
+              ownerInfo["whats_app_msg"] = whatsAppSmsRadio == 1 ? "1" : "0";
+              ownerInfo["pan_number"] = txtPANController.text;
+              ownerInfo["aadhar_number"] = txtAdharNumberController.text;
+              ownerInfo["birthday"] = txtPicDateController.text;
+              ownerInfo["anniversary"] = txtAnniversaryController.text;
+              ownerInfo["owner_photo"] = ownerPhotoFile;
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProductInformation(
+                      outletInfo: widget.outletInfo, ownerInfo: ownerInfo),
+                ),
+              );
             }
-            if (whatsAppSmsRadio == "") {
-              Fluttertoast.showToast(msg: "Please select opt-in for whatsapp message / SMS");
-            }
-            debugPrint("edit store userId ");
-            debugPrint("edit store ownerName ${txtOwnerNameController.text}");
-            debugPrint("edit store primaryMobile ${txtPrimaryMobController.text}");
-            debugPrint("edit store secondaryMobile ${txtSecondaryMobController.text}");
-            debugPrint("edit store helperMobile ${txtHelperMobController.text}");
-            debugPrint("edit store callTimeSlotId $callTimeSlotId");
-            debugPrint("edit store primaryLangId $primaryLangId");
-            debugPrint("edit store secondaryLangId $secondaryLangId");
-            debugPrint("edit store whatsAppMessage $whatsAppSmsRadio");
-            debugPrint("edit store panNo ${txtPANController.text}");
-            debugPrint("edit store aadhar ${txtAdharNumberController.text}");
-            debugPrint("edit store birthday ${txtPicDateController.text}");
-            debugPrint("edit store anniversary ${txtAnniversaryController.text}");
-            debugPrint("edit store ownerPhoto $ownerFileName");
-            Map<String, dynamic> ownerInfo = HashMap<String, dynamic>();
-            ownerInfo["owner_name"] = txtOwnerNameController.text;
-            ownerInfo["primary_mobile"] = txtPrimaryMobController.text;
-            ownerInfo["secondary_mobile"] = txtSecondaryMobController.text;
-            ownerInfo["helper_mobile"] = txtHelperMobController.text;
-            ownerInfo["call_time_slot"] = txtSelectCallTimeSlotController.text;
-            ownerInfo["lang_first"] = txtSelectLangFirstController.text;
-            ownerInfo["lang_second"] = txtSelectLangSecondController.text;
-            ownerInfo["whats_app_msg"] = whatsAppSmsRadio;
-            ownerInfo["pan_number"] = txtPANController.text;
-            ownerInfo["aadhar_number"] = txtAdharNumberController.text;
-            ownerInfo["birthday"] = txtPicDateController.text;
-            ownerInfo["anniversary"] = txtAnniversaryController.text;
-            ownerInfo["owner_photo"] = ownerPhotoFile;
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ProductInformation(outletInfo: widget.outletInfo, ownerInfo: ownerInfo),
-              ),
-            );
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -409,7 +421,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
               ),
               controller: txtController,
               decoration: InputDecoration(
-                suffixIcon: txtController == txtPicDateController || txtController == txtAnniversaryController
+                suffixIcon: txtController == txtPicDateController ||
+                        txtController == txtAnniversaryController
                     ? const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Align(
@@ -446,7 +459,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
               ),
             ),
           )
-        : txtController == txtPicDateController || txtController == txtAnniversaryController
+        : txtController == txtPicDateController ||
+                txtController == txtAnniversaryController
             ? GestureDetector(
                 onTap: () async {
                   if (txtController == txtPicDateController) {
@@ -459,7 +473,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
                         lastDate: await NTP.now(),
                       );
                       if (dateTimeBirth != null) {
-                        commonBloc.add(CommonBlocBirthdayEvent(dateTime: dateTimeBirth!));
+                        commonBloc.add(
+                            CommonBlocBirthdayEvent(dateTime: dateTimeBirth!));
                       }
                     }
                   }
@@ -472,7 +487,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       lastDate: await NTP.now(),
                     );
                     if (dateTimeAnniversary != null) {
-                      commonBloc.add(CommonBlocAnniversaryEvent(dateTime: dateTimeAnniversary!));
+                      commonBloc.add(CommonBlocAnniversaryEvent(
+                          dateTime: dateTimeAnniversary!));
                     }
                   }
                 },
@@ -486,7 +502,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
                   ),
                   controller: txtController,
                   decoration: InputDecoration(
-                    suffixIcon: txtController == txtPicDateController || txtController == txtAnniversaryController
+                    suffixIcon: txtController == txtPicDateController ||
+                            txtController == txtAnniversaryController
                         ? const Padding(
                             padding: EdgeInsets.only(right: 20),
                             child: Align(
@@ -530,7 +547,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
                 onTap: () async {
                   selectedController = txtController;
                   await Future.delayed(const Duration(milliseconds: 500));
-                  RenderObject? object = globalKey.currentContext!.findRenderObject();
+                  RenderObject? object =
+                      globalKey.currentContext!.findRenderObject();
                   object!.showOnScreen();
                 },
                 keyboardType: txtController == txtPrimaryMobController ||
@@ -598,7 +616,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
               activeColor: MColor.colorPrimary,
               fillColor: MaterialStateProperty.all(MColor.colorPrimary),
               onChanged: (value) {
-                commonBloc.add(CommonBlocWhatsAppRadioEvent(whatsAppRadioTag: value));
+                commonBloc
+                    .add(CommonBlocWhatsAppRadioEvent(whatsAppRadioTag: value));
               },
             ),
           ),
@@ -655,14 +674,20 @@ class _OwnerInformationState extends State<OwnerInformation> {
   void selectImage() async {
     try {
       XFile? image = await imagePicker.pickImage(
-          source: ImageSource.camera, maxHeight: 512, maxWidth: 512, preferredCameraDevice: CameraDevice.front);
+          source: ImageSource.camera,
+          maxHeight: 512,
+          maxWidth: 512,
+          preferredCameraDevice: CameraDevice.front);
       if (image != null) {
         ownerPhotoFile = File(image.path);
         ownerFileName = image.name;
         commonBloc.add(CommonBlocSelectImageEvent(imageFile: ownerPhotoFile!));
       }
     } catch (exception) {
-      Fluttertoast.showToast(msg: "Permission denied, go to app settings and allow camera permission", toastLength: Toast.LENGTH_LONG);
+      Fluttertoast.showToast(
+          msg:
+              "Permission denied, go to app settings and allow camera permission",
+          toastLength: Toast.LENGTH_LONG);
     }
   }
 
@@ -676,7 +701,10 @@ class _OwnerInformationState extends State<OwnerInformation> {
         builder: (context) {
           return txtController == txtSelectLangFirstController
               ? SelectLanguageBottomSheet(
-                  selectedLanguageName: txtSelectLangFirstController.text.isEmpty ? "" : txtSelectLangFirstController.text,
+                  selectedLanguageName:
+                      txtSelectLangFirstController.text.isEmpty
+                          ? ""
+                          : txtSelectLangFirstController.text,
                   onLanguageSelect: (languageName, id) {
                     txtSelectLangFirstController.text = languageName;
                     if (id != null) {
@@ -688,7 +716,10 @@ class _OwnerInformationState extends State<OwnerInformation> {
                 )
               : txtController == txtSelectLangSecondController
                   ? SelectLanguageBottomSheet(
-                      selectedLanguageName: txtSelectLangSecondController.text.isEmpty ? "" : txtSelectLangSecondController.text,
+                      selectedLanguageName:
+                          txtSelectLangSecondController.text.isEmpty
+                              ? ""
+                              : txtSelectLangSecondController.text,
                       onLanguageSelect: (languageName, id) {
                         txtSelectLangSecondController.text = languageName;
                         if (id != null) {
@@ -700,7 +731,9 @@ class _OwnerInformationState extends State<OwnerInformation> {
                     )
                   : SelectCallTimeSlotBottomSheet(
                       selectedCallTimeSlotName:
-                          txtSelectCallTimeSlotController.text.isEmpty ? "" : txtSelectCallTimeSlotController.text,
+                          txtSelectCallTimeSlotController.text.isEmpty
+                              ? ""
+                              : txtSelectCallTimeSlotController.text,
                       onCallTimeSlotSelect: (callTimeSlot, id) {
                         txtSelectCallTimeSlotController.text = callTimeSlot;
                         if (id != null) {

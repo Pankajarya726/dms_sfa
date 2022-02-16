@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SelectRetailerTypeBottomSheet extends StatefulWidget {
-  final Function(String selectedRetailerType, int? selectedRetailerTypeId)
+  final Function(String selectedRetailerType, String? selectedRetailerTypeId)
       onRetailerTypeSelect;
   final String selectedRetailerTypeName;
   const SelectRetailerTypeBottomSheet(
@@ -38,7 +38,7 @@ class _SelectRetailerTypeBottomSheetState
   // ];
   Object selectRetailerTypeRadio = "";
   String selectedRetailerType = "";
-  int? selectedRetailerTypeId;
+  String? selectedRetailerTypeId;
   CommonBloc commonBloc = CommonBloc();
   List<RetailerTypeModel>? retailerTypeModel = [];
 
@@ -171,7 +171,7 @@ class _SelectRetailerTypeBottomSheetState
                   commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                       enrollmentRadioTag: retailerType.id));
                   selectedRetailerType = retailerType.name;
-                  selectedRetailerTypeId = retailerType.id;
+                  selectedRetailerTypeId = retailerType.id.toString();
                 },
                 child: Row(
                   children: [
@@ -187,7 +187,7 @@ class _SelectRetailerTypeBottomSheetState
                           commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                               enrollmentRadioTag: value));
                           selectedRetailerType = retailerType.name;
-                          selectedRetailerTypeId = retailerType.id;
+                          selectedRetailerTypeId = retailerType.id.toString();
                         },
                       ),
                     ),

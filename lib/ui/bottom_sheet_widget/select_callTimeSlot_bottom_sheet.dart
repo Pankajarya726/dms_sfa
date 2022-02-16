@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SelectCallTimeSlotBottomSheet extends StatefulWidget {
-  final Function(String selectedCallTimeSlot, int? selectedCallTimeSlotId)
+  final Function(String selectedCallTimeSlot, String? selectedCallTimeSlotId)
       onCallTimeSlotSelect;
   final String selectedCallTimeSlotName;
   const SelectCallTimeSlotBottomSheet(
@@ -30,7 +30,7 @@ class _SelectCallTimeSlotBottomSheetState
   String time = "";
   Object selectCallTimeSlotRadio = "";
   String selectedCallTimeSlot = "";
-  int? selectedCallTimeSlotId;
+  String? selectedCallTimeSlotId;
   CommonBloc commonBloc = CommonBloc();
   List<CallTimeSlotModel>? callTimeSlotModel = [];
 
@@ -164,7 +164,7 @@ class _SelectCallTimeSlotBottomSheetState
                   commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                       enrollmentRadioTag: callTimeSlot.id));
                   selectedCallTimeSlot = time;
-                  selectedCallTimeSlotId = callTimeSlot.id;
+                  selectedCallTimeSlotId = callTimeSlot.id.toString();
                 },
                 child: Row(
                   children: [
@@ -180,7 +180,7 @@ class _SelectCallTimeSlotBottomSheetState
                           commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                               enrollmentRadioTag: value));
                           selectedCallTimeSlot = time;
-                          selectedCallTimeSlotId = callTimeSlot.id;
+                          selectedCallTimeSlotId = callTimeSlot.id.toString();
                         },
                       ),
                     ),
