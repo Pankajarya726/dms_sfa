@@ -1,41 +1,27 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tags_x/flutter_tags_x.dart';
 
 class ProductInformation extends StatefulWidget {
   final Map<String, dynamic> outletInfo;
   final Map<String, dynamic> ownerInfo;
-  const ProductInformation(
-      {Key? key, required this.outletInfo, required this.ownerInfo})
-      : super(key: key);
+
+  const ProductInformation({Key? key, required this.outletInfo, required this.ownerInfo}) : super(key: key);
 
   @override
   State<ProductInformation> createState() => _ProductInformationState();
 }
 
 class _ProductInformationState extends State<ProductInformation> {
-  List<String> names = [
-    "Washing powder/cake",
-    "Biscuits",
-    "Spices",
-    "Tea & Coffee",
-    "Bathing Soaps",
-    "Toothpaste/Powder",
-    "Pickles Jam & ketchups",
-    "Dish Washing Soap",
-  ];
-  List<String> icons = [
-    "assets/user.png",
-    "assets/categories.png",
-    "assets/store.png",
-    "assets/lat_long.png",
-    "assets/user.png",
-    "assets/categories.png",
-    "assets/store.png",
-    "assets/lat_long.png",
-  ];
-
   List<ProductsInfo> productInfo = [];
+
+  @override
+  void initState() {
+    getProduct();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +30,14 @@ class _ProductInformationState extends State<ProductInformation> {
     debugPrint("passed input = $inp1");
     debugPrint("passed input = $inp2");
     return Scaffold(
-      body: ListView.builder(
-        itemCount: names.length,
+      appBar: AppBar(),
+      body: ListView.separated(
+        itemCount: productInfo.length,
+        separatorBuilder: (context, index) {
+          return Divider();
+        },
         itemBuilder: (context, index) {
-          return Text(names[index]);
+          return ProductListItem(productsInfo: productInfo[index]);
         },
       ),
       bottomSheet: MaterialButton(
@@ -108,27 +98,112 @@ class _ProductInformationState extends State<ProductInformation> {
     );
   }
 
-  List<Widget>? listWidget() {
-    List<Widget> widgets = [];
-    var text = const Text("Which category/brand does retailer keep?");
-    widgets.add(text);
-    for (ProductsInfo info in productInfo) {
-      widgets.add(Row(
-        children: [
-          Image.asset(info.icons),
-          const SizedBox(
-            width: 10,
-          ),
-          Text(info.productName),
-        ],
-      ));
-      return widgets;
+  getProduct() async {
+    for (int i = 0; i < 10; i++) {
+      productInfo.add(ProductsInfo(
+          icons: "https://dms-upload.s3.ap-southeast-1.amazonaws.com/apimenu_images/61cc431b22fbe.png",
+          productName: "product$i",
+          brands: [Brand(name: "brand1"), Brand(name: "brand2"), Brand(name: "brand3"), Brand(name: "brand4")]));
     }
+    setState(() {});
   }
 }
 
 class ProductsInfo {
   String icons;
   String productName;
-  ProductsInfo({required this.icons, required this.productName});
+  bool check = false;
+  List<Brand> brands;
+
+  ProductsInfo({required this.icons, required this.productName, required this.brands});
+}
+
+class Brand {
+  String name;
+  bool check = false;
+
+  Brand({required this.name});
+}
+
+class ProductListItem extends StatefulWidget {
+  final ProductsInfo productsInfo;
+
+  const ProductListItem({Key? key, required this.productsInfo}) : super(key: key);
+
+  @override
+  _ProductListItemState createState() => _ProductListItemState();
+}
+
+class _ProductListItemState extends State<ProductListItem> {
+  bool checked = false;
+
+  @override
+  void initState() {
+    checked = widget.productsInfo.check;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ListTile(
+            contentPadding: const EdgeInsets.only(left: 0),
+            leading: CachedNetworkImage(
+              imageUrl: widget.productsInfo.icons,
+              width: 30,
+              height: 30,
+            ),
+            title: Text(
+              widget.productsInfo.productName,
+              style: const TextStyle(color: MColor.textColor, letterSpacing: 0.5, fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            trailing: Checkbox(
+              value: checked,
+              onChanged: (value) {
+                checked = value!;
+                widget.productsInfo.check = value;
+                setState(() {});
+              },
+            ),
+          ),
+          SizedBox(
+            height: checked ? 10 : 0,
+          ),
+          checked
+              ? Tags(
+                  alignment: WrapAlignment.start,
+                  itemCount: widget.productsInfo.brands.length,
+                  itemBuilder: (index) {
+                    return ItemTags(
+                      singleItem: false,
+                      index: index,
+                      elevation: 0,
+                      pressEnabled: true,
+                      onPressed: (item) {
+                        widget.productsInfo.brands[index].check = item.customData.check;
+                        setState(() {});
+                      },
+                      customData: widget.productsInfo.brands[index],
+                      textStyle: const TextStyle(fontSize: 17),
+                      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                      title: widget.productsInfo.brands[index].name,
+                      active: widget.productsInfo.brands[index].check,
+                      textActiveColor: MColor.activeTextColor,
+                      textColor: MColor.inactiveTextColor,
+                      color: MColor.disableBgColor,
+                      activeColor: MColor.enableBgColor,
+                      border: Border.all(
+                          color: widget.productsInfo.brands[index].check ? MColor.enableBorderColor : MColor.disableBorderColor),
+                    );
+                  },
+                )
+              : Container()
+        ],
+      ),
+    );
+  }
 }

@@ -326,7 +326,8 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
         Fluttertoast.showToast(msg: comingSoon);
         break;
       case 3:
-        Fluttertoast.showToast(msg: comingSoon);
+        // Fluttertoast.showToast(msg: comingSoon);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const OutletInformation()));
         break;
       case 4:
         // Fluttertoast.showToast(msg: comingSoon);
