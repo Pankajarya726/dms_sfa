@@ -14,6 +14,7 @@ import 'package:dms/ui/add_plan/model/add_plan_response.dart';
 import 'package:dms/ui/add_plan/model/add_plan_update_data.dart';
 import 'package:dms/ui/add_store/model/call_time_slot_response.dart';
 import 'package:dms/ui/add_store/model/editstore_getenroll_type_response.dart';
+import 'package:dms/ui/add_store/model/select_beat_response.dart';
 import 'package:dms/ui/add_store/model/select_distributor_response.dart';
 import 'package:dms/ui/add_store/model/select_district_response.dart';
 import 'package:dms/ui/add_store/model/select_language_response.dart';
@@ -672,7 +673,8 @@ class ApiRepository {
   Future<GetSurveyProduct> getSurveyProduct() async {
     try {
       Response response = await dio.get(Url.getRetailerProducts);
-      GetSurveyProduct getSurveyProduct = GetSurveyProduct.fromJson(response.toString());
+      GetSurveyProduct getSurveyProduct =
+          GetSurveyProduct.fromJson(response.toString());
       return getSurveyProduct;
     } catch (error, stacktrace) {
       String message = "";
@@ -687,6 +689,28 @@ class ApiRepository {
         success: false,
         message: message,
         data: [],
+      );
+    }
+  }
+
+  Future<SelectBeatResponse> selectBeat(Map input) async {
+    try {
+      Response response = await dio.post(Url.getBeat, data: input);
+      SelectBeatResponse baseResponse =
+          SelectBeatResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = StringConst.somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return SelectBeatResponse(
+        success: false,
+        message: message,
       );
     }
   }

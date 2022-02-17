@@ -1,53 +1,46 @@
-import 'package:dms/ui/add_store/bloc/edit_store_bloc.dart';
-import 'package:dms/ui/add_store/bloc/edit_store_events.dart';
-import 'package:dms/ui/add_store/bloc/edit_store_states.dart';
+import 'dart:async';
+import 'dart:collection';
+import 'package:dms/main.dart';
 import 'package:dms/ui/add_store/model/select_distributor_response.dart';
-import 'package:dms/ui/common_bloc/common_bloc.dart';
-import 'package:dms/ui/common_bloc/common_bloc_events.dart';
-import 'package:dms/ui/common_bloc/common_bloc_states.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SelectDistributorBottomSheet extends StatefulWidget {
-  final Function(String selectedDistributor, String? selectedDistributorId) onDistributorSelect;
-  final String selectedDistributorName;
-  const SelectDistributorBottomSheet({Key? key, required this.onDistributorSelect, required this.selectedDistributorName})
-  final String districtId;
+  final Function(DistributorModel? distributorModel) onDistributorSelect;
+  final DistributorModel? distributorModel;
+  final String? districtId;
   const SelectDistributorBottomSheet(
       {Key? key,
       required this.onDistributorSelect,
-      required this.selectedDistributorName,
+      required this.distributorModel,
       required this.districtId})
       : super(key: key);
 
   @override
-  _SelectDistributorBottomSheetState createState() => _SelectDistributorBottomSheetState();
+  _SelectDistributorBottomSheetState createState() =>
+      _SelectDistributorBottomSheetState();
 }
 
-class _SelectDistributorBottomSheetState extends State<SelectDistributorBottomSheet> {
-  // List<String> names = [
-  //   "Murtuza",
-  //   "Himanshu",
-  //   "Vaibhav",
-  //   "Pankaj",
-  //   "Rishabh",
-  //   "Chandan",
-  //   "Atul",
-  //   "Aakash",
-  // ];
-  Object selectDistributorRadio = "";
-  String selectedDistributor = "";
-  String? selectedDistributorId;
-  CommonBloc commonBloc = CommonBloc();
-  List<DistributorModel>? distributorModel = [];
+class _SelectDistributorBottomSheetState
+    extends State<SelectDistributorBottomSheet> {
+  int groupValue = -1;
+  List<DistributorModel> distributorList = [];
+  DistributorModel? selectedDistributor;
+  StreamController<List<DistributorModel>> distributorStream =
+      StreamController();
 
   @override
   void initState() {
     super.initState();
-    selectDistributorRadio = widget.selectedDistributorName;
-    selectedDistributor = widget.selectedDistributorName;
+    if (widget.distributorModel != null) {
+      debugPrint(
+          "widget.selectedDistrict!.id---->${widget.distributorModel!.id}");
+      groupValue = widget.distributorModel!.id;
+      selectedDistributor = widget.distributorModel;
+    }
+    getDistributors();
   }
 
   @override
@@ -61,156 +54,118 @@ class _SelectDistributorBottomSheetState extends State<SelectDistributorBottomSh
           topLeft: Radius.circular(25),
         ),
       ),
-      child: BlocProvider(
-        create: (context) => EditStoreBloc(),
-        child: BlocBuilder<EditStoreBloc, EditStoreStates>(
-          builder: (context, state) {
-            if (state is EditStoreInitialState) {
-              BlocProvider.of<EditStoreBloc>(context).add(SelectDistributorEvent());
-              Map<String, dynamic> input = HashMap<String, dynamic>();
-              input["districts_id"] = widget.districtId;
-              BlocProvider.of<EditStoreBloc>(context)
-                  .add(SelectDistributorEvent(districtId: input));
-            }
-            if (state is EditStoreILoadingState) {
+      child: StreamBuilder<List<DistributorModel>>(
+          stream: distributorStream.stream,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
-            if (state is SelectDistributorState) {
-              distributorModel = state.selectDistributorResponse.data;
-            }
-            if (state is EditStoreFailureState) {
-              return Center(
-                child: Text(state.failureMessage),
-              );
-            }
-            if (distributorModel == null) {
+            if (snapshot.data == null) {
               return Container();
             }
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  StringConst.selectDistributor,
-                  style: TextStyle(
-                    fontSize: 19,
-                    color: MColor.colorPrimary,
-                    letterSpacing: 0.67,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: radioButtonWidget(),
+            if (snapshot.data!.isEmpty) {
+              return const Center(
+                child: Text("Records not found"),
+              );
+            }
+            if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    StringConst.selectDistributor,
+                    style: TextStyle(
+                      fontSize: 19,
+                      color: MColor.colorPrimary,
+                      letterSpacing: 0.67,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      widget.onDistributorSelect(selectedDistributor, selectedDistributorId);
-                      Navigator.pop(context);
-                    },
-                    style: ButtonStyle(
-                      fixedSize: MaterialStateProperty.all(const Size(220, 60)),
-                      backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
-                      elevation: MaterialStateProperty.all(0),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: List.generate(
+                          snapshot.data!.length,
+                          (index) => RadioListTile<int>(
+                            contentPadding: const EdgeInsets.all(0),
+                            value: snapshot.data![index].id,
+                            groupValue: groupValue,
+                            title: Text(
+                              snapshot.data![index].name,
+                            ),
+                            onChanged: (value) {
+                              groupValue = value!;
+                              distributorStream.add(snapshot.data!);
+                            },
+                          ),
                         ),
                       ),
                     ),
-                    child: const Text(
-                      StringConst.done,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (groupValue != -1) {
+                          selectedDistributor = distributorList.singleWhere(
+                              (element) => element.id == groupValue);
+                          widget.onDistributorSelect(selectedDistributor!);
+                        }
+                        Navigator.pop(context);
+                      },
+                      style: ButtonStyle(
+                        fixedSize:
+                            MaterialStateProperty.all(const Size(220, 60)),
+                        backgroundColor:
+                            MaterialStateProperty.all(MColor.colorPrimary),
+                        elevation: MaterialStateProperty.all(0),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        StringConst.done,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-              ],
-            );
-          },
-        ),
-      ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                ],
+              );
+            }
+            return Container();
+          }),
     );
   }
 
-  List<Widget> radioButtonWidget() {
-    List<Widget> widgets = [];
-    for (DistributorModel distributor in distributorModel!) {
-      widgets.add(
-        BlocProvider(
-          create: (context) => commonBloc,
-          child: BlocBuilder<CommonBloc, CommonBlocStates>(
-            builder: (context, state) {
-              if (state is CommonBlocInitialState) {
-                if (selectDistributorRadio == distributor.name) {
-                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: distributor.id));
-                }
-              }
-
-              if (state is CommonBlocEnrollRadioTagState) {
-                selectDistributorRadio = state.enrollmentRadioTag;
-              }
-              return GestureDetector(
-                onTap: () {
-                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: distributor.id));
-                  selectedDistributor = distributor.name;
-                  selectedDistributorId = distributor.id.toString();
-                },
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 18,
-                      child: Radio<dynamic>(
-                        value: distributor.id,
-                        groupValue: selectDistributorRadio,
-                        activeColor: MColor.colorPrimary,
-                        fillColor: MaterialStateProperty.all(MColor.colorPrimary),
-                        onChanged: (value) {
-                          commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-                          selectedDistributor = distributor.name;
-                          selectedDistributorId = distributor.id.toString();
-                        },
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      distributor.name,
-                      style: const TextStyle(
-                        fontSize: 17.0,
-                        color: MColor.backButton,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 15,
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      );
+  getDistributors() async {
+    Map<String, dynamic> input = HashMap<String, dynamic>();
+    input["districts_id"] = widget.districtId;
+    SelectDistributorResponse response =
+        await repository.selectDistributor(input);
+    if (response.success) {
+      distributorList = response.data!;
+      debugPrint("groupValue--->$groupValue");
+      distributorStream.add(distributorList);
+    } else {
+      distributorStream.add(distributorList);
+      // Utility.showToast(response.message);
     }
-    return widgets;
   }
 }

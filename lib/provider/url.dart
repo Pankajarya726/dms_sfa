@@ -4,7 +4,6 @@ class Url {
   static const String validateAppVer = "validateAppVersion";
   static const String login = "login";
   static const String getQuotesAndImages = "getQuotesWithImage";
-
   static const String getMenus = "getApiMenus";
   static const String editProfile = "profileEdit";
   static const String changePassword = "resetPassword";
@@ -27,4 +26,5 @@ class Url {
   static const String getDistributor = "getDistributorsForDistWise";
   static const String getCallTimeSlot = "getCallTimeSlot";
   static const String getRetailerProducts = "getRetailerProducts";
+  static const String getBeat = "getDistibutorsBeat";
 }
