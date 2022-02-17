@@ -70,6 +70,7 @@ class _OutletInformationState extends State<OutletInformation> {
   String? retailerCategoryId;
   GlobalKey globalKey = GlobalKey();
   TextEditingController selectedController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -455,6 +456,10 @@ class _OutletInformationState extends State<OutletInformation> {
           color: MColor.colorPrimary,
           textColor: Colors.white,
           onPressed: () async {
+            if (formKey.currentState!.validate()) {
+              //check if form data are valid,
+              // your process task ahed if all data are valid
+            }
             if (selectEnrollmentRadio == "") {
               Fluttertoast.showToast(msg: "Please select enrollment type");
             } else if (txtSelectBeatNameController.text.isEmpty) {
@@ -622,7 +627,7 @@ class _OutletInformationState extends State<OutletInformation> {
                   globalKey.currentContext!.findRenderObject();
               object!.showOnScreen();
             },
-            keyboardType: TextInputType.text,
+            keyboardType: TextInputType.name,
             controller: txtController,
             enabled: txtController == txtLatitudeController ||
                     txtController == txtLongtitudeController ||
@@ -828,15 +833,18 @@ class _OutletInformationState extends State<OutletInformation> {
                   onDistrictSelect: (district, id) {
                     txtSelectDistrictController.text = district;
                     if (id != null) {
-                      districtId = id;
-                      txtSelectDistributorController.text = "";
+                      districtId != id
+                          ? txtSelectDistributorController.text = ""
+                          : null;
                       txtSelectBeatNameController.text = "";
                       txtOrderBookingController.text = "";
+                      districtId = id;
                     }
                   },
                 )
               : txtController == txtSelectDistributorController
                   ? SelectDistributorBottomSheet(
+                      districtId: districtId != null ? districtId! : "",
                       selectedDistributorName:
                           txtSelectDistributorController.text.isEmpty
                               ? ""

@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:dms/ui/add_store/bloc/edit_store_bloc.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_events.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_states.dart';
@@ -14,10 +16,12 @@ class SelectDistributorBottomSheet extends StatefulWidget {
   final Function(String selectedDistributor, String? selectedDistributorId)
       onDistributorSelect;
   final String selectedDistributorName;
+  final String districtId;
   const SelectDistributorBottomSheet(
       {Key? key,
       required this.onDistributorSelect,
-      required this.selectedDistributorName})
+      required this.selectedDistributorName,
+      required this.districtId})
       : super(key: key);
 
   @override
@@ -66,8 +70,10 @@ class _SelectDistributorBottomSheetState
         child: BlocBuilder<EditStoreBloc, EditStoreStates>(
           builder: (context, state) {
             if (state is EditStoreInitialState) {
+              Map<String, dynamic> input = HashMap<String, dynamic>();
+              input["districts_id"] = widget.districtId;
               BlocProvider.of<EditStoreBloc>(context)
-                  .add(SelectDistributorEvent());
+                  .add(SelectDistributorEvent(districtId: input));
             }
             if (state is EditStoreILoadingState) {
               return const Center(

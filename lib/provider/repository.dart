@@ -620,11 +620,15 @@ class ApiRepository {
     }
   }
 
-  Future<SelectDistributorResponse> selectDistributor() async {
+  Future<SelectDistributorResponse> selectDistributor(Map input) async {
     try {
-      Response response = await dio.get(Url.getDistributor);
+      Response response = await dio.post(
+        Url.getDistributor,
+        data: input,
+      );
       SelectDistributorResponse baseResponse =
           SelectDistributorResponse.fromJson(response.toString());
+
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
