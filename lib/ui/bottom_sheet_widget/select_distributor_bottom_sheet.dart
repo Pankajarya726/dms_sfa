@@ -14,6 +14,12 @@ class SelectDistributorBottomSheet extends StatefulWidget {
   final Function(String selectedDistributor, String? selectedDistributorId) onDistributorSelect;
   final String selectedDistributorName;
   const SelectDistributorBottomSheet({Key? key, required this.onDistributorSelect, required this.selectedDistributorName})
+  final String districtId;
+  const SelectDistributorBottomSheet(
+      {Key? key,
+      required this.onDistributorSelect,
+      required this.selectedDistributorName,
+      required this.districtId})
       : super(key: key);
 
   @override
@@ -61,6 +67,10 @@ class _SelectDistributorBottomSheetState extends State<SelectDistributorBottomSh
           builder: (context, state) {
             if (state is EditStoreInitialState) {
               BlocProvider.of<EditStoreBloc>(context).add(SelectDistributorEvent());
+              Map<String, dynamic> input = HashMap<String, dynamic>();
+              input["districts_id"] = widget.districtId;
+              BlocProvider.of<EditStoreBloc>(context)
+                  .add(SelectDistributorEvent(districtId: input));
             }
             if (state is EditStoreILoadingState) {
               return const Center(

@@ -37,11 +37,15 @@ class SelectDistributorResponse {
 class DistributorModel {
   DistributorModel({
     required this.id,
+    required this.userId,
     required this.name,
+    required this.customerCodes,
   });
 
   int id;
+  int userId;
   String name;
+  String customerCodes;
 
   factory DistributorModel.fromJson(String str) =>
       DistributorModel.fromMap(json.decode(str));
@@ -51,11 +55,16 @@ class DistributorModel {
   factory DistributorModel.fromMap(Map<String, dynamic> json) =>
       DistributorModel(
         id: json["id"] == null ? null : json["id"],
+        userId: json["user_id"] == null ? null : json["user_id"],
         name: json["name"] == null ? null : json["name"],
+        customerCodes:
+            json["customer_codes"] == null ? null : json["customer_codes"],
       );
 
   Map<String, dynamic> toMap() => {
         "id": id == null ? null : id,
+        "user_id": userId == null ? null : userId,
         "name": name == null ? null : name,
+        "customer_codes": customerCodes == null ? null : customerCodes,
       };
 }

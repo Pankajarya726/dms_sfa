@@ -30,7 +30,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
 import '../../../main.dart';
 
 class OutletInformation extends StatefulWidget {
@@ -621,7 +620,7 @@ class _OutletInformationState extends State<OutletInformation> {
               RenderObject? object = globalKey.currentContext!.findRenderObject();
               object!.showOnScreen();
             },
-            keyboardType: TextInputType.text,
+            keyboardType: TextInputType.name,
             controller: txtController,
             enabled: txtController == txtLatitudeController ||
                     txtController == txtLongtitudeController ||

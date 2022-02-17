@@ -114,7 +114,8 @@ class EditStoreBloc extends Bloc<EditStoreEvents, EditStoreStates> {
 
   Stream<EditStoreStates> selectDistributor(SelectDistributorEvent event) async* {
     if (await Network.isConnected()) {
-      SelectDistributorResponse response = await repository.selectDistributor();
+      SelectDistributorResponse response =
+          await repository.selectDistributor(event.districtId);
       if (response.success) {
         yield SelectDistributorState(selectDistributorResponse: response);
       } else {

@@ -24,7 +24,7 @@ class Url {
   static const String getRetailerType = "getRetailerType";
   static const String getRetailerCategory = "getRetailerCategory";
   static const String getDistrict = "getDistrictsRoleWise";
-  static const String getDistributor = "getDistibutors";
+  static const String getDistributor = "getDistributorsForDistWise";
   static const String getCallTimeSlot = "getCallTimeSlot";
   static const String getRetailerProducts = "getRetailerProducts";
 }
