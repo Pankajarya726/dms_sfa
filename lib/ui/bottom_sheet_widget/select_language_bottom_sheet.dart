@@ -11,8 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SelectLanguageBottomSheet extends StatefulWidget {
-  final Function(String selectedLanguage, String? selectedLangId)
-      onLanguageSelect;
+  final Function(String selectedLanguage, String? selectedLangId) onLanguageSelect;
   final String selectedLanguageName;
   final String bottomSheetHeading;
   final String previousSelectedLang;
@@ -25,8 +24,7 @@ class SelectLanguageBottomSheet extends StatefulWidget {
       : super(key: key);
 
   @override
-  _SelectLanguageBottomSheetState createState() =>
-      _SelectLanguageBottomSheetState();
+  _SelectLanguageBottomSheetState createState() => _SelectLanguageBottomSheetState();
 }
 
 class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
@@ -67,8 +65,7 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
         child: BlocBuilder<EditStoreBloc, EditStoreStates>(
           builder: (context, state) {
             if (state is EditStoreInitialState) {
-              BlocProvider.of<EditStoreBloc>(context)
-                  .add(SelectLanguageTypeEvent());
+              BlocProvider.of<EditStoreBloc>(context).add(SelectLanguageTypeEvent());
             }
             if (state is EditStoreILoadingState) {
               return const Center(
@@ -90,7 +87,7 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  selectLangFirst + widget.bottomSheetHeading,
+                  StringConst.selectLangFirst + widget.bottomSheetHeading,
                   style: const TextStyle(
                     fontSize: 19,
                     color: MColor.colorPrimary,
@@ -114,14 +111,12 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      widget.onLanguageSelect(
-                          selectedLanguage, selectedLanguageId);
+                      widget.onLanguageSelect(selectedLanguage, selectedLanguageId);
                       Navigator.pop(context);
                     },
                     style: ButtonStyle(
                       fixedSize: MaterialStateProperty.all(const Size(220, 60)),
-                      backgroundColor:
-                          MaterialStateProperty.all(MColor.colorPrimary),
+                      backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
                       elevation: MaterialStateProperty.all(0),
                       shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
@@ -130,7 +125,7 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
                       ),
                     ),
                     child: const Text(
-                      done,
+                      StringConst.done,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -160,8 +155,7 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
             builder: (context, state) {
               if (state is CommonBlocInitialState) {
                 if (selectLanguageRadio == language.languageName) {
-                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                      enrollmentRadioTag: language.id));
+                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: language.id));
                 }
               }
 
@@ -173,8 +167,7 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
               }
               return GestureDetector(
                 onTap: () {
-                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                      enrollmentRadioTag: language.id));
+                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: language.id));
                   selectedLanguage = language.languageName;
                   selectedLanguageId = language.id.toString();
                 },
@@ -186,11 +179,9 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
                         value: language.id,
                         groupValue: selectLanguageRadio,
                         activeColor: MColor.colorPrimary,
-                        fillColor:
-                            MaterialStateProperty.all(MColor.colorPrimary),
+                        fillColor: MaterialStateProperty.all(MColor.colorPrimary),
                         onChanged: (value) {
-                          commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                              enrollmentRadioTag: value));
+                          commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
                           selectedLanguage = language.languageName;
                           selectedLanguageId = language.id.toString();
                         },

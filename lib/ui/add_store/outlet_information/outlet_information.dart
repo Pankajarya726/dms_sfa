@@ -1,9 +1,15 @@
 import 'dart:collection';
 import 'dart:io';
+
+import 'package:dms/model/retailer_form.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_bloc.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_events.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_states.dart';
 import 'package:dms/ui/add_store/model/editstore_getenroll_type_response.dart';
+import 'package:dms/ui/add_store/model/select_distributor_response.dart';
+import 'package:dms/ui/add_store/model/select_district_response.dart';
+import 'package:dms/ui/add_store/model/select_retailer_category_response.dart';
+import 'package:dms/ui/add_store/model/select_retailer_type_response.dart';
 import 'package:dms/ui/add_store/owner_information/owner_information.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_beat_name_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_distributor_bottom_sheet.dart';
@@ -19,7 +25,6 @@ import 'package:dms/ui/userlocation_bloc/userlocation_states.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
-import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -36,6 +41,8 @@ class OutletInformation extends StatefulWidget {
 }
 
 class _OutletInformationState extends State<OutletInformation> {
+  RetailerForm form = RetailerForm();
+
   Object selectEnrollmentRadio = "";
   Object existingRetailerRadio = "";
   Object isKRORadio = "";
@@ -45,8 +52,7 @@ class _OutletInformationState extends State<OutletInformation> {
   UserLocationBloc userLocationBloc = UserLocationBloc();
   EditStoreBloc editStoreBloc = EditStoreBloc();
   TextEditingController txtSelectDistrictController = TextEditingController();
-  TextEditingController txtSelectDistributorController =
-      TextEditingController();
+  TextEditingController txtSelectDistributorController = TextEditingController();
   TextEditingController txtSelectBeatNameController = TextEditingController();
   TextEditingController txtOrderBookingController = TextEditingController();
   TextEditingController txtOutletNameController = TextEditingController();
@@ -55,15 +61,18 @@ class _OutletInformationState extends State<OutletInformation> {
   TextEditingController txtAddressController = TextEditingController();
   TextEditingController txtPincodeController = TextEditingController();
   TextEditingController txtLandmarkController = TextEditingController();
-  TextEditingController txtSelectRetailerTypeController =
-      TextEditingController();
-  TextEditingController txtSelectRetailerCategoryController =
-      TextEditingController();
+  TextEditingController txtSelectRetailerTypeController = TextEditingController();
+  TextEditingController txtSelectRetailerCategoryController = TextEditingController();
   TextEditingController txtGSTController = TextEditingController();
   List<EnrolmentTypeModel>? enrolmentTypeModel = [];
-  RefreshController refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController refreshController = RefreshController(initialRefresh: false);
   String? enrollmentTypeId;
+  EnrolmentTypeModel? enrolmentType;
+  DistrictModel? districtModel;
+  DistributorModel? distributor;
+  RetailerTypeModel? retailerType;
+  RetailerCategoryModel? retailerCategory;
+
   String? districtId;
   String? distributorId;
   String? beatId;
@@ -86,7 +95,7 @@ class _OutletInformationState extends State<OutletInformation> {
           elevation: 5,
           shadowColor: Colors.white24,
           title: const Text(
-            outletInfo,
+            StringConst.outletInfo,
             style: TextStyle(
               color: MColor.backButton,
             ),
@@ -132,12 +141,11 @@ class _OutletInformationState extends State<OutletInformation> {
                       const SizedBox(
                         width: 10,
                       ),
-                      textWidget(enrollmentType),
+                      textWidget(StringConst.enrollmentType),
                     ],
                   ),
                   sizedBoxWidget(5.0, ""),
-                  BlocBuilder<EditStoreBloc, EditStoreStates>(
-                      builder: (context, state) {
+                  BlocBuilder<EditStoreBloc, EditStoreStates>(builder: (context, state) {
                     if (state is EditStoreInitialState) {
                       editStoreBloc.add(GetEnrolmentTypeEvent());
                     }
@@ -179,11 +187,11 @@ class _OutletInformationState extends State<OutletInformation> {
                       const SizedBox(
                         width: 10,
                       ),
-                      textWidget(district),
+                      textWidget(StringConst.district),
                     ],
                   ),
                   sizedBoxWidget(12.0, ""),
-                  textFields(txtSelectDistrictController, selectHint),
+                  textFields(txtSelectDistrictController, StringConst.selectHint),
                   sizedBoxWidget(20.0, ""),
                   Row(
                     children: [
@@ -191,11 +199,11 @@ class _OutletInformationState extends State<OutletInformation> {
                       const SizedBox(
                         width: 10,
                       ),
-                      textWidget(distributor),
+                      textWidget(StringConst.distributor),
                     ],
                   ),
                   sizedBoxWidget(12.0, ""),
-                  textFields(txtSelectDistributorController, selectHint),
+                  textFields(txtSelectDistributorController, StringConst.selectHint),
                   sizedBoxWidget(20.0, ""),
                   Row(
                     children: [
@@ -203,11 +211,11 @@ class _OutletInformationState extends State<OutletInformation> {
                       const SizedBox(
                         width: 10,
                       ),
-                      textWidget(beatNameMandatory),
+                      textWidget(StringConst.beatNameMandatory),
                     ],
                   ),
                   sizedBoxWidget(12.0, ""),
-                  textFields(txtSelectBeatNameController, selectHint),
+                  textFields(txtSelectBeatNameController, StringConst.selectHint),
                   sizedBoxWidget(20.0, ""),
                   Row(
                     children: [
@@ -215,11 +223,11 @@ class _OutletInformationState extends State<OutletInformation> {
                       const SizedBox(
                         width: 10,
                       ),
-                      textWidget(orderBookingDay),
+                      textWidget(StringConst.orderBookingDay),
                     ],
                   ),
                   sizedBoxWidget(12.0, ""),
-                  textFields(txtOrderBookingController, day),
+                  textFields(txtOrderBookingController, StringConst.day),
                   sizedBoxWidget(12.0, ""),
                   Row(
                     children: [
@@ -227,11 +235,11 @@ class _OutletInformationState extends State<OutletInformation> {
                       const SizedBox(
                         width: 10,
                       ),
-                      textWidget(outletName),
+                      textWidget(StringConst.outletName),
                     ],
                   ),
                   sizedBoxWidget(12.0, ""),
-                  textFields(txtOutletNameController, enterHere),
+                  textFields(txtOutletNameController, StringConst.enterHere),
                   sizedBoxWidget(12.0, ""),
                   BlocBuilder<UserLocationBloc, UserLocationStates>(
                     bloc: userLocationBloc,
@@ -243,22 +251,17 @@ class _OutletInformationState extends State<OutletInformation> {
                       }
 
                       if (state is GetUserLocationState) {
-                        if (txtLatitudeController.text !=
-                                state.latitude.toString() &&
-                            txtLongtitudeController.text !=
-                                state.longitude.toString()) {
-                          txtLatitudeController.text =
-                              state.latitude.toString();
-                          txtLongtitudeController.text =
-                              state.longitude.toString();
+                        if (txtLatitudeController.text != state.latitude.toString() &&
+                            txtLongtitudeController.text != state.longitude.toString()) {
+                          txtLatitudeController.text = state.latitude.toString();
+                          txtLongtitudeController.text = state.longitude.toString();
                           txtAddressController.text = state.currentAddress;
                           txtPincodeController.text = state.pincode;
                         }
                       }
 
                       if (state is UserLocationFailureState) {
-                        Fluttertoast.showToast(
-                            msg: "Please turn on GPS to get current location");
+                        Fluttertoast.showToast(msg: "Please turn on GPS to get current location");
                       }
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -269,11 +272,11 @@ class _OutletInformationState extends State<OutletInformation> {
                               const SizedBox(
                                 width: 10,
                               ),
-                              textWidget(latitude),
+                              textWidget(StringConst.latitude),
                             ],
                           ),
                           sizedBoxWidget(12.0, txtOutletNameController),
-                          textFields(txtLatitudeController, enterHere),
+                          textFields(txtLatitudeController, StringConst.enterHere),
                           sizedBoxWidget(12.0, ""),
                           Row(
                             children: [
@@ -281,11 +284,11 @@ class _OutletInformationState extends State<OutletInformation> {
                               const SizedBox(
                                 width: 10,
                               ),
-                              textWidget(longitude),
+                              textWidget(StringConst.longitude),
                             ],
                           ),
                           sizedBoxWidget(12.0, ""),
-                          textFields(txtLongtitudeController, enterHere),
+                          textFields(txtLongtitudeController, StringConst.enterHere),
                           sizedBoxWidget(12.0, ""),
                           Row(
                             children: [
@@ -293,11 +296,11 @@ class _OutletInformationState extends State<OutletInformation> {
                               const SizedBox(
                                 width: 10,
                               ),
-                              textWidget(address),
+                              textWidget(StringConst.address),
                             ],
                           ),
                           sizedBoxWidget(12.0, ""),
-                          textFields(txtAddressController, enterHere),
+                          textFields(txtAddressController, StringConst.enterHere),
                           sizedBoxWidget(12.0, ""),
                           Row(
                             children: [
@@ -305,11 +308,11 @@ class _OutletInformationState extends State<OutletInformation> {
                               const SizedBox(
                                 width: 10,
                               ),
-                              textWidget(pincode),
+                              textWidget(StringConst.pincode),
                             ],
                           ),
                           sizedBoxWidget(12.0, txtAddressController),
-                          textFields(txtPincodeController, enterHere),
+                          textFields(txtPincodeController, StringConst.enterHere),
                           sizedBoxWidget(12.0, ""),
                         ],
                       );
@@ -321,11 +324,11 @@ class _OutletInformationState extends State<OutletInformation> {
                       const SizedBox(
                         width: 10,
                       ),
-                      textWidget(landmark),
+                      textWidget(StringConst.landmark),
                     ],
                   ),
                   sizedBoxWidget(12.0, ""),
-                  textFields(txtLandmarkController, enterHere),
+                  textFields(txtLandmarkController, StringConst.enterHere),
                   sizedBoxWidget(12.0, ""),
                   Row(
                     children: [
@@ -333,7 +336,7 @@ class _OutletInformationState extends State<OutletInformation> {
                       const SizedBox(
                         width: 10,
                       ),
-                      textWidget(existingRetailer),
+                      textWidget(StringConst.existingRetailer),
                     ],
                   ),
                   sizedBoxWidget(5.0, ""),
@@ -346,8 +349,8 @@ class _OutletInformationState extends State<OutletInformation> {
                       return Row(
                         children: [
                           sizedBoxWidget(0.0, txtLandmarkController),
-                          radioButtonWidget(existingRetailerRadio, 1, yes),
-                          radioButtonWidget(existingRetailerRadio, 2, no),
+                          radioButtonWidget(existingRetailerRadio, 1, StringConst.yes),
+                          radioButtonWidget(existingRetailerRadio, 2, StringConst.no),
                         ],
                       );
                     },
@@ -359,11 +362,11 @@ class _OutletInformationState extends State<OutletInformation> {
                       const SizedBox(
                         width: 10,
                       ),
-                      textWidget(retailerTypeMand),
+                      textWidget(StringConst.retailerTypeMand),
                     ],
                   ),
                   sizedBoxWidget(12.0, ""),
-                  textFields(txtSelectRetailerTypeController, selectHint),
+                  textFields(txtSelectRetailerTypeController, StringConst.selectHint),
                   sizedBoxWidget(20.0, ""),
                   Row(
                     children: [
@@ -371,11 +374,11 @@ class _OutletInformationState extends State<OutletInformation> {
                       const SizedBox(
                         width: 10,
                       ),
-                      textWidget(retailerCategoryMand),
+                      textWidget(StringConst.retailerCategoryMand),
                     ],
                   ),
                   sizedBoxWidget(12.0, ""),
-                  textFields(txtSelectRetailerCategoryController, selectHint),
+                  textFields(txtSelectRetailerCategoryController, StringConst.selectHint),
                   sizedBoxWidget(20.0, ""),
                   Row(
                     children: [
@@ -383,7 +386,7 @@ class _OutletInformationState extends State<OutletInformation> {
                       const SizedBox(
                         width: 10,
                       ),
-                      textWidget(isKRO),
+                      textWidget(StringConst.isKRO),
                     ],
                   ),
                   sizedBoxWidget(5.0, ""),
@@ -395,8 +398,8 @@ class _OutletInformationState extends State<OutletInformation> {
                       }
                       return Row(
                         children: [
-                          radioButtonWidget(isKRORadio, 3, yes),
-                          radioButtonWidget(isKRORadio, 4, no),
+                          radioButtonWidget(isKRORadio, 3, StringConst.yes),
+                          radioButtonWidget(isKRORadio, 4, StringConst.no),
                         ],
                       );
                     },
@@ -408,11 +411,11 @@ class _OutletInformationState extends State<OutletInformation> {
                       const SizedBox(
                         width: 10,
                       ),
-                      textWidget(gstNo),
+                      textWidget(StringConst.gstNo),
                     ],
                   ),
                   sizedBoxWidget(12.0, ""),
-                  textFields(txtGSTController, enterHere),
+                  textFields(txtGSTController, StringConst.enterHere),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -423,7 +426,7 @@ class _OutletInformationState extends State<OutletInformation> {
                           const SizedBox(
                             width: 10,
                           ),
-                          textWidget(outletPhoto),
+                          textWidget(StringConst.outletPhoto),
                         ],
                       ),
                       sizedBoxWidget(12.0, txtGSTController),
@@ -436,7 +439,7 @@ class _OutletInformationState extends State<OutletInformation> {
                             onTap: () {
                               selectImage();
                             },
-                            child: selectImageWidget(outletName),
+                            child: selectImageWidget(StringConst.outletName),
                           );
                         },
                       ),
@@ -474,19 +477,16 @@ class _OutletInformationState extends State<OutletInformation> {
             } else if (outletPhotoFile == null) {
               Fluttertoast.showToast(msg: "Please capture outlet photo");
             } else {
-              String userId = await SharedPreference.getStringPreference(
-                  SharedPreference.userId);
+              String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
               debugPrint("edit store userId $userId");
               debugPrint("edit store enrollmentTypeId $enrollmentTypeId");
               debugPrint("edit store cityId $districtId");
               debugPrint("edit store distributorId $distributorId");
               debugPrint("edit store beatId $beatId");
               debugPrint("edit store orderBookingDayId $orderBookingDayId");
-              debugPrint(
-                  "edit store outletName ${txtOutletNameController.text}");
+              debugPrint("edit store outletName ${txtOutletNameController.text}");
               debugPrint("edit store latitude ${txtLatitudeController.text}");
-              debugPrint(
-                  "edit store longitude ${txtLongtitudeController.text}");
+              debugPrint("edit store longitude ${txtLongtitudeController.text}");
               debugPrint("edit store address ${txtAddressController.text}");
               debugPrint("edit store landmark ${txtLandmarkController.text}");
               debugPrint("edit store pincode ${txtPincodeController.text}");
@@ -510,32 +510,28 @@ class _OutletInformationState extends State<OutletInformation> {
               debugPrint("edit store outletphoto $outletFileName");
 
               Map<String, dynamic> outletInfo = HashMap<String, dynamic>();
-              outletInfo["user_id"] =
-                  await SharedPreference.getStringPreference(
-                      SharedPreference.userId);
+              outletInfo["user_id"] = await SharedPreference.getStringPreference(SharedPreference.userId);
               outletInfo["enrolment_type"] = enrollmentTypeId;
-              outletInfo["district_id"] = districtId;
-              outletInfo["distributor_id"] = distributorId;
-              outletInfo["beat_id"] = beatId;
-              outletInfo["order_booking_day_id"] = orderBookingDayId;
-              outletInfo["outlet_name"] = txtOutletNameController.text;
-              outletInfo["latitude"] = txtLatitudeController.text;
-              outletInfo["longitude"] = txtLongtitudeController.text;
-              outletInfo["address"] = txtAddressController.text;
-              outletInfo["pincode"] = txtPincodeController.text;
-              outletInfo["landmark"] = txtLandmarkController.text;
-              outletInfo["existing_retailer"] =
-                  existingRetailerRadio == 1 ? "1" : "0";
-              outletInfo["retailer_type"] = retailerTypeId;
-              outletInfo["retailer_category"] = retailerCategoryId;
-              outletInfo["is_kro"] = isKRORadio == 3 ? "1" : "0";
-              outletInfo["gst_number"] = txtGSTController.text;
-              outletInfo["outlet_photo"] = outletPhotoFile;
+
+              form.districtId = districtId ?? "";
+              form.distributorId = distributorId ?? "";
+              form.beatId = beatId ?? "";
+              form.orderBookingDay1 = orderBookingDayId ?? "";
+              form.outletName = txtOutletNameController.text.trim();
+              form.latitude = txtLatitudeController.text.trim();
+              form.longitude = txtLongtitudeController.text.trim();
+              form.address = txtAddressController.text.trim();
+              form.landmark = txtLandmarkController.text.trim();
+              form.isExistingRetailer = existingRetailerRadio == 1 ? "1" : "0";
+              form.retailerTypeId = retailerTypeId ?? "";
+              form.retailerCategoryId = retailerCategoryId ?? "";
+              form.isKro = isKRORadio == 3 ? "1" : "0";
+              form.gstNo = txtGSTController.text.trim();
+              form.outletImage = outletPhotoFile == null ? "" : outletPhotoFile!.path;
+
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        OwnerInformation(outletInfo: outletInfo)),
+                MaterialPageRoute(builder: (context) => OwnerInformation(form: form)),
               );
             }
           },
@@ -543,7 +539,7 @@ class _OutletInformationState extends State<OutletInformation> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
               Text(
-                nextCaps,
+                StringConst.nextCaps,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w500,
@@ -622,8 +618,7 @@ class _OutletInformationState extends State<OutletInformation> {
             onTap: () async {
               selectedController = txtController;
               await Future.delayed(const Duration(milliseconds: 500));
-              RenderObject? object =
-                  globalKey.currentContext!.findRenderObject();
+              RenderObject? object = globalKey.currentContext!.findRenderObject();
               object!.showOnScreen();
             },
             keyboardType: TextInputType.text,
@@ -724,9 +719,10 @@ class _OutletInformationState extends State<OutletInformation> {
     for (EnrolmentTypeModel enrolmentType in enrolmentTypeModel!) {
       widgets.add(GestureDetector(
         onTap: () {
-          commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-              enrollmentRadioTag: enrolmentType.id));
+          commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: enrolmentType.id));
           enrollmentTypeId = enrolmentType.id.toString();
+          form.enrollmentTypeId = enrolmentType.id.toString();
+          form.enrollmentType = enrolmentType.enrollmentType.toString();
         },
         child: Row(
           children: [
@@ -738,9 +734,10 @@ class _OutletInformationState extends State<OutletInformation> {
                 activeColor: MColor.colorPrimary,
                 fillColor: MaterialStateProperty.all(MColor.colorPrimary),
                 onChanged: (value) {
-                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                      enrollmentRadioTag: value));
+                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
                   enrollmentTypeId = enrolmentType.id.toString();
+                  form.enrollmentTypeId = enrolmentType.id.toString();
+                  form.enrollmentType = enrolmentType.enrollmentType.toString();
                 },
               ),
             ),
@@ -799,20 +796,15 @@ class _OutletInformationState extends State<OutletInformation> {
   void selectImage() async {
     try {
       XFile? image = await imagePicker.pickImage(
-          source: ImageSource.camera,
-          maxHeight: 512,
-          maxWidth: 512,
-          preferredCameraDevice: CameraDevice.front);
+          source: ImageSource.camera, maxHeight: 512, maxWidth: 512, preferredCameraDevice: CameraDevice.front);
       if (image != null) {
         outletPhotoFile = File(image.path);
         outletFileName = image.name;
+
         commonBloc.add(CommonBlocSelectImageEvent(imageFile: outletPhotoFile!));
       }
     } catch (exception) {
-      Fluttertoast.showToast(
-          msg:
-              "Permission denied, go to app settings and allow camera permission",
-          toastLength: Toast.LENGTH_LONG);
+      Fluttertoast.showToast(msg: "Permission denied, go to app settings and allow camera permission", toastLength: Toast.LENGTH_LONG);
     }
   }
 
@@ -826,25 +818,19 @@ class _OutletInformationState extends State<OutletInformation> {
         builder: (context) {
           return txtController == txtSelectDistrictController
               ? SelectDistrictBottomSheet(
-                  selectedDistrictName: txtSelectDistrictController.text.isEmpty
-                      ? ""
-                      : txtSelectDistrictController.text,
-                  onDistrictSelect: (district, id) {
-                    txtSelectDistrictController.text = district;
-                    if (id != null) {
-                      districtId = id;
-                      txtSelectDistributorController.text = "";
-                      txtSelectBeatNameController.text = "";
-                      txtOrderBookingController.text = "";
-                    }
+                  selectedDistrict: districtModel,
+                  onDistrictSelect: (district) {
+                    districtModel = district;
+                    txtSelectDistrictController.text = district.name;
+                    districtId = district.id.toString();
+                    txtSelectDistributorController.text = "";
+                    txtSelectBeatNameController.text = "";
+                    txtOrderBookingController.text = "";
                   },
                 )
               : txtController == txtSelectDistributorController
                   ? SelectDistributorBottomSheet(
-                      selectedDistributorName:
-                          txtSelectDistributorController.text.isEmpty
-                              ? ""
-                              : txtSelectDistributorController.text,
+                      selectedDistributorName: txtSelectDistributorController.text.isEmpty ? "" : txtSelectDistributorController.text,
                       onDistributorSelect: (distributor, id) {
                         txtSelectDistributorController.text = distributor;
                         if (id != null) {
@@ -856,10 +842,7 @@ class _OutletInformationState extends State<OutletInformation> {
                     )
                   : txtController == txtSelectBeatNameController
                       ? SelectBeatNameBottomSheet(
-                          selectedBeatNameName:
-                              txtSelectBeatNameController.text.isEmpty
-                                  ? ""
-                                  : txtSelectBeatNameController.text,
+                          selectedBeatNameName: txtSelectBeatNameController.text.isEmpty ? "" : txtSelectBeatNameController.text,
                           onBeatNameSelect: (beatName) {
                             txtSelectBeatNameController.text = beatName;
                             // txtOrderBookingController.text = beatName;
@@ -868,12 +851,9 @@ class _OutletInformationState extends State<OutletInformation> {
                       : txtController == txtSelectRetailerTypeController
                           ? SelectRetailerTypeBottomSheet(
                               selectedRetailerTypeName:
-                                  txtSelectRetailerTypeController.text.isEmpty
-                                      ? ""
-                                      : txtSelectRetailerTypeController.text,
+                                  txtSelectRetailerTypeController.text.isEmpty ? "" : txtSelectRetailerTypeController.text,
                               onRetailerTypeSelect: (retailerType, id) {
-                                txtSelectRetailerTypeController.text =
-                                    retailerType;
+                                txtSelectRetailerTypeController.text = retailerType;
                                 if (id != null) {
                                   retailerTypeId = id;
                                 }
@@ -881,14 +861,9 @@ class _OutletInformationState extends State<OutletInformation> {
                             )
                           : SelectRetailerCategoryBottomSheet(
                               selectedRetailerCategoryName:
-                                  txtSelectRetailerCategoryController
-                                          .text.isEmpty
-                                      ? ""
-                                      : txtSelectRetailerCategoryController
-                                          .text,
+                                  txtSelectRetailerCategoryController.text.isEmpty ? "" : txtSelectRetailerCategoryController.text,
                               onRetailerCategorySelect: (retailerCategory, id) {
-                                txtSelectRetailerCategoryController.text =
-                                    retailerCategory;
+                                txtSelectRetailerCategoryController.text = retailerCategory;
                                 if (id != null) {
                                   retailerCategoryId = id;
                                 }

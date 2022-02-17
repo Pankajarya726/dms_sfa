@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:path/path.dart' as path;
 
 class RetailerForm {
   String enrollmentTypeId = "";
@@ -23,7 +24,7 @@ class RetailerForm {
   String retailerCategoryId = "";
   String isKro = "0";
   String gstNo = "";
-  String outlatImage = "";
+  String outletImage = "";
   String ownerName = "";
   String mobileNumber = " ";
   String secondaryMobile = "";
@@ -54,14 +55,16 @@ class RetailerForm {
         "email": email,
         "mobile_number": mobileNumber,
         "helper_number": helperNumber,
-        "city_id": cityId,
+        "city_id": districtId,
         "pan": pan,
         "adhar_number": aadhaarNumber,
         "birthday": birthday,
+        "owner_image": ownerImage.isEmpty ? null : MultipartFile.fromFileSync(ownerImage, filename: path.basename(ownerImage)),
+        "outlet_image": outletImage.isEmpty ? null : MultipartFile.fromFileSync(outletImage, filename: path.basename(outletImage)),
         "anniversary": anniversary,
         "outlet_name": outletName,
-        "beat_name": beatName,
-        "distributor": distributor,
+        "beat_name": beatId,
+        "distributor": distributorId,
         "latitude": latitude,
         "longitude": longitude,
         "secondary_mobile": secondaryMobile,
@@ -75,7 +78,7 @@ class RetailerForm {
         "call_time_slot_id": callTimeSlotId,
         "language_id_1": languageId1,
         "language_id_2": languageId2,
-        "retailer_type": retailerType,
+        "retailer_type": retailerTypeId,
         "retailer_category": retailerCategory,
         "is_whatsapp_sms": isWhatsappSms,
         "order_booking_day_1": orderBookingDay1

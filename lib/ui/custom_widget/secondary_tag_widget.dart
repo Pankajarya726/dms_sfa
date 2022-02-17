@@ -38,7 +38,7 @@ class _SecondaryTagWidgetState extends State<SecondaryTagWidget> {
         const Padding(
           padding: EdgeInsets.symmetric(vertical: 15),
           child: Text(
-            secondaryTag,
+            StringConst.secondaryTag,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,

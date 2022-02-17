@@ -70,7 +70,7 @@ class _OrderHistoryBottomSheetState extends State<OrderHistoryBottomSheet> {
   Widget heading = const Padding(
     padding: EdgeInsets.fromLTRB(15, 15, 15, 5),
     child: Text(
-      summary,
+      StringConst.summary,
       style: TextStyle(
         fontSize: 19,
         color: MColor.colorPrimary,

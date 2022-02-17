@@ -74,7 +74,7 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
               const Expanded(
                 child: Center(
                   child: Text(
-                    retailers,
+                    StringConst.retailers,
                     style: TextStyle(
                       color: MColor.backButton,
                     ),
@@ -95,7 +95,7 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                   },
                   color: MColor.colorSecondary,
                   child: const Text(
-                    addCaps,
+                    StringConst.addCaps,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 15,

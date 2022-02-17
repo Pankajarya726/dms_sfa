@@ -13,17 +13,17 @@ class Constants {
   static String token = "";
 
   static const List<String> monthsName = [
-    january,
-    february,
-    march,
-    april,
-    may,
-    june,
-    july,
-    august,
-    september,
-    october,
-    november,
-    december
+    StringConst.january,
+    StringConst.february,
+    StringConst.march,
+    StringConst.april,
+    StringConst.may,
+    StringConst.june,
+    StringConst.july,
+    StringConst.august,
+    StringConst.september,
+    StringConst.october,
+    StringConst.november,
+    StringConst.december
   ];
 }

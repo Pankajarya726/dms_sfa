@@ -317,24 +317,24 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
   void navigateToHomeItems(index) {
     switch (index) {
       case 0:
-        Fluttertoast.showToast(msg: comingSoon);
+        Fluttertoast.showToast(msg:StringConst. comingSoon);
         break;
       case 1:
-        Fluttertoast.showToast(msg: comingSoon);
+        Fluttertoast.showToast(msg: StringConst.comingSoon);
         break;
       case 2:
-        Fluttertoast.showToast(msg: comingSoon);
+        Fluttertoast.showToast(msg: StringConst.comingSoon);
         break;
       case 3:
-        // Fluttertoast.showToast(msg: comingSoon);
+        // Fluttertoast.showToast(msg: StringConst.comingSoon);
       Navigator.push(context, MaterialPageRoute(builder: (context) => const OutletInformation()));
         break;
       case 4:
-        // Fluttertoast.showToast(msg: comingSoon);
+        // Fluttertoast.showToast(msg: StringConst.comingSoon);
         Navigator.push(context, MaterialPageRoute(builder: (context) => const RetailerListScreen()));
         break;
       case 5:
-        Fluttertoast.showToast(msg: comingSoon);
+        Fluttertoast.showToast(msg: StringConst.comingSoon);
         break;
     }
   }
@@ -342,13 +342,13 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
   void navigateToBottomBarItems() {
     switch (currentBottomTabIndex) {
       case 0:
-        Fluttertoast.showToast(msg: comingSoon);
+        Fluttertoast.showToast(msg: StringConst.comingSoon);
         break;
       case 1:
-        Fluttertoast.showToast(msg: comingSoon);
+        Fluttertoast.showToast(msg: StringConst.comingSoon);
         break;
       case 2:
-        Fluttertoast.showToast(msg: comingSoon);
+        Fluttertoast.showToast(msg: StringConst.comingSoon);
         break;
       case 3:
         Navigator.push(context, MaterialPageRoute(builder: (context) => const MyPlan()));

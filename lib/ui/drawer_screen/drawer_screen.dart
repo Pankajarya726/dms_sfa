@@ -173,7 +173,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
             ListTile(
               onTap: () {
                 // controller.close!.call();
-                Fluttertoast.showToast(msg: comingSoon);
+                Fluttertoast.showToast(msg: StringConst.comingSoon);
               },
               title: const Text("Script", style: TextStyle(color: Colors.white, fontSize: 18)),
               leading: SvgPicture.asset(
@@ -186,7 +186,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
             ListTile(
               onTap: () {
                 // controller.close!.call();
-                Fluttertoast.showToast(msg: comingSoon);
+                Fluttertoast.showToast(msg: StringConst.comingSoon);
               },
               title: const Text("Message", style: TextStyle(color: Colors.white, fontSize: 18)),
               leading: SvgPicture.asset(
@@ -224,7 +224,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                     return ListTile(
                       onTap: () {
                         if (startMyDay == "hide") {
-                          logoutDialog(context, endDay);
+                          logoutDialog(context, StringConst.endDay);
                           // Navigator.push(context, MaterialPageRoute(builder: (_) => EndDayScreen()));
                         } else {
                           Navigator.of(context).push(
@@ -257,7 +257,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
             ListTile(
               onTap: () {
                 // controller.close!.call();
-                Fluttertoast.showToast(msg: comingSoon);
+                Fluttertoast.showToast(msg: StringConst.comingSoon);
               },
               title: const Text("Sync", style: TextStyle(color: Colors.white, fontSize: 18)),
               leading: SvgPicture.asset(
@@ -299,7 +299,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
             ListTile(
               onTap: () {
                 // controller.close!.call();
-                logoutDialog(context, logout);
+                logoutDialog(context, StringConst.logout);
               },
               title: const Text("Logout", style: TextStyle(color: Colors.white, fontSize: 18)),
               leading: SvgPicture.asset(
@@ -337,7 +337,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          content: titleText == logout
+          content: titleText == StringConst.logout
               ? const Text(
                   "Are you sure you want to logout?",
                   style: TextStyle(
@@ -362,7 +362,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
               },
             ),
             MaterialButton(
-              child: titleText == logout
+              child: titleText == StringConst.logout
                   ? const Text(
                       "Logout",
                       style: TextStyle(
@@ -378,7 +378,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                       ),
                     ),
               onPressed: () async {
-                if (titleText == logout) {
+                if (titleText == StringConst.logout) {
                   await SharedPreference.clearSharedPreference(context);
                   Navigator.pushAndRemoveUntil(
                       context, MaterialPageRoute(builder: (context) => const LoginScreen()), ModalRoute.withName("/"));

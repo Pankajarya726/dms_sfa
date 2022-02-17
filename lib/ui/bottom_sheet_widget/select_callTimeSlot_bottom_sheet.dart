@@ -80,7 +80,7 @@ class _SelectCallTimeSlotBottomSheetState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  callTimeSlot,
+                  StringConst.callTimeSlot,
                   style: TextStyle(
                     fontSize: 19,
                     color: MColor.colorPrimary,
@@ -120,7 +120,7 @@ class _SelectCallTimeSlotBottomSheetState
                       ),
                     ),
                     child: const Text(
-                      done,
+                      StringConst.done,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,

@@ -633,7 +633,7 @@ class ApiRepository {
         ServerError e = ServerError.withError(error: error);
         message = e.getErrorMessage();
       } else {
-        message = somethingWR;
+        message = StringConst.somethingWR;
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return SelectDistributorResponse(
@@ -655,7 +655,7 @@ class ApiRepository {
         ServerError e = ServerError.withError(error: error);
         message = e.getErrorMessage();
       } else {
-        message = somethingWR;
+        message = StringConst.somethingWR;
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return CallTimeSlotResponse(
@@ -676,7 +676,7 @@ class ApiRepository {
         ServerError e = ServerError.withError(error: error);
         message = e.getErrorMessage();
       } else {
-        message = somethingWR;
+        message = StringConst.somethingWR;
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return GetSurveyProduct(

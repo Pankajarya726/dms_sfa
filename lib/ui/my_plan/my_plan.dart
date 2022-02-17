@@ -81,7 +81,7 @@ class _MyPlanState extends State<MyPlan> with TickerProviderStateMixin {
               backgroundColor: const Color(0xffFAFAFA),
               appBar: AppBar(
                 title: const Text(
-                  myPlan,
+                  StringConst.myPlan,
                   style: TextStyle(
                     color: MColor.backButton,
                   ),
@@ -128,7 +128,7 @@ class _MyPlanState extends State<MyPlan> with TickerProviderStateMixin {
                               }
                             },
                             child: const Text(
-                              addCaps,
+                              StringConst.addCaps,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 17,

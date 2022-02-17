@@ -11,22 +11,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SelectDistributorBottomSheet extends StatefulWidget {
-  final Function(String selectedDistributor, String? selectedDistributorId)
-      onDistributorSelect;
+  final Function(String selectedDistributor, String? selectedDistributorId) onDistributorSelect;
   final String selectedDistributorName;
-  const SelectDistributorBottomSheet(
-      {Key? key,
-      required this.onDistributorSelect,
-      required this.selectedDistributorName})
+  const SelectDistributorBottomSheet({Key? key, required this.onDistributorSelect, required this.selectedDistributorName})
       : super(key: key);
 
   @override
-  _SelectDistributorBottomSheetState createState() =>
-      _SelectDistributorBottomSheetState();
+  _SelectDistributorBottomSheetState createState() => _SelectDistributorBottomSheetState();
 }
 
-class _SelectDistributorBottomSheetState
-    extends State<SelectDistributorBottomSheet> {
+class _SelectDistributorBottomSheetState extends State<SelectDistributorBottomSheet> {
   // List<String> names = [
   //   "Murtuza",
   //   "Himanshu",
@@ -66,8 +60,7 @@ class _SelectDistributorBottomSheetState
         child: BlocBuilder<EditStoreBloc, EditStoreStates>(
           builder: (context, state) {
             if (state is EditStoreInitialState) {
-              BlocProvider.of<EditStoreBloc>(context)
-                  .add(SelectDistributorEvent());
+              BlocProvider.of<EditStoreBloc>(context).add(SelectDistributorEvent());
             }
             if (state is EditStoreILoadingState) {
               return const Center(
@@ -89,7 +82,7 @@ class _SelectDistributorBottomSheetState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  selectDistributor,
+                  StringConst.selectDistributor,
                   style: TextStyle(
                     fontSize: 19,
                     color: MColor.colorPrimary,
@@ -113,14 +106,12 @@ class _SelectDistributorBottomSheetState
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      widget.onDistributorSelect(
-                          selectedDistributor, selectedDistributorId);
+                      widget.onDistributorSelect(selectedDistributor, selectedDistributorId);
                       Navigator.pop(context);
                     },
                     style: ButtonStyle(
                       fixedSize: MaterialStateProperty.all(const Size(220, 60)),
-                      backgroundColor:
-                          MaterialStateProperty.all(MColor.colorPrimary),
+                      backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
                       elevation: MaterialStateProperty.all(0),
                       shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
@@ -129,7 +120,7 @@ class _SelectDistributorBottomSheetState
                       ),
                     ),
                     child: const Text(
-                      done,
+                      StringConst.done,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -159,8 +150,7 @@ class _SelectDistributorBottomSheetState
             builder: (context, state) {
               if (state is CommonBlocInitialState) {
                 if (selectDistributorRadio == distributor.name) {
-                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                      enrollmentRadioTag: distributor.id));
+                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: distributor.id));
                 }
               }
 
@@ -169,8 +159,7 @@ class _SelectDistributorBottomSheetState
               }
               return GestureDetector(
                 onTap: () {
-                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                      enrollmentRadioTag: distributor.id));
+                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: distributor.id));
                   selectedDistributor = distributor.name;
                   selectedDistributorId = distributor.id.toString();
                 },
@@ -182,11 +171,9 @@ class _SelectDistributorBottomSheetState
                         value: distributor.id,
                         groupValue: selectDistributorRadio,
                         activeColor: MColor.colorPrimary,
-                        fillColor:
-                            MaterialStateProperty.all(MColor.colorPrimary),
+                        fillColor: MaterialStateProperty.all(MColor.colorPrimary),
                         onChanged: (value) {
-                          commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                              enrollmentRadioTag: value));
+                          commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
                           selectedDistributor = distributor.name;
                           selectedDistributorId = distributor.id.toString();
                         },

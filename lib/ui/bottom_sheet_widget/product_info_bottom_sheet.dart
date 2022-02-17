@@ -51,7 +51,7 @@ class _ProductInfoBottomSheetState extends State<ProductInfoBottomSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              productInfo,
+              StringConst.productInfo,
               style: TextStyle(
                 fontSize: 19,
                 color: MColor.colorPrimary,
@@ -87,7 +87,7 @@ class _ProductInfoBottomSheetState extends State<ProductInfoBottomSheet> {
               height: 30,
             ),
             const Text(
-              schemeInfo,
+              StringConst. schemeInfo,
               style: TextStyle(
                 fontSize: 19,
                 color: MColor.colorPrimary,

@@ -56,7 +56,7 @@ class EditStoreBloc extends Bloc<EditStoreEvents, EditStoreStates> {
         yield EditStoreFailureState(failureMessage: response.message);
       }
     } else {
-      yield EditStoreFailureState(failureMessage: internetCheck);
+      yield EditStoreFailureState(failureMessage: StringConst.internetCheck);
     }
   }
 
@@ -69,38 +69,33 @@ class EditStoreBloc extends Bloc<EditStoreEvents, EditStoreStates> {
         yield EditStoreFailureState(failureMessage: response.message);
       }
     } else {
-      yield EditStoreFailureState(failureMessage: internetCheck);
+      yield EditStoreFailureState(failureMessage: StringConst.internetCheck);
     }
   }
 
-  Stream<EditStoreStates> selectRetailerType(
-      SelectRetailerTypeEvent event) async* {
+  Stream<EditStoreStates> selectRetailerType(SelectRetailerTypeEvent event) async* {
     if (await Network.isConnected()) {
-      SelectRetailerTypeResponse response =
-          await repository.selectRetailerType();
+      SelectRetailerTypeResponse response = await repository.selectRetailerType();
       if (response.success) {
         yield SelectRetailerTypeState(selectRetailerTypeResponse: response);
       } else {
         yield EditStoreFailureState(failureMessage: response.message);
       }
     } else {
-      yield EditStoreFailureState(failureMessage: internetCheck);
+      yield EditStoreFailureState(failureMessage: StringConst.internetCheck);
     }
   }
 
-  Stream<EditStoreStates> selectRetailerCategory(
-      SelectRetailerCategoryEvent event) async* {
+  Stream<EditStoreStates> selectRetailerCategory(SelectRetailerCategoryEvent event) async* {
     if (await Network.isConnected()) {
-      SelectRetailerCategoryResponse response =
-          await repository.selectRetailerCategory();
+      SelectRetailerCategoryResponse response = await repository.selectRetailerCategory();
       if (response.success) {
-        yield SelectRetailerCategoryState(
-            selectRetailerCategoryResponse: response);
+        yield SelectRetailerCategoryState(selectRetailerCategoryResponse: response);
       } else {
         yield EditStoreFailureState(failureMessage: response.message);
       }
     } else {
-      yield EditStoreFailureState(failureMessage: internetCheck);
+      yield EditStoreFailureState(failureMessage: StringConst.internetCheck);
     }
   }
 
@@ -113,12 +108,11 @@ class EditStoreBloc extends Bloc<EditStoreEvents, EditStoreStates> {
         yield EditStoreFailureState(failureMessage: response.message);
       }
     } else {
-      yield EditStoreFailureState(failureMessage: internetCheck);
+      yield EditStoreFailureState(failureMessage: StringConst.internetCheck);
     }
   }
 
-  Stream<EditStoreStates> selectDistributor(
-      SelectDistributorEvent event) async* {
+  Stream<EditStoreStates> selectDistributor(SelectDistributorEvent event) async* {
     if (await Network.isConnected()) {
       SelectDistributorResponse response = await repository.selectDistributor();
       if (response.success) {
@@ -127,12 +121,11 @@ class EditStoreBloc extends Bloc<EditStoreEvents, EditStoreStates> {
         yield EditStoreFailureState(failureMessage: response.message);
       }
     } else {
-      yield EditStoreFailureState(failureMessage: internetCheck);
+      yield EditStoreFailureState(failureMessage: StringConst.internetCheck);
     }
   }
 
-  Stream<EditStoreStates> selectCallTimeSlot(
-      SelectCallTimeSlotEvent event) async* {
+  Stream<EditStoreStates> selectCallTimeSlot(SelectCallTimeSlotEvent event) async* {
     if (await Network.isConnected()) {
       CallTimeSlotResponse response = await repository.selectCallTimeslot();
       if (response.success) {
@@ -141,7 +134,7 @@ class EditStoreBloc extends Bloc<EditStoreEvents, EditStoreStates> {
         yield EditStoreFailureState(failureMessage: response.message);
       }
     } else {
-      yield EditStoreFailureState(failureMessage: internetCheck);
+      yield EditStoreFailureState(failureMessage: StringConst.internetCheck);
     }
   }
 }

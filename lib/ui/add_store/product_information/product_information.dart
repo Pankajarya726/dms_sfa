@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/main.dart';
 import 'package:dms/model/get_survey_product.dart';
+import 'package:dms/model/retailer_form.dart';
 import 'package:dms/ui/bottom_sheet_widget/otp_bottom_sheet.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
@@ -11,24 +13,24 @@ import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ProductInformation extends StatefulWidget {
-  final Map<String, dynamic> outletInfo;
-  final Map<String, dynamic> ownerInfo;
+  final RetailerForm form;
 
-  const ProductInformation({Key? key, required this.outletInfo, required this.ownerInfo}) : super(key: key);
+  const ProductInformation({Key? key, required this.form}) : super(key: key);
 
   @override
   State<ProductInformation> createState() => _ProductInformationState();
 }
 
 class _ProductInformationState extends State<ProductInformation> {
-  List<Widget> products = [];
+  List<Widget> widgetList = [];
+  List<SurveyProduct> productList = [];
 
   StreamController<List<Widget>> productStream = StreamController();
   RefreshController refreshController = RefreshController();
 
   @override
   void initState() {
-    products.add(const Padding(
+    widgetList.add(const Padding(
       padding: EdgeInsets.symmetric(horizontal: 15),
       child: Text(
         "Which category/brand does retailer keep?",
@@ -36,7 +38,7 @@ class _ProductInformationState extends State<ProductInformation> {
       ),
     ));
 
-    productStream.add(products);
+    productStream.add(widgetList);
     getProduct();
     super.initState();
   }
@@ -48,7 +50,7 @@ class _ProductInformationState extends State<ProductInformation> {
         elevation: 1,
         shadowColor: Colors.white24,
         title: const Text(
-          productInformation,
+          StringConst.productInformation,
           style: TextStyle(
             color: MColor.backButton,
           ),
@@ -72,12 +74,12 @@ class _ProductInformationState extends State<ProductInformation> {
             padding: const EdgeInsets.symmetric(
               vertical: 15,
             ),
-            itemCount: products.length,
+            itemCount: widgetList.length,
             separatorBuilder: (context, index) {
               return const Divider();
             },
             itemBuilder: (context, index) {
-              return products[index];
+              return widgetList[index];
             },
           );
         },
@@ -88,51 +90,14 @@ class _ProductInformationState extends State<ProductInformation> {
         color: MColor.colorSecondary,
         textColor: Colors.white,
         onPressed: () async {
-          showModalBottomSheet(
-              context: context,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
-              ),
-              builder: (context) {
-                return const SelectOtpNumberBottomSheet();
-              });
-
-          // debugPrint("edit store userId ");
-          // debugPrint("edit store ownerName ${txtOwnerNameController.text}");
-          // debugPrint(
-          //     "edit store primaryMobile ${txtPrimaryMobController.text}");
-          // debugPrint(
-          //     "edit store secondaryMobile ${txtSecondaryMobController.text}");
-          // debugPrint("edit store helperMobile ${txtHelperMobController.text}");
-          // debugPrint("edit store callTimeSlotId $callTimeSlotId");
-          // debugPrint("edit store primaryLangId $primaryLangId");
-          // debugPrint("edit store secondaryLangId $secondaryLangId");
-          // debugPrint("edit store whatsAppMessage $whatsAppSmsRadio");
-          // debugPrint("edit store panNo ${txtPANController.text}");
-          // debugPrint("edit store aadhar ${txtAdharNumberController.text}");
-          // debugPrint("edit store birthday ${txtPicDateController.text}");
-          // debugPrint("edit store anniversary ${txtAnniversaryController.text}");
-          // debugPrint("edit store ownerPhoto $ownerFileName");
-          // Map<String, dynamic> ownerInfo = HashMap<String, dynamic>();
-          // ownerInfo["owner_name"] = txtOwnerNameController.text;
-          // ownerInfo["primary_mobile"] = txtPrimaryMobController.text;
-          // ownerInfo["secondary_mobile"] = txtSecondaryMobController.text;
-          // ownerInfo["helper_mobile"] = txtHelperMobController.text;
-          // ownerInfo["call_time_slot"] = txtSelectCallTimeSlotController.text;
-          // ownerInfo["lang_first"] = txtSelectLangFirstController.text;
-          // ownerInfo["lang_second"] = txtSelectLangSecondController.text;
-          // ownerInfo["whats_app_msg"] = whatsAppSmsRadio;
-          // ownerInfo["pan_number"] = txtPANController.text;
-          // ownerInfo["aadhar_number"] = txtAdharNumberController.text;
-          // ownerInfo["birthday"] = txtPicDateController.text;
-          // ownerInfo["anniversary"] = txtAnniversaryController.text;
-          // ownerInfo["owner_photo"] = ownerPhotoFile;
+          log("inputs--->" + widget.form.toMap().toString());
+          register(context);
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
             Text(
-              submitCaps,
+              StringConst.submitCaps,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -153,12 +118,25 @@ class _ProductInformationState extends State<ProductInformation> {
     GetSurveyProduct response = await repository.getSurveyProduct();
 
     if (response.success && response.data.isNotEmpty) {
-      await Future.forEach(response.data, (SurveyProduct product) => products.add(ProductListItem(productsInfo: product)));
+      productList.clear();
+      productList.addAll(response.data);
+      await Future.forEach(productList, (SurveyProduct product) => widgetList.add(ProductListItem(productsInfo: product)));
 
-      debugPrint("products--->${products.length}");
+      debugPrint("products--->${productList.length}");
 
-      productStream.add(products);
+      productStream.add(widgetList);
     }
+  }
+
+  void register(BuildContext context) async {
+    showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+        ),
+        builder: (context) {
+          return const SelectOtpNumberBottomSheet();
+        });
   }
 }
 

@@ -39,11 +39,11 @@ class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  boxLayout("assets/sun.png", startMyDayCaps, 60.0, 25.0),
+                  boxLayout("assets/sun.png", StringConst.startMyDayCaps, 60.0, 25.0),
                   const SizedBox(
                     height: 50,
                   ),
-                  boxLayout("assets/explore.png", exploreCaps, 50.0, 28.0),
+                  boxLayout("assets/explore.png", StringConst.exploreCaps, 50.0, 28.0),
                 ],
               ),
             ),
@@ -84,7 +84,7 @@ class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
             borderRadius: BorderRadius.circular(15),
           ),
           onTap: () {
-            if (imageLabel == startMyDayCaps) {
+            if (imageLabel == StringConst.startMyDayCaps) {
               // if (myPlan == null) {
               //   Fluttertoast.showToast(msg: "You don't have any plan for today, Please connect to admin");
               // } else {

@@ -99,7 +99,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      syncText,
+                      StringConst.syncText,
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,

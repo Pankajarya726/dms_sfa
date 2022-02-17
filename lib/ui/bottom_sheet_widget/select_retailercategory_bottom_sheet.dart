@@ -11,23 +11,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SelectRetailerCategoryBottomSheet extends StatefulWidget {
-  final Function(
-          String selectedRetailerCategory, String? selectedRetailerCategoryId)
-      onRetailerCategorySelect;
+  final Function(String selectedRetailerCategory, String? selectedRetailerCategoryId) onRetailerCategorySelect;
   final String selectedRetailerCategoryName;
   const SelectRetailerCategoryBottomSheet(
-      {Key? key,
-      required this.onRetailerCategorySelect,
-      required this.selectedRetailerCategoryName})
+      {Key? key, required this.onRetailerCategorySelect, required this.selectedRetailerCategoryName})
       : super(key: key);
 
   @override
-  _SelectRetailerCategoryBottomSheetState createState() =>
-      _SelectRetailerCategoryBottomSheetState();
+  _SelectRetailerCategoryBottomSheetState createState() => _SelectRetailerCategoryBottomSheetState();
 }
 
-class _SelectRetailerCategoryBottomSheetState
-    extends State<SelectRetailerCategoryBottomSheet> {
+class _SelectRetailerCategoryBottomSheetState extends State<SelectRetailerCategoryBottomSheet> {
   List<RetailerCategoryModel>? retailerCategoryModel = [];
   Object selectRetailerCategoryRadio = "";
   String selectedRetailerCategory = "";
@@ -57,8 +51,7 @@ class _SelectRetailerCategoryBottomSheetState
         child: BlocBuilder<EditStoreBloc, EditStoreStates>(
           builder: (context, state) {
             if (state is EditStoreInitialState) {
-              BlocProvider.of<EditStoreBloc>(context)
-                  .add(SelectRetailerCategoryEvent());
+              BlocProvider.of<EditStoreBloc>(context).add(SelectRetailerCategoryEvent());
             }
             if (state is EditStoreILoadingState) {
               return const Center(
@@ -80,7 +73,7 @@ class _SelectRetailerCategoryBottomSheetState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  retailerCategory,
+                  StringConst.retailerCategory,
                   style: TextStyle(
                     fontSize: 19,
                     color: MColor.colorPrimary,
@@ -104,14 +97,12 @@ class _SelectRetailerCategoryBottomSheetState
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      widget.onRetailerCategorySelect(
-                          selectedRetailerCategory, selectedRetailerCategoryId);
+                      widget.onRetailerCategorySelect(selectedRetailerCategory, selectedRetailerCategoryId);
                       Navigator.pop(context);
                     },
                     style: ButtonStyle(
                       fixedSize: MaterialStateProperty.all(const Size(220, 60)),
-                      backgroundColor:
-                          MaterialStateProperty.all(MColor.colorPrimary),
+                      backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
                       elevation: MaterialStateProperty.all(0),
                       shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
@@ -120,7 +111,7 @@ class _SelectRetailerCategoryBottomSheetState
                       ),
                     ),
                     child: const Text(
-                      done,
+                      StringConst.done,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -150,8 +141,7 @@ class _SelectRetailerCategoryBottomSheetState
             builder: (context, state) {
               if (state is CommonBlocInitialState) {
                 if (selectRetailerCategoryRadio == retailerCategory.category) {
-                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                      enrollmentRadioTag: retailerCategory.id));
+                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: retailerCategory.id));
                 }
               }
 
@@ -160,8 +150,7 @@ class _SelectRetailerCategoryBottomSheetState
               }
               return GestureDetector(
                 onTap: () {
-                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                      enrollmentRadioTag: retailerCategory.id));
+                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: retailerCategory.id));
                   selectedRetailerCategory = retailerCategory.category;
                   selectedRetailerCategoryId = retailerCategory.id.toString();
                 },
@@ -173,14 +162,11 @@ class _SelectRetailerCategoryBottomSheetState
                         value: retailerCategory.id,
                         groupValue: selectRetailerCategoryRadio,
                         activeColor: MColor.colorPrimary,
-                        fillColor:
-                            MaterialStateProperty.all(MColor.colorPrimary),
+                        fillColor: MaterialStateProperty.all(MColor.colorPrimary),
                         onChanged: (value) {
-                          commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                              enrollmentRadioTag: value));
+                          commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
                           selectedRetailerCategory = retailerCategory.category;
-                          selectedRetailerCategoryId =
-                              retailerCategory.id.toString();
+                          selectedRetailerCategoryId = retailerCategory.id.toString();
                         },
                       ),
                     ),

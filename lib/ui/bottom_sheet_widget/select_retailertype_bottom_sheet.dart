@@ -88,7 +88,7 @@ class _SelectRetailerTypeBottomSheetState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  retailerType,
+                  StringConst.retailerType,
                   style: TextStyle(
                     fontSize: 19,
                     color: MColor.colorPrimary,
@@ -128,7 +128,7 @@ class _SelectRetailerTypeBottomSheetState
                       ),
                     ),
                     child: const Text(
-                      done,
+                      StringConst. done,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,

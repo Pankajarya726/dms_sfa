@@ -177,7 +177,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
               ),
             ),
             title: const Text(
-              startMyDay,
+              StringConst.startMyDay,
               style: TextStyle(
                 color: MColor.backButton,
                 fontWeight: FontWeight.bold,
@@ -450,7 +450,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                               height: 15,
                             ),
                             const Text(
-                              remark,
+                              StringConst.remark,
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -585,7 +585,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         const Text(
-                                          getMeeting,
+                                          StringConst.getMeeting,
                                           style: TextStyle(
                                             fontSize: 17,
                                             fontWeight: FontWeight.bold,
@@ -694,7 +694,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         const Text(
-                                          selfie,
+                                          StringConst.selfie,
                                           style: TextStyle(
                                             letterSpacing: 0.67,
                                             fontSize: 17,
@@ -787,7 +787,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                     selectedPrimaryTag!.name.trim().toString().toLowerCase() == "leave" ||
                             selectedPrimaryTag!.name.trim().toString().toLowerCase() == "holiday"
                         ? const Text(
-                            confirm,
+                            StringConst.confirm,
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w500,
@@ -795,7 +795,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                             ),
                           )
                         : const Text(
-                            letsBegin,
+                            StringConst.letsBegin,
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w500,

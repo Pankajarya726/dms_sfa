@@ -155,7 +155,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                 color: MColor.backButton,
               ),
             ),
-            title: const Text(addPlan),
+            title: const Text(StringConst.addPlan),
             elevation: 1,
             actions: [
               Center(
@@ -435,7 +435,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                           height: 15,
                         ),
                         const Text(
-                          remark,
+                          StringConst.remark,
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -554,7 +554,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    confirm,
+                    StringConst.confirm,
                     style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
                   SizedBox(

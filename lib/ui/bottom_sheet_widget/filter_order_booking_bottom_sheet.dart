@@ -54,7 +54,7 @@ class _FilterOrderBookingBottomSheetState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            filter,
+            StringConst.filter,
             style: TextStyle(
               fontSize: 19,
               color: MColor.colorPrimary,
@@ -111,7 +111,7 @@ class _FilterOrderBookingBottomSheetState
                 ),
               ),
               child: const Text(
-                done,
+                StringConst.done,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,

@@ -11,12 +11,10 @@ class SelectOtpNumberBottomSheet extends StatefulWidget {
   const SelectOtpNumberBottomSheet({Key? key}) : super(key: key);
 
   @override
-  _SelectOtpNumberBottomSheetState createState() =>
-      _SelectOtpNumberBottomSheetState();
+  _SelectOtpNumberBottomSheetState createState() => _SelectOtpNumberBottomSheetState();
 }
 
-class _SelectOtpNumberBottomSheetState
-    extends State<SelectOtpNumberBottomSheet> {
+class _SelectOtpNumberBottomSheetState extends State<SelectOtpNumberBottomSheet> {
   Object selectNumberRadio = "";
   TextEditingController otpController = TextEditingController();
   CommonBloc commonBloc = CommonBloc();
@@ -39,7 +37,7 @@ class _SelectOtpNumberBottomSheetState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                otpNumber,
+                StringConst.otpNumber,
                 style: TextStyle(
                   fontSize: 19,
                   color: MColor.colorPrimary,
@@ -57,9 +55,9 @@ class _SelectOtpNumberBottomSheetState
                   }
                   return Column(
                     children: [
-                      radioButtonWidget(selectNumberRadio, 0, primary),
-                      radioButtonWidget(selectNumberRadio, 1, secondary),
-                      radioButtonWidget(selectNumberRadio, 2, helper),
+                      radioButtonWidget(selectNumberRadio, 0, StringConst.primary),
+                      radioButtonWidget(selectNumberRadio, 1, StringConst.secondary),
+                      radioButtonWidget(selectNumberRadio, 2, StringConst.helper),
                     ],
                   );
                 },
@@ -68,10 +66,10 @@ class _SelectOtpNumberBottomSheetState
                 height: 20,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  buttonWidget(done),
-                  buttonWidget(submitAnyway),
+                  buttonWidget(StringConst.done),
+                  buttonWidget(StringConst.submitAnyway),
                 ],
               ),
               const SizedBox(
@@ -86,9 +84,9 @@ class _SelectOtpNumberBottomSheetState
 
   Widget buttonWidget(label) {
     return Center(
-      child: ElevatedButton(
+      child: MaterialButton(
         onPressed: () {
-          if (label == done) {
+          if (label == StringConst.done) {
             if (selectNumberRadio == "") {
               Fluttertoast.showToast(msg: "Please select number for OTP");
             } else {
@@ -99,17 +97,23 @@ class _SelectOtpNumberBottomSheetState
             Navigator.pop(context);
           }
         },
-        style: ButtonStyle(
-          fixedSize: MaterialStateProperty.all(const Size(170, 50)),
-          backgroundColor: MaterialStateProperty.all(
-              label == done ? MColor.colorPrimary : MColor.colorSecondary),
-          elevation: MaterialStateProperty.all(0),
-          shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-          ),
+        color: label == StringConst.done ? MColor.colorPrimary : MColor.colorSecondary,
+        height: 40,
+        minWidth: MediaQuery.of(context).size.width / 2.5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
         ),
+        // style: ButtonStyle(
+        //   fixedSize: MaterialStateProperty.all(const Size(170, 50)),
+        //   backgroundColor: MaterialStateProperty.all(
+        //       label == done ? MColor.colorPrimary : MColor.colorSecondary),
+        //   elevation: MaterialStateProperty.all(0),
+        //   shape: MaterialStateProperty.all(
+        //     RoundedRectangleBorder(
+        //       borderRadius: BorderRadius.circular(30),
+        //     ),
+        //   ),
+        // ),
         child: Text(
           label,
           style: const TextStyle(
@@ -138,8 +142,7 @@ class _SelectOtpNumberBottomSheetState
               activeColor: MColor.colorPrimary,
               fillColor: MaterialStateProperty.all(MColor.colorPrimary),
               onChanged: (value) {
-                commonBloc
-                    .add(CommonBlocRetailerRadioEvent(retailerRadioTag: value));
+                commonBloc.add(CommonBlocRetailerRadioEvent(retailerRadioTag: value));
               },
             ),
           ),
@@ -183,7 +186,7 @@ class _SelectOtpNumberBottomSheetState
             const Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                pleaseEnterOTP,
+                StringConst.pleaseEnterOTP,
                 style: TextStyle(
                   letterSpacing: 0.67,
                   color: Colors.black,
@@ -205,7 +208,7 @@ class _SelectOtpNumberBottomSheetState
                 color: MColor.backButton,
               ),
               decoration: InputDecoration(
-                hintText: enterHere,
+                hintText: StringConst.enterHere,
                 hintStyle: const TextStyle(
                   color: MColor.backButton,
                   letterSpacing: 0.67,
@@ -230,7 +233,7 @@ class _SelectOtpNumberBottomSheetState
                     Navigator.pop(context);
                   },
                   child: const Text(
-                    cancel,
+                    StringConst.cancel,
                     style: TextStyle(
                       fontSize: 16,
                       letterSpacing: 0.67,
@@ -244,7 +247,7 @@ class _SelectOtpNumberBottomSheetState
                 ),
                 InkWell(
                   child: const Text(
-                    confirmSmall,
+                    StringConst.confirmSmall,
                     style: TextStyle(
                       fontSize: 16,
                       letterSpacing: 0.67,

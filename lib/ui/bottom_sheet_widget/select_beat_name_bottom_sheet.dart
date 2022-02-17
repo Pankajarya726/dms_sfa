@@ -55,7 +55,7 @@ class _SelectBeatNameBottomSheetState extends State<SelectBeatNameBottomSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            beatName,
+            StringConst. beatName,
             style: TextStyle(
               fontSize: 19,
               color: MColor.colorPrimary,
@@ -112,7 +112,7 @@ class _SelectBeatNameBottomSheetState extends State<SelectBeatNameBottomSheet> {
                 ),
               ),
               child: const Text(
-                done,
+                StringConst.done,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,

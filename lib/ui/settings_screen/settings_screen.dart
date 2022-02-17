@@ -232,7 +232,7 @@ class _SettingScreenState extends State<SettingsScreen> {
         //         const AboutUsScreen(),
         //   ),
         // );
-        Fluttertoast.showToast(msg: comingSoon);
+        Fluttertoast.showToast(msg: StringConst.comingSoon);
         break;
 
       case 3:
@@ -248,7 +248,7 @@ class _SettingScreenState extends State<SettingsScreen> {
         break;
 
       default:
-        Fluttertoast.showToast(msg: comingSoon);
+        Fluttertoast.showToast(msg: StringConst.comingSoon);
         break;
     }
   }
