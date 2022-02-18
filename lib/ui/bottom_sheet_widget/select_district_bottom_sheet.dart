@@ -8,13 +8,16 @@ import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 
 class SelectDistrictBottomSheet extends StatefulWidget {
-  final Function(DistrictModel distric) onDistrictSelect;
-  final DistrictModel? selectedDistrict;
+  final Function(DistrictModel? district) onDistrictSelect;
+  final DistrictModel? districtModel;
 
-  const SelectDistrictBottomSheet({Key? key, required this.onDistrictSelect, required this.selectedDistrict}) : super(key: key);
+  const SelectDistrictBottomSheet(
+      {Key? key, required this.onDistrictSelect, required this.districtModel})
+      : super(key: key);
 
   @override
-  _SelectDistrictBottomSheetState createState() => _SelectDistrictBottomSheetState();
+  _SelectDistrictBottomSheetState createState() =>
+      _SelectDistrictBottomSheetState();
 }
 
 class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
@@ -25,10 +28,10 @@ class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
 
   @override
   void initState() {
-    if (widget.selectedDistrict != null) {
-      debugPrint("widget.selectedDistrict!.id---->${widget.selectedDistrict!.id}");
-      groupValue = widget.selectedDistrict!.id;
-      selectedDistrict = widget.selectedDistrict;
+    if (widget.districtModel != null) {
+      debugPrint("widget.selectedDistrict!.id---->${widget.districtModel!.id}");
+      groupValue = widget.districtModel!.id;
+      selectedDistrict = widget.districtModel;
     }
     getDistricts();
     super.initState();
@@ -37,96 +40,105 @@ class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: const EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 5),
-        width: MediaQuery.of(context).size.width,
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(25),
-            topLeft: Radius.circular(25),
-          ),
+      margin: const EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 5),
+      width: MediaQuery.of(context).size.width,
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(25),
+          topLeft: Radius.circular(25),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              StringConst.selectDistrict,
-              style: TextStyle(
-                fontSize: 19,
-                color: MColor.colorPrimary,
-                letterSpacing: 0.67,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            StreamBuilder<List<DistrictModel>>(
-                stream: districtStream.stream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                    return Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: List.generate(
-                            snapshot.data!.length,
-                            (index) => RadioListTile<int>(
-                              contentPadding: const EdgeInsets.all(0),
-                              value: snapshot.data![index].id,
-                              groupValue: groupValue,
-                              title: Text(
-                                snapshot.data![index].name,
-                              ),
-                              onChanged: (value) {
-                                groupValue = value!;
-                                districtStream.add(snapshot.data!);
-                              },
+      ),
+      child: StreamBuilder<List<DistrictModel>>(
+          stream: districtStream.stream,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    StringConst.selectDistrict,
+                    style: TextStyle(
+                      fontSize: 19,
+                      color: MColor.colorPrimary,
+                      letterSpacing: 0.67,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: List.generate(
+                          snapshot.data!.length,
+                          (index) => RadioListTile<int>(
+                            contentPadding: const EdgeInsets.all(0),
+                            value: snapshot.data![index].id,
+                            groupValue: groupValue,
+                            title: Text(
+                              snapshot.data![index].name,
                             ),
+                            onChanged: (value) {
+                              groupValue = value!;
+                              districtStream.add(snapshot.data!);
+                            },
                           ),
                         ),
                       ),
-                    );
-                  }
-                  return Container();
-                }),
-            const SizedBox(
-              height: 20,
-            ),
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  if (groupValue != -1) {
-                    selectedDistrict = districtList.singleWhere((element) => element.id == groupValue);
-                    widget.onDistrictSelect(selectedDistrict!);
-                  }
-
-                  Navigator.pop(context);
-                },
-                style: ButtonStyle(
-                  fixedSize: MaterialStateProperty.all(const Size(220, 60)),
-                  backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
-                  elevation: MaterialStateProperty.all(0),
-                  shape: MaterialStateProperty.all(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                ),
-                child: const Text(
-                  StringConst.done,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                  const SizedBox(
+                    height: 20,
                   ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-          ],
-        ));
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (groupValue != -1) {
+                          selectedDistrict = districtList.singleWhere(
+                              (element) => element.id == groupValue);
+                          widget.onDistrictSelect(selectedDistrict!);
+                        }
+
+                        Navigator.pop(context);
+                      },
+                      style: ButtonStyle(
+                        fixedSize:
+                            MaterialStateProperty.all(const Size(220, 60)),
+                        backgroundColor:
+                            MaterialStateProperty.all(MColor.colorPrimary),
+                        elevation: MaterialStateProperty.all(0),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        StringConst.done,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                ],
+              );
+            }
+            return Container();
+          }),
+    );
   }
 
   getDistricts() async {
