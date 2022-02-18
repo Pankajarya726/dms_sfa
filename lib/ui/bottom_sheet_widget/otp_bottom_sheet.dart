@@ -1,99 +1,136 @@
+import 'package:dms/model/retailer_form.dart';
 import 'package:dms/ui/common_bloc/common_bloc.dart';
 import 'package:dms/ui/common_bloc/common_bloc_events.dart';
-import 'package:dms/ui/common_bloc/common_bloc_states.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class SelectOtpNumberBottomSheet extends StatefulWidget {
-  const SelectOtpNumberBottomSheet({Key? key}) : super(key: key);
+  final Function(String mobile) onDone;
+  final Function onSubmit;
+  final RetailerForm form;
+
+  const SelectOtpNumberBottomSheet({Key? key, required this.form, required this.onDone, required this.onSubmit}) : super(key: key);
 
   @override
   _SelectOtpNumberBottomSheetState createState() => _SelectOtpNumberBottomSheetState();
 }
 
 class _SelectOtpNumberBottomSheetState extends State<SelectOtpNumberBottomSheet> {
-  Object selectNumberRadio = "";
+  int groupValue = -1;
   TextEditingController otpController = TextEditingController();
   CommonBloc commonBloc = CommonBloc();
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => commonBloc,
-      child: Container(
-        margin: const EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 5),
-        width: MediaQuery.of(context).size.width,
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(25),
-            topLeft: Radius.circular(25),
-          ),
+    return Container(
+      margin: const EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 5),
+      width: MediaQuery.of(context).size.width,
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(25),
+          topLeft: Radius.circular(25),
         ),
-        child: IntrinsicHeight(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                StringConst.otpNumber,
-                style: TextStyle(
-                  fontSize: 19,
-                  color: MColor.colorPrimary,
-                  letterSpacing: 0.67,
-                  fontWeight: FontWeight.bold,
+      ),
+      child: IntrinsicHeight(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              StringConst.otpNumber,
+              style: TextStyle(
+                fontSize: 19,
+                color: MColor.colorPrimary,
+                letterSpacing: 0.67,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Column(
+              children: [
+                RadioListTile<int>(
+                  value: 1,
+                  groupValue: groupValue,
+                  onChanged: (value) {
+                    groupValue = value!;
+                    setState(() {});
+                  },
+                  title: const Text(StringConst.primary),
                 ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              BlocBuilder<CommonBloc, CommonBlocStates>(
-                builder: (context, state) {
-                  if (state is CommonBlocRetailerRadioState) {
-                    selectNumberRadio = state.retailerRadioTag;
-                  }
-                  return Column(
-                    children: [
-                      radioButtonWidget(selectNumberRadio, 0, StringConst.primary),
-                      radioButtonWidget(selectNumberRadio, 1, StringConst.secondary),
-                      radioButtonWidget(selectNumberRadio, 2, StringConst.helper),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  buttonWidget(StringConst.done),
-                  buttonWidget(StringConst.submitAnyway),
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-            ],
-          ),
+                RadioListTile<int>(
+                  value: 2,
+                  groupValue: groupValue,
+                  onChanged: (value) {
+                    groupValue = value!;
+                    setState(() {});
+                  },
+                  title: const Text(StringConst.secondary),
+                ),
+                RadioListTile<int>(
+                  value: 3,
+                  groupValue: groupValue,
+                  onChanged: (value) {
+                    groupValue = value!;
+                    setState(() {});
+                  },
+                  title: const Text(StringConst.helper),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                buttonWidget(context, StringConst.done),
+                buttonWidget(context, StringConst.submitAnyway),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget buttonWidget(label) {
+  Widget buttonWidget(BuildContext context, String label) {
     return Center(
       child: MaterialButton(
         onPressed: () {
           if (label == StringConst.done) {
-            if (selectNumberRadio == "") {
-              Fluttertoast.showToast(msg: "Please select number for OTP");
-            } else {
-              logoutDialog(context);
-              // Navigator.pop(context);
+            if (groupValue == -1) {
+              Fluttertoast.showToast(msg: "Please select an option");
+              return;
             }
+            if (groupValue == 1 && widget.form.mobileNumber.trim().isEmpty) {
+              Fluttertoast.showToast(msg: "Primary mobile number is not entered please select different option");
+              return;
+            }
+            if (groupValue == 2 && widget.form.secondaryMobile.trim().isEmpty) {
+              Fluttertoast.showToast(msg: "Secondary mobile number is not entered please select different option");
+              return;
+            }
+            if (groupValue == 3 && widget.form.helperNumber.trim().isEmpty) {
+              Fluttertoast.showToast(msg: "Helper mobile number is not entered please select different option");
+              return;
+            }
+
+            String number = groupValue == 1
+                ? widget.form.mobileNumber.trim()
+                : groupValue == 2
+                    ? widget.form.secondaryMobile.trim()
+                    : widget.form.helperNumber.trim();
+
+            widget.onDone(number);
+            Navigator.pop(context);
           } else {
+            widget.onSubmit();
             Navigator.pop(context);
           }
         },

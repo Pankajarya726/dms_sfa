@@ -36,12 +36,14 @@ class SurveyProduct {
   SurveyProduct({
     required this.id,
     required this.categoryName,
+    required this.categoryImage,
     required this.categoryDescription,
     required this.brand,
   });
 
   int id;
   String categoryName;
+  String categoryImage;
   String categoryDescription;
   bool check = false;
   List<Brand> brand;
@@ -52,17 +54,24 @@ class SurveyProduct {
 
   factory SurveyProduct.fromMap(Map<String, dynamic> json) => SurveyProduct(
         id: json["id"] ?? 0,
-        categoryName: json["category_name"],
-        categoryDescription: json["category_description"],
+        categoryName: json["category_name"] ?? "",
+        categoryImage: json["category_image"] ?? "",
+        categoryDescription: json["category_description"] ?? "",
         brand: json["brand"] == null ? [] : List<Brand>.from(json["brand"].map((x) => Brand.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
         "id": id,
         "category_name": categoryName,
+        "category_image": categoryName,
         "category_description": categoryDescription,
         "brand": brand == null ? [] : List<dynamic>.from(brand.map((x) => x.toMap())),
       };
+
+  @override
+  String toString() {
+    return 'SurveyProduct{id: $id, categoryName: $categoryName, categoryDescription: $categoryDescription, check: $check, brand: $brand}';
+  }
 }
 
 class Brand {
@@ -88,4 +97,9 @@ class Brand {
         "id": id,
         "brand_name": brandName,
       };
+
+  @override
+  String toString() {
+    return 'Brand{id: $id, brandName: $brandName, check: $check}';
+  }
 }

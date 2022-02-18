@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:dms/ui/add_store/bloc/edit_store_bloc.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_events.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_states.dart';
@@ -13,13 +15,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class SelectDistributorBottomSheet extends StatefulWidget {
   final Function(String selectedDistributor, String? selectedDistributorId) onDistributorSelect;
   final String selectedDistributorName;
-  const SelectDistributorBottomSheet({Key? key, required this.onDistributorSelect, required this.selectedDistributorName})
   final String districtId;
+
   const SelectDistributorBottomSheet(
-      {Key? key,
-      required this.onDistributorSelect,
-      required this.selectedDistributorName,
-      required this.districtId})
+      {Key? key, required this.onDistributorSelect, required this.selectedDistributorName, required this.districtId})
       : super(key: key);
 
   @override
@@ -27,16 +26,6 @@ class SelectDistributorBottomSheet extends StatefulWidget {
 }
 
 class _SelectDistributorBottomSheetState extends State<SelectDistributorBottomSheet> {
-  // List<String> names = [
-  //   "Murtuza",
-  //   "Himanshu",
-  //   "Vaibhav",
-  //   "Pankaj",
-  //   "Rishabh",
-  //   "Chandan",
-  //   "Atul",
-  //   "Aakash",
-  // ];
   Object selectDistributorRadio = "";
   String selectedDistributor = "";
   String? selectedDistributorId;
@@ -66,11 +55,9 @@ class _SelectDistributorBottomSheetState extends State<SelectDistributorBottomSh
         child: BlocBuilder<EditStoreBloc, EditStoreStates>(
           builder: (context, state) {
             if (state is EditStoreInitialState) {
-              BlocProvider.of<EditStoreBloc>(context).add(SelectDistributorEvent());
               Map<String, dynamic> input = HashMap<String, dynamic>();
               input["districts_id"] = widget.districtId;
-              BlocProvider.of<EditStoreBloc>(context)
-                  .add(SelectDistributorEvent(districtId: input));
+              BlocProvider.of<EditStoreBloc>(context).add(SelectDistributorEvent(districtId: input));
             }
             if (state is EditStoreILoadingState) {
               return const Center(

@@ -30,6 +30,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+
 import '../../../main.dart';
 
 class OutletInformation extends StatefulWidget {
@@ -678,6 +679,7 @@ class _OutletInformationState extends State<OutletInformation> {
 
     return GestureDetector(
       onTap: () {
+        FocusScope.of(context).unfocus();
         addRadioEvent();
       },
       child: Row(
@@ -793,6 +795,7 @@ class _OutletInformationState extends State<OutletInformation> {
   }
 
   void selectImage() async {
+    FocusScope.of(context).unfocus();
     try {
       XFile? image = await imagePicker.pickImage(
           source: ImageSource.camera, maxHeight: 512, maxWidth: 512, preferredCameraDevice: CameraDevice.front);
@@ -808,6 +811,7 @@ class _OutletInformationState extends State<OutletInformation> {
   }
 
   void openBottomSheet(BuildContext context, txtController) async {
+    FocusScope.of(context).unfocus();
     showModalBottomSheet(
         context: context,
         // isScrollControlled: true,
@@ -838,6 +842,7 @@ class _OutletInformationState extends State<OutletInformation> {
                           txtOrderBookingController.text = "";
                         }
                       },
+                      districtId: districtModel!.id.toString(),
                     )
                   : txtController == txtSelectBeatNameController
                       ? SelectBeatNameBottomSheet(

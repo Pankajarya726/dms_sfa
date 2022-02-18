@@ -8,6 +8,7 @@ import 'package:dms/model/retailer_form.dart';
 import 'package:dms/ui/bottom_sheet_widget/otp_bottom_sheet.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -121,21 +122,56 @@ class _ProductInformationState extends State<ProductInformation> {
       productList.clear();
       productList.addAll(response.data);
       await Future.forEach(productList, (SurveyProduct product) => widgetList.add(ProductListItem(productsInfo: product)));
-
       debugPrint("products--->${productList.length}");
-
       productStream.add(widgetList);
     }
   }
 
   void register(BuildContext context) async {
+    List<SurveyProduct> selected = productList.where((element) => element.check).toList();
+    debugPrint("selectedProduct--->$selected");
+    if (selected.isEmpty) {
+      Utility.showToast("Please select at least one Product");
+      return;
+    }
+
+    Map<String, dynamic> productMap = {};
+    List<Map<String, dynamic>> categoryList = [];
+
+    selected.forEach((element) async {
+      Map<String, dynamic> category = {};
+      category["product_id"] = element.id;
+      String brand = "";
+      List<Brand> brands = element.brand.where((element) => element.check).toList();
+      debugPrint("brands-->$brands");
+      for (int i = 0; i < brands.length; i++) {
+        if (i + 1 == brands.length) {
+          brand = brand + "${brands[i].id}";
+        } else {
+          brand = brand + "${brands[i].id},";
+        }
+      }
+      category["brand_id"] = brand;
+      categoryList.add(category);
+    });
+
+    productMap["product"] = categoryList;
+
+    debugPrint("productMap-->$productMap");
+
     showModalBottomSheet(
         context: context,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
         ),
         builder: (context) {
-          return const SelectOtpNumberBottomSheet();
+          return SelectOtpNumberBottomSheet(
+            form: widget.form,
+            onDone: (String number) {
+              debugPrint("otp_number-->$number");
+            },
+            onSubmit: () {},
+          );
         });
   }
 }
@@ -168,7 +204,9 @@ class _ProductListItemState extends State<ProductListItem> {
           ListTile(
             contentPadding: const EdgeInsets.only(left: 0),
             leading: CachedNetworkImage(
-              imageUrl: widget.productsInfo.categoryDescription,
+              imageUrl: widget.productsInfo.categoryImage != ""
+                  ? widget.productsInfo.categoryImage
+                  : "https://dms-upload.s3.ap-southeast-1.amazonaws.com/apimenu_images/61cc431b22fbe.png",
               width: 30,
               height: 30,
             ),
@@ -186,7 +224,7 @@ class _ProductListItemState extends State<ProductListItem> {
             ),
           ),
           SizedBox(
-            height: checked ? 10 : 0,
+            height: checked && widget.productsInfo.brand.isNotEmpty ? 10 : 0,
           ),
           checked
               ? Tags(
@@ -199,7 +237,7 @@ class _ProductListItemState extends State<ProductListItem> {
                       elevation: 0,
                       pressEnabled: true,
                       onPressed: (item) {
-                        widget.productsInfo.brand[index].check = item.customData.check;
+                        widget.productsInfo.brand[index].check = !item.customData.check;
                         setState(() {});
                       },
                       customData: widget.productsInfo.brand[index],
