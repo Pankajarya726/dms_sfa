@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dms/main.dart';
 import 'package:dms/ui/add_store/model/select_district_response.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
   DistrictModel? selectedDistrict;
   List<DistrictModel> districtList = [];
   StreamController<List<DistrictModel>> districtStream = StreamController();
+  String failureMessage = "";
 
   @override
   void initState() {
@@ -54,6 +56,16 @@ class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(),
+              );
+            }
+            if (failureMessage == StringConst.internetCheck) {
+              return Center(
+                child: Text(failureMessage),
+              );
+            }
+            if (snapshot.data!.isEmpty) {
+              return Center(
+                child: Text(failureMessage),
               );
             }
             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
@@ -143,12 +155,18 @@ class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
 
   getDistricts() async {
     SelectDistrictResponse response = await repository.selectDistrict();
-    if (response.success) {
-      districtList = response.data!;
-      debugPrint("groupValue--->$groupValue");
-      districtStream.add(districtList);
+    if (await Network.isConnected()) {
+      if (response.success) {
+        districtList = response.data!;
+        debugPrint("groupValue--->$groupValue");
+        districtStream.add(districtList);
+      } else {
+        failureMessage = response.message;
+        districtStream.add(districtList);
+      }
     } else {
-      Utility.showToast(response.message);
+      failureMessage = StringConst.internetCheck;
+      districtStream.add(districtList);
     }
   }
 }

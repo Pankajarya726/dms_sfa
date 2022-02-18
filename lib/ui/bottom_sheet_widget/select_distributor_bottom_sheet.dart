@@ -1,11 +1,13 @@
-import 'package:dms/ui/add_store/bloc/edit_store_bloc.dart';
-import 'package:dms/ui/add_store/bloc/edit_store_events.dart';
-import 'package:dms/ui/add_store/bloc/edit_store_states.dart';
+import 'dart:async';
+import 'dart:collection';
+
 import 'package:dms/ui/add_store/model/select_distributor_response.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
-import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
+
+import '../../main.dart';
 
 class SelectDistributorBottomSheet extends StatefulWidget {
   final Function(DistributorModel? distributorModel) onDistributorSelect;
@@ -30,6 +32,7 @@ class _SelectDistributorBottomSheetState
   DistributorModel? selectedDistributor;
   StreamController<List<DistributorModel>> distributorStream =
       StreamController();
+  String failureMessage = "";
 
   @override
   void initState() {
@@ -62,12 +65,14 @@ class _SelectDistributorBottomSheetState
                 child: CircularProgressIndicator(),
               );
             }
-            if (snapshot.data == null) {
-              return Container();
+            if (failureMessage == StringConst.internetCheck) {
+              return Center(
+                child: Text(failureMessage),
+              );
             }
             if (snapshot.data!.isEmpty) {
-              return const Center(
-                child: Text("Records not found"),
+              return Center(
+                child: Text(failureMessage),
               );
             }
             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
@@ -159,13 +164,18 @@ class _SelectDistributorBottomSheetState
     input["districts_id"] = widget.districtId;
     SelectDistributorResponse response =
         await repository.selectDistributor(input);
-    if (response.success) {
-      distributorList = response.data!;
-      debugPrint("groupValue--->$groupValue");
-      distributorStream.add(distributorList);
+    if (await Network.isConnected()) {
+      if (response.success) {
+        distributorList = response.data!;
+        debugPrint("groupValue--->$groupValue");
+        distributorStream.add(distributorList);
+      } else {
+        failureMessage = response.message;
+        distributorStream.add(distributorList);
+      }
     } else {
+      failureMessage = StringConst.internetCheck;
       distributorStream.add(distributorList);
-      // Utility.showToast(response.message);
     }
   }
 }

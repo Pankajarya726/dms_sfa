@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:dms/main.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_bloc.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_events.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_states.dart';
@@ -6,33 +9,47 @@ import 'package:dms/ui/common_bloc/common_bloc.dart';
 import 'package:dms/ui/common_bloc/common_bloc_events.dart';
 import 'package:dms/ui/common_bloc/common_bloc_states.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SelectRetailerCategoryBottomSheet extends StatefulWidget {
-  final Function(String selectedRetailerCategory, String? selectedRetailerCategoryId) onRetailerCategorySelect;
-  final String selectedRetailerCategoryName;
+  final Function(RetailerCategoryModel? retailerCategoryModel)
+      onRetailerCategorySelect;
+  final RetailerCategoryModel? retailerCategoryModel;
   const SelectRetailerCategoryBottomSheet(
-      {Key? key, required this.onRetailerCategorySelect, required this.selectedRetailerCategoryName})
+      {Key? key,
+      required this.onRetailerCategorySelect,
+      required this.retailerCategoryModel})
       : super(key: key);
 
   @override
-  _SelectRetailerCategoryBottomSheetState createState() => _SelectRetailerCategoryBottomSheetState();
+  _SelectRetailerCategoryBottomSheetState createState() =>
+      _SelectRetailerCategoryBottomSheetState();
 }
 
-class _SelectRetailerCategoryBottomSheetState extends State<SelectRetailerCategoryBottomSheet> {
-  List<RetailerCategoryModel>? retailerCategoryModel = [];
-  Object selectRetailerCategoryRadio = "";
-  String selectedRetailerCategory = "";
-  String? selectedRetailerCategoryId;
+class _SelectRetailerCategoryBottomSheetState
+    extends State<SelectRetailerCategoryBottomSheet> {
+  int groupValue = -1;
   CommonBloc commonBloc = CommonBloc();
+  StreamController<List<RetailerCategoryModel>> retailerCategoryStream =
+      StreamController();
+  RetailerCategoryModel? retailerCategoryModel;
+  List<RetailerCategoryModel> retailerCategoryList = [];
+  String failureMessage = "";
 
   @override
   void initState() {
     super.initState();
-    selectRetailerCategoryRadio = widget.selectedRetailerCategoryName;
-    selectedRetailerCategory = widget.selectedRetailerCategoryName;
+    if (widget.retailerCategoryModel != null) {
+      debugPrint(
+          "widget.selectedDistrict!.id---->${widget.retailerCategoryModel!.id}");
+      groupValue = widget.retailerCategoryModel!.id;
+      retailerCategoryModel = widget.retailerCategoryModel;
+    }
+
+    getRetailerCategory();
   }
 
   @override
@@ -46,152 +63,125 @@ class _SelectRetailerCategoryBottomSheetState extends State<SelectRetailerCatego
           topLeft: Radius.circular(25),
         ),
       ),
-      child: BlocProvider(
-        create: (context) => EditStoreBloc(),
-        child: BlocBuilder<EditStoreBloc, EditStoreStates>(
-          builder: (context, state) {
-            if (state is EditStoreInitialState) {
-              BlocProvider.of<EditStoreBloc>(context).add(SelectRetailerCategoryEvent());
-            }
-            if (state is EditStoreILoadingState) {
+      child: StreamBuilder<List<RetailerCategoryModel>>(
+          stream: retailerCategoryStream.stream,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
-            if (state is SelectRetailerCategoryState) {
-              retailerCategoryModel = state.selectRetailerCategoryResponse.data;
-            }
-            if (state is EditStoreFailureState) {
+            if (failureMessage == StringConst.internetCheck) {
               return Center(
-                child: Text(state.failureMessage),
+                child: Text(failureMessage),
               );
             }
-            if (retailerCategoryModel == null) {
-              return Container();
+            if (snapshot.data!.isEmpty) {
+              return Center(
+                child: Text(failureMessage),
+              );
             }
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  StringConst.retailerCategory,
-                  style: TextStyle(
-                    fontSize: 19,
-                    color: MColor.colorPrimary,
-                    letterSpacing: 0.67,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: radioButtonWidget(),
+            if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    StringConst.retailerCategory,
+                    style: TextStyle(
+                      fontSize: 19,
+                      color: MColor.colorPrimary,
+                      letterSpacing: 0.67,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      widget.onRetailerCategorySelect(selectedRetailerCategory, selectedRetailerCategoryId);
-                      Navigator.pop(context);
-                    },
-                    style: ButtonStyle(
-                      fixedSize: MaterialStateProperty.all(const Size(220, 60)),
-                      backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
-                      elevation: MaterialStateProperty.all(0),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: List.generate(
+                          snapshot.data!.length,
+                          (index) => RadioListTile<int>(
+                            contentPadding: const EdgeInsets.all(0),
+                            value: snapshot.data![index].id,
+                            groupValue: groupValue,
+                            title: Text(
+                              snapshot.data![index].category,
+                            ),
+                            onChanged: (value) {
+                              groupValue = value!;
+                              retailerCategoryStream.add(snapshot.data!);
+                            },
+                          ),
                         ),
                       ),
                     ),
-                    child: const Text(
-                      StringConst.done,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (groupValue != -1) {
+                          retailerCategoryModel =
+                              retailerCategoryList.singleWhere(
+                                  (element) => element.id == groupValue);
+                          widget
+                              .onRetailerCategorySelect(retailerCategoryModel);
+                        }
+
+                        Navigator.pop(context);
+                      },
+                      style: ButtonStyle(
+                        fixedSize:
+                            MaterialStateProperty.all(const Size(220, 60)),
+                        backgroundColor:
+                            MaterialStateProperty.all(MColor.colorPrimary),
+                        elevation: MaterialStateProperty.all(0),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        StringConst.done,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-              ],
-            );
-          },
-        ),
-      ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                ],
+              );
+            }
+            return Container();
+          }),
     );
   }
 
-  List<Widget> radioButtonWidget() {
-    List<Widget> widgets = [];
-    for (RetailerCategoryModel retailerCategory in retailerCategoryModel!) {
-      widgets.add(
-        BlocProvider(
-          create: (context) => commonBloc,
-          child: BlocBuilder<CommonBloc, CommonBlocStates>(
-            builder: (context, state) {
-              if (state is CommonBlocInitialState) {
-                if (selectRetailerCategoryRadio == retailerCategory.category) {
-                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: retailerCategory.id));
-                }
-              }
-
-              if (state is CommonBlocEnrollRadioTagState) {
-                selectRetailerCategoryRadio = state.enrollmentRadioTag;
-              }
-              return GestureDetector(
-                onTap: () {
-                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: retailerCategory.id));
-                  selectedRetailerCategory = retailerCategory.category;
-                  selectedRetailerCategoryId = retailerCategory.id.toString();
-                },
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 18,
-                      child: Radio<dynamic>(
-                        value: retailerCategory.id,
-                        groupValue: selectRetailerCategoryRadio,
-                        activeColor: MColor.colorPrimary,
-                        fillColor: MaterialStateProperty.all(MColor.colorPrimary),
-                        onChanged: (value) {
-                          commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-                          selectedRetailerCategory = retailerCategory.category;
-                          selectedRetailerCategoryId = retailerCategory.id.toString();
-                        },
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      retailerCategory.category,
-                      style: const TextStyle(
-                        fontSize: 17.0,
-                        color: MColor.backButton,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 15,
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      );
+  void getRetailerCategory() async {
+    SelectRetailerCategoryResponse response =
+        await repository.selectRetailerCategory();
+    if (await Network.isConnected()) {
+      if (response.success) {
+        retailerCategoryList = response.data!;
+        retailerCategoryStream.add(retailerCategoryList);
+      } else {
+        failureMessage = response.message;
+        retailerCategoryStream.add(retailerCategoryList);
+      }
+    } else {
+      failureMessage = StringConst.internetCheck;
+      retailerCategoryStream.add(retailerCategoryList);
     }
-    return widgets;
   }
 }

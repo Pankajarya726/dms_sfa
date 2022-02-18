@@ -3,12 +3,12 @@ import 'dart:collection';
 import 'package:dms/main.dart';
 import 'package:dms/ui/add_store/model/select_beat_response.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
-import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 
 class SelectBeatNameBottomSheet extends StatefulWidget {
-  final Function(BeatModal beatModal) onBeatNameSelect;
+  final Function(BeatModal? beatModal) onBeatNameSelect;
   final BeatModal? beatModal;
   final String customerCode;
   const SelectBeatNameBottomSheet(
@@ -28,6 +28,7 @@ class _SelectBeatNameBottomSheetState extends State<SelectBeatNameBottomSheet> {
   BeatModal? beatModal;
   StreamController<List<BeatModal>> beatStream = StreamController();
   List<BeatModal> beatList = [];
+  String failureMessage = "";
 
   @override
   void initState() {
@@ -59,9 +60,14 @@ class _SelectBeatNameBottomSheetState extends State<SelectBeatNameBottomSheet> {
                 child: CircularProgressIndicator(),
               );
             }
+            if (failureMessage == StringConst.internetCheck) {
+              return Center(
+                child: Text(failureMessage),
+              );
+            }
             if (snapshot.data!.isEmpty) {
-              return const Center(
-                child: Text("Records not found"),
+              return Center(
+                child: Text(failureMessage),
               );
             }
             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
@@ -151,11 +157,17 @@ class _SelectBeatNameBottomSheetState extends State<SelectBeatNameBottomSheet> {
     Map<String, dynamic> input = HashMap<String, dynamic>();
     input["customer_codes"] = widget.customerCode;
     SelectBeatResponse response = await repository.selectBeat(input);
-    if (response.success) {
-      beatList = response.data!;
-      beatStream.add(beatList);
+    if (await Network.isConnected()) {
+      if (response.success) {
+        beatList = response.data!;
+        beatStream.add(beatList);
+      } else {
+        failureMessage = response.message;
+        beatStream.add(beatList);
+      }
     } else {
-      Utility.showToast(response.message);
+      failureMessage = StringConst.internetCheck;
+      beatStream.add(beatList);
     }
   }
 }
