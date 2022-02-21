@@ -26,7 +26,6 @@ import 'package:dms/ui/userlocation_bloc/userlocation_bloc.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_events.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_states.dart';
 import 'package:dms/utils/colors.dart';
-import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
@@ -150,8 +149,7 @@ class _OutletInformationState extends State<OutletInformation> {
                     ],
                   ),
                   sizedBoxWidget(5.0, ""),
-                  BlocBuilder<EditStoreBloc, EditStoreStates>(
-                      builder: (context, state) {
+                  BlocBuilder<EditStoreBloc, EditStoreStates>(builder: (context, state) {
                     if (state is EditStoreInitialState) {
                       editStoreBloc.add(GetEnrolmentTypeEvent());
                     }
@@ -197,8 +195,7 @@ class _OutletInformationState extends State<OutletInformation> {
                     ],
                   ),
                   sizedBoxWidget(12.0, ""),
-                  textFields(
-                      txtSelectDistrictController, StringConst.selectHint),
+                  textFields(txtSelectDistrictController, StringConst.selectHint),
                   sizedBoxWidget(20.0, ""),
                   Row(
                     children: [
@@ -210,8 +207,7 @@ class _OutletInformationState extends State<OutletInformation> {
                     ],
                   ),
                   sizedBoxWidget(12.0, ""),
-                  textFields(
-                      txtSelectDistributorController, StringConst.selectHint),
+                  textFields(txtSelectDistributorController, StringConst.selectHint),
                   sizedBoxWidget(20.0, ""),
                   Row(
                     children: [
@@ -223,8 +219,7 @@ class _OutletInformationState extends State<OutletInformation> {
                     ],
                   ),
                   sizedBoxWidget(12.0, ""),
-                  textFields(
-                      txtSelectBeatNameController, StringConst.selectHint),
+                  textFields(txtSelectBeatNameController, StringConst.selectHint),
                   sizedBoxWidget(20.0, ""),
                   Row(
                     children: [
@@ -630,8 +625,7 @@ class _OutletInformationState extends State<OutletInformation> {
             onTap: () async {
               selectedController = txtController;
               await Future.delayed(const Duration(milliseconds: 500));
-              RenderObject? object =
-                  globalKey.currentContext!.findRenderObject();
+              RenderObject? object = globalKey.currentContext!.findRenderObject();
               object!.showOnScreen();
             },
             keyboardType: TextInputType.name,
@@ -733,8 +727,7 @@ class _OutletInformationState extends State<OutletInformation> {
     for (EnrolmentTypeModel enrolmentType in enrolmentTypeModel!) {
       widgets.add(GestureDetector(
         onTap: () {
-          commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-              enrollmentRadioTag: enrolmentType.id));
+          commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: enrolmentType.id));
           enrollmentTypeId = enrolmentType.id.toString();
           form.enrollmentTypeId = enrolmentType.id.toString();
           form.enrollmentType = enrolmentType.enrollmentType.toString();
@@ -749,8 +742,7 @@ class _OutletInformationState extends State<OutletInformation> {
                 activeColor: MColor.colorPrimary,
                 fillColor: MaterialStateProperty.all(MColor.colorPrimary),
                 onChanged: (value) {
-                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                      enrollmentRadioTag: value));
+                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
                   enrollmentTypeId = enrolmentType.id.toString();
                   form.enrollmentTypeId = enrolmentType.id.toString();
                   form.enrollmentType = enrolmentType.enrollmentType.toString();
@@ -813,10 +805,7 @@ class _OutletInformationState extends State<OutletInformation> {
     FocusScope.of(context).unfocus();
     try {
       XFile? image = await imagePicker.pickImage(
-          source: ImageSource.camera,
-          maxHeight: 512,
-          maxWidth: 512,
-          preferredCameraDevice: CameraDevice.front);
+          source: ImageSource.camera, maxHeight: 512, maxWidth: 512, preferredCameraDevice: CameraDevice.front);
       if (image != null) {
         outletPhotoFile = File(image.path);
         outletFileName = image.name;
@@ -824,10 +813,7 @@ class _OutletInformationState extends State<OutletInformation> {
         commonBloc.add(CommonBlocSelectImageEvent(imageFile: outletPhotoFile!));
       }
     } catch (exception) {
-      Fluttertoast.showToast(
-          msg:
-              "Permission denied, go to app settings and allow camera permission",
-          toastLength: Toast.LENGTH_LONG);
+      Fluttertoast.showToast(msg: "Permission denied, go to app settings and allow camera permission", toastLength: Toast.LENGTH_LONG);
     }
   }
 
@@ -878,7 +864,7 @@ class _OutletInformationState extends State<OutletInformation> {
                             if (beat != null) {
                               beatModal = beat;
                               txtSelectBeatNameController.text = beat.name;
-                              beatId = beat.id.toString();
+
                               getOrderBookingDay();
                             }
                           },
@@ -891,8 +877,7 @@ class _OutletInformationState extends State<OutletInformation> {
                                 if (retailerType != null) {
                                   retailerTypeModel = retailerType;
                                   retailerTypeId = retailerType.id.toString();
-                                  txtSelectRetailerTypeController.text =
-                                      retailerType.name;
+                                  txtSelectRetailerTypeController.text = retailerType.name;
                                 }
                               },
                             )
@@ -901,10 +886,8 @@ class _OutletInformationState extends State<OutletInformation> {
                               onRetailerCategorySelect: (retailerCategory) {
                                 if (retailerCategory != null) {
                                   retailerCategoryModal = retailerCategory;
-                                  retailerCategoryId =
-                                      retailerCategory.id.toString();
-                                  txtSelectRetailerCategoryController.text =
-                                      retailerCategory.category;
+                                  retailerCategoryId = retailerCategory.id.toString();
+                                  txtSelectRetailerCategoryController.text = retailerCategory.category;
                                 }
                               },
                             );
@@ -919,7 +902,7 @@ class _OutletInformationState extends State<OutletInformation> {
 
   getOrderBookingDay() async {
     Map<String, dynamic> input = HashMap<String, dynamic>();
-    input["beat_id"] = beatId;
+    input["beat_id"] = beatModal == null ? "" : beatModal!.id;
     OrderBookingDayResponse response = await repository.orderBookingDay(input);
     if (response.success) {
       orderBookingDayList = response.data!;
@@ -931,9 +914,7 @@ class _OutletInformationState extends State<OutletInformation> {
           txtOrderBookingController.text = orderBookingDay.orderBookingDay1;
           orderBookingDayId = orderBookingDay.id.toString();
         } else {
-          txtOrderBookingController.text = orderBookingDay.orderBookingDay1 +
-              ", " +
-              orderBookingDay.orderBookingDay2;
+          txtOrderBookingController.text = orderBookingDay.orderBookingDay1 + ", " + orderBookingDay.orderBookingDay2;
           orderBookingDayId = orderBookingDay.id.toString();
         }
       }
