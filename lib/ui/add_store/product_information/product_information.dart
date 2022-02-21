@@ -1,15 +1,22 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/main.dart';
+import 'package:dms/model/base_response.dart';
 import 'package:dms/model/get_survey_product.dart';
 import 'package:dms/model/retailer_form.dart';
 import 'package:dms/ui/bottom_sheet_widget/otp_bottom_sheet.dart';
+import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/constants.dart';
+import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -91,7 +98,6 @@ class _ProductInformationState extends State<ProductInformation> {
         color: MColor.colorSecondary,
         textColor: Colors.white,
         onPressed: () async {
-          log("inputs--->" + widget.form.toMap().toString());
           register(context);
         },
         child: Row(
@@ -135,7 +141,6 @@ class _ProductInformationState extends State<ProductInformation> {
       return;
     }
 
-    Map<String, dynamic> productMap = {};
     List<Map<String, dynamic>> categoryList = [];
 
     selected.forEach((element) async {
@@ -151,13 +156,17 @@ class _ProductInformationState extends State<ProductInformation> {
           brand = brand + "${brands[i].id},";
         }
       }
-      category["brand_id"] = brand;
+      category["brands"] = brand;
+
       categoryList.add(category);
     });
 
-    productMap["product"] = categoryList;
+    debugPrint("productMap-->$categoryList");
+    debugPrint("productMap-->${jsonEncode(categoryList)}");
 
-    debugPrint("productMap-->$productMap");
+    Map<String, dynamic> input = widget.form.toMap();
+    input["products"] = jsonEncode(categoryList);
+    log("inputs--->" + input.toString());
 
     showModalBottomSheet(
         context: context,
@@ -169,10 +178,110 @@ class _ProductInformationState extends State<ProductInformation> {
             form: widget.form,
             onDone: (String number) {
               debugPrint("otp_number-->$number");
+              input["otp_number"] = number;
+              try {
+                log("inputs--->$input");
+                registerApi(input);
+              } catch (exception) {
+                debugPrint("exception-->$exception");
+              }
             },
-            onSubmit: () {},
+            onSubmit: () {
+              try {
+                log("inputs--->$input");
+                registerApi(input);
+              } catch (exception) {
+                debugPrint("exception-->$exception");
+              }
+            },
           );
         });
+  }
+
+  void registerApi(Map<String, dynamic> input) async {
+    if (await Network.isConnected()) {
+      EasyLoading.show();
+      BaseResponse response = await repository.registerRetailer(input);
+      EasyLoading.dismiss();
+
+      if (response.success) {
+        if (input["otp_number"].toString().isEmpty) {
+          Utility.showToast(response.message);
+          debugPrint(Navigator.defaultRouteName);
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const DrawerScreen()), (route) => false);
+        } else {
+          showVerifyOtpAlert(input["otp_number"]);
+        }
+      } else {
+        Utility.showToast(response.message);
+      }
+    } else {
+      Utility.showToast(Constants.internetAlert);
+    }
+  }
+
+  void showVerifyOtpAlert(String mobile) async {
+    showDialog(
+        context: navigationService.navigatorKey.currentContext!,
+        barrierDismissible: false,
+        builder: (context) {
+          TextEditingController controller = TextEditingController();
+          return AlertDialog(
+            title: const Text(
+              "Please Enter OTP",
+              style: TextStyle(color: Colors.black, fontSize: 18),
+            ),
+            content: TextFormField(
+              controller: controller,
+              keyboardType: TextInputType.phone,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text(
+                    "Cancel",
+                    style: TextStyle(color: Colors.black, fontSize: 16, letterSpacing: 0.5),
+                  )),
+              TextButton(
+                  onPressed: () {
+                    if (controller.text.trim().isEmpty) {
+                      Utility.showToast("Please enter otp");
+                    } else {
+                      verifyOtp(mobile, controller.text.trim());
+                    }
+                  },
+                  child: const Text(
+                    "Confirm",
+                    style: TextStyle(color: MColor.colorPrimary, fontSize: 16, letterSpacing: 0.5),
+                  )),
+            ],
+          );
+        });
+  }
+
+  void verifyOtp(String mobile, String otp) async {
+    if (await Network.isConnected()) {
+      Map<String, dynamic> input = {};
+      input["otp_number"] = mobile;
+      input["otp"] = otp;
+
+      EasyLoading.show();
+      BaseResponse response = await repository.verifyOtp(input);
+      EasyLoading.dismiss();
+
+      if (response.success) {
+        Utility.showToast(response.message);
+        debugPrint(Navigator.defaultRouteName);
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const DrawerScreen()), (route) => false);
+      } else {
+        Utility.showToast(response.message);
+      }
+    } else {
+      Utility.showToast(Constants.internetAlert);
+    }
   }
 }
 

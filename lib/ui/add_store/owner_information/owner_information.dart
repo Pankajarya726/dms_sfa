@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dms/model/retailer_form.dart';
@@ -341,19 +342,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
               widget.form.anniversary = txtAnniversaryController.text.trim();
               widget.form.ownerImage = ownerPhotoFile != null ? ownerPhotoFile!.path : "";
 
-              // ownerInfo["owner_name"] = txtOwnerNameController.text;
-              // ownerInfo["primary_mobile"] = txtPrimaryMobController.text;
-              // ownerInfo["secondary_mobile"] = txtSecondaryMobController.text;
-              // ownerInfo["helper_mobile"] = txtHelperMobController.text;
-              // ownerInfo["call_time_slot"] = callTimeSlotId;
-              // ownerInfo["lang_first"] = primaryLangId;
-              // ownerInfo["lang_second"] = secondaryLangId;
-              // ownerInfo["whats_app_msg"] = whatsAppSmsRadio == 1 ? "1" : "0";
-              // ownerInfo["pan_number"] = txtPANController.text;
-              // ownerInfo["aadhar_number"] = txtAdharNumberController.text;
-              // ownerInfo["birthday"] = txtPicDateController.text;
-              // ownerInfo["anniversary"] = txtAnniversaryController.text;
-              // ownerInfo["owner_photo"] = ownerPhotoFile;
+              log("retailer-from---->${widget.form.toMap().toString()}");
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -663,6 +652,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
   }
 
   void openBottomSheet(BuildContext context, txtController) async {
+    FocusScope.of(context).unfocus();
     showModalBottomSheet(
         context: context,
         // isScrollControlled: true,

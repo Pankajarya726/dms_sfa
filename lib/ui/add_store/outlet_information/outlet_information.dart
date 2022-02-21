@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dms/model/retailer_form.dart';
@@ -53,8 +54,7 @@ class _OutletInformationState extends State<OutletInformation> {
   UserLocationBloc userLocationBloc = UserLocationBloc();
   EditStoreBloc editStoreBloc = EditStoreBloc();
   TextEditingController txtSelectDistrictController = TextEditingController();
-  TextEditingController txtSelectDistributorController =
-      TextEditingController();
+  TextEditingController txtSelectDistributorController = TextEditingController();
   TextEditingController txtSelectBeatNameController = TextEditingController();
   TextEditingController txtOrderBookingController = TextEditingController();
   TextEditingController txtOutletNameController = TextEditingController();
@@ -63,14 +63,11 @@ class _OutletInformationState extends State<OutletInformation> {
   TextEditingController txtAddressController = TextEditingController();
   TextEditingController txtPincodeController = TextEditingController();
   TextEditingController txtLandmarkController = TextEditingController();
-  TextEditingController txtSelectRetailerTypeController =
-      TextEditingController();
-  TextEditingController txtSelectRetailerCategoryController =
-      TextEditingController();
+  TextEditingController txtSelectRetailerTypeController = TextEditingController();
+  TextEditingController txtSelectRetailerCategoryController = TextEditingController();
   TextEditingController txtGSTController = TextEditingController();
   List<EnrolmentTypeModel>? enrolmentTypeModel = [];
-  RefreshController refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController refreshController = RefreshController(initialRefresh: false);
   String? enrollmentTypeId;
   EnrolmentTypeModel? enrolmentType;
   DistrictModel? districtModel;
@@ -81,7 +78,7 @@ class _OutletInformationState extends State<OutletInformation> {
 
   String? districtId;
   String? distributorId;
-  String? beatId;
+
   String? orderBookingDayId;
   String? retailerTypeId;
   String? retailerCategoryId;
@@ -257,22 +254,17 @@ class _OutletInformationState extends State<OutletInformation> {
                       }
 
                       if (state is GetUserLocationState) {
-                        if (txtLatitudeController.text !=
-                                state.latitude.toString() &&
-                            txtLongtitudeController.text !=
-                                state.longitude.toString()) {
-                          txtLatitudeController.text =
-                              state.latitude.toString();
-                          txtLongtitudeController.text =
-                              state.longitude.toString();
+                        if (txtLatitudeController.text != state.latitude.toString() &&
+                            txtLongtitudeController.text != state.longitude.toString()) {
+                          txtLatitudeController.text = state.latitude.toString();
+                          txtLongtitudeController.text = state.longitude.toString();
                           txtAddressController.text = state.currentAddress;
                           txtPincodeController.text = state.pincode;
                         }
                       }
 
                       if (state is UserLocationFailureState) {
-                        Fluttertoast.showToast(
-                            msg: "Please turn on GPS to get current location");
+                        Fluttertoast.showToast(msg: "Please turn on GPS to get current location");
                       }
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -287,8 +279,7 @@ class _OutletInformationState extends State<OutletInformation> {
                             ],
                           ),
                           sizedBoxWidget(12.0, txtOutletNameController),
-                          textFields(
-                              txtLatitudeController, StringConst.enterHere),
+                          textFields(txtLatitudeController, StringConst.enterHere),
                           sizedBoxWidget(12.0, ""),
                           Row(
                             children: [
@@ -300,8 +291,7 @@ class _OutletInformationState extends State<OutletInformation> {
                             ],
                           ),
                           sizedBoxWidget(12.0, ""),
-                          textFields(
-                              txtLongtitudeController, StringConst.enterHere),
+                          textFields(txtLongtitudeController, StringConst.enterHere),
                           sizedBoxWidget(12.0, ""),
                           Row(
                             children: [
@@ -313,8 +303,7 @@ class _OutletInformationState extends State<OutletInformation> {
                             ],
                           ),
                           sizedBoxWidget(12.0, ""),
-                          textFields(
-                              txtAddressController, StringConst.enterHere),
+                          textFields(txtAddressController, StringConst.enterHere),
                           sizedBoxWidget(12.0, ""),
                           Row(
                             children: [
@@ -326,8 +315,7 @@ class _OutletInformationState extends State<OutletInformation> {
                             ],
                           ),
                           sizedBoxWidget(12.0, txtAddressController),
-                          textFields(
-                              txtPincodeController, StringConst.enterHere),
+                          textFields(txtPincodeController, StringConst.enterHere),
                           sizedBoxWidget(12.0, ""),
                         ],
                       );
@@ -364,10 +352,8 @@ class _OutletInformationState extends State<OutletInformation> {
                       return Row(
                         children: [
                           sizedBoxWidget(0.0, txtLandmarkController),
-                          radioButtonWidget(
-                              existingRetailerRadio, 1, StringConst.yes),
-                          radioButtonWidget(
-                              existingRetailerRadio, 2, StringConst.no),
+                          radioButtonWidget(existingRetailerRadio, 1, StringConst.yes),
+                          radioButtonWidget(existingRetailerRadio, 2, StringConst.no),
                         ],
                       );
                     },
@@ -383,8 +369,7 @@ class _OutletInformationState extends State<OutletInformation> {
                     ],
                   ),
                   sizedBoxWidget(12.0, ""),
-                  textFields(
-                      txtSelectRetailerTypeController, StringConst.selectHint),
+                  textFields(txtSelectRetailerTypeController, StringConst.selectHint),
                   sizedBoxWidget(20.0, ""),
                   Row(
                     children: [
@@ -396,8 +381,7 @@ class _OutletInformationState extends State<OutletInformation> {
                     ],
                   ),
                   sizedBoxWidget(12.0, ""),
-                  textFields(txtSelectRetailerCategoryController,
-                      StringConst.selectHint),
+                  textFields(txtSelectRetailerCategoryController, StringConst.selectHint),
                   sizedBoxWidget(20.0, ""),
                   Row(
                     children: [
@@ -496,19 +480,16 @@ class _OutletInformationState extends State<OutletInformation> {
             } else if (outletPhotoFile == null) {
               Fluttertoast.showToast(msg: "Please capture outlet photo");
             } else {
-              String userId = await SharedPreference.getStringPreference(
-                  SharedPreference.userId);
+              String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
               debugPrint("edit store userId $userId");
               debugPrint("edit store enrollmentTypeId $enrollmentTypeId");
               debugPrint("edit store cityId $districtId");
               debugPrint("edit store distributorId $distributorId");
-              debugPrint("edit store beatId $beatId");
+              debugPrint("edit store beatId ${beatModal!.id}");
               debugPrint("edit store orderBookingDayId $orderBookingDayId");
-              debugPrint(
-                  "edit store outletName ${txtOutletNameController.text}");
+              debugPrint("edit store outletName ${txtOutletNameController.text}");
               debugPrint("edit store latitude ${txtLatitudeController.text}");
-              debugPrint(
-                  "edit store longitude ${txtLongtitudeController.text}");
+              debugPrint("edit store longitude ${txtLongtitudeController.text}");
               debugPrint("edit store address ${txtAddressController.text}");
               debugPrint("edit store landmark ${txtLandmarkController.text}");
               debugPrint("edit store pincode ${txtPincodeController.text}");
@@ -532,32 +513,31 @@ class _OutletInformationState extends State<OutletInformation> {
               debugPrint("edit store outletphoto $outletFileName");
 
               Map<String, dynamic> outletInfo = HashMap<String, dynamic>();
-              outletInfo["user_id"] =
-                  await SharedPreference.getStringPreference(
-                      SharedPreference.userId);
+              outletInfo["user_id"] = await SharedPreference.getStringPreference(SharedPreference.userId);
               outletInfo["enrolment_type"] = enrollmentTypeId;
 
               form.districtId = districtId ?? "";
               form.distributorId = distributorId ?? "";
-              form.beatId = beatId ?? "";
+              form.beatId = beatModal != null ? beatModal!.id.toString() : "";
               form.orderBookingDay1 = orderBookingDayId ?? "";
               form.outletName = txtOutletNameController.text.trim();
               form.latitude = txtLatitudeController.text.trim();
               form.longitude = txtLongtitudeController.text.trim();
               form.address = txtAddressController.text.trim();
+              form.pinCode = txtPincodeController.text.trim();
               form.landmark = txtLandmarkController.text.trim();
               form.isExistingRetailer = existingRetailerRadio == 1 ? "1" : "0";
               form.retailerTypeId = retailerTypeId ?? "";
               form.retailerCategoryId = retailerCategoryId ?? "";
               form.isKro = isKRORadio == 3 ? "1" : "0";
               form.gstNo = txtGSTController.text.trim();
-              form.outletImage =
-                  outletPhotoFile == null ? "" : outletPhotoFile!.path;
+              form.outletImage = outletPhotoFile == null ? "" : outletPhotoFile!.path;
+
+              log("retailer-from---->${form.toMap().toString()}");
 
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => OwnerInformation(form: form)),
+                MaterialPageRoute(builder: (context) => OwnerInformation(form: form)),
               );
             }
           },
@@ -837,6 +817,7 @@ class _OutletInformationState extends State<OutletInformation> {
   }
 
   void openBottomSheet(BuildContext context, txtController) async {
+    FocusScope.of(context).unfocus();
     showModalBottomSheet(
         context: context,
         // isScrollControlled: true,
@@ -865,16 +846,13 @@ class _OutletInformationState extends State<OutletInformation> {
                       onDistributorSelect: (distributor) {
                         if (distributor != null) {
                           distributorModel = distributor;
-                          txtSelectDistributorController.text =
-                              distributor.name;
+                          txtSelectDistributorController.text = distributor.name;
                           distributorId = distributor.customerCodes;
                         }
                         txtSelectBeatNameController.text = "";
                         beatModal = null;
                       },
-                      districtId: districtModel != null
-                          ? districtModel!.id.toString()
-                          : "",
+                      districtId: districtModel != null ? districtModel!.id.toString() : "",
                     )
                   : txtController == txtSelectBeatNameController
                       ? SelectBeatNameBottomSheet(
@@ -883,9 +861,7 @@ class _OutletInformationState extends State<OutletInformation> {
                             beatModal = beat;
                             txtSelectBeatNameController.text = beat.name;
                           },
-                          customerCode: distributorModel != null
-                              ? distributorModel!.customerCodes
-                              : "",
+                          customerCode: distributorModel != null ? distributorModel!.customerCodes : "",
                         )
                       : txtController == txtSelectRetailerTypeController
                           ? SelectRetailerTypeBottomSheet(

@@ -54,8 +54,8 @@ class RetailerForm {
         "owner_name": ownerName,
         "email": email,
         "mobile_number": mobileNumber,
-        "helper_number": helperNumber,
-        "city_id": districtId,
+        "helper_mobile": helperNumber,
+        "district_id": districtId,
         "pan": pan,
         "adhar_number": aadhaarNumber,
         "birthday": birthday,
@@ -79,7 +79,7 @@ class RetailerForm {
         "language_id_1": languageId1,
         "language_id_2": languageId2,
         "retailer_type": retailerTypeId,
-        "retailer_category": retailerCategory,
+        "retailer_category": retailerCategoryId,
         "is_whatsapp_sms": isWhatsappSms,
         "order_booking_day_1": orderBookingDay1
       };

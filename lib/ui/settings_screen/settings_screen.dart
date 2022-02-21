@@ -303,6 +303,12 @@ class _SettingScreenState extends State<SettingsScreen> {
   }
 
   void rateApp() async {
-    AppRating.openStoreListing();
+    try {
+      var res = await AppRating.requestReview();
+      debugPrint("res-->$res");
+    } catch (exception) {
+      debugPrint("exception-->$exception");
+      AppRating.openStoreListing();
+    }
   }
 }

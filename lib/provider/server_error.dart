@@ -24,6 +24,7 @@ class ServerError implements Exception {
   _handleError(DioError error) async {
     _errorCode = error.response!.statusCode!;
     debugPrint(error.toString());
+    debugPrint("_errorCode-->$_errorCode");
     debugPrint(error.message);
     switch (error.type) {
       case DioErrorType.cancel:

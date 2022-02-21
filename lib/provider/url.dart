@@ -27,4 +27,6 @@ class Url {
   static const String getCallTimeSlot = "getCallTimeSlot";
   static const String getRetailerProducts = "getRetailerProducts";
   static const String getBeat = "getDistibutorsBeat";
+  static const String retailerEnrollmentSave = "retailerEnrollmentSave";
+  static const String verifyOtp = "verifyOtp";
 }
