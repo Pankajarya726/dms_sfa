@@ -22,6 +22,7 @@ import 'package:dms/ui/bottom_sheet_widget/select_retailertype_bottom_sheet.dart
 import 'package:dms/ui/common_bloc/common_bloc.dart';
 import 'package:dms/ui/common_bloc/common_bloc_events.dart';
 import 'package:dms/ui/common_bloc/common_bloc_states.dart';
+import 'package:dms/ui/custom_widget/input_widget.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_bloc.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_events.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_states.dart';
@@ -243,7 +244,12 @@ class _OutletInformationState extends State<OutletInformation> {
                     ],
                   ),
                   sizedBoxWidget(12.0, ""),
-                  textFields(txtOutletNameController, StringConst.enterHere),
+
+                  NameEditText(
+                    controller: txtOutletNameController,
+                    hint: StringConst.enterHere,
+                  ),
+                  // textFields(txtOutletNameController, StringConst.enterHere),
                   sizedBoxWidget(12.0, ""),
                   BlocBuilder<UserLocationBloc, UserLocationStates>(
                     bloc: userLocationBloc,
@@ -566,7 +572,7 @@ class _OutletInformationState extends State<OutletInformation> {
 
   Widget sizedBoxWidget(boxHeight, txtController) {
     return SizedBox(
-      key: selectedController == txtController ? globalKey : null,
+      // key: selectedController == txtController ? globalKey : null,
       height: boxHeight,
     );
   }
