@@ -1,23 +1,18 @@
-import 'package:dms/ui/add_store/bloc/edit_store_bloc.dart';
-import 'package:dms/ui/add_store/bloc/edit_store_events.dart';
-import 'package:dms/ui/add_store/bloc/edit_store_states.dart';
+import 'dart:async';
+import 'package:dms/main.dart';
 import 'package:dms/ui/add_store/model/call_time_slot_response.dart';
-import 'package:dms/ui/common_bloc/common_bloc.dart';
-import 'package:dms/ui/common_bloc/common_bloc_events.dart';
-import 'package:dms/ui/common_bloc/common_bloc_states.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SelectCallTimeSlotBottomSheet extends StatefulWidget {
-  final Function(String selectedCallTimeSlot, String? selectedCallTimeSlotId)
-      onCallTimeSlotSelect;
-  final String selectedCallTimeSlotName;
+  final Function(CallTimeSlotModel? callTimeSlotModel) onCallTimeSlotSelect;
+  final CallTimeSlotModel? callTimeSlotModel;
   const SelectCallTimeSlotBottomSheet(
       {Key? key,
       required this.onCallTimeSlotSelect,
-      required this.selectedCallTimeSlotName})
+      required this.callTimeSlotModel})
       : super(key: key);
 
   @override
@@ -28,17 +23,26 @@ class SelectCallTimeSlotBottomSheet extends StatefulWidget {
 class _SelectCallTimeSlotBottomSheetState
     extends State<SelectCallTimeSlotBottomSheet> {
   String time = "";
-  Object selectCallTimeSlotRadio = "";
-  String selectedCallTimeSlot = "";
-  String? selectedCallTimeSlotId;
-  CommonBloc commonBloc = CommonBloc();
-  List<CallTimeSlotModel>? callTimeSlotModel = [];
+  int groupValue = -1;
+  List<CallTimeSlotModel> callTimeSlotList = [];
+  CallTimeSlotModel? callTimeSlotModel;
+  StreamController<List<CallTimeSlotModel>> callTimeSlotStream =
+      StreamController();
+  String failureMessage = "";
 
   @override
   void initState() {
     super.initState();
-    selectCallTimeSlotRadio = widget.selectedCallTimeSlotName;
-    selectedCallTimeSlot = widget.selectedCallTimeSlotName;
+    if (widget.callTimeSlotModel != null) {
+      debugPrint(
+          "widget.selectedDistrict!.id---->${widget.callTimeSlotModel!.id}");
+      groupValue = widget.callTimeSlotModel!.id;
+      callTimeSlotModel = widget.callTimeSlotModel;
+      time = widget.callTimeSlotModel!.from +
+          " to " +
+          widget.callTimeSlotModel!.to;
+    }
+    getCallTimeSlot();
   }
 
   @override
@@ -52,160 +56,123 @@ class _SelectCallTimeSlotBottomSheetState
           topLeft: Radius.circular(25),
         ),
       ),
-      child: BlocProvider(
-        create: (context) => EditStoreBloc(),
-        child: BlocBuilder<EditStoreBloc, EditStoreStates>(
-          builder: (context, state) {
-            if (state is EditStoreInitialState) {
-              BlocProvider.of<EditStoreBloc>(context)
-                  .add(SelectCallTimeSlotEvent());
-            }
-            if (state is EditStoreILoadingState) {
+      child: StreamBuilder<List<CallTimeSlotModel>>(
+          stream: callTimeSlotStream.stream,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
-            if (state is SelectCallTimeSlotState) {
-              callTimeSlotModel = state.callTimeSlotResponse.data;
-            }
-            if (state is EditStoreFailureState) {
+            if (failureMessage == StringConst.internetCheck) {
               return Center(
-                child: Text(state.failureMessage),
+                child: Text(failureMessage),
               );
             }
-            if (callTimeSlotModel == null) {
-              return Container();
+            if (snapshot.data!.isEmpty) {
+              return Center(
+                child: Text(failureMessage),
+              );
             }
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  StringConst.callTimeSlot,
-                  style: TextStyle(
-                    fontSize: 19,
-                    color: MColor.colorPrimary,
-                    letterSpacing: 0.67,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: radioButtonWidget(),
+            if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    StringConst.callTimeSlot,
+                    style: TextStyle(
+                      fontSize: 19,
+                      color: MColor.colorPrimary,
+                      letterSpacing: 0.67,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      widget.onCallTimeSlotSelect(
-                          selectedCallTimeSlot, selectedCallTimeSlotId);
-                      Navigator.pop(context);
-                    },
-                    style: ButtonStyle(
-                      fixedSize: MaterialStateProperty.all(const Size(220, 60)),
-                      backgroundColor:
-                          MaterialStateProperty.all(MColor.colorPrimary),
-                      elevation: MaterialStateProperty.all(0),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: List.generate(snapshot.data!.length, (index) {
+                          time = snapshot.data![index].from +
+                              " to " +
+                              snapshot.data![index].to;
+                          return RadioListTile<int>(
+                            contentPadding: const EdgeInsets.all(0),
+                            value: snapshot.data![index].id,
+                            groupValue: groupValue,
+                            title: Text(
+                              time,
+                            ),
+                            onChanged: (value) {
+                              groupValue = value!;
+                              callTimeSlotStream.add(snapshot.data!);
+                            },
+                          );
+                        }),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (groupValue != -1) {
+                          callTimeSlotModel = callTimeSlotList.singleWhere(
+                              (element) => element.id == groupValue);
+                          widget.onCallTimeSlotSelect(callTimeSlotModel);
+                        }
+                        Navigator.pop(context);
+                      },
+                      style: ButtonStyle(
+                        fixedSize:
+                            MaterialStateProperty.all(const Size(220, 60)),
+                        backgroundColor:
+                            MaterialStateProperty.all(MColor.colorPrimary),
+                        elevation: MaterialStateProperty.all(0),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        StringConst.done,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    child: const Text(
-                      StringConst.done,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
                   ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-              ],
-            );
-          },
-        ),
-      ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                ],
+              );
+            }
+            return Container();
+          }),
     );
   }
 
-  List<Widget> radioButtonWidget() {
-    List<Widget> widgets = [];
-    for (CallTimeSlotModel callTimeSlot in callTimeSlotModel!) {
-      time = callTimeSlot.from + " to " + callTimeSlot.to;
-      widgets.add(
-        BlocProvider(
-          create: (context) => commonBloc,
-          child: BlocBuilder<CommonBloc, CommonBlocStates>(
-            builder: (context, state) {
-              if (state is CommonBlocInitialState) {
-                if (selectCallTimeSlotRadio == time) {
-                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                      enrollmentRadioTag: callTimeSlot.id));
-                }
-              }
-
-              if (state is CommonBlocEnrollRadioTagState) {
-                selectCallTimeSlotRadio = state.enrollmentRadioTag;
-              }
-              return GestureDetector(
-                onTap: () {
-                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                      enrollmentRadioTag: callTimeSlot.id));
-                  selectedCallTimeSlot = time;
-                  selectedCallTimeSlotId = callTimeSlot.id.toString();
-                },
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 18,
-                      child: Radio<dynamic>(
-                        value: callTimeSlot.id,
-                        groupValue: selectCallTimeSlotRadio,
-                        activeColor: MColor.colorPrimary,
-                        fillColor:
-                            MaterialStateProperty.all(MColor.colorPrimary),
-                        onChanged: (value) {
-                          commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                              enrollmentRadioTag: value));
-                          selectedCallTimeSlot = time;
-                          selectedCallTimeSlotId = callTimeSlot.id.toString();
-                        },
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      time,
-                      style: const TextStyle(
-                        fontSize: 17.0,
-                        color: MColor.backButton,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 15,
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      );
+  void getCallTimeSlot() async {
+    CallTimeSlotResponse response = await repository.selectCallTimeslot();
+    if (await Network.isConnected()) {
+      if (response.success) {
+        callTimeSlotList = response.data!;
+        callTimeSlotStream.add(callTimeSlotList);
+      } else {
+        failureMessage = response.message;
+        callTimeSlotStream.add(callTimeSlotList);
+      }
+    } else {
+      failureMessage = StringConst.internetCheck;
+      callTimeSlotStream.add(callTimeSlotList);
     }
-    return widgets;
   }
 }

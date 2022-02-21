@@ -7,6 +7,7 @@ import 'package:dms/ui/add_store/bloc/edit_store_bloc.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_events.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_states.dart';
 import 'package:dms/ui/add_store/model/editstore_getenroll_type_response.dart';
+import 'package:dms/ui/add_store/model/orderbooking_day_response.dart';
 import 'package:dms/ui/add_store/model/select_beat_response.dart';
 import 'package:dms/ui/add_store/model/select_distributor_response.dart';
 import 'package:dms/ui/add_store/model/select_district_response.dart';
@@ -25,6 +26,7 @@ import 'package:dms/ui/userlocation_bloc/userlocation_bloc.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_events.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_states.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
@@ -73,9 +75,8 @@ class _OutletInformationState extends State<OutletInformation> {
   DistrictModel? districtModel;
   DistributorModel? distributorModel;
   BeatModal? beatModal;
-  RetailerTypeModel? retailerType;
-  RetailerCategoryModel? retailerCategory;
-
+  RetailerTypeModel? retailerTypeModel;
+  RetailerCategoryModel? retailerCategoryModal;
   String? districtId;
   String? distributorId;
 
@@ -84,6 +85,7 @@ class _OutletInformationState extends State<OutletInformation> {
   String? retailerCategoryId;
   GlobalKey globalKey = GlobalKey();
   TextEditingController selectedController = TextEditingController();
+  List<OrderBookingDayModal> orderBookingDayList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +150,8 @@ class _OutletInformationState extends State<OutletInformation> {
                     ],
                   ),
                   sizedBoxWidget(5.0, ""),
-                  BlocBuilder<EditStoreBloc, EditStoreStates>(builder: (context, state) {
+                  BlocBuilder<EditStoreBloc, EditStoreStates>(
+                      builder: (context, state) {
                     if (state is EditStoreInitialState) {
                       editStoreBloc.add(GetEnrolmentTypeEvent());
                     }
@@ -194,7 +197,8 @@ class _OutletInformationState extends State<OutletInformation> {
                     ],
                   ),
                   sizedBoxWidget(12.0, ""),
-                  textFields(txtSelectDistrictController, StringConst.selectHint),
+                  textFields(
+                      txtSelectDistrictController, StringConst.selectHint),
                   sizedBoxWidget(20.0, ""),
                   Row(
                     children: [
@@ -206,7 +210,8 @@ class _OutletInformationState extends State<OutletInformation> {
                     ],
                   ),
                   sizedBoxWidget(12.0, ""),
-                  textFields(txtSelectDistributorController, StringConst.selectHint),
+                  textFields(
+                      txtSelectDistributorController, StringConst.selectHint),
                   sizedBoxWidget(20.0, ""),
                   Row(
                     children: [
@@ -218,7 +223,8 @@ class _OutletInformationState extends State<OutletInformation> {
                     ],
                   ),
                   sizedBoxWidget(12.0, ""),
-                  textFields(txtSelectBeatNameController, StringConst.selectHint),
+                  textFields(
+                      txtSelectBeatNameController, StringConst.selectHint),
                   sizedBoxWidget(20.0, ""),
                   Row(
                     children: [
@@ -624,7 +630,8 @@ class _OutletInformationState extends State<OutletInformation> {
             onTap: () async {
               selectedController = txtController;
               await Future.delayed(const Duration(milliseconds: 500));
-              RenderObject? object = globalKey.currentContext!.findRenderObject();
+              RenderObject? object =
+                  globalKey.currentContext!.findRenderObject();
               object!.showOnScreen();
             },
             keyboardType: TextInputType.name,
@@ -726,7 +733,8 @@ class _OutletInformationState extends State<OutletInformation> {
     for (EnrolmentTypeModel enrolmentType in enrolmentTypeModel!) {
       widgets.add(GestureDetector(
         onTap: () {
-          commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: enrolmentType.id));
+          commonBloc.add(CommonBlocEnrollTypeRadioEvent(
+              enrollmentRadioTag: enrolmentType.id));
           enrollmentTypeId = enrolmentType.id.toString();
           form.enrollmentTypeId = enrolmentType.id.toString();
           form.enrollmentType = enrolmentType.enrollmentType.toString();
@@ -741,7 +749,8 @@ class _OutletInformationState extends State<OutletInformation> {
                 activeColor: MColor.colorPrimary,
                 fillColor: MaterialStateProperty.all(MColor.colorPrimary),
                 onChanged: (value) {
-                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
+                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(
+                      enrollmentRadioTag: value));
                   enrollmentTypeId = enrolmentType.id.toString();
                   form.enrollmentTypeId = enrolmentType.id.toString();
                   form.enrollmentType = enrolmentType.enrollmentType.toString();
@@ -804,7 +813,10 @@ class _OutletInformationState extends State<OutletInformation> {
     FocusScope.of(context).unfocus();
     try {
       XFile? image = await imagePicker.pickImage(
-          source: ImageSource.camera, maxHeight: 512, maxWidth: 512, preferredCameraDevice: CameraDevice.front);
+          source: ImageSource.camera,
+          maxHeight: 512,
+          maxWidth: 512,
+          preferredCameraDevice: CameraDevice.front);
       if (image != null) {
         outletPhotoFile = File(image.path);
         outletFileName = image.name;
@@ -812,7 +824,10 @@ class _OutletInformationState extends State<OutletInformation> {
         commonBloc.add(CommonBlocSelectImageEvent(imageFile: outletPhotoFile!));
       }
     } catch (exception) {
-      Fluttertoast.showToast(msg: "Permission denied, go to app settings and allow camera permission", toastLength: Toast.LENGTH_LONG);
+      Fluttertoast.showToast(
+          msg:
+              "Permission denied, go to app settings and allow camera permission",
+          toastLength: Toast.LENGTH_LONG);
     }
   }
 
@@ -836,6 +851,7 @@ class _OutletInformationState extends State<OutletInformation> {
                     }
                     txtSelectDistributorController.text = "";
                     txtSelectBeatNameController.text = "";
+                    txtOrderBookingController.text = "";
                     distributorModel = null;
                     beatModal = null;
                   },
@@ -850,6 +866,7 @@ class _OutletInformationState extends State<OutletInformation> {
                           distributorId = distributor.customerCodes;
                         }
                         txtSelectBeatNameController.text = "";
+                        txtOrderBookingController.text = "";
                         beatModal = null;
                       },
                       districtId: districtModel != null ? districtModel!.id.toString() : "",
@@ -858,29 +875,36 @@ class _OutletInformationState extends State<OutletInformation> {
                       ? SelectBeatNameBottomSheet(
                           beatModal: beatModal,
                           onBeatNameSelect: (beat) {
-                            beatModal = beat;
-                            txtSelectBeatNameController.text = beat.name;
+                            if (beat != null) {
+                              beatModal = beat;
+                              txtSelectBeatNameController.text = beat.name;
+                              beatId = beat.id.toString();
+                              getOrderBookingDay();
+                            }
                           },
                           customerCode: distributorModel != null ? distributorModel!.customerCodes : "",
                         )
                       : txtController == txtSelectRetailerTypeController
                           ? SelectRetailerTypeBottomSheet(
-                              selectedRetailerTypeName:
-                                  txtSelectRetailerTypeController.text.isEmpty ? "" : txtSelectRetailerTypeController.text,
-                              onRetailerTypeSelect: (retailerType, id) {
-                                txtSelectRetailerTypeController.text = retailerType;
-                                if (id != null) {
-                                  retailerTypeId = id;
+                              retailerTypeModel: retailerTypeModel,
+                              onRetailerTypeSelect: (retailerType) {
+                                if (retailerType != null) {
+                                  retailerTypeModel = retailerType;
+                                  retailerTypeId = retailerType.id.toString();
+                                  txtSelectRetailerTypeController.text =
+                                      retailerType.name;
                                 }
                               },
                             )
                           : SelectRetailerCategoryBottomSheet(
-                              selectedRetailerCategoryName:
-                                  txtSelectRetailerCategoryController.text.isEmpty ? "" : txtSelectRetailerCategoryController.text,
-                              onRetailerCategorySelect: (retailerCategory, id) {
-                                txtSelectRetailerCategoryController.text = retailerCategory;
-                                if (id != null) {
-                                  retailerCategoryId = id;
+                              retailerCategoryModel: retailerCategoryModal,
+                              onRetailerCategorySelect: (retailerCategory) {
+                                if (retailerCategory != null) {
+                                  retailerCategoryModal = retailerCategory;
+                                  retailerCategoryId =
+                                      retailerCategory.id.toString();
+                                  txtSelectRetailerCategoryController.text =
+                                      retailerCategory.category;
                                 }
                               },
                             );
@@ -891,5 +915,28 @@ class _OutletInformationState extends State<OutletInformation> {
     editStoreBloc.add(GetEnrolmentTypeEvent());
     userLocationBloc.add(GetUserLocationEvent());
     refreshController.refreshCompleted();
+  }
+
+  getOrderBookingDay() async {
+    Map<String, dynamic> input = HashMap<String, dynamic>();
+    input["beat_id"] = beatId;
+    OrderBookingDayResponse response = await repository.orderBookingDay(input);
+    if (response.success) {
+      orderBookingDayList = response.data!;
+      for (OrderBookingDayModal orderBookingDay in orderBookingDayList) {
+        if (orderBookingDay.orderBookingDay1.isEmpty) {
+          txtOrderBookingController.text = orderBookingDay.orderBookingDay2;
+          orderBookingDayId = orderBookingDay.id.toString();
+        } else if (orderBookingDay.orderBookingDay2.isEmpty) {
+          txtOrderBookingController.text = orderBookingDay.orderBookingDay1;
+          orderBookingDayId = orderBookingDay.id.toString();
+        } else {
+          txtOrderBookingController.text = orderBookingDay.orderBookingDay1 +
+              ", " +
+              orderBookingDay.orderBookingDay2;
+          orderBookingDayId = orderBookingDay.id.toString();
+        }
+      }
+    }
   }
 }

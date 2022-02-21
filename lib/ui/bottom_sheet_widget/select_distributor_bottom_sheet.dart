@@ -4,27 +4,36 @@ import 'dart:collection';
 import 'package:dms/main.dart';
 import 'package:dms/ui/add_store/model/select_distributor_response.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
+
+import '../../main.dart';
 
 class SelectDistributorBottomSheet extends StatefulWidget {
   final Function(DistributorModel? distributorModel) onDistributorSelect;
   final DistributorModel? distributorModel;
   final String? districtId;
-
   const SelectDistributorBottomSheet(
-      {Key? key, required this.onDistributorSelect, required this.distributorModel, required this.districtId})
+      {Key? key,
+      required this.onDistributorSelect,
+      required this.distributorModel,
+      required this.districtId})
       : super(key: key);
 
   @override
-  _SelectDistributorBottomSheetState createState() => _SelectDistributorBottomSheetState();
+  _SelectDistributorBottomSheetState createState() =>
+      _SelectDistributorBottomSheetState();
 }
 
-class _SelectDistributorBottomSheetState extends State<SelectDistributorBottomSheet> {
+class _SelectDistributorBottomSheetState
+    extends State<SelectDistributorBottomSheet> {
   int groupValue = -1;
   List<DistributorModel> distributorList = [];
   DistributorModel? selectedDistributor;
-  StreamController<List<DistributorModel>> distributorStream = StreamController();
+  StreamController<List<DistributorModel>> distributorStream =
+      StreamController();
+  String failureMessage = "";
 
   @override
   void initState() {
@@ -56,12 +65,14 @@ class _SelectDistributorBottomSheetState extends State<SelectDistributorBottomSh
                 child: CircularProgressIndicator(),
               );
             }
-            if (snapshot.data == null) {
-              return Container();
+            if (failureMessage == StringConst.internetCheck) {
+              return Center(
+                child: Text(failureMessage),
+              );
             }
             if (snapshot.data!.isEmpty) {
-              return const Center(
-                child: Text("Records not found"),
+              return Center(
+                child: Text(failureMessage),
               );
             }
             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
@@ -109,14 +120,17 @@ class _SelectDistributorBottomSheetState extends State<SelectDistributorBottomSh
                     child: ElevatedButton(
                       onPressed: () {
                         if (groupValue != -1) {
-                          selectedDistributor = distributorList.singleWhere((element) => element.id == groupValue);
+                          selectedDistributor = distributorList.singleWhere(
+                              (element) => element.id == groupValue);
                           widget.onDistributorSelect(selectedDistributor!);
                         }
                         Navigator.pop(context);
                       },
                       style: ButtonStyle(
-                        fixedSize: MaterialStateProperty.all(const Size(220, 60)),
-                        backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
+                        fixedSize:
+                            MaterialStateProperty.all(const Size(220, 60)),
+                        backgroundColor:
+                            MaterialStateProperty.all(MColor.colorPrimary),
                         elevation: MaterialStateProperty.all(0),
                         shape: MaterialStateProperty.all(
                           RoundedRectangleBorder(
@@ -148,12 +162,19 @@ class _SelectDistributorBottomSheetState extends State<SelectDistributorBottomSh
   getDistributors() async {
     Map<String, dynamic> input = HashMap<String, dynamic>();
     input["districts_id"] = widget.districtId;
-    SelectDistributorResponse response = await repository.selectDistributor(input);
-    if (response.success) {
-      distributorList = response.data!;
-      debugPrint("groupValue--->$groupValue");
-      distributorStream.add(distributorList);
+    SelectDistributorResponse response =
+        await repository.selectDistributor(input);
+    if (await Network.isConnected()) {
+      if (response.success) {
+        distributorList = response.data!;
+        debugPrint("groupValue--->$groupValue");
+        distributorStream.add(distributorList);
+      } else {
+        failureMessage = response.message;
+        distributorStream.add(distributorList);
+      }
     } else {
+      failureMessage = StringConst.internetCheck;
       distributorStream.add(distributorList);
       // Utility.showToast(response.message);
     }

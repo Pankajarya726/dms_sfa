@@ -1,52 +1,45 @@
-import 'package:dms/ui/add_store/bloc/edit_store_bloc.dart';
-import 'package:dms/ui/add_store/bloc/edit_store_events.dart';
-import 'package:dms/ui/add_store/bloc/edit_store_states.dart';
+import 'dart:async';
+import 'package:dms/main.dart';
 import 'package:dms/ui/add_store/model/select_language_response.dart';
-import 'package:dms/ui/common_bloc/common_bloc.dart';
-import 'package:dms/ui/common_bloc/common_bloc_events.dart';
-import 'package:dms/ui/common_bloc/common_bloc_states.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SelectLanguageBottomSheet extends StatefulWidget {
-  final Function(String selectedLanguage, String? selectedLangId) onLanguageSelect;
-  final String selectedLanguageName;
+  final Function(LanguageModel? languageModel) onLanguageSelect;
+  final LanguageModel? languageModel;
   final String bottomSheetHeading;
   final String previousSelectedLang;
   const SelectLanguageBottomSheet(
       {Key? key,
       required this.onLanguageSelect,
-      required this.selectedLanguageName,
+      required this.languageModel,
       required this.bottomSheetHeading,
       required this.previousSelectedLang})
       : super(key: key);
 
   @override
-  _SelectLanguageBottomSheetState createState() => _SelectLanguageBottomSheetState();
+  _SelectLanguageBottomSheetState createState() =>
+      _SelectLanguageBottomSheetState();
 }
 
 class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
-  // List<String> names = [
-  //   "English",
-  //   "Hindi",
-  //   "Tamil",
-  //   "Urdu",
-  //   "Telgu",
-  //   "Marathi",
-  // ];
-  Object selectLanguageRadio = "";
-  String selectedLanguage = "";
-  String? selectedLanguageId;
-  CommonBloc commonBloc = CommonBloc();
-  List<LanguageModel>? languageModel = [];
+  int groupValue = -1;
+  List<LanguageModel> languageModelList = [];
+  LanguageModel? languageModel;
+  StreamController<List<LanguageModel>> languageStream = StreamController();
+  String failureMessage = "";
 
   @override
   void initState() {
     super.initState();
-    selectLanguageRadio = widget.selectedLanguageName;
-    selectedLanguage = widget.selectedLanguageName;
+    if (widget.languageModel != null) {
+      debugPrint("widget.selectedDistrict!.id---->${widget.languageModel!.id}");
+      groupValue = widget.languageModel!.id;
+      languageModel = widget.languageModel;
+    }
+    getLanguage();
   }
 
   @override
@@ -60,155 +53,126 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
           topLeft: Radius.circular(25),
         ),
       ),
-      child: BlocProvider(
-        create: (context) => EditStoreBloc(),
-        child: BlocBuilder<EditStoreBloc, EditStoreStates>(
-          builder: (context, state) {
-            if (state is EditStoreInitialState) {
-              BlocProvider.of<EditStoreBloc>(context).add(SelectLanguageTypeEvent());
-            }
-            if (state is EditStoreILoadingState) {
+      child: StreamBuilder<List<LanguageModel>>(
+          stream: languageStream.stream,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
-            if (state is SelectLanguageTypeState) {
-              languageModel = state.selectLanguageResponse.data;
-            }
-            if (state is EditStoreFailureState) {
+            if (failureMessage == StringConst.internetCheck) {
               return Center(
-                child: Text(state.failureMessage),
+                child: Text(failureMessage),
               );
             }
-            if (languageModel == null) {
-              return Container();
+            if (snapshot.data!.isEmpty) {
+              return Center(
+                child: Text(failureMessage),
+              );
             }
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  StringConst.selectLangFirst + widget.bottomSheetHeading,
-                  style: const TextStyle(
-                    fontSize: 19,
-                    color: MColor.colorPrimary,
-                    letterSpacing: 0.67,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: radioButtonWidget(),
+
+            if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    StringConst.selectLangFirst + widget.bottomSheetHeading,
+                    style: const TextStyle(
+                      fontSize: 19,
+                      color: MColor.colorPrimary,
+                      letterSpacing: 0.67,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      widget.onLanguageSelect(selectedLanguage, selectedLanguageId);
-                      Navigator.pop(context);
-                    },
-                    style: ButtonStyle(
-                      fixedSize: MaterialStateProperty.all(const Size(220, 60)),
-                      backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
-                      elevation: MaterialStateProperty.all(0),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: List.generate(snapshot.data!.length, (index) {
+                          if (snapshot.data![index].languageName ==
+                              widget.previousSelectedLang) {
+                            return Container();
+                          }
+                          return RadioListTile<int>(
+                            contentPadding: const EdgeInsets.all(0),
+                            value: snapshot.data![index].id,
+                            groupValue: groupValue,
+                            title: Text(
+                              snapshot.data![index].languageName,
+                            ),
+                            onChanged: (value) {
+                              groupValue = value!;
+                              languageStream.add(snapshot.data!);
+                            },
+                          );
+                        }),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (groupValue != -1) {
+                          languageModel = languageModelList.singleWhere(
+                              (element) => element.id == groupValue);
+                          widget.onLanguageSelect(languageModel);
+                        }
+                        Navigator.pop(context);
+                      },
+                      style: ButtonStyle(
+                        fixedSize:
+                            MaterialStateProperty.all(const Size(220, 60)),
+                        backgroundColor:
+                            MaterialStateProperty.all(MColor.colorPrimary),
+                        elevation: MaterialStateProperty.all(0),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        StringConst.done,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    child: const Text(
-                      StringConst.done,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
                   ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-              ],
-            );
-          },
-        ),
-      ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                ],
+              );
+            }
+            return Container();
+          }),
     );
   }
 
-  List<Widget> radioButtonWidget() {
-    List<Widget> widgets = [];
-    for (LanguageModel language in languageModel!) {
-      widgets.add(
-        BlocProvider(
-          create: (context) => commonBloc,
-          child: BlocBuilder<CommonBloc, CommonBlocStates>(
-            builder: (context, state) {
-              if (state is CommonBlocInitialState) {
-                if (selectLanguageRadio == language.languageName) {
-                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: language.id));
-                }
-              }
+  void getLanguage() async {
+    SelectLanguageResponse response = await repository.selectLanguage();
 
-              if (state is CommonBlocEnrollRadioTagState) {
-                selectLanguageRadio = state.enrollmentRadioTag;
-              }
-              if (language.languageName == widget.previousSelectedLang) {
-                return Container();
-              }
-              return GestureDetector(
-                onTap: () {
-                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: language.id));
-                  selectedLanguage = language.languageName;
-                  selectedLanguageId = language.id.toString();
-                },
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 18,
-                      child: Radio<dynamic>(
-                        value: language.id,
-                        groupValue: selectLanguageRadio,
-                        activeColor: MColor.colorPrimary,
-                        fillColor: MaterialStateProperty.all(MColor.colorPrimary),
-                        onChanged: (value) {
-                          commonBloc.add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-                          selectedLanguage = language.languageName;
-                          selectedLanguageId = language.id.toString();
-                        },
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      language.languageName,
-                      style: const TextStyle(
-                        fontSize: 17.0,
-                        color: MColor.backButton,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 15,
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      );
+    if (await Network.isConnected()) {
+      if (response.success) {
+        languageModelList = response.data!;
+        languageStream.add(languageModelList);
+      } else {
+        failureMessage = response.message;
+        languageStream.add(languageModelList);
+      }
+    } else {
+      failureMessage = StringConst.internetCheck;
+      languageStream.add(languageModelList);
     }
-    return widgets;
   }
 }
