@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:dms/ui/add_store/model/call_time_slot_response.dart';
+import 'package:dms/ui/add_store/model/select_language_response.dart';
 import 'package:path/path.dart' as path;
 
 class RetailerForm {
@@ -26,15 +28,14 @@ class RetailerForm {
   String gstNo = "";
   String outletImage = "";
   String ownerName = "";
-  String mobileNumber = " ";
+  String primaryMobile = " ";
   String secondaryMobile = "";
-  String helperNumber = "";
-  String callTimeSlotId = "";
-  String callTimeSlot = "";
-  String languageId1 = "";
-  String language1 = "";
-  String language2 = "";
-  String languageId2 = "";
+  String helperMobile = "";
+
+  CallTimeSlotModel? callTimeSlot;
+  LanguageModel? primaryLang;
+  LanguageModel? secondaryLang;
+
   String isWhatsappSms = "";
   String pan = "";
   String aadhaarNumber = "";
@@ -53,8 +54,8 @@ class RetailerForm {
   Map<String, dynamic> toMap() => <String, dynamic>{
         "owner_name": ownerName,
         "email": email,
-        "mobile_number": mobileNumber,
-        "helper_mobile": helperNumber,
+        "mobile_number": primaryMobile,
+        "helper_mobile": helperMobile,
         "district_id": districtId,
         "pan": pan,
         "adhar_number": aadhaarNumber,
@@ -75,9 +76,9 @@ class RetailerForm {
         "gst_no": gstNo,
         "is_existing_retailer": isExistingRetailer,
         "enrollment_type_id": enrollmentTypeId,
-        "call_time_slot_id": callTimeSlotId,
-        "language_id_1": languageId1,
-        "language_id_2": languageId2,
+        "call_time_slot_id": callTimeSlot == null ? "" : callTimeSlot!.id,
+        "language_id_1": primaryLang == null ? "" : primaryLang!.id,
+        "language_id_2": secondaryLang == null ? "" : secondaryLang!.id,
         "retailer_type": retailerTypeId,
         "retailer_category": retailerCategoryId,
         "is_whatsapp_sms": isWhatsappSms,

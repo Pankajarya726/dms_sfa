@@ -108,7 +108,7 @@ class _SelectOtpNumberBottomSheetState extends State<SelectOtpNumberBottomSheet>
               Fluttertoast.showToast(msg: "Please select an option");
               return;
             }
-            if (groupValue == 1 && widget.form.mobileNumber.trim().isEmpty) {
+            if (groupValue == 1 && widget.form.primaryMobile.trim().isEmpty) {
               Fluttertoast.showToast(msg: "Primary mobile number is not entered please select different option");
               return;
             }
@@ -116,16 +116,16 @@ class _SelectOtpNumberBottomSheetState extends State<SelectOtpNumberBottomSheet>
               Fluttertoast.showToast(msg: "Secondary mobile number is not entered please select different option");
               return;
             }
-            if (groupValue == 3 && widget.form.helperNumber.trim().isEmpty) {
+            if (groupValue == 3 && widget.form.helperMobile.trim().isEmpty) {
               Fluttertoast.showToast(msg: "Helper mobile number is not entered please select different option");
               return;
             }
 
             String number = groupValue == 1
-                ? widget.form.mobileNumber.trim()
+                ? widget.form.primaryMobile.trim()
                 : groupValue == 2
                     ? widget.form.secondaryMobile.trim()
-                    : widget.form.helperNumber.trim();
+                    : widget.form.helperMobile.trim();
 
             widget.onDone(number);
             Navigator.pop(context);

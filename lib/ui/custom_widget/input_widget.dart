@@ -6,14 +6,10 @@ class NameEditText extends StatefulWidget {
   final TextEditingController controller;
   final String hint;
   final GlobalKey globalKey;
-  final Function(TextEditingController controller) onTextFieldOpened;
 
-  const NameEditText(
-      {Key? key,
-      required this.controller,
-      required this.hint,
-      required this.onTextFieldOpened,
-      required this.globalKey})
+  final Function(String text) onChange;
+
+  const NameEditText({Key? key, required this.controller, required this.hint, required this.onChange, required this.globalKey})
       : super(key: key);
 
   @override
@@ -29,15 +25,10 @@ class _NameEditTextState extends State<NameEditText> {
         return false;
       },
       child: TextFormField(
-        onFieldSubmitted: (value) {
-          TextEditingController selectedController = TextEditingController();
-          widget.onTextFieldOpened(selectedController);
-        },
+        onChanged: widget.onChange,
         onTap: () async {
-          widget.onTextFieldOpened(widget.controller);
           await Future.delayed(const Duration(milliseconds: 500));
-          RenderObject? object =
-              widget.globalKey.currentContext!.findRenderObject();
+          RenderObject? object = widget.globalKey.currentContext!.findRenderObject();
           object!.showOnScreen();
         },
         autofocus: false,
@@ -75,8 +66,9 @@ class _NameEditTextState extends State<NameEditText> {
 class MobileEditText extends StatefulWidget {
   final TextEditingController controller;
   final String hint;
-  const MobileEditText({Key? key, required this.controller, required this.hint})
-      : super(key: key);
+  final Function(String text) onChange;
+
+  const MobileEditText({Key? key, required this.controller, required this.hint, required this.onChange}) : super(key: key);
 
   @override
   _MobileEditTextState createState() => _MobileEditTextState();
@@ -87,6 +79,7 @@ class _MobileEditTextState extends State<MobileEditText> {
   Widget build(BuildContext context) {
     return TextFormField(
       autofocus: false,
+      onChanged: widget.onChange,
       style: const TextStyle(
         fontSize: 15,
         fontWeight: FontWeight.bold,
@@ -125,12 +118,8 @@ class GSTEditText extends StatefulWidget {
   final String hint;
   final GlobalKey globalKey;
   final Function(TextEditingController controller) onTextFieldOpened;
-  const GSTEditText(
-      {Key? key,
-      required this.controller,
-      required this.hint,
-      required this.globalKey,
-      required this.onTextFieldOpened})
+
+  const GSTEditText({Key? key, required this.controller, required this.hint, required this.globalKey, required this.onTextFieldOpened})
       : super(key: key);
 
   @override
@@ -148,8 +137,7 @@ class _GSTEditTextState extends State<GSTEditText> {
       onTap: () async {
         widget.onTextFieldOpened(widget.controller);
         await Future.delayed(const Duration(milliseconds: 500));
-        RenderObject? object =
-            widget.globalKey.currentContext!.findRenderObject();
+        RenderObject? object = widget.globalKey.currentContext!.findRenderObject();
         object!.showOnScreen();
       },
       autofocus: false,
