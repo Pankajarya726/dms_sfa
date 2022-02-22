@@ -51,6 +51,8 @@ class _OutletInformationState extends State<OutletInformation> {
   Object selectEnrollmentRadio = "";
   Object existingRetailerRadio = "";
   Object isKRORadio = "";
+  // asdgasdgsdg
+
   File? outletPhotoFile;
   String? outletFileName;
   CommonBloc commonBloc = CommonBloc();

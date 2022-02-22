@@ -69,6 +69,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
   }
 
   restorePrevSession() {
+    //
     ownerPhotoFile = widget.form.ownerImage.isEmpty ? null : File(widget.form.ownerImage);
     // whatsAppSmsRadio = widget.ownerForm!.isWhatsappSms;
     txtOwnerName.text = widget.form.ownerName;
