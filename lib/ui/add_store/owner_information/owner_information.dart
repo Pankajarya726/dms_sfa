@@ -72,6 +72,33 @@ class _OwnerInformationState extends State<OwnerInformation> {
   LanguageModel? languageSecondModel;
 
   @override
+  void initState() {
+    super.initState();
+    restorePrevSession();
+  }
+
+  restorePrevSession() {
+    if (widget.ownerForm != null) {
+      // ownerPhotoFile = widget.ownerForm!.ownerImage as File?;
+      whatsAppSmsRadio = widget.ownerForm!.isWhatsappSms;
+      txtOwnerNameController.text = widget.ownerForm!.ownerName;
+      txtPrimaryMobController.text = widget.ownerForm!.mobileNumber;
+      txtSecondaryMobController.text = widget.ownerForm!.secondaryMobile;
+      txtHelperMobController.text = widget.ownerForm!.helperNumber;
+      txtSelectCallTimeSlotController.text = widget.ownerForm!.callTimeSlot;
+      txtSelectLangFirstController.text = widget.ownerForm!.language1;
+      txtSelectLangSecondController.text = widget.ownerForm!.language2;
+      txtPANController.text = widget.ownerForm!.pan;
+      txtAdharNumberController.text = widget.ownerForm!.aadhaarNumber;
+      txtPicDateController.text = widget.ownerForm!.birthday;
+      txtAnniversaryController.text = widget.ownerForm!.anniversary;
+      callTimeSlotId = widget.ownerForm!.callTimeSlotId;
+      primaryLangId = widget.ownerForm!.languageId1;
+      secondaryLangId = widget.ownerForm!.languageId2;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => commonBloc,
