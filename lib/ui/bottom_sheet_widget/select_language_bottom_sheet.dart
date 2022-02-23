@@ -103,6 +103,11 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
                             groupValue: groupValue,
                             title: Text(
                               snapshot.data![index].languageName,
+                              style: const TextStyle(
+                                fontSize: 17.0,
+                                color: MColor.backButton,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             onChanged: (value) {
                               groupValue = value!;
@@ -128,7 +133,7 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
                       },
                       style: ButtonStyle(
                         fixedSize:
-                            MaterialStateProperty.all(const Size(220, 60)),
+                            MaterialStateProperty.all(const Size(180, 55)),
                         backgroundColor:
                             MaterialStateProperty.all(MColor.colorPrimary),
                         elevation: MaterialStateProperty.all(0),

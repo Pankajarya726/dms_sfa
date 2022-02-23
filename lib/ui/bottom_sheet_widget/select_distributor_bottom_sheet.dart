@@ -15,25 +15,32 @@ class SelectDistributorBottomSheet extends StatefulWidget {
   final DistributorModel? distributorModel;
   final String? districtId;
   const SelectDistributorBottomSheet(
-      {Key? key, required this.onDistributorSelect, required this.distributorModel, required this.districtId})
+      {Key? key,
+      required this.onDistributorSelect,
+      required this.distributorModel,
+      required this.districtId})
       : super(key: key);
 
   @override
-  _SelectDistributorBottomSheetState createState() => _SelectDistributorBottomSheetState();
+  _SelectDistributorBottomSheetState createState() =>
+      _SelectDistributorBottomSheetState();
 }
 
-class _SelectDistributorBottomSheetState extends State<SelectDistributorBottomSheet> {
+class _SelectDistributorBottomSheetState
+    extends State<SelectDistributorBottomSheet> {
   int groupValue = -1;
   List<DistributorModel> distributorList = [];
   DistributorModel? selectedDistributor;
-  StreamController<List<DistributorModel>> distributorStream = StreamController();
+  StreamController<List<DistributorModel>> distributorStream =
+      StreamController();
   String failureMessage = "";
 
   @override
   void initState() {
     super.initState();
     if (widget.distributorModel != null) {
-      debugPrint("widget.selectedDistrict!.id---->${widget.distributorModel!.id}");
+      debugPrint(
+          "widget.selectedDistrict!.id---->${widget.distributorModel!.id}");
       groupValue = widget.distributorModel!.id;
       selectedDistributor = widget.distributorModel;
     }
@@ -97,6 +104,11 @@ class _SelectDistributorBottomSheetState extends State<SelectDistributorBottomSh
                             groupValue: groupValue,
                             title: Text(
                               snapshot.data![index].name,
+                              style: const TextStyle(
+                                fontSize: 17.0,
+                                color: MColor.backButton,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             onChanged: (value) {
                               groupValue = value!;
@@ -114,14 +126,17 @@ class _SelectDistributorBottomSheetState extends State<SelectDistributorBottomSh
                     child: ElevatedButton(
                       onPressed: () {
                         if (groupValue != -1) {
-                          selectedDistributor = distributorList.singleWhere((element) => element.id == groupValue);
+                          selectedDistributor = distributorList.singleWhere(
+                              (element) => element.id == groupValue);
                           widget.onDistributorSelect(selectedDistributor!);
                         }
                         Navigator.pop(context);
                       },
                       style: ButtonStyle(
-                        fixedSize: MaterialStateProperty.all(const Size(220, 60)),
-                        backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
+                        fixedSize:
+                            MaterialStateProperty.all(const Size(180, 55)),
+                        backgroundColor:
+                            MaterialStateProperty.all(MColor.colorPrimary),
                         elevation: MaterialStateProperty.all(0),
                         shape: MaterialStateProperty.all(
                           RoundedRectangleBorder(
@@ -153,7 +168,8 @@ class _SelectDistributorBottomSheetState extends State<SelectDistributorBottomSh
   getDistributors() async {
     Map<String, dynamic> input = HashMap<String, dynamic>();
     input["districts_id"] = widget.districtId;
-    SelectDistributorResponse response = await repository.selectDistributor(input);
+    SelectDistributorResponse response =
+        await repository.selectDistributor(input);
     if (await Network.isConnected()) {
       if (response.success) {
         distributorList = response.data!;

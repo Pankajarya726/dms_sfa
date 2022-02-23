@@ -97,6 +97,11 @@ class _SelectBeatNameBottomSheetState extends State<SelectBeatNameBottomSheet> {
                             groupValue: groupValue,
                             title: Text(
                               snapshot.data![index].name,
+                              style: const TextStyle(
+                                fontSize: 17.0,
+                                color: MColor.backButton,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             onChanged: (value) {
                               groupValue = value!;
@@ -122,7 +127,7 @@ class _SelectBeatNameBottomSheetState extends State<SelectBeatNameBottomSheet> {
                       },
                       style: ButtonStyle(
                         fixedSize:
-                            MaterialStateProperty.all(const Size(220, 60)),
+                            MaterialStateProperty.all(const Size(180, 55)),
                         backgroundColor:
                             MaterialStateProperty.all(MColor.colorPrimary),
                         elevation: MaterialStateProperty.all(0),

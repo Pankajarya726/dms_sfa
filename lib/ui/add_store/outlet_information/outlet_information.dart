@@ -1,7 +1,6 @@
 import 'dart:collection';
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:dms/model/retailer_form.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_bloc.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_events.dart';
@@ -9,9 +8,6 @@ import 'package:dms/ui/add_store/bloc/edit_store_states.dart';
 import 'package:dms/ui/add_store/model/editstore_getenroll_type_response.dart';
 import 'package:dms/ui/add_store/model/orderbooking_day_response.dart';
 import 'package:dms/ui/add_store/model/select_beat_response.dart';
-
-
-
 import 'package:dms/ui/add_store/model/select_distributor_response.dart';
 import 'package:dms/ui/add_store/model/select_district_response.dart';
 import 'package:dms/ui/add_store/model/select_retailer_category_response.dart';
@@ -49,13 +45,9 @@ class OutletInformation extends StatefulWidget {
 
 class _OutletInformationState extends State<OutletInformation> {
   RetailerForm form = RetailerForm();
-  RetailerForm ownerForm = RetailerForm();
-
   Object selectEnrollmentRadio = "";
   Object existingRetailerRadio = "";
   Object isKRORadio = "";
-  // asdgasdgsdg
-
   File? outletPhotoFile;
   String? outletFileName;
   CommonBloc commonBloc = CommonBloc();
@@ -89,7 +81,6 @@ class _OutletInformationState extends State<OutletInformation> {
   RetailerCategoryModel? retailerCategoryModal;
   String? districtId;
   String? distributorId;
-
   String? orderBookingDayId;
   String? retailerTypeId;
   String? retailerCategoryId;
@@ -265,6 +256,12 @@ class _OutletInformationState extends State<OutletInformation> {
                     onChange: (text) {
                       form.outletName = text;
                     },
+                    // onKeyboardOpened: (controller) {
+                    //   selectedController = controller;
+                    // },
+                    // onKeyboardClosed: (controller) {
+                    //   selectedController = controller;
+                    // },
                   ),
                   // textFields(txtOutletNameController, StringConst.enterHere),
                   sizedBoxWidget(20.0, ""),
@@ -467,7 +464,7 @@ class _OutletInformationState extends State<OutletInformation> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      sizedBoxWidget(12.0, ""),
+                      sizedBoxWidget(20.0, ""),
                       Row(
                         children: [
                           Image.asset("assets/gallery.png"),
@@ -477,7 +474,7 @@ class _OutletInformationState extends State<OutletInformation> {
                           textWidget(StringConst.outletPhoto),
                         ],
                       ),
-                      sizedBoxWidget(20.0, txtGSTController),
+                      sizedBoxWidget(10.0, txtGSTController),
                       BlocBuilder<CommonBloc, CommonBlocStates>(
                         builder: (context, state) {
                           if (state is CommonBlocSelectImageState) {
@@ -492,9 +489,6 @@ class _OutletInformationState extends State<OutletInformation> {
                         },
                       ),
                     ],
-                  ),
-                  const SizedBox(
-                    width: 40,
                   ),
                   sizedBoxWidget(5.0, ""),
                 ],
@@ -524,6 +518,9 @@ class _OutletInformationState extends State<OutletInformation> {
               Fluttertoast.showToast(msg: "Please select retailer category");
             } else if (outletPhotoFile == null) {
               Fluttertoast.showToast(msg: "Please capture outlet photo");
+            } else if (txtGSTController.text.length < 15 &&
+                txtGSTController.text.isNotEmpty) {
+              Fluttertoast.showToast(msg: "Please enter valid GST number");
             } else {
               String userId = await SharedPreference.getStringPreference(
                   SharedPreference.userId);
@@ -559,12 +556,6 @@ class _OutletInformationState extends State<OutletInformation> {
 
               debugPrint("edit store gstNo ${txtGSTController.text}");
               debugPrint("edit store outletphoto $outletFileName");
-
-              Map<String, dynamic> outletInfo = HashMap<String, dynamic>();
-              outletInfo["user_id"] =
-                  await SharedPreference.getStringPreference(
-                      SharedPreference.userId);
-              outletInfo["enrolment_type"] = enrollmentTypeId;
 
               form.districtId = districtId ?? "";
               form.distributorId = distributorId ?? "";
@@ -620,7 +611,7 @@ class _OutletInformationState extends State<OutletInformation> {
 
   Widget sizedBoxWidget(boxHeight, txtController) {
     return SizedBox(
-      // key: selectedController == txtController ? globalKey : null,
+      key: selectedController == txtController ? globalKey : null,
       height: boxHeight,
     );
   }

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dms/model/get_survey_product.dart';
 import 'package:dms/ui/add_store/model/call_time_slot_response.dart';
 import 'package:dms/ui/add_store/model/select_language_response.dart';
 import 'package:path/path.dart' as path;
@@ -28,7 +29,7 @@ class RetailerForm {
   String gstNo = "";
   String outletImage = "";
   String ownerName = "";
-  String primaryMobile = " ";
+  String primaryMobile = "";
   String secondaryMobile = "";
   String helperMobile = "";
 
@@ -45,6 +46,8 @@ class RetailerForm {
   String email = "";
   String cityId = "";
 
+  List<SurveyProduct> productList = [];
+
   RetailerForm();
 
   FormData toFormData() {
@@ -60,8 +63,14 @@ class RetailerForm {
         "pan": pan,
         "adhar_number": aadhaarNumber,
         "birthday": birthday,
-        "owner_image": ownerImage.isEmpty ? null : MultipartFile.fromFileSync(ownerImage, filename: path.basename(ownerImage)),
-        "outlet_image": outletImage.isEmpty ? null : MultipartFile.fromFileSync(outletImage, filename: path.basename(outletImage)),
+        "owner_image": ownerImage.isEmpty
+            ? null
+            : MultipartFile.fromFileSync(ownerImage,
+                filename: path.basename(ownerImage)),
+        "outlet_image": outletImage.isEmpty
+            ? null
+            : MultipartFile.fromFileSync(outletImage,
+                filename: path.basename(outletImage)),
         "anniversary": anniversary,
         "outlet_name": outletName,
         "beat_name": beatId,
