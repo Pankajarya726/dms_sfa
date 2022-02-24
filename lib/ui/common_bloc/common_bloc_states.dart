@@ -47,7 +47,7 @@ class CommonBlocRetailerRadioState extends CommonBlocStates {
 }
 
 class CommonBlocWhatsAppRadioState extends CommonBlocStates {
-  final Object whatsAppRadioTag;
+  final String whatsAppRadioTag;
   CommonBlocWhatsAppRadioState({required this.whatsAppRadioTag});
   @override
   List<Object> get props => [whatsAppRadioTag];

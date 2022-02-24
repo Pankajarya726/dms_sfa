@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/main.dart';
 import 'package:dms/model/base_response.dart';
@@ -22,8 +21,10 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ProductInformation extends StatefulWidget {
   final RetailerForm form;
-
-  const ProductInformation({Key? key, required this.form}) : super(key: key);
+  const ProductInformation({
+    Key? key,
+    required this.form,
+  }) : super(key: key);
 
   @override
   State<ProductInformation> createState() => _ProductInformationState();
@@ -32,7 +33,6 @@ class ProductInformation extends StatefulWidget {
 class _ProductInformationState extends State<ProductInformation> {
   List<Widget> widgetList = [];
   List<SurveyProduct> productList = [];
-
   StreamController<List<Widget>> productStream = StreamController();
   RefreshController refreshController = RefreshController();
 
@@ -42,14 +42,16 @@ class _ProductInformationState extends State<ProductInformation> {
       padding: EdgeInsets.symmetric(horizontal: 15),
       child: Text(
         "Which category/brand does retailer keep?",
-        style: TextStyle(fontSize: 20, color: MColor.colorPrimary, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+        style: TextStyle(
+            fontSize: 20,
+            color: MColor.colorPrimary,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5),
       ),
     ));
-
     productStream.add(widgetList);
     getProduct();
-    //
-    //
+
     super.initState();
   }
 
@@ -129,14 +131,18 @@ class _ProductInformationState extends State<ProductInformation> {
     if (response.success && response.data.isNotEmpty) {
       productList.clear();
       productList.addAll(response.data);
-      await Future.forEach(productList, (SurveyProduct product) => widgetList.add(ProductListItem(productsInfo: product)));
+      await Future.forEach(
+          productList,
+          (SurveyProduct product) =>
+              widgetList.add(ProductListItem(productsInfo: product)));
       debugPrint("products--->${productList.length}");
       productStream.add(widgetList);
     }
   }
 
   void register(BuildContext context) async {
-    List<SurveyProduct> selected = productList.where((element) => element.check).toList();
+    List<SurveyProduct> selected =
+        productList.where((element) => element.check).toList();
     debugPrint("selectedProduct--->$selected");
     if (selected.isEmpty) {
       Utility.showToast("Please select at least one Product");
@@ -149,7 +155,8 @@ class _ProductInformationState extends State<ProductInformation> {
       Map<String, dynamic> category = {};
       category["product_id"] = element.id;
       String brand = "";
-      List<Brand> brands = element.brand.where((element) => element.check).toList();
+      List<Brand> brands =
+          element.brand.where((element) => element.check).toList();
       debugPrint("brands-->$brands");
       for (int i = 0; i < brands.length; i++) {
         if (i + 1 == brands.length) {
@@ -210,7 +217,10 @@ class _ProductInformationState extends State<ProductInformation> {
         if (input["otp_number"] == null) {
           Utility.showToast(response.message);
           debugPrint(Navigator.defaultRouteName);
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const DrawerScreen()), (route) => false);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => const DrawerScreen()),
+              (route) => false);
         } else {
           showVerifyOtpAlert(input["otp_number"]);
         }
@@ -245,7 +255,8 @@ class _ProductInformationState extends State<ProductInformation> {
                   },
                   child: const Text(
                     "Cancel",
-                    style: TextStyle(color: Colors.black, fontSize: 16, letterSpacing: 0.5),
+                    style: TextStyle(
+                        color: Colors.black, fontSize: 16, letterSpacing: 0.5),
                   )),
               TextButton(
                   onPressed: () {
@@ -257,7 +268,10 @@ class _ProductInformationState extends State<ProductInformation> {
                   },
                   child: const Text(
                     "Confirm",
-                    style: TextStyle(color: MColor.colorPrimary, fontSize: 16, letterSpacing: 0.5),
+                    style: TextStyle(
+                        color: MColor.colorPrimary,
+                        fontSize: 16,
+                        letterSpacing: 0.5),
                   )),
             ],
           );
@@ -277,7 +291,10 @@ class _ProductInformationState extends State<ProductInformation> {
       if (response.success) {
         Utility.showToast(response.message);
         debugPrint(Navigator.defaultRouteName);
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const DrawerScreen()), (route) => false);
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => const DrawerScreen()),
+            (route) => false);
       } else {
         Utility.showToast(response.message);
       }
@@ -290,7 +307,8 @@ class _ProductInformationState extends State<ProductInformation> {
 class ProductListItem extends StatefulWidget {
   final SurveyProduct productsInfo;
 
-  const ProductListItem({Key? key, required this.productsInfo}) : super(key: key);
+  const ProductListItem({Key? key, required this.productsInfo})
+      : super(key: key);
 
   @override
   _ProductListItemState createState() => _ProductListItemState();
@@ -323,7 +341,11 @@ class _ProductListItemState extends State<ProductListItem> {
             ),
             title: Text(
               widget.productsInfo.categoryName,
-              style: const TextStyle(color: MColor.textColor, letterSpacing: 0.5, fontWeight: FontWeight.bold, fontSize: 18),
+              style: const TextStyle(
+                  color: MColor.textColor,
+                  letterSpacing: 0.5,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18),
             ),
             trailing: Checkbox(
               value: checked,
@@ -348,12 +370,14 @@ class _ProductListItemState extends State<ProductListItem> {
                       elevation: 0,
                       pressEnabled: true,
                       onPressed: (item) {
-                        widget.productsInfo.brand[index].check = !item.customData.check;
+                        widget.productsInfo.brand[index].check =
+                            !item.customData.check;
                         setState(() {});
                       },
                       customData: widget.productsInfo.brand[index],
                       textStyle: const TextStyle(fontSize: 17),
-                      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 10),
                       title: widget.productsInfo.brand[index].brandName,
                       active: widget.productsInfo.brand[index].check,
                       textActiveColor: MColor.activeTextColor,
@@ -361,7 +385,9 @@ class _ProductListItemState extends State<ProductListItem> {
                       color: MColor.disableBgColor,
                       activeColor: MColor.enableBgColor,
                       border: Border.all(
-                          color: widget.productsInfo.brand[index].check ? MColor.enableBorderColor : MColor.disableBorderColor),
+                          color: widget.productsInfo.brand[index].check
+                              ? MColor.enableBorderColor
+                              : MColor.disableBorderColor),
                     );
                   },
                 )

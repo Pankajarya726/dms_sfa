@@ -43,7 +43,7 @@ class CommonBlocRetailerRadioEvent extends CommonBlocEvents {
 }
 
 class CommonBlocWhatsAppRadioEvent extends CommonBlocEvents {
-  final Object whatsAppRadioTag;
+  final String whatsAppRadioTag;
   CommonBlocWhatsAppRadioEvent({required this.whatsAppRadioTag});
   @override
   List<Object> get props => [whatsAppRadioTag];

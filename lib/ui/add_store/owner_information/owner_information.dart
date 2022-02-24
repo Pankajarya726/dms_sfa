@@ -1,6 +1,4 @@
-import 'dart:collection';
 import 'dart:io';
-
 import 'package:dms/model/retailer_form.dart';
 import 'package:dms/ui/add_store/model/call_time_slot_response.dart';
 import 'package:dms/ui/add_store/model/select_language_response.dart';
@@ -19,14 +17,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:ntp/ntp.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
 import '../../../main.dart';
 
 class OwnerInformation extends StatefulWidget {
   final RetailerForm form;
-
   const OwnerInformation({
     Key? key,
     required this.form,
@@ -39,7 +34,7 @@ class OwnerInformation extends StatefulWidget {
 class _OwnerInformationState extends State<OwnerInformation> {
   File? ownerPhotoFile;
   String? ownerFileName;
-  Object whatsAppSmsRadio = "";
+  String whatsAppSmsRadio = "";
   DateTime? dateTimeBirth;
   DateTime? dateTimeAnniversary;
   CommonBloc commonBloc = CommonBloc();
@@ -54,10 +49,14 @@ class _OwnerInformationState extends State<OwnerInformation> {
   TextEditingController txtAdhaar = TextEditingController();
   TextEditingController txtBirthday = TextEditingController();
   TextEditingController txtAnniversary = TextEditingController();
-
-  RefreshController refreshController = RefreshController(initialRefresh: false);
-  GlobalKey globalKey = GlobalKey();
-  TextEditingController selectedController = TextEditingController();
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
+  GlobalKey globalKeyName = GlobalKey();
+  GlobalKey globalKeyPrimMob = GlobalKey();
+  GlobalKey globalKeySecMob = GlobalKey();
+  GlobalKey globalKeyHelpMob = GlobalKey();
+  GlobalKey globalKeyPAN = GlobalKey();
+  GlobalKey globalKeyAadhar = GlobalKey();
   CallTimeSlotModel? callTimeSlotModel;
   LanguageModel? primaryLanguage;
   LanguageModel? secondaryLanguage;
@@ -69,9 +68,9 @@ class _OwnerInformationState extends State<OwnerInformation> {
   }
 
   restorePrevSession() {
-    //
-    ownerPhotoFile = widget.form.ownerImage.isEmpty ? null : File(widget.form.ownerImage);
-    // whatsAppSmsRadio = widget.ownerForm!.isWhatsappSms;
+    ownerPhotoFile =
+        widget.form.ownerImage.isEmpty ? null : File(widget.form.ownerImage);
+    whatsAppSmsRadio = widget.form.isWhatsappSms;
     txtOwnerName.text = widget.form.ownerName;
     txtPrimaryMobile.text = widget.form.primaryMobile;
     txtSecondaryMobile.text = widget.form.secondaryMobile;
@@ -79,15 +78,16 @@ class _OwnerInformationState extends State<OwnerInformation> {
 
     callTimeSlotModel = widget.form.callTimeSlot;
     if (callTimeSlotModel != null) {
-      txtCallTime.text = callTimeSlotModel!.from + " to " + callTimeSlotModel!.to;
+      txtCallTime.text =
+          callTimeSlotModel!.from + " to " + callTimeSlotModel!.to;
     }
 
     primaryLanguage = widget.form.primaryLang;
     secondaryLanguage = widget.form.secondaryLang;
-
     if (primaryLanguage != null) {
       txtPrimaryLang.text = primaryLanguage!.languageName;
     }
+
     if (secondaryLanguage != null) {
       txtSecondaryLang.text = secondaryLanguage!.languageName;
     }
@@ -136,6 +136,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/owner.png"),
                       const SizedBox(
@@ -144,17 +145,18 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.ownerName),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   NameEditText(
                     controller: txtOwnerName,
                     hint: StringConst.enterHere,
-                    globalKey: globalKey,
+                    globalKey: globalKeyName,
                     onChange: (String text) {
                       widget.form.ownerName = text;
                     },
                   ),
-                  sizedBoxWidget(14.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/phone_call.png"),
                       const SizedBox(
@@ -163,16 +165,18 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.primaryMobile),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   MobileEditText(
                     hint: StringConst.enterHere,
                     controller: txtPrimaryMobile,
+                    globalKey: globalKeyPrimMob,
                     onChange: (text) {
                       widget.form.primaryMobile = text;
                     },
                   ),
-                  sizedBoxWidget(14.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/phone_call.png"),
                       const SizedBox(
@@ -181,16 +185,21 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.secondaryMobile),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  SizedBox(
+                    key: globalKeyPrimMob,
+                  ),
+                  sizedBoxWidget(12.0),
                   MobileEditText(
                     hint: StringConst.enterHere,
                     controller: txtSecondaryMobile,
+                    globalKey: globalKeySecMob,
                     onChange: (text) {
                       widget.form.secondaryMobile = text;
                     },
                   ),
-                  sizedBoxWidget(14.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/phone_call.png"),
                       const SizedBox(
@@ -199,16 +208,21 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.helperMobile),
                     ],
                   ),
-                  sizedBoxWidget(12.0, txtSecondaryMobile),
+                  SizedBox(
+                    key: globalKeySecMob,
+                    height: 12.0,
+                  ),
                   MobileEditText(
                     hint: StringConst.enterHere,
                     controller: txtHelperMobile,
+                    globalKey: globalKeyHelpMob,
                     onChange: (text) {
                       widget.form.helperMobile = text;
                     },
                   ),
-                  sizedBoxWidget(14.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/headphones.png"),
                       const SizedBox(
@@ -217,10 +231,14 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.callTimeSlotMand),
                     ],
                   ),
-                  sizedBoxWidget(12.0, txtHelperMobile),
+                  SizedBox(
+                    key: globalKeyHelpMob,
+                    height: 12.0,
+                  ),
                   textFields(txtCallTime, StringConst.selectHint),
-                  sizedBoxWidget(20.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/languages.png"),
                       const SizedBox(
@@ -229,10 +247,11 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.languageFirst),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   textFields(txtPrimaryLang, StringConst.selectHint),
-                  sizedBoxWidget(20.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/languages.png"),
                       const SizedBox(
@@ -241,9 +260,9 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.languageSecond),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   textFields(txtSecondaryLang, StringConst.selectHint),
-                  sizedBoxWidget(20.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -251,26 +270,30 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       const SizedBox(
                         width: 10,
                       ),
-                      Flexible(child: textWidget(StringConst.whatsAppSms)),
+                      textWidget(StringConst.whatsAppSms),
                     ],
                   ),
-                  sizedBoxWidget(5.0, ""),
+                  sizedBoxWidget(5.0),
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
                       if (state is CommonBlocWhatsAppRadioState) {
                         whatsAppSmsRadio = state.whatsAppRadioTag;
-                        debugPrint("$whatsAppSmsRadio");
+                        widget.form.isWhatsappSms = state.whatsAppRadioTag;
+                        debugPrint(whatsAppSmsRadio);
                       }
                       return Row(
                         children: [
-                          radioButtonWidget(whatsAppSmsRadio, 1, StringConst.yes),
-                          radioButtonWidget(whatsAppSmsRadio, 2, StringConst.no),
+                          radioButtonWidget(
+                              whatsAppSmsRadio, "1", StringConst.yes),
+                          radioButtonWidget(
+                              whatsAppSmsRadio, "2", StringConst.no),
                         ],
                       );
                     },
                   ),
-                  sizedBoxWidget(5.0, ""),
+                  sizedBoxWidget(5.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/pan.png"),
                       const SizedBox(
@@ -279,10 +302,18 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.pan),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
-                  textFields(txtPAN, StringConst.enterHere),
-                  sizedBoxWidget(14.0, ""),
+                  sizedBoxWidget(12.0),
+                  PANEditText(
+                    controller: txtPAN,
+                    hint: StringConst.enterHere,
+                    globalKey: globalKeyPAN,
+                    onChange: (String text) {
+                      widget.form.pan = text;
+                    },
+                  ),
+                  sizedBoxWidget(20.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/identity.png"),
                       const SizedBox(
@@ -291,10 +322,21 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.adharNumber),
                     ],
                   ),
-                  sizedBoxWidget(12.0, txtPAN),
-                  textFields(txtAdhaar, StringConst.enterHere),
-                  sizedBoxWidget(14.0, ""),
+                  SizedBox(
+                    key: globalKeyPAN,
+                    height: 12.0,
+                  ),
+                  AadharEditText(
+                    controller: txtAdhaar,
+                    hint: StringConst.enterHere,
+                    globalKey: globalKeyAadhar,
+                    onChange: (String text) {
+                      widget.form.aadhaarNumber = text;
+                    },
+                  ),
+                  sizedBoxWidget(20.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/cake.png"),
                       const SizedBox(
@@ -303,17 +345,32 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.birthday),
                     ],
                   ),
-                  sizedBoxWidget(12.0, txtAdhaar),
+                  SizedBox(
+                    key: globalKeyAadhar,
+                    height: 12.0,
+                  ),
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
                       if (state is CommonBlocBirthdayState) {
-                        txtBirthday.text = DateFormat("yyyy-MM-dd").format(state.dateTime);
+                        txtBirthday.text =
+                            DateFormat("yyyy-MM-dd").format(state.dateTime);
+                        widget.form.birthday =
+                            DateFormat("yyyy-MM-dd").format(state.dateTime);
                       }
-                      return textFields(txtBirthday, StringConst.picDate);
+
+                      return DateEditText(
+                        controller: txtBirthday,
+                        hint: StringConst.picDate,
+                        name: StringConst.birthday,
+                        onChange: (text) {
+                          widget.form.birthday = text;
+                        },
+                      );
                     },
                   ),
-                  sizedBoxWidget(20.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/confetti.png"),
                       const SizedBox(
@@ -322,21 +379,31 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.anniversary),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
                       if (state is CommonBlocAnniversaryState) {
-                        txtAnniversary.text = DateFormat("yyyy-MM-dd").format(state.dateTime);
+                        txtAnniversary.text =
+                            DateFormat("yyyy-MM-dd").format(state.dateTime);
+                        widget.form.anniversary =
+                            DateFormat("yyyy-MM-dd").format(state.dateTime);
                       }
-                      return textFields(txtAnniversary, StringConst.picDate);
+                      return DateEditText(
+                        controller: txtAnniversary,
+                        hint: StringConst.picDate,
+                        name: StringConst.anniversary,
+                        onChange: (text) {
+                          widget.form.anniversary = text;
+                        },
+                      );
                     },
                   ),
-                  sizedBoxWidget(5.0, ""),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      sizedBoxWidget(17.0, ""),
+                      sizedBoxWidget(20.0),
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Image.asset("assets/gallery.png"),
                           const SizedBox(
@@ -345,7 +412,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
                           textWidget(StringConst.ownerPhoto),
                         ],
                       ),
-                      sizedBoxWidget(12.0, ""),
+                      sizedBoxWidget(10.0),
                       BlocBuilder<CommonBloc, CommonBlocStates>(
                         builder: (context, state) {
                           if (state is CommonBlocSelectOwnerImageState) {
@@ -361,7 +428,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       ),
                     ],
                   ),
-                  sizedBoxWidget(5.0, ""),
+                  sizedBoxWidget(5.0),
                 ],
               ),
             ),
@@ -384,10 +451,22 @@ class _OwnerInformationState extends State<OwnerInformation> {
             } else if (txtPrimaryLang.text.isEmpty) {
               Utility.showToast("Please select language 1st");
             } else if (whatsAppSmsRadio == "") {
-              Utility.showToast("Please select opt-in for whatsapp message / SMS");
+              Utility.showToast(
+                  "Please select opt-in for whatsapp message / SMS");
+            } else if (txtPrimaryMobile.text.length < 10) {
+              Utility.showToast("Please enter valid primary mobile number");
+            } else if (txtSecondaryMobile.text.length < 10 &&
+                txtSecondaryMobile.text.isNotEmpty) {
+              Utility.showToast("Please enter valid secondary mobile number");
+            } else if (txtHelperMobile.text.length < 10 &&
+                txtHelperMobile.text.isNotEmpty) {
+              Utility.showToast("Please enter valid helper mobile number");
+            } else if (txtPAN.text.length < 10 && txtPAN.text.isNotEmpty) {
+              Utility.showToast("Please enter valid pan number");
+            } else if (txtAdhaar.text.length < 12 &&
+                txtAdhaar.text.isNotEmpty) {
+              Utility.showToast("Please enter valid aadhar number");
             } else {
-              Map<String, dynamic> ownerInfo = HashMap<String, dynamic>();
-
               widget.form.ownerName = txtOwnerName.text.trim();
               widget.form.primaryMobile = txtPrimaryMobile.text.trim();
               widget.form.secondaryMobile = txtSecondaryMobile.text.trim();
@@ -395,30 +474,20 @@ class _OwnerInformationState extends State<OwnerInformation> {
               widget.form.callTimeSlot = callTimeSlotModel;
               widget.form.primaryLang = primaryLanguage;
               widget.form.secondaryLang = secondaryLanguage;
-              widget.form.isWhatsappSms = whatsAppSmsRadio == 1 ? "1" : "0";
+              widget.form.isWhatsappSms = whatsAppSmsRadio == "1" ? "1" : "0";
               widget.form.pan = txtPAN.text.trim();
               widget.form.aadhaarNumber = txtAdhaar.text.trim();
               widget.form.birthday = txtBirthday.text.trim();
               widget.form.anniversary = txtAnniversary.text.trim();
-              widget.form.ownerImage = ownerPhotoFile != null ? ownerPhotoFile!.path : "";
+              widget.form.ownerImage =
+                  ownerPhotoFile != null ? ownerPhotoFile!.path : "";
 
-              // ownerInfo["owner_name"] = txtOwnerNameController.text;
-              // ownerInfo["primary_mobile"] = txtPrimaryMobController.text;
-              // ownerInfo["secondary_mobile"] = txtSecondaryMobController.text;
-              // ownerInfo["helper_mobile"] = txtHelperMobController.text;
-              // ownerInfo["call_time_slot"] = callTimeSlotId;
-              // ownerInfo["lang_first"] = primaryLangId;
-              // ownerInfo["lang_second"] = secondaryLangId;
-              // ownerInfo["whats_app_msg"] = whatsAppSmsRadio == 1 ? "1" : "0";
-              // ownerInfo["pan_number"] = txtPANController.text;
-              // ownerInfo["aadhar_number"] = txtAdharNumberController.text;
-              // ownerInfo["birthday"] = txtPicDateController.text;
-              // ownerInfo["anniversary"] = txtAnniversaryController.text;
-              // ownerInfo["owner_photo"] = ownerPhotoFile;
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ProductInformation(form: widget.form),
+                  builder: (context) => ProductInformation(
+                    form: widget.form,
+                  ),
                 ),
               );
             }
@@ -445,193 +514,64 @@ class _OwnerInformationState extends State<OwnerInformation> {
     );
   }
 
-  Widget sizedBoxWidget(boxHeight, txtController) {
+  Widget sizedBoxWidget(boxHeight) {
     return SizedBox(
-      key: selectedController == txtController ? globalKey : null,
       height: boxHeight,
     );
   }
 
   Widget textFields(txtController, textHint) {
-    return txtController == txtCallTime || txtController == txtPrimaryLang || txtController == txtSecondaryLang
-        ? TextFormField(
-            onTap: () async {
-              FocusScope.of(context).unfocus();
-              openBottomSheet(context, txtController);
-            },
-            readOnly: true,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.67,
-              color: MColor.backButton,
-            ),
-            controller: txtController,
-            decoration: InputDecoration(
-              suffixIcon: txtController == txtBirthday || txtController == txtAnniversary
-                  ? const Padding(
-                      padding: EdgeInsets.only(right: 20),
-                      child: Align(
-                        widthFactor: 1,
-                        alignment: Alignment.centerRight,
-                        child: Image(
-                          width: 22,
-                          image: AssetImage("assets/calendar_icon.png"),
-                        ),
-                      ),
-                    )
-                  : const Padding(
-                      padding: EdgeInsets.only(right: 15),
-                      child: Icon(
-                        Icons.keyboard_arrow_down_outlined,
-                        color: MColor.backButton,
-                        size: 30,
-                      ),
-                    ),
-              hintText: textHint,
-              hintStyle: const TextStyle(
-                color: MColor.backButton,
-                letterSpacing: 0.67,
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-              ),
-              contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-              filled: true,
-              fillColor: const Color(0xffF2F2F2),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          )
-        : txtController == txtBirthday || txtController == txtAnniversary
-            ? TextFormField(
-                readOnly: true,
-                onTap: () async {
-                  FocusScope.of(context).unfocus();
-                  if (txtController == txtBirthday) {
-                    dateTimeBirth ??= await NTP.now();
-                    dateTimeBirth = await showDatePicker(
-                      context: context,
-                      initialDate: dateTimeBirth!,
-                      firstDate: DateTime(1950),
-                      lastDate: await NTP.now(),
-                    );
-                    if (dateTimeBirth != null) {
-                      commonBloc.add(CommonBlocBirthdayEvent(dateTime: dateTimeBirth!));
-                    }
-                  }
-                  if (txtController == txtAnniversary) {
-                    dateTimeAnniversary ??= await NTP.now();
-                    dateTimeAnniversary = await showDatePicker(
-                      context: context,
-                      initialDate: dateTimeAnniversary!,
-                      firstDate: DateTime(1950),
-                      lastDate: await NTP.now(),
-                    );
-                    if (dateTimeAnniversary != null) {
-                      commonBloc.add(CommonBlocAnniversaryEvent(dateTime: dateTimeAnniversary!));
-                    }
-                  }
-                },
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.67,
-                  color: MColor.backButton,
-                ),
-                controller: txtController,
-                decoration: InputDecoration(
-                  suffixIcon: txtController == txtBirthday || txtController == txtAnniversary
-                      ? const Padding(
-                          padding: EdgeInsets.only(right: 20),
-                          child: Align(
-                            widthFactor: 1,
-                            alignment: Alignment.centerRight,
-                            child: Image(
-                              width: 22,
-                              image: AssetImage("assets/calendar_icon.png"),
-                            ),
-                          ),
-                        )
-                      : const Padding(
-                          padding: EdgeInsets.only(right: 15),
-                          child: Icon(
-                            Icons.keyboard_arrow_down_outlined,
-                            color: MColor.backButton,
-                            size: 30,
-                          ),
-                        ),
-                  hintText: textHint,
-                  hintStyle: const TextStyle(
-                    color: MColor.backButton,
-                    letterSpacing: 0.67,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                  ),
-                  contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                  filled: true,
-                  fillColor: const Color(0xffF2F2F2),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              )
-            : TextFormField(
-                onFieldSubmitted: (value) {
-                  selectedController = TextEditingController();
-                },
-                onTap: () async {
-                  selectedController = txtController;
-                  await Future.delayed(const Duration(milliseconds: 500));
-                  RenderObject? object = globalKey.currentContext!.findRenderObject();
-                  object!.showOnScreen();
-                },
-                keyboardType: txtController == txtPrimaryMobile ||
-                        txtController == txtSecondaryMobile ||
-                        txtController == txtHelperMobile ||
-                        txtController == txtAdhaar
-                    ? TextInputType.number
-                    : TextInputType.text,
-                controller: txtController,
-                maxLength: txtController == txtPrimaryMobile || txtController == txtSecondaryMobile || txtController == txtHelperMobile
-                    ? 10
-                    : null,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.67,
-                  color: MColor.backButton,
-                ),
-                decoration: InputDecoration(
-                  hintText: textHint,
-                  hintStyle: const TextStyle(
-                    color: MColor.backButton,
-                    letterSpacing: 0.67,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                  ),
-                  contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                  filled: true,
-                  fillColor: const Color(0xffF2F2F2),
-                  counter: Container(),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              );
+    return TextFormField(
+      onTap: () async {
+        FocusScope.of(context).unfocus();
+        openBottomSheet(context, txtController);
+      },
+      readOnly: true,
+      style: const TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 0.67,
+        color: MColor.backButton,
+      ),
+      controller: txtController,
+      decoration: InputDecoration(
+        suffixIcon: const Padding(
+          padding: EdgeInsets.only(right: 15),
+          child: Icon(
+            Icons.keyboard_arrow_down_outlined,
+            color: MColor.backButton,
+            size: 30,
+          ),
+        ),
+        hintText: textHint,
+        hintStyle: const TextStyle(
+          color: MColor.backButton,
+          letterSpacing: 0.67,
+          fontWeight: FontWeight.bold,
+          fontSize: 15,
+        ),
+        contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+        filled: true,
+        fillColor: const Color(0xffF2F2F2),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
   }
 
   Widget textWidget(currentText) {
-    return Text(
-      currentText,
-      style: const TextStyle(
-        fontWeight: FontWeight.bold,
-        letterSpacing: 0.67,
-        fontSize: 17,
-        color: Colors.black,
+    return Flexible(
+      child: Text(
+        currentText,
+        maxLines: 3,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          letterSpacing: 0.67,
+          fontSize: 17,
+          color: Colors.black,
+        ),
       ),
     );
   }
@@ -651,7 +591,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
               activeColor: MColor.colorPrimary,
               fillColor: MaterialStateProperty.all(MColor.colorPrimary),
               onChanged: (value) {
-                commonBloc.add(CommonBlocWhatsAppRadioEvent(whatsAppRadioTag: value));
+                commonBloc
+                    .add(CommonBlocWhatsAppRadioEvent(whatsAppRadioTag: value));
               },
             ),
           ),
@@ -708,7 +649,10 @@ class _OwnerInformationState extends State<OwnerInformation> {
   void selectImage() async {
     try {
       XFile? image = await imagePicker.pickImage(
-          source: ImageSource.camera, maxHeight: 512, maxWidth: 512, preferredCameraDevice: CameraDevice.front);
+          source: ImageSource.camera,
+          maxHeight: 512,
+          maxWidth: 512,
+          preferredCameraDevice: CameraDevice.front);
       if (image != null) {
         ownerPhotoFile = File(image.path);
         ownerFileName = image.name;
@@ -716,7 +660,10 @@ class _OwnerInformationState extends State<OwnerInformation> {
         commonBloc.add(CommonBlocSelectImageEvent(imageFile: ownerPhotoFile!));
       }
     } catch (exception) {
-      Fluttertoast.showToast(msg: "Permission denied, go to app settings and allow camera permission", toastLength: Toast.LENGTH_LONG);
+      Fluttertoast.showToast(
+          msg:
+              "Permission denied, go to app settings and allow camera permission",
+          toastLength: Toast.LENGTH_LONG);
     }
   }
 
@@ -759,7 +706,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       onCallTimeSlotSelect: (callTimeSlot) {
                         if (callTimeSlot != null) {
                           callTimeSlotModel = callTimeSlot;
-                          txtCallTime.text = callTimeSlot.from + " to " + callTimeSlot.to;
+                          txtCallTime.text =
+                              callTimeSlot.from + " to " + callTimeSlot.to;
                           widget.form.callTimeSlot = callTimeSlotModel;
                         }
                       },
