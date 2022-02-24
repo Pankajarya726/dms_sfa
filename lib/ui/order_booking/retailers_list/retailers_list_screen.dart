@@ -1,11 +1,15 @@
+import 'dart:collection';
+
+import 'package:dms/main.dart';
 import 'package:dms/ui/add_store/outlet_information/outlet_information.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/filter_retailer_bottom_sheet.dart';
+import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/retailers_tab.dart';
 import 'package:dms/ui/order_booking/search_retailers/search_retailier_screen.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class RetailerListScreen extends StatefulWidget {
@@ -15,13 +19,15 @@ class RetailerListScreen extends StatefulWidget {
   _RetailerListScreenState createState() => _RetailerListScreenState();
 }
 
-class _RetailerListScreenState extends State<RetailerListScreen> with TickerProviderStateMixin {
+class _RetailerListScreenState extends State<RetailerListScreen>
+    with TickerProviderStateMixin {
   late TabController tabController;
 
   @override
   void initState() {
     tabController = TabController(length: 3, vsync: this);
     super.initState();
+    getAllBeats();
   }
 
   @override
@@ -142,7 +148,10 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                     style: const TextStyle(fontSize: 16),
                     readOnly: true,
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchRetailerScreen()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const SearchRetailerScreen()));
                     },
                     decoration: InputDecoration(
                         hintText: "Search",
@@ -151,15 +160,18 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5),
                             gapPadding: 2,
-                            borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                            borderSide: const BorderSide(
+                                width: 1, color: Color(0xffC5C5C5))),
                         disabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5),
                             gapPadding: 2,
-                            borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                            borderSide: const BorderSide(
+                                width: 1, color: Color(0xffC5C5C5))),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5),
                             gapPadding: 2,
-                            borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                            borderSide: const BorderSide(
+                                width: 1, color: Color(0xffC5C5C5))),
                         prefixIcon: const Icon(
                           Icons.search,
                           color: Color(0xff555555),
@@ -175,27 +187,40 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                       indicatorWeight: 3,
                       indicatorColor: MColor.colorPrimary,
                       labelPadding: const EdgeInsets.symmetric(horizontal: 5),
-                      indicatorPadding: const EdgeInsets.symmetric(horizontal: 5),
+                      indicatorPadding:
+                          const EdgeInsets.symmetric(horizontal: 5),
                       tabs: [
                         Tab(
                           child: Text(
                             "Not Connected",
-                            style: Theme.of(context).textTheme.bodyText1!.merge(TextStyle(
-                                color: const Color(0xff303030).withOpacity(0.85), letterSpacing: 0.5, fontWeight: FontWeight.w600)),
+                            style: Theme.of(context).textTheme.bodyText1!.merge(
+                                TextStyle(
+                                    color: const Color(0xff303030)
+                                        .withOpacity(0.85),
+                                    letterSpacing: 0.5,
+                                    fontWeight: FontWeight.w600)),
                           ),
                         ),
                         Tab(
                           child: Text(
                             "No Order",
-                            style: Theme.of(context).textTheme.bodyText2!.merge(TextStyle(
-                                color: const Color(0xff303030).withOpacity(0.85), letterSpacing: 0.5, fontWeight: FontWeight.w600)),
+                            style: Theme.of(context).textTheme.bodyText2!.merge(
+                                TextStyle(
+                                    color: const Color(0xff303030)
+                                        .withOpacity(0.85),
+                                    letterSpacing: 0.5,
+                                    fontWeight: FontWeight.w600)),
                           ),
                         ),
                         Tab(
                           child: Text(
                             "Order",
-                            style: Theme.of(context).textTheme.bodyText2!.merge(TextStyle(
-                                color: const Color(0xff303030).withOpacity(0.85), letterSpacing: 0.5, fontWeight: FontWeight.w600)),
+                            style: Theme.of(context).textTheme.bodyText2!.merge(
+                                TextStyle(
+                                    color: const Color(0xff303030)
+                                        .withOpacity(0.85),
+                                    letterSpacing: 0.5,
+                                    fontWeight: FontWeight.w600)),
                           ),
                         ),
                       ]),
@@ -206,10 +231,27 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
         ),
         body: TabBarView(
           controller: tabController,
-          children: const [RetailerTab(index: 0), RetailerTab(index: 1), RetailerTab(index: 2)],
+          children: const [
+            RetailerTab(index: 0),
+            RetailerTab(index: 1),
+            RetailerTab(index: 2)
+          ],
         ),
       ),
     );
+  }
+
+  void getAllBeats() async {
+    Map<String, dynamic> input = HashMap<String, dynamic>();
+    input["user_id"] = await SharedPreference.getStringPreference(
+        SharedPreference.userId); //login user id
+    input["date"] = "2022-02-22";
+    GetAllBeatsResponse response = await repository.getAllBeats(input);
+    if (response.success) {
+      debugPrint("response = ${response.message}");
+    } else {
+      debugPrint("response = ${response.message}");
+    }
   }
 }
 
