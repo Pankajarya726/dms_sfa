@@ -62,6 +62,7 @@ dependencies:
   in_app_update:
 #  for review and rate the app on store
   in_app_review:
+  rxdart:
 
 
 

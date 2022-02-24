@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dms/model/retaileres_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/retailer_list_item.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
@@ -15,10 +16,10 @@ class RetailerTab extends StatefulWidget {
 }
 
 class _RetailerTabState extends State<RetailerTab> with AutomaticKeepAliveClientMixin<RetailerTab> {
-  List<Retailer> retailers = [];
+  List<Retailers> retailers = [];
   List<String> tags = ["All", "Vijay Nagar", "Palasia", "Rajwada"];
   String tag = "All";
-  StreamController<List<Retailer>> retailerStreamController = StreamController();
+  StreamController<List<Retailers>> retailerStreamController = StreamController();
 
   @override
   void initState() {
@@ -38,12 +39,12 @@ class _RetailerTabState extends State<RetailerTab> with AutomaticKeepAliveClient
               if (tag == "All") {
                 retailerStreamController.add(retailers);
               } else {
-                List<Retailer> filterList = retailers.where((element) => element.locationName == tag).toList();
+                List<Retailers> filterList = retailers.where((element) => element.primaryAddress == tag).toList();
                 retailerStreamController.add(filterList);
               }
             }),
         Expanded(
-          child: StreamBuilder<List<Retailer>>(
+          child: StreamBuilder<List<Retailers>>(
             stream: retailerStreamController.stream,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -85,66 +86,74 @@ class _RetailerTabState extends State<RetailerTab> with AutomaticKeepAliveClient
   }
 
   void getRetailers() async {
-    retailers.add(Retailer(
-        id: "1",
-        code: "478956",
-        storeName: "AK Store",
-        address: "1502, Pennsylvania Avenue",
-        locationName: "Vijay Nagar",
-        locationId: "10",
-        image:
+    retailers.add(Retailers(
+        id: 1,
+        uniqueCode: "478956",
+        outletName: "AK Store",
+        primaryAddress: "1502, Pennsylvania Avenue",
+        customerName: "Vijay Nagar",
+        userId: 10,
+        outletPicture:
             "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
-        priority: "P0"));
-    retailers.add(Retailer(
-        id: "1",
-        code: "651023",
-        storeName: "Naveen Store",
-        address: "1994, Oldsmobile Bravado",
-        locationName: "Palasia",
-        locationId: "10",
-        image:
-            "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
-        priority: "P1"));
-    retailers.add(Retailer(
-        id: "1",
-        code: "109845",
-        storeName: "Muffins Store",
-        address: "630, Cambridge Court",
-        locationName: "Vijay Nagar",
-        locationId: "10",
-        image:
-            "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
-        priority: "P0"));
-    retailers.add(Retailer(
-        id: "1",
-        code: "651023",
-        storeName: "Namkeen Store",
-        address: "1994, Oldsmobile Bravada",
-        locationName: "Palasia",
-        locationId: "10",
-        image:
-            "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
-        priority: "P1"));
-    retailers.add(Retailer(
-        id: "1",
-        code: "109845",
-        storeName: "Muffins Store",
-        address: "630, Cambridge Court",
-        locationName: "Vijay Nagar",
-        locationId: "10",
-        image:
-            "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
-        priority: "P0"));
-    retailers.add(Retailer(
-        id: "1",
-        code: "109845",
-        storeName: "Muffins Store",
-        address: "630, Cambridge Court",
-        locationName: "Rajwada",
-        locationId: "10",
-        image:
-            "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
-        priority: "P0"));
+        primaryMobile: '',
+        lng: '',
+        districtId: 1,
+        enrollmentTypeId: 0,
+        secondaryMobile: '',
+        lat: '',
+        beatId: 0,
+        beatName: "vijaynagar",
+        connectionStatus: 0));
+    // retailers.add(Retailers(
+    //     id: "1",
+    //     code: "651023",
+    //     storeName: "Naveen Store",
+    //     address: "1994, Oldsmobile Bravado",
+    //     locationName: "Palasia",
+    //     locationId: "10",
+    //     outletPicture:
+    //         "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
+    //     priority: "P1"));
+    // retailers.add(Retailers(
+    //     id: "1",
+    //     code: "109845",
+    //     storeName: "Muffins Store",
+    //     address: "630, Cambridge Court",
+    //     locationName: "Vijay Nagar",
+    //     locationId: "10",
+    //     image:
+    //         "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
+    //     priority: "P0"));
+    // retailers.add(Retailer(
+    //     id: "1",
+    //     code: "651023",
+    //     storeName: "Namkeen Store",
+    //     address: "1994, Oldsmobile Bravada",
+    //     locationName: "Palasia",
+    //     locationId: "10",
+    //     image:
+    //         "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
+    //     priority: "P1"));
+    // retailers.add(Retailer(
+    //     id: "1",
+    //     code: "109845",
+    //     storeName: "Muffins Store",
+    //     address: "630, Cambridge Court",
+    //     locationName: "Vijay Nagar",
+    //     locationId: "10",
+    //     image:
+    //         "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
+    //     priority: "P0"));
+    // retailers.add(Retailer(
+    //     id: "1",
+    //     code: "109845",
+    //     storeName: "Muffins Store",
+    //     address: "630, Cambridge Court",
+    //     locationName: "Rajwada",
+    //     locationId: "10",
+    //     image:
+    //         "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
+    //     priority: "P0"));
     retailerStreamController.add(retailers);
   }
 
@@ -164,6 +173,7 @@ class BeatWidget extends StatefulWidget {
 
 class _BeatWidgetState extends State<BeatWidget> {
   String tag = "All";
+
   @override
   void initState() {
     super.initState();

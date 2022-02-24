@@ -8,6 +8,7 @@ import 'package:dms/model/base_response.dart';
 import 'package:dms/model/get_all_tag_response.dart';
 import 'package:dms/model/get_plan_response.dart';
 import 'package:dms/model/get_survey_product.dart';
+import 'package:dms/model/retaileres_response.dart';
 import 'package:dms/provider/server_error.dart';
 import 'package:dms/provider/url.dart';
 import 'package:dms/ui/add_plan/model/add_plan_response.dart';
@@ -746,6 +747,27 @@ class ApiRepository {
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return OrderBookingDayResponse(
+        success: false,
+        message: message,
+      );
+    }
+  }
+
+  Future<RetailersResponse> searchRetailer(Map input) async {
+    try {
+      Response response = await dio.post(Url.searchRetailer, data: input);
+      RetailersResponse baseResponse = RetailersResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = StringConst.somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return RetailersResponse(
         success: false,
         message: message,
       );

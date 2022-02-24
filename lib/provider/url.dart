@@ -30,4 +30,5 @@ class Url {
   static const String retailerEnrollmentSave = "retailerEnrollmentSave";
   static const String verifyOtp = "verifyOtp";
   static const String getOrderBookingDay = "getOrderBooking_day";
+  static const String searchRetailer = "searchRetailer";
 }

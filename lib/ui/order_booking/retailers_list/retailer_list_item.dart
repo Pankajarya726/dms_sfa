@@ -1,10 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dms/model/retaileres_response.dart';
 import 'package:dms/ui/order_booking/retailer_detail/retailer_detail_screen.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class RetailerListItems extends StatefulWidget {
   final int index;
-  final Retailer retailer;
+  final Retailers retailer;
 
   const RetailerListItems({Key? key, required this.index, required this.retailer}) : super(key: key);
 
@@ -51,7 +53,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                       child: Row(
                         children: [
                           Text(
-                            widget.retailer.code,
+                            widget.retailer.uniqueCode,
                             style: const TextStyle(
                               color: Color(0XFF555555),
                               letterSpacing: 0.67,
@@ -70,7 +72,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                             width: 10,
                           ),
                           Text(
-                            widget.retailer.storeName,
+                            widget.retailer.outletName,
                             style: const TextStyle(
                               color: Color(0XFF555555),
                               letterSpacing: 0.67,
@@ -94,12 +96,19 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(5),
-                      child: const Image(
-                        width: 50,
+                      child: CachedNetworkImage(
+                        imageUrl: widget.retailer.outletPicture,
                         height: 50,
-                        fit: BoxFit.fill,
-                        image: NetworkImage(
-                            "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg"),
+                        width: 50,
+                        imageBuilder: (context, imageProvider) {
+                          return Image(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          );
+                        },
+                        errorWidget: (context, url, error) {
+                          return Icon(Icons.error);
+                        },
                       ),
                     ),
                     const SizedBox(
@@ -114,7 +123,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              widget.retailer.address,
+                              widget.retailer.primaryAddress,
                               style: const TextStyle(
                                 letterSpacing: 0.67,
                                 fontWeight: FontWeight.w600,
@@ -122,7 +131,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
-                              widget.retailer.locationName,
+                              widget.retailer.beatName,
                               style: const TextStyle(
                                 letterSpacing: 0.67,
                                 color: MColor.backButton,
@@ -133,32 +142,32 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                         ),
                       ),
                     ),
-                    Container(
-                      height: 50,
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: const Color(0XFFDAA520),
-                              borderRadius: BorderRadius.circular(2),
-                            ),
-                            child: Align(
-                              child: Text(
-                                widget.retailer.priority,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 0.67,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
+                    // Container(
+                    //   height: 50,
+                    //   padding: const EdgeInsets.symmetric(vertical: 5),
+                    //   child: Column(
+                    //     mainAxisAlignment: MainAxisAlignment.end,
+                    //     children: [
+                    //       Container(
+                    //         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                    //         decoration: BoxDecoration(
+                    //           color: const Color(0XFFDAA520),
+                    //           borderRadius: BorderRadius.circular(2),
+                    //         ),
+                    //         child: Align(
+                    //           child: Text(
+                    //             widget.retailer.priority,
+                    //             style: const TextStyle(
+                    //               color: Colors.white,
+                    //               fontWeight: FontWeight.w500,
+                    //               letterSpacing: 0.67,
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // )
                   ],
                 )
               ],
@@ -168,25 +177,4 @@ class _RetailerListItemsState extends State<RetailerListItems> {
       ),
     );
   }
-}
-
-class Retailer {
-  String id;
-  String code;
-  String storeName;
-  String address;
-  String locationName;
-  String locationId;
-  String image;
-  String priority;
-
-  Retailer(
-      {required this.id,
-      required this.code,
-      required this.storeName,
-      required this.address,
-      required this.locationName,
-      required this.locationId,
-      required this.image,
-      required this.priority});
 }

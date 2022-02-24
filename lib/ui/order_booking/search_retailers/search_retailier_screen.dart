@@ -1,3 +1,10 @@
+import 'dart:async';
+
+import 'package:dms/main.dart';
+import 'package:dms/model/retaileres_response.dart';
+import 'package:dms/ui/order_booking/retailers_list/retailer_list_item.dart';
+import 'package:dms/utils/constants.dart';
+import 'package:dms/utils/network.dart';
 import 'package:flutter/material.dart';
 
 class SearchRetailerScreen extends StatefulWidget {
@@ -9,6 +16,8 @@ class SearchRetailerScreen extends StatefulWidget {
 
 class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
   TextEditingController edtSearch = TextEditingController();
+  List<Retailers> retailers = [];
+  StreamController<List<Retailers>> searchStream = StreamController();
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +31,14 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
             child: TextFormField(
               autofocus: true,
               controller: edtSearch,
-              onChanged: (text) {},
+              onChanged: (text) {
+                if (text.trim().isEmpty) {
+                  retailers.clear();
+                  searchStream.addError("Enter Name or mobile number to search retailer");
+                } else {
+                  searchApi(text);
+                }
+              },
               decoration: InputDecoration(
                   hintText: "Search",
                   hintStyle: const TextStyle(fontSize: 16),
@@ -48,6 +64,8 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
                     onPressed: () {
                       if (edtSearch.text.trim().isNotEmpty) {
                         edtSearch.clear();
+                        retailers.clear();
+                        searchStream.addError("Enter Name or mobile number to search retailer");
                       } else {
                         Navigator.pop(context);
                       }
@@ -56,7 +74,71 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
             ),
           ),
         ),
+        actions: const [
+          SizedBox(
+            width: 15,
+          )
+        ],
+      ),
+      body: StreamBuilder<List<Retailers>>(
+        stream: searchStream.stream,
+        // initialData: retailers,
+        builder: (context, snapshot) {
+          // if (snapshot.connectionState == ConnectionState.waiting) {
+          //   return const Center(
+          //     child: CircularProgressIndicator(),
+          //   );
+          // }
+
+          if (snapshot.hasData) {
+            if (snapshot.data!.isEmpty) {
+              return const Center(
+                child: Text("Retailers not found"),
+              );
+            }
+
+            return ListView.separated(
+                itemCount: snapshot.data!.length,
+                padding: const EdgeInsets.all(15),
+                separatorBuilder: (context, index) {
+                  return const SizedBox(
+                    height: 10,
+                  );
+                },
+                itemBuilder: (context, index) {
+                  return RetailerListItems(index: snapshot.data![index].connectionStatus, retailer: snapshot.data![index]);
+                });
+          }
+          if (snapshot.hasError) {
+            if (snapshot.error.toString() == "loading") {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
+            return Center(
+              child: Text("${snapshot.error}"),
+            );
+          }
+
+          return Container();
+        },
       ),
     );
+  }
+
+  void searchApi(String text) async {
+    if (await Network.isConnected()) {
+      Map input = {"search": text};
+      searchStream.addError("loading");
+      RetailersResponse response = await repository.searchRetailer(input);
+      if (response.success) {
+        searchStream.add(response.data!);
+      } else {
+        searchStream.addError(response.message);
+      }
+    } else {
+      searchStream.addError(Constants.internetAlert);
+    }
   }
 }

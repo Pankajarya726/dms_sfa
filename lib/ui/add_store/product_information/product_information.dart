@@ -13,7 +13,6 @@ import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
-
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -208,7 +207,7 @@ class _ProductInformationState extends State<ProductInformation> {
       EasyLoading.dismiss();
 
       if (response.success) {
-        if (input["otp_number"].toString().isEmpty) {
+        if (input["otp_number"] == null) {
           Utility.showToast(response.message);
           debugPrint(Navigator.defaultRouteName);
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const DrawerScreen()), (route) => false);
