@@ -33,7 +33,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
 import '../../../main.dart';
 
 class OutletInformation extends StatefulWidget {
@@ -84,8 +83,10 @@ class _OutletInformationState extends State<OutletInformation> {
   String? orderBookingDayId;
   String? retailerTypeId;
   String? retailerCategoryId;
-  GlobalKey globalKey = GlobalKey();
-  TextEditingController selectedController = TextEditingController();
+  GlobalKey globalKeyLandmark = GlobalKey();
+  GlobalKey globalKeyName = GlobalKey();
+  GlobalKey globalKeyGST = GlobalKey();
+  GlobalKey globalKeyAddress = GlobalKey();
   List<OrderBookingDayModal> orderBookingDayList = [];
 
   @override
@@ -150,7 +151,7 @@ class _OutletInformationState extends State<OutletInformation> {
                       textWidget(StringConst.enrollmentType),
                     ],
                   ),
-                  sizedBoxWidget(5.0, ""),
+                  sizedBoxWidget(5.0),
                   BlocBuilder<EditStoreBloc, EditStoreStates>(
                       builder: (context, state) {
                     if (state is EditStoreInitialState) {
@@ -187,7 +188,7 @@ class _OutletInformationState extends State<OutletInformation> {
                       },
                     );
                   }),
-                  sizedBoxWidget(5.0, ""),
+                  sizedBoxWidget(5.0),
                   Row(
                     children: [
                       Image.asset("assets/building.png"),
@@ -197,10 +198,10 @@ class _OutletInformationState extends State<OutletInformation> {
                       textWidget(StringConst.district),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   textFields(
                       txtSelectDistrictController, StringConst.selectHint),
-                  sizedBoxWidget(20.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
                     children: [
                       Image.asset("assets/truck.png"),
@@ -210,10 +211,10 @@ class _OutletInformationState extends State<OutletInformation> {
                       textWidget(StringConst.distributor),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   textFields(
                       txtSelectDistributorController, StringConst.selectHint),
-                  sizedBoxWidget(20.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
                     children: [
                       Image.asset("assets/map.png"),
@@ -223,10 +224,10 @@ class _OutletInformationState extends State<OutletInformation> {
                       textWidget(StringConst.beatNameMandatory),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   textFields(
                       txtSelectBeatNameController, StringConst.selectHint),
-                  sizedBoxWidget(20.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
                     children: [
                       Image.asset("assets/calendar.png"),
@@ -236,9 +237,9 @@ class _OutletInformationState extends State<OutletInformation> {
                       textWidget(StringConst.orderBookingDay),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   textFields(txtOrderBookingController, StringConst.day),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   Row(
                     children: [
                       Image.asset("assets/store.png"),
@@ -248,23 +249,16 @@ class _OutletInformationState extends State<OutletInformation> {
                       textWidget(StringConst.outletName),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   NameEditText(
                     controller: txtOutletNameController,
                     hint: StringConst.enterHere,
-                    globalKey: globalKey,
+                    globalKey: globalKeyName,
                     onChange: (text) {
                       form.outletName = text;
                     },
-                    // onKeyboardOpened: (controller) {
-                    //   selectedController = controller;
-                    // },
-                    // onKeyboardClosed: (controller) {
-                    //   selectedController = controller;
-                    // },
                   ),
-                  // textFields(txtOutletNameController, StringConst.enterHere),
-                  sizedBoxWidget(20.0, ""),
+                  sizedBoxWidget(20.0),
                   BlocBuilder<UserLocationBloc, UserLocationStates>(
                     bloc: userLocationBloc,
                     builder: (context, state) {
@@ -304,10 +298,13 @@ class _OutletInformationState extends State<OutletInformation> {
                               textWidget(StringConst.latitude),
                             ],
                           ),
-                          sizedBoxWidget(12.0, txtOutletNameController),
+                          SizedBox(
+                            key: globalKeyName,
+                            height: 12.0,
+                          ),
                           textFields(
                               txtLatitudeController, StringConst.enterHere),
-                          sizedBoxWidget(12.0, ""),
+                          sizedBoxWidget(12.0),
                           Row(
                             children: [
                               Image.asset("assets/lat_long.png"),
@@ -317,10 +314,10 @@ class _OutletInformationState extends State<OutletInformation> {
                               textWidget(StringConst.longitude),
                             ],
                           ),
-                          sizedBoxWidget(12.0, ""),
+                          sizedBoxWidget(12.0),
                           textFields(
                               txtLongtitudeController, StringConst.enterHere),
-                          sizedBoxWidget(12.0, ""),
+                          sizedBoxWidget(12.0),
                           Row(
                             children: [
                               Image.asset("assets/address.png"),
@@ -330,10 +327,10 @@ class _OutletInformationState extends State<OutletInformation> {
                               textWidget(StringConst.address),
                             ],
                           ),
-                          sizedBoxWidget(12.0, ""),
+                          sizedBoxWidget(12.0),
                           textFields(
                               txtAddressController, StringConst.enterHere),
-                          sizedBoxWidget(12.0, ""),
+                          sizedBoxWidget(12.0),
                           Row(
                             children: [
                               Image.asset("assets/pin_code.png"),
@@ -343,10 +340,13 @@ class _OutletInformationState extends State<OutletInformation> {
                               textWidget(StringConst.pincode),
                             ],
                           ),
-                          sizedBoxWidget(12.0, txtAddressController),
+                          SizedBox(
+                            key: globalKeyAddress,
+                            height: 12.0,
+                          ),
                           textFields(
                               txtPincodeController, StringConst.enterHere),
-                          sizedBoxWidget(12.0, ""),
+                          sizedBoxWidget(12.0),
                         ],
                       );
                     },
@@ -360,9 +360,9 @@ class _OutletInformationState extends State<OutletInformation> {
                       textWidget(StringConst.landmark),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   textFields(txtLandmarkController, StringConst.enterHere),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   Row(
                     children: [
                       Image.asset("assets/user.png"),
@@ -372,7 +372,7 @@ class _OutletInformationState extends State<OutletInformation> {
                       textWidget(StringConst.existingRetailer),
                     ],
                   ),
-                  sizedBoxWidget(5.0, ""),
+                  sizedBoxWidget(5.0),
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
                       if (state is CommonBlocRetailerRadioState) {
@@ -381,7 +381,9 @@ class _OutletInformationState extends State<OutletInformation> {
                       }
                       return Row(
                         children: [
-                          sizedBoxWidget(0.0, txtLandmarkController),
+                          SizedBox(
+                            key: globalKeyLandmark,
+                          ),
                           radioButtonWidget(
                               existingRetailerRadio, 1, StringConst.yes),
                           radioButtonWidget(
@@ -390,7 +392,7 @@ class _OutletInformationState extends State<OutletInformation> {
                       );
                     },
                   ),
-                  sizedBoxWidget(5.0, ""),
+                  sizedBoxWidget(5.0),
                   Row(
                     children: [
                       Image.asset("assets/store.png"),
@@ -400,10 +402,10 @@ class _OutletInformationState extends State<OutletInformation> {
                       textWidget(StringConst.retailerTypeMand),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   textFields(
                       txtSelectRetailerTypeController, StringConst.selectHint),
-                  sizedBoxWidget(20.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
                     children: [
                       Image.asset("assets/categories.png"),
@@ -413,10 +415,10 @@ class _OutletInformationState extends State<OutletInformation> {
                       textWidget(StringConst.retailerCategoryMand),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   textFields(txtSelectRetailerCategoryController,
                       StringConst.selectHint),
-                  sizedBoxWidget(20.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
                     children: [
                       Image.asset("assets/question.png"),
@@ -426,7 +428,7 @@ class _OutletInformationState extends State<OutletInformation> {
                       textWidget(StringConst.isKRO),
                     ],
                   ),
-                  sizedBoxWidget(5.0, ""),
+                  sizedBoxWidget(5.0),
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
                       if (state is CommonBlocIsKRORadioState) {
@@ -441,7 +443,7 @@ class _OutletInformationState extends State<OutletInformation> {
                       );
                     },
                   ),
-                  sizedBoxWidget(5.0, ""),
+                  sizedBoxWidget(5.0),
                   Row(
                     children: [
                       Image.asset("assets/document.png"),
@@ -451,20 +453,16 @@ class _OutletInformationState extends State<OutletInformation> {
                       textWidget(StringConst.gstNo),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   GSTEditText(
                     controller: txtGSTController,
                     hint: StringConst.enterHere,
-                    globalKey: globalKey,
-                    onTextFieldOpened: (controller) {
-                      selectedController = controller;
-                    },
+                    globalKey: globalKeyGST,
                   ),
-                  // textFields(txtGSTController, StringConst.enterHere),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      sizedBoxWidget(20.0, ""),
+                      sizedBoxWidget(20.0),
                       Row(
                         children: [
                           Image.asset("assets/gallery.png"),
@@ -474,7 +472,10 @@ class _OutletInformationState extends State<OutletInformation> {
                           textWidget(StringConst.outletPhoto),
                         ],
                       ),
-                      sizedBoxWidget(10.0, txtGSTController),
+                      SizedBox(
+                        key: globalKeyGST,
+                        height: 10.0,
+                      ),
                       BlocBuilder<CommonBloc, CommonBlocStates>(
                         builder: (context, state) {
                           if (state is CommonBlocSelectImageState) {
@@ -490,7 +491,7 @@ class _OutletInformationState extends State<OutletInformation> {
                       ),
                     ],
                   ),
-                  sizedBoxWidget(5.0, ""),
+                  sizedBoxWidget(5.0),
                 ],
               ),
             ),
@@ -609,9 +610,8 @@ class _OutletInformationState extends State<OutletInformation> {
     );
   }
 
-  Widget sizedBoxWidget(boxHeight, txtController) {
+  Widget sizedBoxWidget(boxHeight) {
     return SizedBox(
-      key: selectedController == txtController ? globalKey : null,
       height: boxHeight,
     );
   }
@@ -663,16 +663,19 @@ class _OutletInformationState extends State<OutletInformation> {
             ),
           )
         : TextFormField(
-            onFieldSubmitted: (value) {
-              selectedController = TextEditingController();
-            },
             autofocus: false,
             onTap: () async {
-              selectedController = txtController;
-              await Future.delayed(const Duration(milliseconds: 500));
-              RenderObject? object =
-                  globalKey.currentContext!.findRenderObject();
-              object!.showOnScreen();
+              if (txtController == txtAddressController) {
+                await Future.delayed(const Duration(milliseconds: 500));
+                RenderObject? object =
+                    globalKeyAddress.currentContext!.findRenderObject();
+                object!.showOnScreen();
+              } else {
+                await Future.delayed(const Duration(milliseconds: 500));
+                RenderObject? object =
+                    globalKeyLandmark.currentContext!.findRenderObject();
+                object!.showOnScreen();
+              }
             },
             keyboardType: TextInputType.name,
             controller: txtController,

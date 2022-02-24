@@ -51,8 +51,12 @@ class _OwnerInformationState extends State<OwnerInformation> {
   TextEditingController txtAnniversary = TextEditingController();
   RefreshController refreshController =
       RefreshController(initialRefresh: false);
-  GlobalKey globalKey = GlobalKey();
-  TextEditingController selectedController = TextEditingController();
+  GlobalKey globalKeyName = GlobalKey();
+  GlobalKey globalKeyPrimMob = GlobalKey();
+  GlobalKey globalKeySecMob = GlobalKey();
+  GlobalKey globalKeyHelpMob = GlobalKey();
+  GlobalKey globalKeyPAN = GlobalKey();
+  GlobalKey globalKeyAadhar = GlobalKey();
   CallTimeSlotModel? callTimeSlotModel;
   LanguageModel? primaryLanguage;
   LanguageModel? secondaryLanguage;
@@ -132,6 +136,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/owner.png"),
                       const SizedBox(
@@ -140,23 +145,18 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.ownerName),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   NameEditText(
                     controller: txtOwnerName,
                     hint: StringConst.enterHere,
-                    globalKey: globalKey,
+                    globalKey: globalKeyName,
                     onChange: (String text) {
                       widget.form.ownerName = text;
                     },
-                    // onKeyboardOpened: (controller) {
-                    //   selectedController = controller;
-                    // },
-                    // onKeyboardClosed: (controller) {
-                    //   selectedController = controller;
-                    // },
                   ),
-                  sizedBoxWidget(20.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/phone_call.png"),
                       const SizedBox(
@@ -165,16 +165,18 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.primaryMobile),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   MobileEditText(
                     hint: StringConst.enterHere,
                     controller: txtPrimaryMobile,
+                    globalKey: globalKeyPrimMob,
                     onChange: (text) {
                       widget.form.primaryMobile = text;
                     },
                   ),
-                  sizedBoxWidget(20.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/phone_call.png"),
                       const SizedBox(
@@ -183,16 +185,21 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.secondaryMobile),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  SizedBox(
+                    key: globalKeyPrimMob,
+                  ),
+                  sizedBoxWidget(12.0),
                   MobileEditText(
                     hint: StringConst.enterHere,
                     controller: txtSecondaryMobile,
+                    globalKey: globalKeySecMob,
                     onChange: (text) {
                       widget.form.secondaryMobile = text;
                     },
                   ),
-                  sizedBoxWidget(20.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/phone_call.png"),
                       const SizedBox(
@@ -201,16 +208,21 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.helperMobile),
                     ],
                   ),
-                  sizedBoxWidget(12.0, txtSecondaryMobile),
+                  SizedBox(
+                    key: globalKeySecMob,
+                    height: 12.0,
+                  ),
                   MobileEditText(
                     hint: StringConst.enterHere,
                     controller: txtHelperMobile,
+                    globalKey: globalKeyHelpMob,
                     onChange: (text) {
                       widget.form.helperMobile = text;
                     },
                   ),
-                  sizedBoxWidget(20.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/headphones.png"),
                       const SizedBox(
@@ -219,10 +231,14 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.callTimeSlotMand),
                     ],
                   ),
-                  sizedBoxWidget(12.0, txtHelperMobile),
+                  SizedBox(
+                    key: globalKeyHelpMob,
+                    height: 12.0,
+                  ),
                   textFields(txtCallTime, StringConst.selectHint),
-                  sizedBoxWidget(20.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/languages.png"),
                       const SizedBox(
@@ -231,10 +247,11 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.languageFirst),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   textFields(txtPrimaryLang, StringConst.selectHint),
-                  sizedBoxWidget(20.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/languages.png"),
                       const SizedBox(
@@ -243,9 +260,9 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.languageSecond),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   textFields(txtSecondaryLang, StringConst.selectHint),
-                  sizedBoxWidget(20.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -253,10 +270,10 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       const SizedBox(
                         width: 10,
                       ),
-                      Flexible(child: textWidget(StringConst.whatsAppSms)),
+                      textWidget(StringConst.whatsAppSms),
                     ],
                   ),
-                  sizedBoxWidget(5.0, ""),
+                  sizedBoxWidget(5.0),
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
                       if (state is CommonBlocWhatsAppRadioState) {
@@ -274,8 +291,9 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       );
                     },
                   ),
-                  sizedBoxWidget(5.0, ""),
+                  sizedBoxWidget(5.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/pan.png"),
                       const SizedBox(
@@ -284,17 +302,18 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.pan),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   PANEditText(
                     controller: txtPAN,
                     hint: StringConst.enterHere,
-                    globalKey: globalKey,
+                    globalKey: globalKeyPAN,
                     onChange: (String text) {
                       widget.form.pan = text;
                     },
                   ),
-                  sizedBoxWidget(20.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/identity.png"),
                       const SizedBox(
@@ -303,17 +322,21 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.adharNumber),
                     ],
                   ),
-                  sizedBoxWidget(12.0, txtPAN),
+                  SizedBox(
+                    key: globalKeyPAN,
+                    height: 12.0,
+                  ),
                   AadharEditText(
                     controller: txtAdhaar,
                     hint: StringConst.enterHere,
-                    globalKey: globalKey,
+                    globalKey: globalKeyAadhar,
                     onChange: (String text) {
                       widget.form.aadhaarNumber = text;
                     },
                   ),
-                  sizedBoxWidget(20.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/cake.png"),
                       const SizedBox(
@@ -322,7 +345,10 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.birthday),
                     ],
                   ),
-                  sizedBoxWidget(12.0, txtAdhaar),
+                  SizedBox(
+                    key: globalKeyAadhar,
+                    height: 12.0,
+                  ),
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
                       if (state is CommonBlocBirthdayState) {
@@ -336,15 +362,15 @@ class _OwnerInformationState extends State<OwnerInformation> {
                         controller: txtBirthday,
                         hint: StringConst.picDate,
                         name: StringConst.birthday,
-                        globalKey: globalKey,
                         onChange: (text) {
                           widget.form.birthday = text;
                         },
                       );
                     },
                   ),
-                  sizedBoxWidget(20.0, ""),
+                  sizedBoxWidget(20.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/confetti.png"),
                       const SizedBox(
@@ -353,7 +379,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       textWidget(StringConst.anniversary),
                     ],
                   ),
-                  sizedBoxWidget(12.0, ""),
+                  sizedBoxWidget(12.0),
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
                       if (state is CommonBlocAnniversaryState) {
@@ -365,7 +391,6 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       return DateEditText(
                         controller: txtAnniversary,
                         hint: StringConst.picDate,
-                        globalKey: globalKey,
                         name: StringConst.anniversary,
                         onChange: (text) {
                           widget.form.anniversary = text;
@@ -376,8 +401,9 @@ class _OwnerInformationState extends State<OwnerInformation> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      sizedBoxWidget(20.0, ""),
+                      sizedBoxWidget(20.0),
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Image.asset("assets/gallery.png"),
                           const SizedBox(
@@ -386,7 +412,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
                           textWidget(StringConst.ownerPhoto),
                         ],
                       ),
-                      sizedBoxWidget(10.0, ""),
+                      sizedBoxWidget(10.0),
                       BlocBuilder<CommonBloc, CommonBlocStates>(
                         builder: (context, state) {
                           if (state is CommonBlocSelectOwnerImageState) {
@@ -402,7 +428,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       ),
                     ],
                   ),
-                  sizedBoxWidget(5.0, ""),
+                  sizedBoxWidget(5.0),
                 ],
               ),
             ),
@@ -488,9 +514,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
     );
   }
 
-  Widget sizedBoxWidget(boxHeight, txtController) {
+  Widget sizedBoxWidget(boxHeight) {
     return SizedBox(
-      // key: selectedController == txtController ? globalKey : null,
       height: boxHeight,
     );
   }
@@ -537,13 +562,16 @@ class _OwnerInformationState extends State<OwnerInformation> {
   }
 
   Widget textWidget(currentText) {
-    return Text(
-      currentText,
-      style: const TextStyle(
-        fontWeight: FontWeight.bold,
-        letterSpacing: 0.67,
-        fontSize: 17,
-        color: Colors.black,
+    return Flexible(
+      child: Text(
+        currentText,
+        maxLines: 3,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          letterSpacing: 0.67,
+          fontSize: 17,
+          color: Colors.black,
+        ),
       ),
     );
   }

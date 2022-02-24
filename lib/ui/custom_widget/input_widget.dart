@@ -12,8 +12,6 @@ class NameEditText extends StatefulWidget {
   final String hint;
   final GlobalKey globalKey;
   final Function(String text) onChange;
-  // final Function(TextEditingController controller) onKeyboardOpened;
-  // final Function(TextEditingController controller) onKeyboardClosed;
 
   const NameEditText({
     Key? key,
@@ -21,8 +19,6 @@ class NameEditText extends StatefulWidget {
     required this.hint,
     required this.onChange,
     required this.globalKey,
-    // required this.onKeyboardOpened,
-    // required this.onKeyboardClosed,
   }) : super(key: key);
 
   @override
@@ -33,18 +29,13 @@ class _NameEditTextState extends State<NameEditText> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      // onFieldSubmitted: (value) {
-      //   TextEditingController controller = TextEditingController();
-      //   widget.onKeyboardClosed(controller);
-      // },
       onChanged: widget.onChange,
-      // onTap: () async {
-      //   widget.onKeyboardOpened(widget.controller);
-      //   await Future.delayed(const Duration(milliseconds: 500));
-      //   RenderObject? object =
-      //       widget.globalKey.currentContext!.findRenderObject();
-      //   object!.showOnScreen();
-      // },
+      onTap: () async {
+        await Future.delayed(const Duration(milliseconds: 500));
+        RenderObject? object =
+            widget.globalKey.currentContext!.findRenderObject();
+        object!.showOnScreen();
+      },
       autofocus: false,
       style: const TextStyle(
         fontSize: 15,
@@ -80,13 +71,15 @@ class MobileEditText extends StatefulWidget {
   final TextEditingController controller;
   final String hint;
   final Function(String text) onChange;
+  final GlobalKey globalKey;
 
-  const MobileEditText(
-      {Key? key,
-      required this.controller,
-      required this.hint,
-      required this.onChange})
-      : super(key: key);
+  const MobileEditText({
+    Key? key,
+    required this.controller,
+    required this.hint,
+    required this.onChange,
+    required this.globalKey,
+  }) : super(key: key);
 
   @override
   _MobileEditTextState createState() => _MobileEditTextState();
@@ -96,6 +89,12 @@ class _MobileEditTextState extends State<MobileEditText> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      onTap: () async {
+        await Future.delayed(const Duration(milliseconds: 500));
+        RenderObject? object =
+            widget.globalKey.currentContext!.findRenderObject();
+        object!.showOnScreen();
+      },
       autofocus: false,
       onChanged: widget.onChange,
       style: const TextStyle(
@@ -135,15 +134,13 @@ class GSTEditText extends StatefulWidget {
   final TextEditingController controller;
   final String hint;
   final GlobalKey globalKey;
-  final Function(TextEditingController controller) onTextFieldOpened;
 
-  const GSTEditText(
-      {Key? key,
-      required this.controller,
-      required this.hint,
-      required this.globalKey,
-      required this.onTextFieldOpened})
-      : super(key: key);
+  const GSTEditText({
+    Key? key,
+    required this.controller,
+    required this.hint,
+    required this.globalKey,
+  }) : super(key: key);
 
   @override
   _GSTEditTextState createState() => _GSTEditTextState();
@@ -153,6 +150,12 @@ class _GSTEditTextState extends State<GSTEditText> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      onTap: () async {
+        await Future.delayed(const Duration(milliseconds: 500));
+        RenderObject? object =
+            widget.globalKey.currentContext!.findRenderObject();
+        object!.showOnScreen();
+      },
       autofocus: false,
       style: const TextStyle(
         fontSize: 15,
@@ -312,14 +315,12 @@ class _AadharEditTextState extends State<AadharEditText> {
 class DateEditText extends StatefulWidget {
   final TextEditingController controller;
   final String hint;
-  final GlobalKey globalKey;
   final String name;
   final Function(String text) onChange;
   const DateEditText({
     Key? key,
     required this.controller,
     required this.hint,
-    required this.globalKey,
     required this.onChange,
     required this.name,
   }) : super(key: key);
