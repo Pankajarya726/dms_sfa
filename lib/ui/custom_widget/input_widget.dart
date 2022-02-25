@@ -405,3 +405,117 @@ class _DateEditTextState extends State<DateEditText> {
     );
   }
 }
+
+class FreezedEditText extends StatefulWidget {
+  final TextEditingController controller;
+  final String hint;
+  final Function(String text) onChange;
+  const FreezedEditText({
+    Key? key,
+    required this.controller,
+    required this.hint,
+    required this.onChange,
+  }) : super(key: key);
+
+  @override
+  State<FreezedEditText> createState() => _FreezedEditTextState();
+}
+
+class _FreezedEditTextState extends State<FreezedEditText> {
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      onChanged: widget.onChange,
+      autofocus: false,
+      controller: widget.controller,
+      enabled: false,
+      style: const TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 0.67,
+        color: MColor.backButton,
+      ),
+      decoration: InputDecoration(
+        hintText: widget.hint,
+        hintStyle: const TextStyle(
+          color: MColor.backButton,
+          letterSpacing: 0.67,
+          fontWeight: FontWeight.bold,
+          fontSize: 15,
+        ),
+        contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+        filled: true,
+        fillColor: const Color(0xffF2F2F2),
+        counter: Container(),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
+  }
+}
+
+class NormalEditText extends StatefulWidget {
+  final TextEditingController controller;
+  final GlobalKey globalKey;
+  final String name;
+  final Function(String text) onChange;
+  const NormalEditText({
+    Key? key,
+    required this.controller,
+    required this.onChange,
+    required this.globalKey,
+    required this.name,
+  }) : super(key: key);
+
+  @override
+  State<NormalEditText> createState() => _NormalEditTextState();
+}
+
+class _NormalEditTextState extends State<NormalEditText> {
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      autofocus: false,
+      onTap: () async {
+        if (widget.name == StringConst.address) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          RenderObject? object =
+              widget.globalKey.currentContext!.findRenderObject();
+          object!.showOnScreen();
+        } else {
+          await Future.delayed(const Duration(milliseconds: 500));
+          RenderObject? object =
+              widget.globalKey.currentContext!.findRenderObject();
+          object!.showOnScreen();
+        }
+      },
+      keyboardType: TextInputType.name,
+      controller: widget.controller,
+      style: const TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 0.67,
+        color: MColor.backButton,
+      ),
+      decoration: InputDecoration(
+        hintText: StringConst.enterHere,
+        hintStyle: const TextStyle(
+          color: MColor.backButton,
+          letterSpacing: 0.67,
+          fontWeight: FontWeight.bold,
+          fontSize: 15,
+        ),
+        contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+        filled: true,
+        fillColor: const Color(0xffF2F2F2),
+        counter: Container(),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
+  }
+}

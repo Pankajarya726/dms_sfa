@@ -27,7 +27,6 @@ class _RetailerListScreenState extends State<RetailerListScreen>
   void initState() {
     tabController = TabController(length: 3, vsync: this);
     super.initState();
-    getAllBeats();
   }
 
   @override
@@ -239,19 +238,6 @@ class _RetailerListScreenState extends State<RetailerListScreen>
         ),
       ),
     );
-  }
-
-  void getAllBeats() async {
-    Map<String, dynamic> input = HashMap<String, dynamic>();
-    input["user_id"] = await SharedPreference.getStringPreference(
-        SharedPreference.userId); //login user id
-    input["date"] = "2022-02-22";
-    GetAllBeatsResponse response = await repository.getAllBeats(input);
-    if (response.success) {
-      debugPrint("response = ${response.message}");
-    } else {
-      debugPrint("response = ${response.message}");
-    }
   }
 }
 

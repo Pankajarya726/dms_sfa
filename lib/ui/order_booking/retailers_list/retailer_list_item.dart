@@ -1,20 +1,38 @@
+import 'dart:collection';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dms/main.dart';
 import 'package:dms/model/retaileres_response.dart';
 import 'package:dms/ui/order_booking/retailer_detail/retailer_detail_screen.dart';
+import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class RetailerListItems extends StatefulWidget {
   final int index;
   final Retailers retailer;
+  final String beatId;
+  final int orderStatus;
 
-  const RetailerListItems({Key? key, required this.index, required this.retailer}) : super(key: key);
+  const RetailerListItems({
+    Key? key,
+    required this.index,
+    required this.retailer,
+    required this.beatId,
+    required this.orderStatus,
+  }) : super(key: key);
 
   @override
   State<RetailerListItems> createState() => _RetailerListItemsState();
 }
 
 class _RetailerListItemsState extends State<RetailerListItems> {
+  @override
+  void initState() {
+    super.initState();
+    getRetailerOrderWise();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -41,10 +59,14 @@ class _RetailerListItemsState extends State<RetailerListItems> {
             borderRadius: BorderRadius.circular(10),
           ),
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const RetailerDetailScreen()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const RetailerDetailScreen()));
           },
           child: Padding(
-            padding: const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
+            padding:
+                const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
             child: Column(
               children: [
                 Row(
@@ -176,5 +198,18 @@ class _RetailerListItemsState extends State<RetailerListItems> {
         ),
       ),
     );
+  }
+
+  void getRetailerOrderWise() async {
+    Map<String, dynamic> input = HashMap<String, dynamic>();
+    input["order_status"] = widget.orderStatus;
+    input["beat_id"] = widget.beatId.toString();
+    GetRetailersResponse response =
+        await repository.getRetailersOrderWise(input);
+    if (response.success) {
+      debugPrint("response = ${response.message}");
+    } else {
+      debugPrint("response = ${response.message}");
+    }
   }
 }

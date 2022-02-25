@@ -29,6 +29,7 @@ import 'package:dms/ui/edit_profile/model/update_profile_response.dart';
 import 'package:dms/ui/login_screen/login_model/login_response.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_brand_&_category_resonse.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
+import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/ui/splash_screen/model/splash_model.dart';
 import 'package:dms/ui/start_my_day/model/end_my_day_response.dart';
 import 'package:dms/ui/start_my_day/model/quotes_and_images_response.dart';
@@ -829,9 +830,9 @@ class ApiRepository {
     }
   }
 
-  Future<GetAllBeatsResponse> getAllBeats(Map input) async {
+  Future<GetAllBeatsResponse> getAllBeats() async {
     try {
-      Response response = await dio.post(Url.getAllBeats, data: input);
+      Response response = await dio.get(Url.getAllBeats);
       GetAllBeatsResponse baseResponse =
           GetAllBeatsResponse.fromJson(response.toString());
       return baseResponse;
@@ -845,6 +846,28 @@ class ApiRepository {
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return GetAllBeatsResponse(
+        success: false,
+        message: message,
+      );
+    }
+  }
+
+  Future<GetRetailersResponse> getRetailersOrderWise(Map input) async {
+    try {
+      Response response = await dio.post(Url.getRetailerOrderWise, data: input);
+      GetRetailersResponse baseResponse =
+          GetRetailersResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = StringConst.somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return GetRetailersResponse(
         success: false,
         message: message,
       );
