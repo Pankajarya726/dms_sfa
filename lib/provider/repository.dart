@@ -28,6 +28,7 @@ import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart'
 import 'package:dms/ui/edit_profile/model/update_profile_response.dart';
 import 'package:dms/ui/login_screen/login_model/login_response.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_brand_&_category_resonse.dart';
+import 'package:dms/ui/order_booking/retailer_detail/model/retailer_details_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/ui/splash_screen/model/splash_model.dart';
@@ -868,6 +869,28 @@ class ApiRepository {
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return GetRetailersResponse(
+        success: false,
+        message: message,
+      );
+    }
+  }
+
+  Future<RetailersDetailsResponse> getRetailerInfo(Map input) async {
+    try {
+      Response response = await dio.post(Url.getRetailerInfo, data: input);
+      RetailersDetailsResponse baseResponse =
+          RetailersDetailsResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = StringConst.somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return RetailersDetailsResponse(
         success: false,
         message: message,
       );

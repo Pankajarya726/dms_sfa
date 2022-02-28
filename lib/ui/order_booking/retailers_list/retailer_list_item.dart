@@ -62,7 +62,9 @@ class _RetailerListItemsState extends State<RetailerListItems> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (_) => const RetailerDetailScreen()));
+                    builder: (_) => const RetailerDetailScreen(
+                          storeId: "150",
+                        )));
           },
           child: Padding(
             padding:
@@ -129,7 +131,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                           );
                         },
                         errorWidget: (context, url, error) {
-                          return Icon(Icons.error);
+                          return const Icon(Icons.error);
                         },
                       ),
                     ),
