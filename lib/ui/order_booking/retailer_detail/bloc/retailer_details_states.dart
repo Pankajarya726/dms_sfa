@@ -18,8 +18,8 @@ class RetailerDetailFailureState extends RetailerDetailStates {
 }
 
 class GetRetailerDetailState extends RetailerDetailStates {
-  final RetailersDetailsResponse retailersDetailsResponse;
-  GetRetailerDetailState({required this.retailersDetailsResponse});
+  final RetailerDetailsModal retailer;
+  GetRetailerDetailState({required this.retailer});
   @override
-  List<Object> get props => [retailersDetailsResponse];
+  List<Object> get props => [retailer];
 }

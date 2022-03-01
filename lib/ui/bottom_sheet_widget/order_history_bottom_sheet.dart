@@ -1,9 +1,12 @@
+import 'package:dms/ui/order_booking/retailer_detail/model/retailer_details_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 
 class OrderHistoryBottomSheet extends StatefulWidget {
-  const OrderHistoryBottomSheet({Key? key}) : super(key: key);
+  final List<Product> product;
+  const OrderHistoryBottomSheet({Key? key, required this.product})
+      : super(key: key);
 
   @override
   _OrderHistoryBottomSheetState createState() =>
@@ -12,18 +15,18 @@ class OrderHistoryBottomSheet extends StatefulWidget {
 
 class _OrderHistoryBottomSheetState extends State<OrderHistoryBottomSheet> {
   List<Widget> itemList = [];
-  List<String> flavourName = [
-    "Surprise Egg Jhony Bravo",
-    "Lollipop Elaichi Kulfi",
-    "Candy Cookie N Cream",
-    "Pepstick Crunchy Chocolate",
-    "Candy Cookie N Cream",
-    "Surprise Egg Jhony Bravo",
-    "Lollipop Elaichi Kulfi",
-    "Candy Cookie N Cream",
-    "Pepstick Crunchy Chocolate",
-    "Candy Cookie N Cream",
-  ];
+  // List<String> flavourName = [
+  //   "Surprise Egg Jhony Bravo",
+  //   "Lollipop Elaichi Kulfi",
+  //   "Candy Cookie N Cream",
+  //   "Pepstick Crunchy Chocolate",
+  //   "Candy Cookie N Cream",
+  //   "Surprise Egg Jhony Bravo",
+  //   "Lollipop Elaichi Kulfi",
+  //   "Candy Cookie N Cream",
+  //   "Pepstick Crunchy Chocolate",
+  //   "Candy Cookie N Cream",
+  // ];
 
   @override
   void initState() {
@@ -39,31 +42,43 @@ class _OrderHistoryBottomSheetState extends State<OrderHistoryBottomSheet> {
       maxChildSize: 1,
       minChildSize: 0.6,
       builder: (BuildContext context, ScrollController scrollController) {
-        return ListView.builder(
-          controller: scrollController,
-          itemCount: itemList.length,
-          itemBuilder: (context, index) {
-            return itemList[index];
-          },
-        );
+        return widget.product.isNotEmpty
+            ? ListView.builder(
+                controller: scrollController,
+                itemCount: itemList.length,
+                itemBuilder: (context, index) {
+                  return itemList[index];
+                },
+              )
+            : const Center(
+                child: Text("Data not found"),
+              );
       },
     );
   }
 
   getList() {
     itemList.add(heading);
-    for (int i = 0; i < flavourName.length; i++) {
+    for (int i = 0; i < widget.product.length; i++) {
       OrderHistory history = OrderHistory(
-        name: flavourName[i],
-        quantity: "75 | 150",
-        price: "₹${i + 1}00",
+        name: widget.product[i].variant.isEmpty
+            ? widget.product[i].category
+            : widget.product[i].category.isEmpty
+                ? widget.product[i].variant
+                : widget.product[i].variant + " " + widget.product[i].category,
+        quantity: widget.product[i].qtyPkg.isNotEmpty &&
+                widget.product[i].qtyMoq.isNotEmpty
+            ? widget.product[i].qtyPkg + " | " + widget.product[i].qtyMoq
+            : "",
+        price:
+            widget.product[i].mrp.isNotEmpty ? "₹" + widget.product[i].mrp : "",
       );
+
       itemList.add(
         OrderhistoryWidget(
           history: history,
         ),
       );
-      setState(() {});
     }
   }
 

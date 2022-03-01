@@ -28,7 +28,7 @@ class RetailerDetailsBloc
       RetailersDetailsResponse response =
           await repository.getRetailerInfo(input);
       if (response.success) {
-        yield GetRetailerDetailState(retailersDetailsResponse: response);
+        yield GetRetailerDetailState(retailer: response.data!.first);
       } else {
         yield RetailerDetailFailureState(failureMessage: response.message);
       }

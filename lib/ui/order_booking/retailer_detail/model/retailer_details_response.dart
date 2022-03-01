@@ -208,18 +208,20 @@ class Product {
   Product({
     required this.id,
     required this.category,
+    required this.variant,
     required this.mrp,
-    required this.ptr,
-    required this.moq,
+    required this.ptrPcsPrice,
+    required this.ptrMoqPrice,
     required this.qtyPkg,
     required this.qtyMoq,
   });
 
   String id;
   String category;
+  String variant;
   String mrp;
-  String ptr;
-  String moq;
+  String ptrPcsPrice;
+  String ptrMoqPrice;
   String qtyPkg;
   String qtyMoq;
 
@@ -230,9 +232,14 @@ class Product {
   factory Product.fromMap(Map<String, dynamic> json) => Product(
         id: json["id"] == null ? "" : json["id"].toString(),
         category: json["category"] == null ? "" : json["category"].toString(),
+        variant: json["variant"] == null ? "" : json["variant"].toString(),
         mrp: json["mrp"] == null ? "" : json["mrp"].toString(),
-        ptr: json["ptr"] == null ? "" : json["ptr"].toString(),
-        moq: json["moq"] == null ? "" : json["moq"].toString(),
+        ptrPcsPrice: json["ptr_pcs_price"] == null
+            ? ""
+            : json["ptr_pcs_price"].toString(),
+        ptrMoqPrice: json["ptr_moq_price"] == null
+            ? ""
+            : json["ptr_moq_price"].toString(),
         qtyPkg: json["qty_pkg"] == null ? "" : json["qty_pkg"].toString(),
         qtyMoq: json["qty_moq"] == null ? "" : json["qty_moq"].toString(),
       );
@@ -240,9 +247,10 @@ class Product {
   Map<String, dynamic> toMap() => {
         "id": id,
         "category": category,
+        "variant": variant,
         "mrp": mrp,
-        "ptr": ptr,
-        "moq": moq,
+        "ptr_pcs_price": ptrPcsPrice,
+        "ptr_moq_price": ptrMoqPrice,
         "qty_pkg": qtyPkg,
         "qty_moq": qtyMoq,
       };
