@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dms/main.dart';
 import 'package:dms/model/retaileres_response.dart';
+import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/retailer_list_item.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
@@ -16,8 +17,8 @@ class SearchRetailerScreen extends StatefulWidget {
 
 class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
   TextEditingController edtSearch = TextEditingController();
-  List<Retailers> retailers = [];
-  StreamController<List<Retailers>> searchStream = StreamController();
+  List<RetailersModal> retailers = [];
+  StreamController<List<RetailersModal>> searchStream = StreamController();
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +35,7 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
               onChanged: (text) {
                 if (text.trim().isEmpty) {
                   retailers.clear();
-                  searchStream.addError(
-                      "Enter Name or mobile number to search retailer");
+                  searchStream.addError("Enter Name or mobile number to search retailer");
                 } else {
                   searchApi(text);
                 }
@@ -47,18 +47,15 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide:
-                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide:
-                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide:
-                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   suffixIcon: IconButton(
                     splashRadius: 20,
                     icon: const Icon(
@@ -69,8 +66,7 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
                       if (edtSearch.text.trim().isNotEmpty) {
                         edtSearch.clear();
                         retailers.clear();
-                        searchStream.addError(
-                            "Enter Name or mobile number to search retailer");
+                        searchStream.addError("Enter Name or mobile number to search retailer");
                       } else {
                         Navigator.pop(context);
                       }
@@ -85,7 +81,7 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
           )
         ],
       ),
-      body: StreamBuilder<List<Retailers>>(
+      body: StreamBuilder<List<RetailersModal>>(
         stream: searchStream.stream,
         // initialData: retailers,
         builder: (context, snapshot) {
@@ -112,7 +108,7 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
                 },
                 itemBuilder: (context, index) {
                   return RetailerListItems(
-                    index: snapshot.data![index].connectionStatus,
+                    index: 0,
                     retailer: snapshot.data![index],
                     orderStatus: 2,
                     beatId: "15",

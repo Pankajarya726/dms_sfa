@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:collection';
 
-import 'package:dms/model/retaileres_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
+import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/retailer_list_item.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/constants.dart';
+import 'package:dms/utils/network.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 
@@ -18,18 +22,19 @@ class RetailerTab extends StatefulWidget {
   _RetailerTabState createState() => _RetailerTabState();
 }
 
-class _RetailerTabState extends State<RetailerTab>
-    with AutomaticKeepAliveClientMixin<RetailerTab> {
-  List<Retailers> retailers = [];
-  List<String> tags = ["All", "Vijay Nagar", "Palasia", "Rajwada"];
+class _RetailerTabState extends State<RetailerTab> with AutomaticKeepAliveClientMixin<RetailerTab> {
+  List<RetailersModal> retailers = [];
+  List<BeatsModal> beatList = [];
+  BeatsModal? selectedBeat;
+
   String tag = "All";
-  StreamController<List<Retailers>> retailerStreamController =
-      StreamController();
+  StreamController<List<RetailersModal>> retailerStreamController = StreamController();
 
   @override
   void initState() {
-    debugPrint("retailerTab--->");
-    getRetailers();
+    beatList.add(BeatsModal(id: "", name: "All"));
+    selectedBeat = beatList.first;
+
     getAllBeats();
     super.initState();
   }
@@ -40,19 +45,15 @@ class _RetailerTabState extends State<RetailerTab>
     return Column(
       children: [
         BeatWidget(
-            tags: tags,
-            onSelect: (String tag) {
-              if (tag == "All") {
-                retailerStreamController.add(retailers);
-              } else {
-                List<Retailers> filterList = retailers
-                    .where((element) => element.primaryAddress == tag)
-                    .toList();
-                retailerStreamController.add(filterList);
+            tags: beatList,
+            onSelect: (BeatsModal tag) {
+              if (selectedBeat != tag) {
+                selectedBeat = tag;
+                getRetailers();
               }
             }),
         Expanded(
-          child: StreamBuilder<List<Retailers>>(
+          child: StreamBuilder<List<RetailersModal>>(
             stream: retailerStreamController.stream,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -65,6 +66,7 @@ class _RetailerTabState extends State<RetailerTab>
                   child: Text("${snapshot.error}"),
                 );
               }
+
               if (snapshot.hasData && snapshot.data!.isEmpty) {
                 return const Center(
                   child: Text("Retailers not found"),
@@ -83,7 +85,7 @@ class _RetailerTabState extends State<RetailerTab>
                   return RetailerListItems(
                     index: widget.index,
                     retailer: snapshot.data![index],
-                    beatId: "15",
+                    beatId: selectedBeat!.id,
                     orderStatus: widget.index == 0
                         ? 1
                         : widget.index == 1
@@ -100,84 +102,36 @@ class _RetailerTabState extends State<RetailerTab>
   }
 
   void getAllBeats() async {
-    GetAllBeatsResponse response = await repository.getAllBeats();
-    if (response.success) {
-      debugPrint("response = ${response.message}");
+    if (await Network.isConnected()) {
+      GetAllBeatsResponse response = await repository.getAllBeats();
+      if (response.success) {
+        beatList.addAll(response.data!);
+        getRetailers();
+        setState(() {});
+      } else {
+        Utility.showToast(response.message);
+      }
     } else {
-      debugPrint("response = ${response.message}");
+      Utility.showToast(Constants.internetAlert);
     }
   }
 
   void getRetailers() async {
-    retailers.add(Retailers(
-        id: 1,
-        uniqueCode: "478956",
-        outletName: "AK Store",
-        primaryAddress: "1502, Pennsylvania Avenue",
-        customerName: "Vijay Nagar",
-        userId: 10,
-        outletPicture:
-            "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
-        primaryMobile: '',
-        lng: '',
-        districtId: 1,
-        enrollmentTypeId: 0,
-        secondaryMobile: '',
-        lat: '',
-        beatId: 0,
-        beatName: "vijaynagar",
-        connectionStatus: 0));
-    // retailers.add(Retailers(
-    //     id: "1",
-    //     code: "651023",
-    //     storeName: "Naveen Store",
-    //     address: "1994, Oldsmobile Bravado",
-    //     locationName: "Palasia",
-    //     locationId: "10",
-    //     outletPicture:
-    //         "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
-    //     priority: "P1"));
-    // retailers.add(Retailers(
-    //     id: "1",
-    //     code: "109845",
-    //     storeName: "Muffins Store",
-    //     address: "630, Cambridge Court",
-    //     locationName: "Vijay Nagar",
-    //     locationId: "10",
-    //     image:
-    //         "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
-    //     priority: "P0"));
-    // retailers.add(Retailer(
-    //     id: "1",
-    //     code: "651023",
-    //     storeName: "Namkeen Store",
-    //     address: "1994, Oldsmobile Bravada",
-    //     locationName: "Palasia",
-    //     locationId: "10",
-    //     image:
-    //         "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
-    //     priority: "P1"));
-    // retailers.add(Retailer(
-    //     id: "1",
-    //     code: "109845",
-    //     storeName: "Muffins Store",
-    //     address: "630, Cambridge Court",
-    //     locationName: "Vijay Nagar",
-    //     locationId: "10",
-    //     image:
-    //         "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
-    //     priority: "P0"));
-    // retailers.add(Retailer(
-    //     id: "1",
-    //     code: "109845",
-    //     storeName: "Muffins Store",
-    //     address: "630, Cambridge Court",
-    //     locationName: "Rajwada",
-    //     locationId: "10",
-    //     image:
-    //         "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
-    //     priority: "P0"));
-    retailerStreamController.add(retailers);
+    if (await Network.isConnected()) {
+      Map<String, dynamic> input = HashMap<String, dynamic>();
+      input["order_status"] = widget.index + 1;
+      input["beat_id"] = selectedBeat!.id;
+      GetRetailersResponse response = await repository.getRetailersOrderWise(input);
+      if (response.success) {
+        retailers = response.data!;
+        retailerStreamController.add(retailers);
+        debugPrint("response = ${response.message}");
+      } else {
+        retailerStreamController.addError(response.message);
+      }
+    } else {
+      Utility.showToast(Constants.internetAlert);
+    }
   }
 
   @override
@@ -185,18 +139,17 @@ class _RetailerTabState extends State<RetailerTab>
 }
 
 class BeatWidget extends StatefulWidget {
-  final List<String> tags;
-  final Function(String tag) onSelect;
+  final List<BeatsModal> tags;
+  final Function(BeatsModal tag) onSelect;
 
-  const BeatWidget({Key? key, required this.tags, required this.onSelect})
-      : super(key: key);
+  const BeatWidget({Key? key, required this.tags, required this.onSelect}) : super(key: key);
 
   @override
   _BeatWidgetState createState() => _BeatWidgetState();
 }
 
 class _BeatWidgetState extends State<BeatWidget> {
-  String tag = "All";
+  BeatsModal tag = BeatsModal(name: "All", id: "");
 
   @override
   void initState() {
@@ -217,27 +170,18 @@ class _BeatWidgetState extends State<BeatWidget> {
             widget.onSelect(item.customData);
             setState(() {});
           },
-          active: widget.tags[index] == tag,
+          active: widget.tags[index].name == tag.name,
           customData: widget.tags[index],
           textActiveColor: Colors.black,
           textColor: const Color(0xff555555),
           elevation: 0,
-          textStyle: const TextStyle(
-              fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          border: Border.all(
-              color: widget.tags[index] == tag
-                  ? MColor.colorPrimary
-                  : const Color(0xffC5C5C5),
-              width: 1.5),
+          border: Border.all(color: widget.tags[index].name == tag.name ? MColor.colorPrimary : const Color(0xffC5C5C5), width: 1.5),
           singleItem: true,
-          activeColor: widget.tags[index] == tag
-              ? const Color(0xffFFC9CC)
-              : const Color(0xffFAFAFA),
-          color: widget.tags[index] == tag
-              ? const Color(0xffFFC9CC)
-              : const Color(0xffFAFAFA),
-          title: widget.tags[index],
+          activeColor: widget.tags[index].name == tag.name ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
+          color: widget.tags[index].name == tag.name ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
+          title: widget.tags[index].name,
         );
       },
     );

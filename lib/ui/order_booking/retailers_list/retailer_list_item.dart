@@ -2,7 +2,6 @@ import 'dart:collection';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/main.dart';
-import 'package:dms/model/retaileres_response.dart';
 import 'package:dms/ui/order_booking/retailer_detail/retailer_detail_screen.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/utils/colors.dart';
@@ -10,7 +9,7 @@ import 'package:flutter/material.dart';
 
 class RetailerListItems extends StatefulWidget {
   final int index;
-  final Retailers retailer;
+  final RetailersModal retailer;
   final String beatId;
   final int orderStatus;
 
@@ -30,7 +29,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
   @override
   void initState() {
     super.initState();
-    getRetailerOrderWise();
+    // getRetailerOrderWise();
   }
 
   @override
@@ -67,8 +66,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                         )));
           },
           child: Padding(
-            padding:
-                const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
+            padding: const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
             child: Column(
               children: [
                 Row(
@@ -96,7 +94,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                             width: 10,
                           ),
                           Text(
-                            widget.retailer.outletName,
+                            widget.retailer.outlatName,
                             style: const TextStyle(
                               color: Color(0XFF555555),
                               letterSpacing: 0.67,
@@ -108,7 +106,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                       ),
                     ),
                     const Image(
-                      width: 25,
+                      width: 20,
                       image: AssetImage("assets/location_green.png"),
                     )
                   ],
@@ -140,7 +138,6 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                     ),
                     Expanded(
                       child: Container(
-                        height: 50,
                         padding: const EdgeInsets.symmetric(vertical: 5),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,11 +145,15 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                           children: [
                             Text(
                               widget.retailer.primaryAddress,
+                              maxLines: 3,
                               style: const TextStyle(
                                 letterSpacing: 0.67,
                                 fontWeight: FontWeight.w600,
                               ),
                               overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(
+                              height: 10,
                             ),
                             Text(
                               widget.retailer.beatName,
@@ -166,32 +167,15 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                         ),
                       ),
                     ),
-                    // Container(
-                    //   height: 50,
-                    //   padding: const EdgeInsets.symmetric(vertical: 5),
-                    //   child: Column(
-                    //     mainAxisAlignment: MainAxisAlignment.end,
-                    //     children: [
-                    //       Container(
-                    //         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-                    //         decoration: BoxDecoration(
-                    //           color: const Color(0XFFDAA520),
-                    //           borderRadius: BorderRadius.circular(2),
-                    //         ),
-                    //         child: Align(
-                    //           child: Text(
-                    //             widget.retailer.priority,
-                    //             style: const TextStyle(
-                    //               color: Colors.white,
-                    //               fontWeight: FontWeight.w500,
-                    //               letterSpacing: 0.67,
-                    //             ),
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // )
+                    Container(
+                      height: 40,
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: Image(
+                        width: 40,
+                        height: 40,
+                        image: AssetImage(widget.retailer.enrollmentTypeId == "1" ? "assets/retailer.png" : "assets/retailer.png"),
+                      ),
+                    )
                   ],
                 )
               ],
@@ -206,8 +190,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
     Map<String, dynamic> input = HashMap<String, dynamic>();
     input["order_status"] = widget.orderStatus;
     input["beat_id"] = widget.beatId.toString();
-    GetRetailersResponse response =
-        await repository.getRetailersOrderWise(input);
+    GetRetailersResponse response = await repository.getRetailersOrderWise(input);
     if (response.success) {
       debugPrint("response = ${response.message}");
     } else {

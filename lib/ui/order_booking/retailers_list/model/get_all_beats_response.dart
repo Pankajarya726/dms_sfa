@@ -13,49 +13,41 @@ class GetAllBeatsResponse {
 
   bool success;
   String message;
-  List<GetAllBeatsModal>? data;
+  List<BeatsModal>? data;
 
-  factory GetAllBeatsResponse.fromJson(String str) =>
-      GetAllBeatsResponse.fromMap(json.decode(str));
+  factory GetAllBeatsResponse.fromJson(String str) => GetAllBeatsResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory GetAllBeatsResponse.fromMap(Map<String, dynamic> json) =>
-      GetAllBeatsResponse(
+  factory GetAllBeatsResponse.fromMap(Map<String, dynamic> json) => GetAllBeatsResponse(
         success: json["success"] == null ? null : json["success"],
         message: json["message"] == null ? null : json["message"],
-        data: json["data"] == null
-            ? []
-            : List<GetAllBeatsModal>.from(
-                json["data"].map((x) => GetAllBeatsModal.fromMap(x))),
+        data: json["data"] == null ? [] : List<BeatsModal>.from(json["data"].map((x) => BeatsModal.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
         "success": success == null ? null : success,
         "message": message == null ? null : message,
-        "data":
-            data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
+        "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
       };
 }
 
-class GetAllBeatsModal {
-  GetAllBeatsModal({
+class BeatsModal {
+  BeatsModal({
     required this.id,
     required this.name,
   });
 
-  int id;
+  String id;
   String name;
 
-  factory GetAllBeatsModal.fromJson(String str) =>
-      GetAllBeatsModal.fromMap(json.decode(str));
+  factory BeatsModal.fromJson(String str) => BeatsModal.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory GetAllBeatsModal.fromMap(Map<String, dynamic> json) =>
-      GetAllBeatsModal(
-        id: json["id"] == null ? null : json["id"],
-        name: json["name"] == null ? null : json["name"],
+  factory BeatsModal.fromMap(Map<String, dynamic> json) => BeatsModal(
+        id: json["id"] == null ? "" : json["id"].toString(),
+        name: json["name"] == null ? "" : json["name"].toString(),
       );
 
   Map<String, dynamic> toMap() => {
