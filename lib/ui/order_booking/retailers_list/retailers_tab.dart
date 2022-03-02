@@ -1,10 +1,13 @@
 import 'dart:async';
 
 import 'package:dms/model/retaileres_response.dart';
+import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/retailer_list_item.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
+
+import '../../../main.dart';
 
 class RetailerTab extends StatefulWidget {
   final int index;
@@ -15,16 +18,19 @@ class RetailerTab extends StatefulWidget {
   _RetailerTabState createState() => _RetailerTabState();
 }
 
-class _RetailerTabState extends State<RetailerTab> with AutomaticKeepAliveClientMixin<RetailerTab> {
+class _RetailerTabState extends State<RetailerTab>
+    with AutomaticKeepAliveClientMixin<RetailerTab> {
   List<Retailers> retailers = [];
   List<String> tags = ["All", "Vijay Nagar", "Palasia", "Rajwada"];
   String tag = "All";
-  StreamController<List<Retailers>> retailerStreamController = StreamController();
+  StreamController<List<Retailers>> retailerStreamController =
+      StreamController();
 
   @override
   void initState() {
     debugPrint("retailerTab--->");
     getRetailers();
+    getAllBeats();
     super.initState();
   }
 
@@ -39,7 +45,9 @@ class _RetailerTabState extends State<RetailerTab> with AutomaticKeepAliveClient
               if (tag == "All") {
                 retailerStreamController.add(retailers);
               } else {
-                List<Retailers> filterList = retailers.where((element) => element.primaryAddress == tag).toList();
+                List<Retailers> filterList = retailers
+                    .where((element) => element.primaryAddress == tag)
+                    .toList();
                 retailerStreamController.add(filterList);
               }
             }),
@@ -75,6 +83,12 @@ class _RetailerTabState extends State<RetailerTab> with AutomaticKeepAliveClient
                   return RetailerListItems(
                     index: widget.index,
                     retailer: snapshot.data![index],
+                    beatId: "15",
+                    orderStatus: widget.index == 0
+                        ? 1
+                        : widget.index == 1
+                            ? 2
+                            : 3,
                   );
                 },
               );
@@ -83,6 +97,15 @@ class _RetailerTabState extends State<RetailerTab> with AutomaticKeepAliveClient
         ),
       ],
     );
+  }
+
+  void getAllBeats() async {
+    GetAllBeatsResponse response = await repository.getAllBeats();
+    if (response.success) {
+      debugPrint("response = ${response.message}");
+    } else {
+      debugPrint("response = ${response.message}");
+    }
   }
 
   void getRetailers() async {
@@ -165,7 +188,8 @@ class BeatWidget extends StatefulWidget {
   final List<String> tags;
   final Function(String tag) onSelect;
 
-  const BeatWidget({Key? key, required this.tags, required this.onSelect}) : super(key: key);
+  const BeatWidget({Key? key, required this.tags, required this.onSelect})
+      : super(key: key);
 
   @override
   _BeatWidgetState createState() => _BeatWidgetState();
@@ -198,12 +222,21 @@ class _BeatWidgetState extends State<BeatWidget> {
           textActiveColor: Colors.black,
           textColor: const Color(0xff555555),
           elevation: 0,
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+          textStyle: const TextStyle(
+              fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          border: Border.all(color: widget.tags[index] == tag ? MColor.colorPrimary : const Color(0xffC5C5C5), width: 1.5),
+          border: Border.all(
+              color: widget.tags[index] == tag
+                  ? MColor.colorPrimary
+                  : const Color(0xffC5C5C5),
+              width: 1.5),
           singleItem: true,
-          activeColor: widget.tags[index] == tag ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
-          color: widget.tags[index] == tag ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
+          activeColor: widget.tags[index] == tag
+              ? const Color(0xffFFC9CC)
+              : const Color(0xffFAFAFA),
+          color: widget.tags[index] == tag
+              ? const Color(0xffFFC9CC)
+              : const Color(0xffFAFAFA),
           title: widget.tags[index],
         );
       },

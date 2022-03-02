@@ -238,7 +238,13 @@ class _OutletInformationState extends State<OutletInformation> {
                     ],
                   ),
                   sizedBoxWidget(12.0),
-                  textFields(txtOrderBookingController, StringConst.day),
+                  FreezedEditText(
+                    controller: txtOrderBookingController,
+                    hint: StringConst.day,
+                    onChange: (text) {
+                      txtOrderBookingController.text = text;
+                    },
+                  ),
                   sizedBoxWidget(12.0),
                   Row(
                     children: [
@@ -302,8 +308,13 @@ class _OutletInformationState extends State<OutletInformation> {
                             key: globalKeyName,
                             height: 12.0,
                           ),
-                          textFields(
-                              txtLatitudeController, StringConst.enterHere),
+                          FreezedEditText(
+                            controller: txtLatitudeController,
+                            hint: StringConst.enterHere,
+                            onChange: (text) {
+                              txtLatitudeController.text = text;
+                            },
+                          ),
                           sizedBoxWidget(12.0),
                           Row(
                             children: [
@@ -315,8 +326,13 @@ class _OutletInformationState extends State<OutletInformation> {
                             ],
                           ),
                           sizedBoxWidget(12.0),
-                          textFields(
-                              txtLongtitudeController, StringConst.enterHere),
+                          FreezedEditText(
+                            controller: txtLongtitudeController,
+                            hint: StringConst.enterHere,
+                            onChange: (text) {
+                              txtLongtitudeController.text = text;
+                            },
+                          ),
                           sizedBoxWidget(12.0),
                           Row(
                             children: [
@@ -328,8 +344,14 @@ class _OutletInformationState extends State<OutletInformation> {
                             ],
                           ),
                           sizedBoxWidget(12.0),
-                          textFields(
-                              txtAddressController, StringConst.enterHere),
+                          NormalEditText(
+                            controller: txtAddressController,
+                            onChange: (text) {
+                              txtAddressController.text = text;
+                            },
+                            globalKey: globalKeyAddress,
+                            name: StringConst.address,
+                          ),
                           sizedBoxWidget(12.0),
                           Row(
                             children: [
@@ -344,8 +366,13 @@ class _OutletInformationState extends State<OutletInformation> {
                             key: globalKeyAddress,
                             height: 12.0,
                           ),
-                          textFields(
-                              txtPincodeController, StringConst.enterHere),
+                          FreezedEditText(
+                            controller: txtPincodeController,
+                            hint: StringConst.enterHere,
+                            onChange: (text) {
+                              txtPincodeController.text = text;
+                            },
+                          ),
                           sizedBoxWidget(12.0),
                         ],
                       );
@@ -361,7 +388,14 @@ class _OutletInformationState extends State<OutletInformation> {
                     ],
                   ),
                   sizedBoxWidget(12.0),
-                  textFields(txtLandmarkController, StringConst.enterHere),
+                  NormalEditText(
+                    controller: txtLandmarkController,
+                    onChange: (text) {
+                      txtLandmarkController.text = text;
+                    },
+                    globalKey: globalKeyLandmark,
+                    name: StringConst.landmark,
+                  ),
                   sizedBoxWidget(12.0),
                   Row(
                     children: [
@@ -617,98 +651,43 @@ class _OutletInformationState extends State<OutletInformation> {
   }
 
   Widget textFields(txtController, textHint) {
-    return txtController == txtSelectDistrictController ||
-            txtController == txtSelectDistributorController ||
-            txtController == txtSelectBeatNameController ||
-            txtController == txtSelectRetailerTypeController ||
-            txtController == txtSelectRetailerCategoryController
-        ? GestureDetector(
-            onTap: () async {
-              openBottomSheet(context, txtController);
-            },
-            child: TextFormField(
-              enabled: false,
-              autofocus: false,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.67,
-                color: MColor.backButton,
-              ),
-              controller: txtController,
-              decoration: InputDecoration(
-                suffixIcon: const Padding(
-                  padding: EdgeInsets.only(right: 15),
-                  child: Icon(
-                    Icons.keyboard_arrow_down_outlined,
-                    color: MColor.backButton,
-                    size: 30,
-                  ),
-                ),
-                hintText: textHint,
-                hintStyle: const TextStyle(
-                  color: MColor.backButton,
-                  letterSpacing: 0.67,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
-                contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                filled: true,
-                fillColor: const Color(0xffF2F2F2),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-          )
-        : TextFormField(
-            autofocus: false,
-            onTap: () async {
-              if (txtController == txtAddressController) {
-                await Future.delayed(const Duration(milliseconds: 500));
-                RenderObject? object =
-                    globalKeyAddress.currentContext!.findRenderObject();
-                object!.showOnScreen();
-              } else {
-                await Future.delayed(const Duration(milliseconds: 500));
-                RenderObject? object =
-                    globalKeyLandmark.currentContext!.findRenderObject();
-                object!.showOnScreen();
-              }
-            },
-            keyboardType: TextInputType.name,
-            controller: txtController,
-            enabled: txtController == txtLatitudeController ||
-                    txtController == txtLongtitudeController ||
-                    txtController == txtPincodeController ||
-                    txtController == txtOrderBookingController
-                ? false
-                : true,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.67,
-              color: MColor.backButton,
-            ),
-            decoration: InputDecoration(
-              hintText: textHint,
-              hintStyle: const TextStyle(
-                color: MColor.backButton,
-                letterSpacing: 0.67,
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-              ),
-              contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-              filled: true,
-              fillColor: const Color(0xffF2F2F2),
-              counter: Container(),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          );
+    return TextFormField(
+      onTap: () async {
+        openBottomSheet(context, txtController);
+      },
+      readOnly: true,
+      style: const TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 0.67,
+        color: MColor.backButton,
+      ),
+      controller: txtController,
+      decoration: InputDecoration(
+        suffixIcon: const Padding(
+          padding: EdgeInsets.only(right: 15),
+          child: Icon(
+            Icons.keyboard_arrow_down_outlined,
+            color: MColor.backButton,
+            size: 30,
+          ),
+        ),
+        hintText: textHint,
+        hintStyle: const TextStyle(
+          color: MColor.backButton,
+          letterSpacing: 0.67,
+          fontWeight: FontWeight.bold,
+          fontSize: 15,
+        ),
+        contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+        filled: true,
+        fillColor: const Color(0xffF2F2F2),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
   }
 
   Widget textWidget(currentText) {

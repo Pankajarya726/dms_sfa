@@ -26,9 +26,13 @@ class Url {
   static const String getDistributor = "getDistributorsForDistWise";
   static const String getCallTimeSlot = "getCallTimeSlot";
   static const String getRetailerProducts = "getRetailerProducts";
-  static const String getBeat = "getDistibutorsBeat";
+  static const String getDistibutorsBeat = "getDistibutorsBeat";
   static const String retailerEnrollmentSave = "retailerEnrollmentSave";
   static const String verifyOtp = "verifyOtp";
   static const String getOrderBookingDay = "getOrderBooking_day";
   static const String searchRetailer = "searchRetailer";
+  static const String getBrandAndCategory = "getBrandAndCategoryBeatWise";
+  static const String getAllBeats = "getBeatForLoginUser";
+  static const String getRetailerOrderWise = "getRetailerOrderWise";
+  static const String getRetailerInfo = "retailerInfo";
 }

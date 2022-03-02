@@ -1,5 +1,9 @@
+import 'dart:collection';
+
+import 'package:dms/main.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/filter_order_booking_bottom_sheet.dart';
+import 'package:dms/ui/order_booking/order_booking_list/model/get_brand_&_category_resonse.dart';
 import 'package:dms/ui/order_booking/order_booking_list/order_booking_tab.dart';
 import 'package:dms/ui/order_booking/order_confirmation/order_confirmation_screen.dart';
 import 'package:dms/utils/colors.dart';
@@ -13,7 +17,8 @@ class OrderBookingListScreen extends StatefulWidget {
   _OrderBookingListScreenState createState() => _OrderBookingListScreenState();
 }
 
-class _OrderBookingListScreenState extends State<OrderBookingListScreen> with TickerProviderStateMixin {
+class _OrderBookingListScreenState extends State<OrderBookingListScreen>
+    with TickerProviderStateMixin {
   late TabController tabController;
   String selectedPrice = "";
 
@@ -21,6 +26,7 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
   void initState() {
     tabController = TabController(length: 3, vsync: this);
     super.initState();
+    getBrandAndCategory();
   }
 
   @override
@@ -117,7 +123,8 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
           child: Column(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                 child: TextFormField(
                   style: const TextStyle(fontSize: 16),
                   decoration: InputDecoration(
@@ -127,15 +134,18 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5),
                           gapPadding: 2,
-                          borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                          borderSide: const BorderSide(
+                              width: 1, color: Color(0xffC5C5C5))),
                       disabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5),
                           gapPadding: 2,
-                          borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                          borderSide: const BorderSide(
+                              width: 1, color: Color(0xffC5C5C5))),
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5),
                           gapPadding: 2,
-                          borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                          borderSide: const BorderSide(
+                              width: 1, color: Color(0xffC5C5C5))),
                       prefixIcon: const Icon(
                         Icons.search,
                         color: Color(0xff555555),
@@ -158,7 +168,8 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
                         "Suggested",
                         style: Theme.of(context).textTheme.bodyText1!.merge(
                               TextStyle(
-                                color: const Color(0xff303030).withOpacity(0.85),
+                                color:
+                                    const Color(0xff303030).withOpacity(0.85),
                                 letterSpacing: 0.67,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 18,
@@ -171,7 +182,8 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
                         "Scheme 1",
                         style: Theme.of(context).textTheme.bodyText2!.merge(
                               TextStyle(
-                                color: const Color(0xff303030).withOpacity(0.85),
+                                color:
+                                    const Color(0xff303030).withOpacity(0.85),
                                 letterSpacing: 0.67,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 18,
@@ -184,7 +196,8 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
                         "Tiny Tush",
                         style: Theme.of(context).textTheme.bodyText2!.merge(
                               TextStyle(
-                                color: const Color(0xff303030).withOpacity(0.85),
+                                color:
+                                    const Color(0xff303030).withOpacity(0.85),
                                 letterSpacing: 0.67,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 18,
@@ -201,8 +214,24 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
       ),
       body: TabBarView(
         controller: tabController,
-        children: const [OrderBookingTab(index: 0), OrderBookingTab(index: 1), OrderBookingTab(index: 2)],
+        children: const [
+          OrderBookingTab(index: 0),
+          OrderBookingTab(index: 1),
+          OrderBookingTab(index: 2)
+        ],
       ),
     );
+  }
+
+  void getBrandAndCategory() async {
+    Map<String, dynamic> input = HashMap<String, dynamic>();
+    input["beat_id"] = "5";
+    GetBrandCategoryResponse response =
+        await repository.getBrandAndCategory(input);
+    if (response.success) {
+      debugPrint("response = ${response.message}");
+    } else {
+      debugPrint("response = ${response.message}");
+    }
   }
 }

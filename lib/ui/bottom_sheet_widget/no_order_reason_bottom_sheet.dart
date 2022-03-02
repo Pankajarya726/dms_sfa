@@ -44,8 +44,11 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
               minLines: 3,
               maxLines: 5,
               decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                  border: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.circular(10))),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(10))),
             ),
             const SizedBox(
               height: 15,
