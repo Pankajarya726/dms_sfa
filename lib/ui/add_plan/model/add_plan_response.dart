@@ -18,8 +18,8 @@ class AddPlanResponse {
   String toJson() => json.encode(toMap());
 
   factory AddPlanResponse.fromMap(Map<String, dynamic> json) => AddPlanResponse(
-        success: json["success"] ?? false,
-        message: json["message"] ?? "",
+        success: json["success"],
+        message: json["message"],
         data: json["data"] == null ? null : PlanDataModel.fromMap(json["data"]),
       );
 

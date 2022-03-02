@@ -43,13 +43,15 @@ class MyPlanBloc extends Bloc<MyPlanEvents, MyPlanStates> {
     bool pjpButton = await SharedPreference.getBooleanPreference(SharedPreference.showAddPlanButton);
     List<DateTime> months = [];
     debugPrint((DateFormat("MMMM").format(DateTime(DateTime.now().year, DateTime.now().month - 6, DateTime.now().day))).toString());
+
     DateTime now = DateTime.now();
     if (await Network.isConnected()) {
       now = await NTP.now();
     }
 
-    DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
-    debugPrint("${lastDayOfMonth.month}/${lastDayOfMonth.day}");
+    // DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+    //
+    // debugPrint("${lastDayOfMonth.month}/${lastDayOfMonth.day}");
 
     months.add(DateTime(
       now.year,
