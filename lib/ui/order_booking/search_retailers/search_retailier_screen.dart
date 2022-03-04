@@ -35,7 +35,8 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
               onChanged: (text) {
                 if (text.trim().isEmpty) {
                   retailers.clear();
-                  searchStream.addError("Enter Name or mobile number to search retailer");
+                  searchStream.addError(
+                      "Enter Name or mobile number to search retailer");
                 } else {
                   searchApi(text);
                 }
@@ -47,15 +48,18 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide:
+                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide:
+                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide:
+                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   suffixIcon: IconButton(
                     splashRadius: 20,
                     icon: const Icon(
@@ -66,7 +70,8 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
                       if (edtSearch.text.trim().isNotEmpty) {
                         edtSearch.clear();
                         retailers.clear();
-                        searchStream.addError("Enter Name or mobile number to search retailer");
+                        searchStream.addError(
+                            "Enter Name or mobile number to search retailer");
                       } else {
                         Navigator.pop(context);
                       }

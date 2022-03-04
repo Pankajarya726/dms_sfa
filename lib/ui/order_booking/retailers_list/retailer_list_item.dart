@@ -66,7 +66,8 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                         )));
           },
           child: Padding(
-            padding: const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
+            padding:
+                const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
             child: Column(
               children: [
                 Row(
@@ -173,7 +174,10 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                       child: Image(
                         width: 40,
                         height: 40,
-                        image: AssetImage(widget.retailer.enrollmentTypeId == "1" ? "assets/retailer.png" : "assets/retailer.png"),
+                        image: AssetImage(
+                            widget.retailer.enrollmentTypeId == "1"
+                                ? "assets/retailer.png"
+                                : "assets/retailer.png"),
                       ),
                     )
                   ],
@@ -190,7 +194,8 @@ class _RetailerListItemsState extends State<RetailerListItems> {
     Map<String, dynamic> input = HashMap<String, dynamic>();
     input["order_status"] = widget.orderStatus;
     input["beat_id"] = widget.beatId.toString();
-    GetRetailersResponse response = await repository.getRetailersOrderWise(input);
+    GetRetailersResponse response =
+        await repository.getRetailersOrderWise(input);
     if (response.success) {
       debugPrint("response = ${response.message}");
     } else {

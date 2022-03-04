@@ -22,19 +22,20 @@ class RetailerTab extends StatefulWidget {
   _RetailerTabState createState() => _RetailerTabState();
 }
 
-class _RetailerTabState extends State<RetailerTab> with AutomaticKeepAliveClientMixin<RetailerTab> {
+class _RetailerTabState extends State<RetailerTab>
+    with AutomaticKeepAliveClientMixin<RetailerTab> {
   List<RetailersModal> retailers = [];
   List<BeatsModal> beatList = [];
   BeatsModal? selectedBeat;
 
   String tag = "All";
-  StreamController<List<RetailersModal>> retailerStreamController = StreamController();
+  StreamController<List<RetailersModal>> retailerStreamController =
+      StreamController();
 
   @override
   void initState() {
     beatList.add(BeatsModal(id: "", name: "All"));
     selectedBeat = beatList.first;
-
     getAllBeats();
     super.initState();
   }
@@ -61,13 +62,22 @@ class _RetailerTabState extends State<RetailerTab> with AutomaticKeepAliveClient
                   child: CircularProgressIndicator(),
                 );
               }
+
+              if (snapshot.data == null) {
+                return Container();
+              }
+
               if (snapshot.hasError) {
                 return Center(
                   child: Text("${snapshot.error}"),
                 );
               }
 
-              if (snapshot.hasData && snapshot.data!.isEmpty) {
+              if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                retailers = snapshot.data!;
+              }
+
+              if (snapshot.data!.isEmpty) {
                 return const Center(
                   child: Text("Retailers not found"),
                 );
@@ -110,6 +120,8 @@ class _RetailerTabState extends State<RetailerTab> with AutomaticKeepAliveClient
         setState(() {});
       } else {
         Utility.showToast(response.message);
+        beatList.addAll(response.data!);
+        retailerStreamController.add(retailers);
       }
     } else {
       Utility.showToast(Constants.internetAlert);
@@ -121,7 +133,8 @@ class _RetailerTabState extends State<RetailerTab> with AutomaticKeepAliveClient
       Map<String, dynamic> input = HashMap<String, dynamic>();
       input["order_status"] = widget.index + 1;
       input["beat_id"] = selectedBeat!.id;
-      GetRetailersResponse response = await repository.getRetailersOrderWise(input);
+      GetRetailersResponse response =
+          await repository.getRetailersOrderWise(input);
       if (response.success) {
         retailers = response.data!;
         retailerStreamController.add(retailers);
@@ -142,7 +155,8 @@ class BeatWidget extends StatefulWidget {
   final List<BeatsModal> tags;
   final Function(BeatsModal tag) onSelect;
 
-  const BeatWidget({Key? key, required this.tags, required this.onSelect}) : super(key: key);
+  const BeatWidget({Key? key, required this.tags, required this.onSelect})
+      : super(key: key);
 
   @override
   _BeatWidgetState createState() => _BeatWidgetState();
@@ -175,12 +189,21 @@ class _BeatWidgetState extends State<BeatWidget> {
           textActiveColor: Colors.black,
           textColor: const Color(0xff555555),
           elevation: 0,
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+          textStyle: const TextStyle(
+              fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          border: Border.all(color: widget.tags[index].name == tag.name ? MColor.colorPrimary : const Color(0xffC5C5C5), width: 1.5),
+          border: Border.all(
+              color: widget.tags[index].name == tag.name
+                  ? MColor.colorPrimary
+                  : const Color(0xffC5C5C5),
+              width: 1.5),
           singleItem: true,
-          activeColor: widget.tags[index].name == tag.name ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
-          color: widget.tags[index].name == tag.name ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
+          activeColor: widget.tags[index].name == tag.name
+              ? const Color(0xffFFC9CC)
+              : const Color(0xffFAFAFA),
+          color: widget.tags[index].name == tag.name
+              ? const Color(0xffFFC9CC)
+              : const Color(0xffFAFAFA),
           title: widget.tags[index].name,
         );
       },
