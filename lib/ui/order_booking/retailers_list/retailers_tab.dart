@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:dms/listeners/select_beat_listerner.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/retailer_list_item.dart';
@@ -15,44 +16,45 @@ import '../../../main.dart';
 
 class RetailerTab extends StatefulWidget {
   final int index;
+  final BeatsModal selectedBeat;
+  final Function(SelectBeatListener listener) onInit;
 
-  const RetailerTab({Key? key, required this.index}) : super(key: key);
+  const RetailerTab({Key? key, required this.index, required this.onInit, required this.selectedBeat}) : super(key: key);
 
   @override
   _RetailerTabState createState() => _RetailerTabState();
 }
 
-class _RetailerTabState extends State<RetailerTab>
-    with AutomaticKeepAliveClientMixin<RetailerTab> {
+class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener {
   List<RetailersModal> retailers = [];
   List<BeatsModal> beatList = [];
   BeatsModal? selectedBeat;
 
   String tag = "All";
-  StreamController<List<RetailersModal>> retailerStreamController =
-      StreamController();
+  StreamController<List<RetailersModal>> retailerStreamController = StreamController();
 
   @override
   void initState() {
-    beatList.add(BeatsModal(id: "", name: "All"));
-    selectedBeat = beatList.first;
-    getAllBeats();
+    debugPrint("initState--->${widget.selectedBeat.id}");
+    widget.onInit(this);
+    selectedBeat = widget.selectedBeat;
+    getRetailers();
+
     super.initState();
   }
 
   @override
-  // ignore: must_call_super
   Widget build(BuildContext context) {
     return Column(
       children: [
-        BeatWidget(
-            tags: beatList,
-            onSelect: (BeatsModal tag) {
-              if (selectedBeat != tag) {
-                selectedBeat = tag;
-                getRetailers();
-              }
-            }),
+        // BeatWidget(
+        //     tags: beatList,
+        //     onSelect: (BeatsModal tag) {
+        //       if (selectedBeat != tag) {
+        //         selectedBeat = tag;
+        //         getRetailers();
+        //       }
+        //     }),
         Expanded(
           child: StreamBuilder<List<RetailersModal>>(
             stream: retailerStreamController.stream,
@@ -115,13 +117,13 @@ class _RetailerTabState extends State<RetailerTab>
     if (await Network.isConnected()) {
       GetAllBeatsResponse response = await repository.getAllBeats();
       if (response.success) {
+        beatList.add(BeatsModal(id: "", name: "All"));
         beatList.addAll(response.data!);
+        selectedBeat = beatList.first;
         getRetailers();
         setState(() {});
       } else {
         Utility.showToast(response.message);
-        beatList.addAll(response.data!);
-        retailerStreamController.add(retailers);
       }
     } else {
       Utility.showToast(Constants.internetAlert);
@@ -131,10 +133,9 @@ class _RetailerTabState extends State<RetailerTab>
   void getRetailers() async {
     if (await Network.isConnected()) {
       Map<String, dynamic> input = HashMap<String, dynamic>();
-      input["order_status"] = widget.index + 1;
+      input["order_status"] = widget.index;
       input["beat_id"] = selectedBeat!.id;
-      GetRetailersResponse response =
-          await repository.getRetailersOrderWise(input);
+      GetRetailersResponse response = await repository.getRetailersOrderWise(input);
       if (response.success) {
         retailers = response.data!;
         retailerStreamController.add(retailers);
@@ -148,15 +149,17 @@ class _RetailerTabState extends State<RetailerTab>
   }
 
   @override
-  bool get wantKeepAlive => retailers.isNotEmpty;
+  void onBeatSelect(BeatsModal beatsModal) {
+    selectedBeat = beatsModal;
+    getRetailers();
+  }
 }
 
 class BeatWidget extends StatefulWidget {
   final List<BeatsModal> tags;
   final Function(BeatsModal tag) onSelect;
 
-  const BeatWidget({Key? key, required this.tags, required this.onSelect})
-      : super(key: key);
+  const BeatWidget({Key? key, required this.tags, required this.onSelect}) : super(key: key);
 
   @override
   _BeatWidgetState createState() => _BeatWidgetState();
@@ -168,6 +171,7 @@ class _BeatWidgetState extends State<BeatWidget> {
   @override
   void initState() {
     super.initState();
+    widget.onSelect(tag);
   }
 
   @override
@@ -189,21 +193,12 @@ class _BeatWidgetState extends State<BeatWidget> {
           textActiveColor: Colors.black,
           textColor: const Color(0xff555555),
           elevation: 0,
-          textStyle: const TextStyle(
-              fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          border: Border.all(
-              color: widget.tags[index].name == tag.name
-                  ? MColor.colorPrimary
-                  : const Color(0xffC5C5C5),
-              width: 1.5),
+          border: Border.all(color: widget.tags[index].name == tag.name ? MColor.colorPrimary : const Color(0xffC5C5C5), width: 1.5),
           singleItem: true,
-          activeColor: widget.tags[index].name == tag.name
-              ? const Color(0xffFFC9CC)
-              : const Color(0xffFAFAFA),
-          color: widget.tags[index].name == tag.name
-              ? const Color(0xffFFC9CC)
-              : const Color(0xffFAFAFA),
+          activeColor: widget.tags[index].name == tag.name ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
+          color: widget.tags[index].name == tag.name ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
           title: widget.tags[index].name,
         );
       },

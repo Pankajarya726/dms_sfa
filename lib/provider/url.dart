@@ -33,6 +33,7 @@ class Url {
   static const String searchRetailer = "searchRetailer";
   static const String getBrandAndCategory = "getBrandAndCategoryBeatWise";
   static const String getAllBeats = "getBeatForLoginUser";
+  static const String getBeatByOrderBookingDay = "getBeatByOrderBookingDay";
   static const String getRetailerOrderWise = "getRetailerOrderWise";
   static const String getRetailerInfo = "retailerInfo";
 }

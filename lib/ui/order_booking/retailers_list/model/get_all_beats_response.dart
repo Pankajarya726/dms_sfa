@@ -20,14 +20,14 @@ class GetAllBeatsResponse {
   String toJson() => json.encode(toMap());
 
   factory GetAllBeatsResponse.fromMap(Map<String, dynamic> json) => GetAllBeatsResponse(
-        success: json["success"] == null ? null : json["success"],
-        message: json["message"] == null ? null : json["message"],
+        success: json["success"],
+        message: json["message"],
         data: json["data"] == null ? [] : List<BeatsModal>.from(json["data"].map((x) => BeatsModal.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
-        "success": success == null ? null : success,
-        "message": message == null ? null : message,
+        "success": success,
+        "message": message,
         "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
       };
 }
@@ -46,12 +46,12 @@ class BeatsModal {
   String toJson() => json.encode(toMap());
 
   factory BeatsModal.fromMap(Map<String, dynamic> json) => BeatsModal(
-        id: json["id"] == null ? "" : json["id"].toString(),
+        id: json["id"] == null ? "0" : json["id"].toString(),
         name: json["name"] == null ? "" : json["name"].toString(),
       );
 
   Map<String, dynamic> toMap() => {
-        "id": id == null ? null : id,
-        "name": name == null ? null : name,
+        "id": id,
+        "name": name,
       };
 }

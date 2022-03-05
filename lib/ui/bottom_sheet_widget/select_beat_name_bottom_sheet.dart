@@ -1,42 +1,39 @@
 import 'dart:async';
 import 'dart:collection';
+
 import 'package:dms/main.dart';
 import 'package:dms/ui/add_store/model/select_beat_response.dart';
+import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 
 class SelectBeatNameBottomSheet extends StatefulWidget {
-  final Function(BeatModal? beatModal) onBeatNameSelect;
-  final BeatModal? beatModal;
+  final Function(BeatsModal? beatsModal) onBeatNameSelect;
+  final BeatsModal? beatsModal;
   final String customerCode;
-  const SelectBeatNameBottomSheet(
-      {Key? key,
-      required this.onBeatNameSelect,
-      required this.beatModal,
-      required this.customerCode})
+  const SelectBeatNameBottomSheet({Key? key, required this.onBeatNameSelect, required this.beatsModal, required this.customerCode})
       : super(key: key);
 
   @override
-  _SelectBeatNameBottomSheetState createState() =>
-      _SelectBeatNameBottomSheetState();
+  _SelectBeatNameBottomSheetState createState() => _SelectBeatNameBottomSheetState();
 }
 
 class _SelectBeatNameBottomSheetState extends State<SelectBeatNameBottomSheet> {
   int groupValue = -1;
-  BeatModal? beatModal;
-  StreamController<List<BeatModal>> beatStream = StreamController();
-  List<BeatModal> beatList = [];
+  BeatsModal? beatsModal;
+  StreamController<List<BeatsModal>> beatStream = StreamController();
+  List<BeatsModal> beatList = [];
   String failureMessage = "";
 
   @override
   void initState() {
     super.initState();
-    if (widget.beatModal != null) {
-      debugPrint("widget.selectedDistrict!.id---->${widget.beatModal!.id}");
-      groupValue = widget.beatModal!.id;
-      beatModal = widget.beatModal;
+    if (widget.beatsModal != null) {
+      debugPrint("widget.selectedDistrict!.id---->${widget.beatsModal!.id}");
+      groupValue = int.parse(widget.beatsModal!.id);
+      beatsModal = widget.beatsModal;
     }
     getBeats();
   }
@@ -52,7 +49,7 @@ class _SelectBeatNameBottomSheetState extends State<SelectBeatNameBottomSheet> {
           topLeft: Radius.circular(25),
         ),
       ),
-      child: StreamBuilder<List<BeatModal>>(
+      child: StreamBuilder<List<BeatsModal>>(
           stream: beatStream.stream,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -93,7 +90,7 @@ class _SelectBeatNameBottomSheetState extends State<SelectBeatNameBottomSheet> {
                           snapshot.data!.length,
                           (index) => RadioListTile<int>(
                             contentPadding: const EdgeInsets.all(0),
-                            value: snapshot.data![index].id,
+                            value: int.parse(snapshot.data![index].id),
                             groupValue: groupValue,
                             title: Text(
                               snapshot.data![index].name,
@@ -119,17 +116,14 @@ class _SelectBeatNameBottomSheetState extends State<SelectBeatNameBottomSheet> {
                     child: ElevatedButton(
                       onPressed: () {
                         if (groupValue != -1) {
-                          beatModal = beatList.singleWhere(
-                              (element) => element.id == groupValue);
-                          widget.onBeatNameSelect(beatModal!);
+                          beatsModal = beatList.singleWhere((element) => element.id == groupValue.toString());
+                          widget.onBeatNameSelect(beatsModal!);
                         }
                         Navigator.pop(context);
                       },
                       style: ButtonStyle(
-                        fixedSize:
-                            MaterialStateProperty.all(const Size(180, 55)),
-                        backgroundColor:
-                            MaterialStateProperty.all(MColor.colorPrimary),
+                        fixedSize: MaterialStateProperty.all(const Size(180, 55)),
+                        backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
                         elevation: MaterialStateProperty.all(0),
                         shape: MaterialStateProperty.all(
                           RoundedRectangleBorder(

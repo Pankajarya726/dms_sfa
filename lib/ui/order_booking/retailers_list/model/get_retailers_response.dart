@@ -15,17 +15,12 @@ class GetRetailersResponse {
   String message;
   List<RetailersModal>? data;
 
-  factory GetRetailersResponse.fromJson(String str) =>
-      GetRetailersResponse.fromMap(json.decode(str));
+  factory GetRetailersResponse.fromJson(String str) => GetRetailersResponse.fromMap(json.decode(str));
 
-  factory GetRetailersResponse.fromMap(Map<String, dynamic> json) =>
-      GetRetailersResponse(
+  factory GetRetailersResponse.fromMap(Map<String, dynamic> json) => GetRetailersResponse(
         success: json["success"] ?? false,
         message: json["message"] ?? "",
-        data: json["data"] == null
-            ? []
-            : List<RetailersModal>.from(
-                json["data"].map((x) => RetailersModal.fromMap(x))),
+        data: json["data"] == null ? [] : List<RetailersModal>.from(json["data"].map((x) => RetailersModal.fromMap(x))),
       );
 }
 
@@ -76,51 +71,29 @@ class RetailersModal {
   String lat;
   String outletPicture;
 
-  factory RetailersModal.fromJson(String str) =>
-      RetailersModal.fromMap(json.decode(str));
+  factory RetailersModal.fromJson(String str) => RetailersModal.fromMap(json.decode(str));
 
   factory RetailersModal.fromMap(Map<String, dynamic> json) => RetailersModal(
-        customerId:
-            json["customer_id"] == null ? "" : json["customer_id"].toString(),
+        customerId: json["customer_id"] == null ? "" : json["customer_id"].toString(),
         userId: json["user_id"] == null ? "" : json["user_id"].toString(),
-        uniqueCode:
-            json["unique_code"] == null ? "" : json["unique_code"].toString(),
+        uniqueCode: json["unique_code"] == null ? "" : json["unique_code"].toString(),
         name: json["name"] == null ? "" : json["name"].toString(),
-        outlatName:
-            json["outlat_name"] == null ? "" : json["outlat_name"].toString(),
-        customerType: json["customer_type"] == null
-            ? ""
-            : json["customer_type"].toString(),
-        primaryMobile: json["primary_mobile"] == null
-            ? ""
-            : json["primary_mobile"].toString(),
-        secondaryMobile: json["secondary_mobile"] == null
-            ? ""
-            : json["secondary_mobile"].toString(),
+        outlatName: json["outlat_name"] == null ? "" : json["outlat_name"].toString(),
+        customerType: json["customer_type"] == null ? "" : json["customer_type"].toString(),
+        primaryMobile: json["primary_mobile"] == null ? "" : json["primary_mobile"].toString(),
+        secondaryMobile: json["secondary_mobile"] == null ? "" : json["secondary_mobile"].toString(),
         email: json["email"] == null ? "" : json["email"].toString(),
-        primaryAddress: json["primary_address"] == null
-            ? ""
-            : json["primary_address"].toString(),
-        retailerTypeId: json["retailer_type_id"] == null
-            ? ""
-            : json["retailer_type_id"].toString(),
-        retailerCategory: json["retailer_category"] == null
-            ? ""
-            : json["retailer_category"].toString(),
-        enrollmentTypeId: json["enrollment_type_id"] == null
-            ? ""
-            : json["enrollment_type_id"].toString(),
+        primaryAddress: json["primary_address"] == null ? "" : json["primary_address"].toString(),
+        retailerTypeId: json["retailer_type_id"] == null ? "" : json["retailer_type_id"].toString(),
+        retailerCategory: json["retailer_category"] == null ? "" : json["retailer_category"].toString(),
+        enrollmentTypeId: json["enrollment_type_id"] == null ? "" : json["enrollment_type_id"].toString(),
         landmark: json["landmark"] == null ? "" : json["landmark"].toString(),
-        locationId:
-            json["location_id"] == null ? "" : json["location_id"].toString(),
+        locationId: json["location_id"] == null ? "" : json["location_id"].toString(),
         beatId: json["beat_id"] == null ? "" : json["beat_id"].toString(),
         beatName: json["beat_name"] == null ? "" : json["beat_name"].toString(),
-        districtId:
-            json["district_id"] == null ? "" : json["district_id"].toString(),
+        districtId: json["district_id"] == null ? "" : json["district_id"].toString(),
         lng: json["lng"] == null ? "" : json["lng"].toString(),
         lat: json["lat"] == null ? "" : json["lat"].toString(),
-        outletPicture: json["outlet_picture"] == null
-            ? ""
-            : json["outlet_picture"].toString(),
+        outletPicture: json["outlet_picture"] == null ? "" : json["outlet_picture"].toString(),
       );
 }
