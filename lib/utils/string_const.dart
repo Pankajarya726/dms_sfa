@@ -92,7 +92,8 @@ class StringConst {
   static const done = "Done";
   static const selectLangFirst = "Select Language ";
   static const selectLangSecond = "Select Language ";
-  static const whatsAppSms = "Does retailer want to opt-in for Whatsapp message / SMS? *";
+  static const whatsAppSms =
+      "Does retailer want to opt-in for Whatsapp message / SMS? *";
   static const filter = "Filter";
   static const productInformation = "Product Info";
   static const schemeInfo = "Scheme Info";
@@ -107,4 +108,17 @@ class StringConst {
   static const submitAnyway = "Submit Anyway";
   static const pleaseEnterOTP = "Please Enter OTP";
   static const cancel = "Cancel";
+  static const sunday = "Sunday";
+  static const monday = "Monday";
+  static const tuesday = "Tuesday";
+  static const wednesday = "Wednesday";
+  static const thursday = "Thursday";
+  static const friday = "Friday";
+  static const saturday = "Saturday";
+  static const nearby = "Nearby";
+  static const sorting = "Sorting";
+  static const route = "Route";
+  static const getRoute = "Get Route";
+  static const selectBeat = "Select Beat";
+  static const selectEnrolmentType = "Select Enrolment Type";
 }

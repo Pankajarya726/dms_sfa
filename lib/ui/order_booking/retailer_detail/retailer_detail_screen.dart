@@ -8,12 +8,14 @@ import 'package:dms/ui/bottom_sheet_widget/no_order_reason_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/order_history_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/task_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/tele_caller_status_bottm_sheet.dart';
+import 'package:dms/ui/drawer_menu/home_screen/home_screen.dart';
 import 'package:dms/ui/order_booking/order_booking_list/order_booking_list_screen.dart';
 import 'package:dms/ui/order_booking/retailer_detail/bloc/retailer_details_bloc.dart';
 import 'package:dms/ui/order_booking/retailer_detail/bloc/retailer_details_events.dart';
 import 'package:dms/ui/order_booking/retailer_detail/bloc/retailer_details_states.dart';
 import 'package:dms/ui/order_booking/retailer_detail/model/retailer_details_response.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -62,6 +64,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
           if (retailer == null) {
             return Container();
           }
+
           return Scaffold(
             appBar: _appBar(AppBar().preferredSize.height),
             backgroundColor: const Color(0xffF7F7F7),
@@ -71,10 +74,13 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                   delegate: SliverChildListDelegate(
                     [
                       DetailGritItem(
-                        value: retailer!.lastVisit!.orderDate,
+                        value: retailer!.lastVisit!.isNotEmpty
+                            ? retailer!.lastVisit!.first.orderDate
+                            : "",
                         image: "assets/store.png",
                         name: "Last visit",
                         type: 1,
+                        retailerDetails: retailer!,
                       ),
                       const DetailGritItem(
                         value: "3",
@@ -294,7 +300,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                         padding: EdgeInsets.only(
                             left: 15, right: 10, bottom: 0, top: 10),
                         child: Text(
-                          "Remark",
+                          StringConst.remark,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
@@ -499,7 +505,16 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                       ),
                     ),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomeScreen(
+                              onInit: (value) {},
+                            ),
+                          ),
+                        );
+                      },
                       icon: const Icon(
                         Icons.home_outlined,
                         size: 30,
@@ -555,33 +570,49 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                     const SizedBox(
                       width: 15,
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          retailer!.outlatName,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            overflow: TextOverflow.ellipsis,
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            retailer!.outlatName,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          retailer!.beatName,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black,
-                            fontSize: 15,
-                            overflow: TextOverflow.ellipsis,
+                          const SizedBox(
+                            height: 5,
                           ),
+                          Text(
+                            retailer!.beatName,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                              fontSize: 15,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      width: 45,
+                      height: 45,
+                      child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: Image(
+                          width: 25,
+                          height: 25,
+                          image: AssetImage(retailer!.enrollmentTypeId == "1"
+                              ? "assets/retailer.png"
+                              : "assets/tele.png"),
                         ),
-                      ],
+                      ),
                     )
                   ],
                 ),
@@ -597,14 +628,16 @@ class DetailGritItem extends StatefulWidget {
   final String name;
   final String value;
   final int type;
+  final RetailerDetailsModal? retailerDetails;
 
-  const DetailGritItem(
-      {Key? key,
-      required this.image,
-      required this.name,
-      required this.value,
-      required this.type})
-      : super(key: key);
+  const DetailGritItem({
+    Key? key,
+    required this.image,
+    required this.name,
+    required this.value,
+    required this.type,
+    this.retailerDetails,
+  }) : super(key: key);
 
   @override
   _DetailGritItemState createState() => _DetailGritItemState();
@@ -621,7 +654,9 @@ class _DetailGritItemState extends State<DetailGritItem> {
           showModalBottomSheet(
               context: context,
               shape: bottomSheetShape,
-              builder: (context) => const LastVisitBottomSheet());
+              builder: (context) => LastVisitBottomSheet(
+                    retailerDetails: widget.retailerDetails,
+                  ));
         }
         if (widget.type == 2) {
           showModalBottomSheet(

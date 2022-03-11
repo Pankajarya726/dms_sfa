@@ -1,7 +1,4 @@
-import 'dart:collection';
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dms/main.dart';
 import 'package:dms/ui/order_booking/retailer_detail/retailer_detail_screen.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/utils/colors.dart';
@@ -29,7 +26,6 @@ class _RetailerListItemsState extends State<RetailerListItems> {
   @override
   void initState() {
     super.initState();
-    // getRetailerOrderWise();
   }
 
   @override
@@ -59,11 +55,13 @@ class _RetailerListItemsState extends State<RetailerListItems> {
           ),
           onTap: () {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => const RetailerDetailScreen(
-                          storeId: "150",
-                        )));
+              context,
+              MaterialPageRoute(
+                builder: (_) => RetailerDetailScreen(
+                  storeId: widget.retailer.userId,
+                ),
+              ),
+            );
           },
           child: Padding(
             padding:
@@ -177,7 +175,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                         image: AssetImage(
                             widget.retailer.enrollmentTypeId == "1"
                                 ? "assets/retailer.png"
-                                : "assets/retailer.png"),
+                                : "assets/tele.png"),
                       ),
                     )
                   ],
@@ -188,18 +186,5 @@ class _RetailerListItemsState extends State<RetailerListItems> {
         ),
       ),
     );
-  }
-
-  void getRetailerOrderWise() async {
-    Map<String, dynamic> input = HashMap<String, dynamic>();
-    input["order_status"] = widget.orderStatus;
-    input["beat_id"] = widget.beatId.toString();
-    GetRetailersResponse response =
-        await repository.getRetailersOrderWise(input);
-    if (response.success) {
-      debugPrint("response = ${response.message}");
-    } else {
-      debugPrint("response = ${response.message}");
-    }
   }
 }

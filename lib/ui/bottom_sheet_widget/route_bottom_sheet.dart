@@ -9,51 +9,24 @@ import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class FilterRetailerBottomSheet extends StatefulWidget {
-  final String day;
-  final String type;
-  final Function(String day, String type, BeatsModal selectedBeat) onFilter;
-  const FilterRetailerBottomSheet({
+class RouteBottomSheet extends StatefulWidget {
+  const RouteBottomSheet({
     Key? key,
-    required this.onFilter,
-    required this.day,
-    required this.type,
   }) : super(key: key);
 
   @override
-  _FilterRetailerBottomSheetState createState() =>
-      _FilterRetailerBottomSheetState();
+  _RouteBottomSheetState createState() => _RouteBottomSheetState();
 }
 
-class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
+class _RouteBottomSheetState extends State<RouteBottomSheet> {
   TextEditingController edtBookingDay = TextEditingController();
   TextEditingController edtPriority = TextEditingController();
 
-  List<String> days = [
-    StringConst.monday,
-    StringConst.tuesday,
-    StringConst.wednesday,
-    StringConst.thursday,
-    StringConst.friday,
-    StringConst.saturday,
-    StringConst.sunday,
-  ];
-  List<String> priorityType = [
-    StringConst.retailer,
-    StringConst.teleRetailer,
-  ];
-  String selectedDay = "";
   String selectedPrioType = "";
   List<BeatsModal> beats = [];
   BeatsModal beatModal = BeatsModal(id: "", name: "All");
-
-  @override
-  void initState() {
-    selectedDay = widget.day;
-    selectedPrioType = widget.type;
-    debugPrint("FilterRetailerBottomSheet");
-    super.initState();
-  }
+  bool retailerCheck = false;
+  bool teleRetailerCheck = false;
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +43,7 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                 height: 10,
               ),
               const Text(
-                StringConst.filter,
+                StringConst.route,
                 style: TextStyle(
                   color: MColor.colorPrimary,
                   fontSize: 18,
@@ -81,14 +54,14 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
               const SizedBox(
                 height: 20,
               ),
-              DropDownField(
-                prevSelected: selectedDay,
-                onSelect: (value) {
-                  debugPrint("select-->$value");
-                  selectedDay = value;
-                },
-                hint: "Select Order Booking Day",
-                menuList: days,
+              const Text(
+                StringConst.selectBeat,
+                style: TextStyle(
+                  color: MColor.inactiveTextColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.67,
+                ),
               ),
               BlocBuilder<RetailersBloc, RetailerState>(
                   builder: (context, state) {
@@ -111,17 +84,42 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                   ),
                 );
               }),
-              DropDownField(
-                prevSelected: selectedPrioType,
-                onSelect: (value) {
-                  debugPrint("select-->");
-                  selectedPrioType = value;
-                },
-                hint: "Select Priority Type",
-                menuList: priorityType,
+              const Text(
+                StringConst.selectEnrolmentType,
+                style: TextStyle(
+                  color: MColor.textColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.67,
+                ),
               ),
               const SizedBox(
-                height: 35,
+                height: 5,
+              ),
+              CheckboxListTile(
+                title: const Text(StringConst.retailer),
+                value: retailerCheck,
+                contentPadding: EdgeInsets.zero,
+                controlAffinity: ListTileControlAffinity.leading,
+                onChanged: (bool? value) {
+                  setState(() {
+                    retailerCheck = value!;
+                  });
+                },
+              ),
+              CheckboxListTile(
+                title: const Text(StringConst.teleRetailer),
+                value: teleRetailerCheck,
+                contentPadding: EdgeInsets.zero,
+                controlAffinity: ListTileControlAffinity.leading,
+                onChanged: (bool? value) {
+                  setState(() {
+                    teleRetailerCheck = value!;
+                  });
+                },
+              ),
+              const SizedBox(
+                height: 25,
               ),
               Padding(
                 padding: EdgeInsets.only(
@@ -131,19 +129,17 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                   children: [
                     MaterialButton(
                       onPressed: () {
-                        widget.onFilter(
-                            selectedDay, selectedPrioType, beatModal);
                         Navigator.pop(context);
                       },
                       height: 50,
-                      padding: const EdgeInsets.symmetric(horizontal: 55),
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
                       color: MColor.colorPrimary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
                       elevation: 0,
                       child: const Text(
-                        StringConst.done,
+                        StringConst.getRoute,
                         style: TextStyle(
                           letterSpacing: 0.67,
                           color: Colors.white,

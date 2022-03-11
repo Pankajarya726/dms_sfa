@@ -2,6 +2,8 @@ import 'package:dms/listeners/select_beat_listerner.dart';
 import 'package:dms/ui/add_store/outlet_information/outlet_information.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/filter_retailer_bottom_sheet.dart';
+import 'package:dms/ui/bottom_sheet_widget/route_bottom_sheet.dart';
+import 'package:dms/ui/bottom_sheet_widget/sort_retailer_bottom_sheet.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailer_bloc.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailers_event.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailers_state.dart';
@@ -14,18 +16,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RetailerListScreen extends StatefulWidget {
-  const RetailerListScreen({Key? key}) : super(key: key);
+  const RetailerListScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   _RetailerListScreenState createState() => _RetailerListScreenState();
 }
 
-class _RetailerListScreenState extends State<RetailerListScreen> with TickerProviderStateMixin {
+class _RetailerListScreenState extends State<RetailerListScreen>
+    with TickerProviderStateMixin {
   late TabController tabController;
   RetailersBloc retailersBloc = RetailersBloc();
   List<BeatsModal> beats = [];
   BeatsModal? selectedBeat;
   SelectBeatListener? selectBeatListener;
+  String selectedDay = "";
+  String selectedPrioType = "";
+  String sortSelected = "";
 
   @override
   void initState() {
@@ -51,7 +59,15 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                         context: context,
                         shape: bottomSheetShape,
                         builder: (context) {
-                          return const FilterRetailerBottomSheet();
+                          return SortingRetailersBottomSheet(
+                            selectedType: sortSelected,
+                            onSelect: (selected) {
+                              sortSelected = selected;
+                              if (selectBeatListener != null) {
+                                selectBeatListener!.onSorting(sortSelected);
+                              }
+                            },
+                          );
                         });
                   },
                   child: const Padding(
@@ -70,7 +86,7 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                         context: context,
                         shape: bottomSheetShape,
                         builder: (context) {
-                          return const FilterRetailerBottomSheet();
+                          return const RouteBottomSheet();
                         });
                   },
                   child: const Padding(
@@ -121,7 +137,19 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                         context: context,
                         shape: bottomSheetShape,
                         builder: (context) {
-                          return const FilterRetailerBottomSheet();
+                          return FilterRetailerBottomSheet(
+                            day: selectedDay,
+                            type: selectedPrioType,
+                            onFilter: (day, type, beatModal) {
+                              selectedDay = day;
+                              selectedPrioType = type;
+                              selectedBeat = beatModal;
+                              if (selectBeatListener != null) {
+                                selectBeatListener!
+                                    .onBeatSelect(selectedBeat!, day, type);
+                              }
+                            },
+                          );
                         });
                   },
                   icon: const Image(
@@ -153,7 +181,10 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                       style: const TextStyle(fontSize: 16),
                       readOnly: true,
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchRetailerScreen()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const SearchRetailerScreen()));
                       },
                       decoration: InputDecoration(
                           hintText: "Search",
@@ -162,15 +193,18 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5),
                               gapPadding: 2,
-                              borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                              borderSide: const BorderSide(
+                                  width: 1, color: Color(0xffC5C5C5))),
                           disabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5),
                               gapPadding: 2,
-                              borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                              borderSide: const BorderSide(
+                                  width: 1, color: Color(0xffC5C5C5))),
                           focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5),
                               gapPadding: 2,
-                              borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                              borderSide: const BorderSide(
+                                  width: 1, color: Color(0xffC5C5C5))),
                           prefixIcon: const Icon(
                             Icons.search,
                             color: Color(0xff555555),
@@ -186,30 +220,53 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                         indicatorWeight: 3,
                         indicatorColor: MColor.colorPrimary,
                         labelPadding: const EdgeInsets.symmetric(horizontal: 5),
-                        indicatorPadding: const EdgeInsets.symmetric(horizontal: 5),
+                        indicatorPadding:
+                            const EdgeInsets.symmetric(horizontal: 5),
                         onTap: (index) {
+                          // if (selectBeatListener != null) {
+                          //   selectBeatListener!.onBeatSelect(
+                          //       selectedBeat!, selectedDay, selectedPrioType);
+                          // }
                           debugPrint("select-tag-->${selectedBeat!.name}");
                         },
                         tabs: [
                           Tab(
                             child: Text(
                               "Not Connected",
-                              style: Theme.of(context).textTheme.bodyText1!.merge(TextStyle(
-                                  color: const Color(0xff303030).withOpacity(0.85), letterSpacing: 0.5, fontWeight: FontWeight.w600)),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .merge(TextStyle(
+                                      color: const Color(0xff303030)
+                                          .withOpacity(0.85),
+                                      letterSpacing: 0.5,
+                                      fontWeight: FontWeight.w600)),
                             ),
                           ),
                           Tab(
                             child: Text(
                               "No Order",
-                              style: Theme.of(context).textTheme.bodyText2!.merge(TextStyle(
-                                  color: const Color(0xff303030).withOpacity(0.85), letterSpacing: 0.5, fontWeight: FontWeight.w600)),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2!
+                                  .merge(TextStyle(
+                                      color: const Color(0xff303030)
+                                          .withOpacity(0.85),
+                                      letterSpacing: 0.5,
+                                      fontWeight: FontWeight.w600)),
                             ),
                           ),
                           Tab(
                             child: Text(
                               "Order",
-                              style: Theme.of(context).textTheme.bodyText2!.merge(TextStyle(
-                                  color: const Color(0xff303030).withOpacity(0.85), letterSpacing: 0.5, fontWeight: FontWeight.w600)),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2!
+                                  .merge(TextStyle(
+                                      color: const Color(0xff303030)
+                                          .withOpacity(0.85),
+                                      letterSpacing: 0.5,
+                                      fontWeight: FontWeight.w600)),
                             ),
                           ),
                         ]),
@@ -220,7 +277,8 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
           ),
           body: Column(
             children: [
-              BlocBuilder<RetailersBloc, RetailerState>(builder: (context, state) {
+              BlocBuilder<RetailersBloc, RetailerState>(
+                  builder: (context, state) {
                 if (state is RetailerInitState) {
                   retailersBloc.add(GetBeatEvent());
                 }
@@ -234,10 +292,11 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                   child: BeatWidget(
                     tags: beats,
                     onSelect: (BeatsModal tag) {
-                      debugPrint("onBeatSelect-->$tag");
+                      debugPrint("onBeatSelect-->${tag.name}");
                       selectedBeat = tag;
                       if (selectBeatListener != null) {
-                        selectBeatListener!.onBeatSelect(tag);
+                        selectBeatListener!.onBeatSelect(
+                            selectedBeat!, selectedDay, selectedPrioType);
                       }
                     },
                   ),
@@ -249,21 +308,27 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
                     RetailerTab(
-                      selectedBeat: selectedBeat ?? BeatsModal(id: "", name: "All"),
+                      selectedBeat: selectedBeat == null
+                          ? BeatsModal(id: "", name: "All")
+                          : selectedBeat!,
                       index: 1,
                       onInit: (SelectBeatListener listener) {
                         selectBeatListener = listener;
                       },
                     ),
                     RetailerTab(
-                      selectedBeat: selectedBeat ?? BeatsModal(id: "", name: "All"),
+                      selectedBeat: selectedBeat == null
+                          ? BeatsModal(id: "", name: "All")
+                          : selectedBeat!,
                       index: 2,
                       onInit: (SelectBeatListener listener) {
                         selectBeatListener = listener;
                       },
                     ),
                     RetailerTab(
-                      selectedBeat: selectedBeat ?? BeatsModal(id: "", name: "All"),
+                      selectedBeat: selectedBeat == null
+                          ? BeatsModal(id: "", name: "All")
+                          : selectedBeat!,
                       index: 3,
                       onInit: (SelectBeatListener listener) {
                         selectBeatListener = listener;
