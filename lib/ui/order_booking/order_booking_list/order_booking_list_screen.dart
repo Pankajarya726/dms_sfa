@@ -225,13 +225,13 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
 
   void getBrandAndCategory() async {
     Map<String, dynamic> input = HashMap<String, dynamic>();
-    input["beat_id"] = "5";
+    input["beat_id"] = "1";
     GetBrandCategoryResponse response =
         await repository.getBrandAndCategory(input);
     if (response.success) {
-      debugPrint("response = ${response.message}");
+      debugPrint("response getBrandAndCategory = ${response.message}");
     } else {
-      debugPrint("response = ${response.message}");
+      debugPrint("response getBrandAndCategory = ${response.message}");
     }
   }
 }

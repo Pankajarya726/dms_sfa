@@ -76,6 +76,7 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
                   height: 70,
                   width: MediaQuery.of(context).size.width,
                   child: BeatWidget(
+                    selectedBeat: "",
                     tags: beats,
                     onSelect: (BeatsModal tag) {
                       debugPrint("onBeatSelect-->${tag.name}");

@@ -229,9 +229,14 @@ class _RetailerTabState extends State<RetailerTab>
 class BeatWidget extends StatefulWidget {
   final List<BeatsModal> tags;
   final Function(BeatsModal tag) onSelect;
+  final String selectedBeat;
 
-  const BeatWidget({Key? key, required this.tags, required this.onSelect})
-      : super(key: key);
+  const BeatWidget({
+    Key? key,
+    required this.tags,
+    required this.onSelect,
+    required this.selectedBeat,
+  }) : super(key: key);
 
   @override
   _BeatWidgetState createState() => _BeatWidgetState();
@@ -242,8 +247,16 @@ class _BeatWidgetState extends State<BeatWidget> {
 
   @override
   void initState() {
-    super.initState();
     widget.onSelect(tag);
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(BeatWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedBeat.isNotEmpty) {
+      tag.name = widget.selectedBeat;
+    }
   }
 
   @override

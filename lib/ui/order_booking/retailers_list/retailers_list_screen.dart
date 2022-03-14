@@ -29,11 +29,12 @@ class _RetailerListScreenState extends State<RetailerListScreen>
   late TabController tabController;
   RetailersBloc retailersBloc = RetailersBloc();
   List<BeatsModal> beats = [];
-  BeatsModal? selectedBeat;
+  BeatsModal? beatModal;
   SelectBeatListener? selectBeatListener;
   String selectedDay = "";
   String selectedPrioType = "";
   String sortSelected = "";
+  String selectedBeat = "";
 
   @override
   void initState() {
@@ -138,15 +139,21 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                         shape: bottomSheetShape,
                         builder: (context) {
                           return FilterRetailerBottomSheet(
+                            beatList: beats,
                             day: selectedDay,
                             type: selectedPrioType,
-                            onFilter: (day, type, beatModal) {
+                            beat: selectedBeat,
+                            onFilter: (day, type, beat) {
                               selectedDay = day;
                               selectedPrioType = type;
-                              selectedBeat = beatModal;
-                              if (selectBeatListener != null) {
-                                selectBeatListener!
-                                    .onBeatSelect(selectedBeat!, day, type);
+                              selectedBeat = beat;
+                              if (selectedBeat.isNotEmpty) {
+                                retailersBloc.add(GetBeatEvent());
+                              }
+                            },
+                            onBeatSelected: (beatsM) {
+                              if (beatsM != null) {
+                                beatModal = beatsM;
                               }
                             },
                           );
@@ -225,9 +232,9 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                         onTap: (index) {
                           // if (selectBeatListener != null) {
                           //   selectBeatListener!.onBeatSelect(
-                          //       selectedBeat!, selectedDay, selectedPrioType);
+                          //       beatModal!, selectedDay, selectedPrioType);
                           // }
-                          debugPrint("select-tag-->${selectedBeat!.name}");
+                          debugPrint("select-tag-->${beatModal!.name}");
                         },
                         tabs: [
                           Tab(
@@ -284,19 +291,27 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                 }
                 if (state is GetBeatState) {
                   beats = state.beats;
-                  selectedBeat = beats.first;
+                  if (selectedBeat.isEmpty) {
+                    beatModal = beats.first;
+                  }
+                  if (selectBeatListener != null) {
+                    selectBeatListener!.onBeatSelect(
+                        beatModal!, selectedDay, selectedPrioType);
+                  }
                 }
+
                 return SizedBox(
                   height: 70,
                   width: MediaQuery.of(context).size.width,
                   child: BeatWidget(
                     tags: beats,
+                    selectedBeat: selectedBeat,
                     onSelect: (BeatsModal tag) {
                       debugPrint("onBeatSelect-->${tag.name}");
-                      selectedBeat = tag;
+                      beatModal = tag;
                       if (selectBeatListener != null) {
                         selectBeatListener!.onBeatSelect(
-                            selectedBeat!, selectedDay, selectedPrioType);
+                            beatModal!, selectedDay, selectedPrioType);
                       }
                     },
                   ),
@@ -308,27 +323,27 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
                     RetailerTab(
-                      selectedBeat: selectedBeat == null
+                      selectedBeat: beatModal == null
                           ? BeatsModal(id: "", name: "All")
-                          : selectedBeat!,
+                          : beatModal!,
                       index: 1,
                       onInit: (SelectBeatListener listener) {
                         selectBeatListener = listener;
                       },
                     ),
                     RetailerTab(
-                      selectedBeat: selectedBeat == null
+                      selectedBeat: beatModal == null
                           ? BeatsModal(id: "", name: "All")
-                          : selectedBeat!,
+                          : beatModal!,
                       index: 2,
                       onInit: (SelectBeatListener listener) {
                         selectBeatListener = listener;
                       },
                     ),
                     RetailerTab(
-                      selectedBeat: selectedBeat == null
+                      selectedBeat: beatModal == null
                           ? BeatsModal(id: "", name: "All")
-                          : selectedBeat!,
+                          : beatModal!,
                       index: 3,
                       onInit: (SelectBeatListener listener) {
                         selectBeatListener = listener;

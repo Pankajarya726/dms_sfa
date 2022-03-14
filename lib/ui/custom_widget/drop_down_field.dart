@@ -1,3 +1,4 @@
+import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
 import 'package:flutter/material.dart';
 
 class DropDownField extends StatefulWidget {
@@ -5,13 +6,17 @@ class DropDownField extends StatefulWidget {
   final String? hint;
   final List<String> menuList;
   final String prevSelected;
+  List<BeatsModal>? beats;
+  Function(BeatsModal? value)? onBeatSelected;
 
-  const DropDownField({
+  DropDownField({
     Key? key,
     required this.onSelect,
     this.hint = "Select",
     required this.menuList,
     required this.prevSelected,
+    this.beats,
+    this.onBeatSelected,
   }) : super(key: key);
 
   @override
@@ -36,14 +41,21 @@ class _DropDownFieldState extends State<DropDownField> {
     return PopupMenuButton(
       itemBuilder: (context) {
         return List.generate(
-          widget.menuList.length,
+          widget.beats == null ? widget.menuList.length : widget.beats!.length,
           (index) {
-            return PopupMenuItem(
-              value: widget.menuList[index],
-              child: ListTile(
-                title: Text(widget.menuList[index]),
-              ),
-            );
+            return widget.beats == null
+                ? PopupMenuItem(
+                    value: widget.menuList[index],
+                    child: ListTile(
+                      title: Text(widget.menuList[index]),
+                    ),
+                  )
+                : PopupMenuItem(
+                    value: widget.beats![index].name,
+                    child: ListTile(
+                      title: Text(widget.beats![index].name),
+                    ),
+                  );
           },
         );
       },
@@ -68,6 +80,13 @@ class _DropDownFieldState extends State<DropDownField> {
         debugPrint("item---->$item");
         selected = item.toString();
         widget.onSelect(item.toString());
+        if (widget.beats != null) {
+          for (BeatsModal modal in widget.beats!) {
+            if (selected == modal.name) {
+              widget.onBeatSelected!(modal);
+            }
+          }
+        }
         setState(() {});
       },
       child: Container(

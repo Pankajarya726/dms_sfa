@@ -1,9 +1,6 @@
 import 'package:dms/ui/custom_widget/drop_down_field.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailer_bloc.dart';
-import 'package:dms/ui/order_booking/retailers_list/bloc/retailers_event.dart';
-import 'package:dms/ui/order_booking/retailers_list/bloc/retailers_state.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
-import 'package:dms/ui/order_booking/retailers_list/retailers_tab.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
@@ -12,12 +9,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class FilterRetailerBottomSheet extends StatefulWidget {
   final String day;
   final String type;
-  final Function(String day, String type, BeatsModal selectedBeat) onFilter;
+  final String beat;
+  final List<BeatsModal> beatList;
+  final Function(String day, String type, String selectedBeat) onFilter;
+  final Function(BeatsModal? beatsModal) onBeatSelected;
   const FilterRetailerBottomSheet({
     Key? key,
     required this.onFilter,
     required this.day,
     required this.type,
+    required this.beat,
+    required this.beatList,
+    required this.onBeatSelected,
   }) : super(key: key);
 
   @override
@@ -44,14 +47,17 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
   ];
   String selectedDay = "";
   String selectedPrioType = "";
+  String selectedBeat = "";
   List<BeatsModal> beats = [];
-  BeatsModal beatModal = BeatsModal(id: "", name: "All");
+  BeatsModal? beatsModal;
 
   @override
   void initState() {
     selectedDay = widget.day;
     selectedPrioType = widget.type;
+    selectedBeat = widget.beat;
     debugPrint("FilterRetailerBottomSheet");
+    beats = widget.beatList;
     super.initState();
   }
 
@@ -90,27 +96,27 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                 hint: "Select Order Booking Day",
                 menuList: days,
               ),
-              BlocBuilder<RetailersBloc, RetailerState>(
-                  builder: (context, state) {
-                if (state is RetailerInitState) {
-                  BlocProvider.of<RetailersBloc>(context).add(GetBeatEvent());
-                }
-                if (state is GetBeatState) {
-                  beats = state.beats;
-                  beatModal = beats.first;
-                }
-                return SizedBox(
-                  height: 70,
-                  width: MediaQuery.of(context).size.width,
-                  child: BeatWidget(
-                    tags: beats,
-                    onSelect: (BeatsModal tag) {
-                      debugPrint("onBeatSelect-->${tag.name}");
-                      beatModal = tag;
-                    },
-                  ),
-                );
-              }),
+              const SizedBox(
+                height: 20,
+              ),
+              DropDownField(
+                prevSelected: selectedBeat,
+                onSelect: (value) {
+                  debugPrint("select-->$value");
+                  selectedBeat = value;
+                },
+                hint: "Select Beat",
+                menuList: days,
+                beats: beats,
+                onBeatSelected: (beatsM) {
+                  if (beatsM != null) {
+                    beatsModal = beatsM;
+                  }
+                },
+              ),
+              const SizedBox(
+                height: 20,
+              ),
               DropDownField(
                 prevSelected: selectedPrioType,
                 onSelect: (value) {
@@ -132,7 +138,10 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                     MaterialButton(
                       onPressed: () {
                         widget.onFilter(
-                            selectedDay, selectedPrioType, beatModal);
+                            selectedDay, selectedPrioType, selectedBeat);
+                        if (beatsModal != null) {
+                          widget.onBeatSelected(beatsModal!);
+                        }
                         Navigator.pop(context);
                       },
                       height: 50,

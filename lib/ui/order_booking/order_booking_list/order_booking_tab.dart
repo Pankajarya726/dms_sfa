@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'dart:collection';
+import 'package:dms/main.dart';
+import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
 import 'package:dms/ui/order_booking/order_booking_list/order_booking_list_item.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
@@ -28,13 +31,14 @@ class _OrderBookingTabState extends State<OrderBookingTab> {
   void initState() {
     getFlavours();
     super.initState();
+    getProducts();
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        BeatWidget(
+        BeatsWidget(
             tags: tags,
             onSelect: (String tag) {
               if (tag == "All") {
@@ -87,6 +91,20 @@ class _OrderBookingTabState extends State<OrderBookingTab> {
     );
   }
 
+  getProducts() async {
+    Map<String, dynamic> input = HashMap<String, dynamic>();
+    input["beat_id"] = "27";
+    input["brand_id"] = "1";
+    input["category_id"] = "";
+    input["retailer_id"] = "27";
+    GetProductsResponse response = await repository.getProducts(input);
+    if (response.success) {
+      print("response ${response.message}");
+    } else {
+      print("response ${response.message}");
+    }
+  }
+
   void getFlavours() async {
     flavours.add(Flavours(
       flavourName: "Glow Pop Red Rose",
@@ -134,18 +152,18 @@ class _OrderBookingTabState extends State<OrderBookingTab> {
   }
 }
 
-class BeatWidget extends StatefulWidget {
+class BeatsWidget extends StatefulWidget {
   final List<String> tags;
   final Function(String tag) onSelect;
 
-  const BeatWidget({Key? key, required this.tags, required this.onSelect})
+  const BeatsWidget({Key? key, required this.tags, required this.onSelect})
       : super(key: key);
 
   @override
-  _BeatWidgetState createState() => _BeatWidgetState();
+  _BeatsWidgetState createState() => _BeatsWidgetState();
 }
 
-class _BeatWidgetState extends State<BeatWidget> {
+class _BeatsWidgetState extends State<BeatsWidget> {
   String tag = "All";
   @override
   void initState() {

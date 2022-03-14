@@ -36,4 +36,5 @@ class Url {
   static const String getBeatByOrderBookingDay = "getBeatByOrderBookingDay";
   static const String getRetailerOrderWise = "getRetailerOrderWise";
   static const String getRetailerInfo = "retailerInfo";
+  static const String getProducts = "getAllProductBeatWise";
 }
