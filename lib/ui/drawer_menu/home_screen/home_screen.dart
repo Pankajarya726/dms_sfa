@@ -1,12 +1,10 @@
 // ignore_for_file: use_key_in_widget_constructors
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dms/ui/add_store/outlet_information/outlet_information.dart';
 import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_bloc.dart';
 import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_events.dart';
 import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_states.dart';
 import 'package:dms/ui/my_plan/my_plan.dart';
-import 'package:dms/ui/order_booking/retailers_list/retailers_list_screen.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +13,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kf_drawer/kf_drawer.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+
 import 'model/get_menus_response.dart';
 
 // ignore: must_be_immutable
@@ -317,7 +316,7 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
   void navigateToHomeItems(index) {
     switch (index) {
       case 0:
-        Fluttertoast.showToast(msg:StringConst. comingSoon);
+        Fluttertoast.showToast(msg: StringConst.comingSoon);
         break;
       case 1:
         Fluttertoast.showToast(msg: StringConst.comingSoon);
@@ -326,12 +325,12 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
         Fluttertoast.showToast(msg: StringConst.comingSoon);
         break;
       case 3:
-        // Fluttertoast.showToast(msg: StringConst.comingSoon);
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const OutletInformation()));
+        Fluttertoast.showToast(msg: StringConst.comingSoon);
+        // Navigator.push(context, MaterialPageRoute(builder: (context) => const OutletInformation()));
         break;
       case 4:
-        // Fluttertoast.showToast(msg: StringConst.comingSoon);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const RetailerListScreen()));
+        Fluttertoast.showToast(msg: StringConst.comingSoon);
+        // Navigator.push(context, MaterialPageRoute(builder: (context) => const RetailerListScreen()));
         break;
       case 5:
         Fluttertoast.showToast(msg: StringConst.comingSoon);

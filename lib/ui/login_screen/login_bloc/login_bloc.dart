@@ -27,7 +27,7 @@ class LoginBloc extends Bloc<LoginEvents, LoginState> {
     if (await Network.isConnected()) {
       EasyLoading.show();
       LoginResponse response = await repository.login(event.mobileNumber, event.password);
-      EasyLoading.dismiss();
+
       if (response.success) {
         SharedPreference.setStringPreference(SharedPreference.accessToken, response.data!.accessToken);
         options.headers.addAll({
@@ -35,6 +35,7 @@ class LoginBloc extends Bloc<LoginEvents, LoginState> {
         });
         yield LoginSuccessState(data: response.data!);
       } else {
+        EasyLoading.dismiss();
         yield LoginFailureState(message: response.message);
       }
     } else {
@@ -47,13 +48,18 @@ class LoginBloc extends Bloc<LoginEvents, LoginState> {
       String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
 
       GetUserResponse response = await repository.getUserDetailsByUserId(userId);
-
+      if (EasyLoading.isShow) {
+        EasyLoading.dismiss();
+      }
       if (response.success) {
         yield GetUserDetailsState(userDetails: response);
       } else {
         yield LoginFailureState(message: response.message);
       }
     } else {
+      if (EasyLoading.isShow) {
+        EasyLoading.dismiss();
+      }
       yield LoginFailureState(message: "Please check your internet connection!");
     }
   }

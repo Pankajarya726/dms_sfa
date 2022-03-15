@@ -39,8 +39,9 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
 
   Stream<StartMyDayStates> getQuotesAndImages(GetQuotesAndImagesEvent event) async* {
     if (await Network.isConnected()) {
-      DateTime _ntpTime;
-      _ntpTime = await NTP.now();
+      DateTime _ntpTime = await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
+        return DateTime.now();
+      });
 
       QuotesAndImagesResponse response = await repository.getQuotesAndImages();
 
@@ -73,8 +74,9 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
   Stream<StartMyDayStates> endMyDay(EndMyDayEvent event) async* {
     if (await Network.isConnected()) {
       String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
-      DateTime _ntpTime;
-      _ntpTime = await NTP.now();
+      DateTime _ntpTime = await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
+        return DateTime.now();
+      });
       String webtime = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
       String address = "";
 

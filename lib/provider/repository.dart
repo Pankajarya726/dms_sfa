@@ -676,7 +676,7 @@ class ApiRepository {
 
   Future<SelectBeatResponse> selectBeat(Map input) async {
     try {
-      Response response = await dio.post(Url.getDistibutorsBeat, data: input);
+      Response response = await dio.post(Url.getDistributorsBeat, data: input);
       SelectBeatResponse baseResponse = SelectBeatResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
@@ -824,7 +824,9 @@ class ApiRepository {
 
   Future<GetAllBeatsResponse> getBeatByOrderBookingDay() async {
     try {
-      DateTime dateTime = await NTP.now();
+      DateTime dateTime = await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
+        return DateTime.now();
+      });
       Map<String, dynamic> input = {"day": DateFormat("EEEE").format(dateTime)};
 
       Response response = await dio.post(Url.getBeatByOrderBookingDay, data: input);

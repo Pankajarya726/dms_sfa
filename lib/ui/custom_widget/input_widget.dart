@@ -32,8 +32,7 @@ class _NameEditTextState extends State<NameEditText> {
       onChanged: widget.onChange,
       onTap: () async {
         await Future.delayed(const Duration(milliseconds: 500));
-        RenderObject? object =
-            widget.globalKey.currentContext!.findRenderObject();
+        RenderObject? object = widget.globalKey.currentContext!.findRenderObject();
         object!.showOnScreen();
       },
       autofocus: false,
@@ -91,8 +90,7 @@ class _MobileEditTextState extends State<MobileEditText> {
     return TextFormField(
       onTap: () async {
         await Future.delayed(const Duration(milliseconds: 500));
-        RenderObject? object =
-            widget.globalKey.currentContext!.findRenderObject();
+        RenderObject? object = widget.globalKey.currentContext!.findRenderObject();
         object!.showOnScreen();
       },
       autofocus: false,
@@ -152,8 +150,7 @@ class _GSTEditTextState extends State<GSTEditText> {
     return TextFormField(
       onTap: () async {
         await Future.delayed(const Duration(milliseconds: 500));
-        RenderObject? object =
-            widget.globalKey.currentContext!.findRenderObject();
+        RenderObject? object = widget.globalKey.currentContext!.findRenderObject();
         object!.showOnScreen();
       },
       autofocus: false,
@@ -194,12 +191,7 @@ class PANEditText extends StatefulWidget {
   final String hint;
   final GlobalKey globalKey;
   final Function(String text) onChange;
-  const PANEditText(
-      {Key? key,
-      required this.controller,
-      required this.hint,
-      required this.globalKey,
-      required this.onChange})
+  const PANEditText({Key? key, required this.controller, required this.hint, required this.globalKey, required this.onChange})
       : super(key: key);
 
   @override
@@ -214,8 +206,7 @@ class _PANEditTextState extends State<PANEditText> {
       autofocus: false,
       onTap: () async {
         await Future.delayed(const Duration(milliseconds: 500));
-        RenderObject? object =
-            widget.globalKey.currentContext!.findRenderObject();
+        RenderObject? object = widget.globalKey.currentContext!.findRenderObject();
         object!.showOnScreen();
       },
       style: const TextStyle(
@@ -255,12 +246,7 @@ class AadharEditText extends StatefulWidget {
   final String hint;
   final GlobalKey globalKey;
   final Function(String text) onChange;
-  const AadharEditText(
-      {Key? key,
-      required this.controller,
-      required this.hint,
-      required this.globalKey,
-      required this.onChange})
+  const AadharEditText({Key? key, required this.controller, required this.hint, required this.globalKey, required this.onChange})
       : super(key: key);
 
   @override
@@ -275,8 +261,7 @@ class _AadharEditTextState extends State<AadharEditText> {
       autofocus: false,
       onTap: () async {
         await Future.delayed(const Duration(milliseconds: 500));
-        RenderObject? object =
-            widget.globalKey.currentContext!.findRenderObject();
+        RenderObject? object = widget.globalKey.currentContext!.findRenderObject();
         object!.showOnScreen();
       },
       style: const TextStyle(
@@ -341,30 +326,35 @@ class _DateEditTextState extends State<DateEditText> {
       onTap: () async {
         FocusScope.of(context).unfocus();
         if (widget.name == StringConst.birthday) {
-          dateTimeBirth ??= await NTP.now();
+          dateTimeBirth ??= await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
+            return DateTime.now();
+          });
           dateTimeBirth = await showDatePicker(
-            context: context,
-            initialDate: dateTimeBirth!,
-            firstDate: DateTime(1950),
-            lastDate: await NTP.now(),
-          );
+              context: context,
+              initialDate: dateTimeBirth!,
+              firstDate: DateTime(1950),
+              lastDate: await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
+                return DateTime.now();
+              }));
           if (dateTimeBirth != null) {
-            BlocProvider.of<CommonBloc>(context)
-                .add(CommonBlocBirthdayEvent(dateTime: dateTimeBirth!));
+            BlocProvider.of<CommonBloc>(context).add(CommonBlocBirthdayEvent(dateTime: dateTimeBirth!));
           }
         }
 
         if (widget.name == StringConst.anniversary) {
-          dateTimeAnniversary ??= await NTP.now();
+          dateTimeAnniversary ??= await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
+            return DateTime.now();
+          });
           dateTimeAnniversary = await showDatePicker(
             context: context,
             initialDate: dateTimeAnniversary!,
             firstDate: DateTime(1950),
-            lastDate: await NTP.now(),
+            lastDate: await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
+              return DateTime.now();
+            }),
           );
           if (dateTimeAnniversary != null) {
-            BlocProvider.of<CommonBloc>(context).add(
-                CommonBlocAnniversaryEvent(dateTime: dateTimeAnniversary!));
+            BlocProvider.of<CommonBloc>(context).add(CommonBlocAnniversaryEvent(dateTime: dateTimeAnniversary!));
           }
         }
       },
@@ -481,13 +471,11 @@ class _NormalEditTextState extends State<NormalEditText> {
       onTap: () async {
         if (widget.name == StringConst.address) {
           await Future.delayed(const Duration(milliseconds: 500));
-          RenderObject? object =
-              widget.globalKey.currentContext!.findRenderObject();
+          RenderObject? object = widget.globalKey.currentContext!.findRenderObject();
           object!.showOnScreen();
         } else {
           await Future.delayed(const Duration(milliseconds: 500));
-          RenderObject? object =
-              widget.globalKey.currentContext!.findRenderObject();
+          RenderObject? object = widget.globalKey.currentContext!.findRenderObject();
           object!.showOnScreen();
         }
       },

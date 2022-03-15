@@ -42,8 +42,8 @@ class ServerError implements Exception {
       case DioErrorType.response:
         _errorMessage = "Internal server error";
         if (error.response!.statusCode == 401) {
+          _errorMessage = "";
           debugPrint("come here-->");
-
           logout();
         }
 

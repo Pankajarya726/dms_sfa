@@ -177,6 +177,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               child: TextFormField(
                                 maxLength: 30,
                                 controller: edtNAme,
+                                readOnly: true,
                                 style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),
                                 autocorrect: true,
                                 enableSuggestions: true,
@@ -200,6 +201,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               padding: const EdgeInsets.fromLTRB(20, 10, 20, 50),
                               child: TextFormField(
                                 controller: edtEmail,
+                                readOnly: true,
                                 style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),
                                 autocorrect: true,
                                 enableSuggestions: true,
