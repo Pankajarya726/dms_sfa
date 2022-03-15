@@ -150,6 +150,10 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                               if (selectedBeat.isNotEmpty) {
                                 retailersBloc.add(GetBeatEvent());
                               }
+                              if (selectBeatListener != null) {
+                                selectBeatListener!.onBeatSelect(
+                                    beatModal!, selectedDay, selectedPrioType);
+                              }
                             },
                             onBeatSelected: (beatsM) {
                               if (beatsM != null) {
@@ -293,10 +297,6 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                   beats = state.beats;
                   if (selectedBeat.isEmpty) {
                     beatModal = beats.first;
-                  }
-                  if (selectBeatListener != null) {
-                    selectBeatListener!.onBeatSelect(
-                        beatModal!, selectedDay, selectedPrioType);
                   }
                 }
 

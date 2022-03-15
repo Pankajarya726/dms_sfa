@@ -1,15 +1,19 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/box_moq_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/product_info_bottom_sheet.dart';
 import 'package:dms/ui/order_booking/order_booking_list/full_screen_image_view.dart';
+import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class OrderBookingListItems extends StatefulWidget {
   final int index;
-  final Flavours flavours;
+  final ProductsModal products;
 
-  const OrderBookingListItems({Key? key, required this.index, required this.flavours}) : super(key: key);
+  const OrderBookingListItems(
+      {Key? key, required this.index, required this.products})
+      : super(key: key);
 
   @override
   State<OrderBookingListItems> createState() => _OrderBookingListItemsState();
@@ -45,10 +49,13 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                 context: context,
                 shape: bottomSheetShape,
                 isScrollControlled: true,
-                builder: (context) => const ProductInfoBottomSheet());
+                builder: (context) => ProductInfoBottomSheet(
+                      products: widget.products,
+                    ));
           },
           child: Padding(
-            padding: const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
+            padding:
+                const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
             child: Column(
               children: [
                 Row(
@@ -57,16 +64,30 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => FullScreenImageView(productImage: widget.flavours.image)),
+                          MaterialPageRoute(
+                              builder: (context) => FullScreenImageView(
+                                  productImage: widget.products.image)),
                         );
                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5),
-                        child: Image(
+                        child: CachedNetworkImage(
                           width: 80,
                           height: 80,
-                          fit: BoxFit.fill,
-                          image: NetworkImage(widget.flavours.image),
+                          fit: BoxFit.cover,
+                          imageUrl: widget.products.image,
+                          imageBuilder: (context, imageProvider) {
+                            return Image(
+                              image: imageProvider,
+                              width: 80,
+                              height: 80,
+                              fit: BoxFit.cover,
+                            );
+                          },
+                          errorWidget: (context, url, error) =>
+                              Image.asset("assets/placeholder.png"),
+                          placeholder: (context, url) =>
+                              Image.asset("assets/placeholder.png"),
                         ),
                       ),
                     ),
@@ -82,34 +103,54 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.flavours.flavourName,
+                              widget.products.productName,
                               style: const TextStyle(
                                 letterSpacing: 0.67,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                                color: MColor.backButton,
+                                color: MColor.textColor,
+                                overflow: TextOverflow.ellipsis,
+                                fontWeight: FontWeight.bold,
                               ),
-                              overflow: TextOverflow.ellipsis,
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  widget.flavours.mrp,
-                                  style: const TextStyle(
-                                    letterSpacing: 0.67,
-                                    color: MColor.textColor,
-                                    overflow: TextOverflow.ellipsis,
-                                    fontWeight: FontWeight.bold,
+                                RichText(
+                                  text: TextSpan(
+                                    text: "MRP: ",
+                                    style: const TextStyle(
+                                      letterSpacing: 0.67,
+                                      color: MColor.textColor,
+                                    ),
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                        text: "₹" + widget.products.mrp,
+                                        style: const TextStyle(
+                                          letterSpacing: 0.67,
+                                          color: Colors.black,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                Text(
-                                  widget.flavours.ptr,
-                                  style: const TextStyle(
-                                    letterSpacing: 0.67,
-                                    color: MColor.textColor,
-                                    overflow: TextOverflow.ellipsis,
-                                    fontWeight: FontWeight.bold,
+                                RichText(
+                                  text: TextSpan(
+                                    text: "PTR: ",
+                                    style: const TextStyle(
+                                      letterSpacing: 0.67,
+                                      color: MColor.textColor,
+                                    ),
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                        text: "₹" + widget.products.ptr,
+                                        style: const TextStyle(
+                                          letterSpacing: 0.67,
+                                          color: MColor.textColor,
+                                          overflow: TextOverflow.ellipsis,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -139,7 +180,10 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
     return InkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: () async {
-        showModalBottomSheet(context: context, shape: bottomSheetShape, builder: (context) => const BoxMoqSheet());
+        showModalBottomSheet(
+            context: context,
+            shape: bottomSheetShape,
+            builder: (context) => const BoxMoqSheet());
       },
       child: Container(
         height: 28,

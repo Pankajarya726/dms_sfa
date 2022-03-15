@@ -17,7 +17,7 @@ class OrderBookingTab extends StatefulWidget {
 }
 
 class _OrderBookingTabState extends State<OrderBookingTab> {
-  List<Flavours> flavours = [];
+  List<ProductsModal> productList = [];
   List<String> tags = [
     "All",
     "Choco Sticks",
@@ -25,11 +25,12 @@ class _OrderBookingTabState extends State<OrderBookingTab> {
     "Choco bite",
   ];
   String tag = "All";
-  StreamController<List<Flavours>> flavourstreamController = StreamController();
+  StreamController<List<ProductsModal>> productsStreamController =
+      StreamController();
 
   @override
   void initState() {
-    getFlavours();
+    // getFlavours();
     super.initState();
     getProducts();
   }
@@ -38,20 +39,20 @@ class _OrderBookingTabState extends State<OrderBookingTab> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        BeatsWidget(
-            tags: tags,
-            onSelect: (String tag) {
-              if (tag == "All") {
-                flavourstreamController.add(flavours);
-              } else {
-                List<Flavours> filterList =
-                    flavours.where((element) => element.mrp == tag).toList();
-                flavourstreamController.add(filterList);
-              }
-            }),
+        // BeatsWidget(
+        //     tags: tags,
+        //     onSelect: (String tag) {
+        //       if (tag == "All") {
+        //         productsStreamController.add(flavours);
+        //       } else {
+        //         List<Flavours> filterList =
+        //             flavours.where((element) => element.mrp == tag).toList();
+        //         productsStreamController.add(filterList);
+        //       }
+        //     }),
         Expanded(
-          child: StreamBuilder<List<Flavours>>(
-            stream: flavourstreamController.stream,
+          child: StreamBuilder<List<ProductsModal>>(
+            stream: productsStreamController.stream,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
@@ -80,7 +81,7 @@ class _OrderBookingTabState extends State<OrderBookingTab> {
                 itemBuilder: (context, index) {
                   return OrderBookingListItems(
                     index: widget.index,
-                    flavours: snapshot.data![index],
+                    products: snapshot.data![index],
                   );
                 },
               );
@@ -99,57 +100,58 @@ class _OrderBookingTabState extends State<OrderBookingTab> {
     input["retailer_id"] = "27";
     GetProductsResponse response = await repository.getProducts(input);
     if (response.success) {
-      print("response ${response.message}");
+      productList = response.data!;
+      productsStreamController.add(productList);
     } else {
-      print("response ${response.message}");
+      productsStreamController.addError(response.message);
     }
   }
 
-  void getFlavours() async {
-    flavours.add(Flavours(
-      flavourName: "Glow Pop Red Rose",
-      mrp: "MRP: 5₹",
-      ptr: "PTR: ₹12.5",
-      image:
-          "https://d29qfl7sjqf9f5.cloudfront.net/uploads/image/image/503094/photo.jpg",
-    ));
-    flavours.add(Flavours(
-      flavourName: "Trumpet Pop Strawberry",
-      mrp: "MRP: 15₹",
-      ptr: "PTR: ₹15.67",
-      image:
-          "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Chocolate_%28blue_background%29.jpg/640px-Chocolate_%28blue_background%29.jpg",
-    ));
-    flavours.add(Flavours(
-      flavourName: "Lollipop Mango Strawberry",
-      mrp: "MRP: 25₹",
-      ptr: "PTR: ₹27.09",
-      image:
-          "https://i.pinimg.com/736x/4c/f7/b8/4cf7b8fa13224525d7a0a5480c4cb56d.jpg",
-    ));
-    flavours.add(Flavours(
-      flavourName: "Surprise Egg Dexter's",
-      mrp: "MRP: 50₹",
-      ptr: "PTR: ₹17.23",
-      image:
-          "https://thefirstyearblog.com/wp-content/uploads/2015/11/Chocolate-Chocolate-Cake-8.jpg",
-    ));
-    flavours.add(Flavours(
-      flavourName: "Jelly Mix Fruits",
-      mrp: "MRP: 100₹",
-      ptr: "PTR: ₹24.01",
-      image:
-          "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Schokolade-schwarz.jpg/1200px-Schokolade-schwarz.jpg",
-    ));
-    flavours.add(Flavours(
-      flavourName: "Mix Shake",
-      mrp: "MRP: 150₹",
-      ptr: "PTR: ₹56.08",
-      image:
-          "https://images.newscientist.com/wp-content/uploads/2021/04/08150421/efr8nf_web.jpg",
-    ));
-    flavourstreamController.add(flavours);
-  }
+  // void getFlavours() async {
+  //   flavours.add(Flavours(
+  //     flavourName: "Glow Pop Red Rose",
+  //     mrp: "MRP: 5₹",
+  //     ptr: "PTR: ₹12.5",
+  //     image:
+  //         "https://d29qfl7sjqf9f5.cloudfront.net/uploads/image/image/503094/photo.jpg",
+  //   ));
+  //   flavours.add(Flavours(
+  //     flavourName: "Trumpet Pop Strawberry",
+  //     mrp: "MRP: 15₹",
+  //     ptr: "PTR: ₹15.67",
+  //     image:
+  //         "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Chocolate_%28blue_background%29.jpg/640px-Chocolate_%28blue_background%29.jpg",
+  //   ));
+  //   flavours.add(Flavours(
+  //     flavourName: "Lollipop Mango Strawberry",
+  //     mrp: "MRP: 25₹",
+  //     ptr: "PTR: ₹27.09",
+  //     image:
+  //         "https://i.pinimg.com/736x/4c/f7/b8/4cf7b8fa13224525d7a0a5480c4cb56d.jpg",
+  //   ));
+  //   flavours.add(Flavours(
+  //     flavourName: "Surprise Egg Dexter's",
+  //     mrp: "MRP: 50₹",
+  //     ptr: "PTR: ₹17.23",
+  //     image:
+  //         "https://thefirstyearblog.com/wp-content/uploads/2015/11/Chocolate-Chocolate-Cake-8.jpg",
+  //   ));
+  //   flavours.add(Flavours(
+  //     flavourName: "Jelly Mix Fruits",
+  //     mrp: "MRP: 100₹",
+  //     ptr: "PTR: ₹24.01",
+  //     image:
+  //         "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Schokolade-schwarz.jpg/1200px-Schokolade-schwarz.jpg",
+  //   ));
+  //   flavours.add(Flavours(
+  //     flavourName: "Mix Shake",
+  //     mrp: "MRP: 150₹",
+  //     ptr: "PTR: ₹56.08",
+  //     image:
+  //         "https://images.newscientist.com/wp-content/uploads/2021/04/08150421/efr8nf_web.jpg",
+  //   ));
+  //   productsStreamController.add(flavours);
+  // }
 }
 
 class BeatsWidget extends StatefulWidget {

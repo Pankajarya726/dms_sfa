@@ -22,8 +22,8 @@ class GetBrandCategoryResponse {
 
   factory GetBrandCategoryResponse.fromMap(Map<String, dynamic> json) =>
       GetBrandCategoryResponse(
-        success: json["success"] == null ? null : json["success"],
-        message: json["message"] == null ? null : json["message"],
+        success: json["success"] ?? false,
+        message: json["message"] ?? "",
         data: json["data"] == null
             ? []
             : List<BrandAndCategoryModel>.from(
@@ -31,8 +31,8 @@ class GetBrandCategoryResponse {
       );
 
   Map<String, dynamic> toMap() => {
-        "success": success == null ? null : success,
-        "message": message == null ? null : message,
+        "success": success,
+        "message": message,
         "data":
             data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
       };
@@ -45,7 +45,7 @@ class BrandAndCategoryModel {
     this.category,
   });
 
-  int id;
+  String id;
   String name;
   List<Category>? category;
 
@@ -56,8 +56,8 @@ class BrandAndCategoryModel {
 
   factory BrandAndCategoryModel.fromMap(Map<String, dynamic> json) =>
       BrandAndCategoryModel(
-        id: json["id"] == null ? null : json["id"],
-        name: json["name"] == null ? null : json["name"],
+        id: json["id"] == null ? "" : json["id"].toString(),
+        name: json["name"] == null ? "" : json["name"].toString(),
         category: json["category"] == null
             ? []
             : List<Category>.from(
@@ -65,8 +65,8 @@ class BrandAndCategoryModel {
       );
 
   Map<String, dynamic> toMap() => {
-        "id": id == null ? null : id,
-        "name": name == null ? null : name,
+        "id": id,
+        "name": name,
         "category": category == null
             ? []
             : List<dynamic>.from(category!.map((x) => x.toMap())),
@@ -79,7 +79,7 @@ class Category {
     required this.categoryName,
   });
 
-  int id;
+  String id;
   String categoryName;
 
   factory Category.fromJson(String str) => Category.fromMap(json.decode(str));
@@ -87,13 +87,14 @@ class Category {
   String toJson() => json.encode(toMap());
 
   factory Category.fromMap(Map<String, dynamic> json) => Category(
-        id: json["id"] == null ? null : json["id"],
-        categoryName:
-            json["category_name"] == null ? null : json["category_name"],
+        id: json["id"] == null ? "" : json["id"].toString(),
+        categoryName: json["category_name"] == null
+            ? ""
+            : json["category_name"].toString(),
       );
 
   Map<String, dynamic> toMap() => {
-        "id": id == null ? null : id,
-        "category_name": categoryName == null ? null : categoryName,
+        "id": id,
+        "category_name": categoryName,
       };
 }

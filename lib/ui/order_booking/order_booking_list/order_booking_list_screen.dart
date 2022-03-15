@@ -3,12 +3,16 @@ import 'dart:collection';
 import 'package:dms/main.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/filter_order_booking_bottom_sheet.dart';
+import 'package:dms/ui/order_booking/order_booking_list/bloc/order_book_list_bloc.dart';
+import 'package:dms/ui/order_booking/order_booking_list/bloc/order_book_list_events.dart';
+import 'package:dms/ui/order_booking/order_booking_list/bloc/order_book_list_states.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_brand_&_category_resonse.dart';
 import 'package:dms/ui/order_booking/order_booking_list/order_booking_tab.dart';
 import 'package:dms/ui/order_booking/order_confirmation/order_confirmation_screen.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class OrderBookingListScreen extends StatefulWidget {
   const OrderBookingListScreen({Key? key}) : super(key: key);
@@ -19,14 +23,23 @@ class OrderBookingListScreen extends StatefulWidget {
 
 class _OrderBookingListScreenState extends State<OrderBookingListScreen>
     with TickerProviderStateMixin {
-  late TabController tabController;
+  TabController? tabController;
   String selectedPrice = "";
+  List<String> tags = [
+    "All",
+    "Choco Sticks",
+    "Choco Vanilla",
+    "Choco bite",
+  ];
+  String tag = "All";
+  List<BrandAndCategoryModel> tabList = [];
 
   @override
   void initState() {
-    tabController = TabController(length: 3, vsync: this);
     super.initState();
-    getBrandAndCategory();
+    tabList.add(BrandAndCategoryModel(id: "", name: "Suggested", category: []));
+    tabList.add(BrandAndCategoryModel(id: "", name: "Scheme", category: []));
+    tabController = TabController(length: tabList.length, vsync: this);
   }
 
   @override
@@ -152,86 +165,80 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
                       )),
                 ),
               ),
-              Container(
-                height: 50,
-                color: const Color(0xffEDEDED),
-                child: TabBar(
-                  controller: tabController,
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  indicatorWeight: 4,
-                  indicatorColor: MColor.colorPrimary,
-                  labelPadding: const EdgeInsets.symmetric(horizontal: 5),
-                  indicatorPadding: const EdgeInsets.symmetric(horizontal: 5),
-                  tabs: [
-                    Tab(
-                      child: Text(
-                        "Suggested",
-                        style: Theme.of(context).textTheme.bodyText1!.merge(
-                              TextStyle(
-                                color:
-                                    const Color(0xff303030).withOpacity(0.85),
-                                letterSpacing: 0.67,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 18,
-                              ),
+              BlocProvider(
+                create: (context) => OrderBookListBloc(),
+                child: BlocBuilder<OrderBookListBloc, OrderBookListStates>(
+                  builder: (context, state) {
+                    if (state is OrderBookListInitialState) {
+                      Map<String, dynamic> input = HashMap<String, dynamic>();
+                      input["beat_id"] = "36";
+                      BlocProvider.of<OrderBookListBloc>(context)
+                          .add(GetBrandAndCatgEvent(input: input));
+                    }
+
+                    if (state is GetBrandAndCatgState) {
+                      tabList.clear();
+                      tabList.add(BrandAndCategoryModel(
+                          id: "", name: "Suggested", category: []));
+                      tabList.add(BrandAndCategoryModel(
+                          id: "", name: "Scheme", category: []));
+                      tabList.addAll((state.brandAndCategoryModal));
+                      tabController =
+                          TabController(length: tabList.length, vsync: this);
+                    }
+                    if (tabList.isEmpty) {
+                      return Container();
+                    }
+                    return Container(
+                      height: 50,
+                      color: const Color(0xffEDEDED),
+                      child: TabBar(
+                        controller: tabController,
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        indicatorWeight: 4,
+                        indicatorColor: MColor.colorPrimary,
+                        labelPadding: const EdgeInsets.symmetric(horizontal: 5),
+                        indicatorPadding:
+                            const EdgeInsets.symmetric(horizontal: 5),
+                        tabs: List.generate(tabList.length, (index) {
+                          return Tab(
+                            child: Text(
+                              tabList[index].name,
+                              style:
+                                  Theme.of(context).textTheme.bodyText1!.merge(
+                                        TextStyle(
+                                          color: const Color(0xff303030)
+                                              .withOpacity(0.85),
+                                          letterSpacing: 0.67,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 18,
+                                        ),
+                                      ),
                             ),
+                          );
+                        }),
                       ),
-                    ),
-                    Tab(
-                      child: Text(
-                        "Scheme 1",
-                        style: Theme.of(context).textTheme.bodyText2!.merge(
-                              TextStyle(
-                                color:
-                                    const Color(0xff303030).withOpacity(0.85),
-                                letterSpacing: 0.67,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 18,
-                              ),
-                            ),
-                      ),
-                    ),
-                    Tab(
-                      child: Text(
-                        "Tiny Tush",
-                        style: Theme.of(context).textTheme.bodyText2!.merge(
-                              TextStyle(
-                                color:
-                                    const Color(0xff303030).withOpacity(0.85),
-                                letterSpacing: 0.67,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 18,
-                              ),
-                            ),
-                      ),
-                    ),
-                  ],
+                    );
+                  },
                 ),
-              )
+              ),
             ],
           ),
         ),
       ),
-      body: TabBarView(
-        controller: tabController,
-        children: const [
-          OrderBookingTab(index: 0),
-          OrderBookingTab(index: 1),
-          OrderBookingTab(index: 2)
-        ],
-      ),
+      body: tabList.isNotEmpty
+          ? TabBarView(
+              controller: tabController,
+              children: List.generate(tabList.length, (index) {
+                return OrderBookingTab(index: index);
+              })
+              // children: const [
+              //   OrderBookingTab(index: 0),
+              //   OrderBookingTab(index: 1),
+              //   OrderBookingTab(index: 2)
+              // ],
+              )
+          : Container(),
     );
-  }
-
-  void getBrandAndCategory() async {
-    Map<String, dynamic> input = HashMap<String, dynamic>();
-    input["beat_id"] = "1";
-    GetBrandCategoryResponse response =
-        await repository.getBrandAndCategory(input);
-    if (response.success) {
-      debugPrint("response getBrandAndCategory = ${response.message}");
-    } else {
-      debugPrint("response getBrandAndCategory = ${response.message}");
-    }
   }
 }
