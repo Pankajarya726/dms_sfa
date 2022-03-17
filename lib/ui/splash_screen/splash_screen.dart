@@ -194,7 +194,7 @@ class _SplashScreenState extends State<SplashScreen> {
       builder: (context) {
         return AlertDialog(
           contentPadding: const EdgeInsets.fromLTRB(25, 10, 0, 0),
-          title: const Text("SFA", style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w600)),
+          title: const Text("VV SalesMitra", style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w600)),
           content: const Text("You are using older version of this app. Please update the app for batter experience.",
               style: TextStyle(color: Color.fromRGBO(85, 85, 85, 1), fontSize: 15, fontWeight: FontWeight.w500)),
           actions: [
