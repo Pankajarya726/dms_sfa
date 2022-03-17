@@ -1,25 +1,25 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/box_moq_bottom_sheet.dart';
-import 'package:dms/ui/bottom_sheet_widget/product_info_bottom_sheet.dart';
+import 'package:dms/ui/bottom_sheet_widget/scheme_product_info_bottom_sheet.dart';
 import 'package:dms/ui/order_booking/order_booking_list/full_screen_image_view.dart';
-import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
+import 'package:dms/ui/order_booking/order_booking_list/model/get_schemes_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 
-class OrderBookingListItems extends StatefulWidget {
+class SchemeProductListItems extends StatefulWidget {
   final int index;
-  final ProductsModal products;
+  final SchemesModal schemes;
 
-  const OrderBookingListItems(
-      {Key? key, required this.index, required this.products})
+  const SchemeProductListItems(
+      {Key? key, required this.index, required this.schemes})
       : super(key: key);
 
   @override
-  State<OrderBookingListItems> createState() => _OrderBookingListItemsState();
+  State<SchemeProductListItems> createState() => _SchemeProductListItemsState();
 }
 
-class _OrderBookingListItemsState extends State<OrderBookingListItems> {
+class _SchemeProductListItemsState extends State<SchemeProductListItems> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -49,8 +49,8 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                 context: context,
                 shape: bottomSheetShape,
                 isScrollControlled: true,
-                builder: (context) => ProductInfoBottomSheet(
-                      products: widget.products,
+                builder: (context) => SchemeProductInfoBottomSheet(
+                      schemes: widget.schemes,
                     ));
           },
           child: Padding(
@@ -66,7 +66,7 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => FullScreenImageView(
-                                  productImage: widget.products.image)),
+                                  productImage: widget.schemes.image)),
                         );
                       },
                       child: ClipRRect(
@@ -75,7 +75,7 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                           width: 80,
                           height: 80,
                           fit: BoxFit.cover,
-                          imageUrl: widget.products.image,
+                          imageUrl: widget.schemes.image,
                           imageBuilder: (context, imageProvider) {
                             return Image(
                               image: imageProvider,
@@ -103,7 +103,7 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.products.productName,
+                              widget.schemes.productName,
                               style: const TextStyle(
                                 letterSpacing: 0.67,
                                 color: MColor.textColor,
@@ -113,6 +113,7 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 RichText(
                                   text: TextSpan(
@@ -123,7 +124,7 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                                     ),
                                     children: <TextSpan>[
                                       TextSpan(
-                                        text: "₹" + widget.products.mrp,
+                                        text: "₹" + widget.schemes.mrp,
                                         style: const TextStyle(
                                           letterSpacing: 0.67,
                                           color: Colors.black,
@@ -143,7 +144,7 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                                       ),
                                       children: <TextSpan>[
                                         TextSpan(
-                                          text: "₹" + widget.products.ptr,
+                                          text: "₹" + widget.schemes.ptr,
                                           style: const TextStyle(
                                             letterSpacing: 0.67,
                                             color: MColor.textColor,
