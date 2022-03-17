@@ -25,12 +25,6 @@ class OrderBookListBloc extends Bloc<OrderBookListEvents, OrderBookListStates> {
       GetBrandCategoryResponse response =
           await repository.getBrandAndCategory(event.input);
       if (response.success) {
-        List<BrandAndCategoryModel> brandAndCategory = [];
-        // brandAndCategory.add(
-        //     BrandAndCategoryModel(id: "", name: "Suggested", category: []));
-        // brandAndCategory
-        //     .add(BrandAndCategoryModel(id: "", name: "Scheme", category: []));
-        // brandAndCategory.addAll(response.data!);
         yield GetBrandAndCatgState(brandAndCategoryModal: response.data!);
       } else {
         Utility.showToast(response.message);
