@@ -48,6 +48,8 @@
     <key>NSPhotoLibraryUsageDescription</key>
     <string>photos description.</string>
 
+
+
 <key> NSLocationWhenInUseUsageDescription</key>
 <string>location description.</string>
 

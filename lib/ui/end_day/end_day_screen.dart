@@ -339,7 +339,9 @@ class _EndDayScreenState extends State<EndDayScreen> {
       Utility.showToast("Please enter Average sale amount");
       return;
     }
-    DateTime _ntpTime = await NTP.now();
+    DateTime _ntpTime = await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
+      return DateTime.now();
+    });
 
     try {
       Position position = await MyLocation.getCurrentLocation();

@@ -877,7 +877,10 @@ class _StartDayScreenState extends State<StartDayScreen> {
   }
 
   void getCurrentDate() async {
-    addPlanBloc.add(GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(await NTP.now())));
+  DateTime dateTime =   await NTP.now().timeout(const Duration(seconds: 15),onTimeout: (){
+      return DateTime.now();
+    });
+    addPlanBloc.add(GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(dateTime)));
   }
 
   void submit() async {
@@ -894,7 +897,9 @@ class _StartDayScreenState extends State<StartDayScreen> {
       debugPrint("remark fields ok ");
       Map<String, dynamic> input = HashMap<String, dynamic>();
 
-      DateTime _ntpTime = await NTP.now();
+      DateTime _ntpTime = await NTP.now().timeout(const Duration(seconds: 15),onTimeout: (){
+        return DateTime.now();
+      });
       input["user_id"] = await SharedPreference.getStringPreference(SharedPreference.userId);
       input["start_day_date"] = DateFormat("yyyy-MM-dd").format(_ntpTime);
       input["start_day_time"] = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
@@ -939,7 +944,9 @@ class _StartDayScreenState extends State<StartDayScreen> {
       debugPrint("all fields ok ");
       Map<String, dynamic> input = HashMap<String, dynamic>();
 
-      DateTime _ntpTime = await NTP.now();
+      DateTime _ntpTime = await NTP.now().timeout(const Duration(seconds: 15),onTimeout: (){
+        return DateTime.now();
+      });
       input["user_id"] = await SharedPreference.getStringPreference(SharedPreference.userId);
       input["start_day_date"] = DateFormat("yyyy-MM-dd").format(_ntpTime);
       input["primary_tag"] = selectedPrimaryTag!.name;

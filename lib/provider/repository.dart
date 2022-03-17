@@ -129,8 +129,7 @@ class ApiRepository {
     try {
       Response response = await dio.post(Url.startMyDay, data: formData);
 
-      StartMyDayResponse startMyDayResponse =
-          StartMyDayResponse.fromJson(response.toString());
+      StartMyDayResponse startMyDayResponse = StartMyDayResponse.fromJson(response.toString());
       return startMyDayResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -197,8 +196,7 @@ class ApiRepository {
     try {
       Response response = await dio.post(Url.endMyDay, data: data);
 
-      EndMyDayResponse endMyDayResponse =
-          EndMyDayResponse.fromJson(response.toString());
+      EndMyDayResponse endMyDayResponse = EndMyDayResponse.fromJson(response.toString());
       return endMyDayResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -704,9 +702,8 @@ class ApiRepository {
 
   Future<SelectBeatResponse> selectBeat(Map input) async {
     try {
-      Response response = await dio.post(Url.getDistibutorsBeat, data: input);
-      SelectBeatResponse baseResponse =
-          SelectBeatResponse.fromJson(response.toString());
+      Response response = await dio.post(Url.getDistributorsBeat, data: input);
+      SelectBeatResponse baseResponse = SelectBeatResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -771,8 +768,7 @@ class ApiRepository {
   Future<OrderBookingDayResponse> orderBookingDay(Map input) async {
     try {
       Response response = await dio.post(Url.getOrderBookingDay, data: input);
-      OrderBookingDayResponse baseResponse =
-          OrderBookingDayResponse.fromJson(response.toString());
+      OrderBookingDayResponse baseResponse = OrderBookingDayResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -858,7 +854,9 @@ class ApiRepository {
 
   Future<GetAllBeatsResponse> getBeatByOrderBookingDay() async {
     try {
-      DateTime dateTime = await NTP.now();
+      DateTime dateTime = await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
+        return DateTime.now();
+      });
       Map<String, dynamic> input = {"day": DateFormat("EEEE").format(dateTime)};
 
       Response response =
@@ -907,8 +905,7 @@ class ApiRepository {
   Future<RetailersDetailsResponse> getRetailerInfo(Map input) async {
     try {
       Response response = await dio.post(Url.getRetailerInfo, data: input);
-      RetailersDetailsResponse baseResponse =
-          RetailersDetailsResponse.fromJson(response.toString());
+      RetailersDetailsResponse baseResponse = RetailersDetailsResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";

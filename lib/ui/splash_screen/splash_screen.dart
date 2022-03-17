@@ -154,6 +154,9 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   addEvent() async {
+    debugPrint("addEvent-->");
+    // Utility.showToast("addEvent");
+
     splashBloc.add(ValidateAppEvent());
   }
 

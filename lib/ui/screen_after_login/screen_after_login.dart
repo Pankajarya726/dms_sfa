@@ -131,9 +131,14 @@ class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
   void getMyPlan() async {
     if (await Network.isConnected()) {
       String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
+
+      DateTime dateTime = await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
+        return DateTime.now();
+      });
+
       Map input = {
         "user_id": userId,
-        "add_plan_date": DateFormat("yyyy-MM-dd").format(await NTP.now()),
+        "add_plan_date": DateFormat("yyyy-MM-dd").format(dateTime),
       };
       GetPlanByDateResponse response = await repository.getSavedPlan(input);
 

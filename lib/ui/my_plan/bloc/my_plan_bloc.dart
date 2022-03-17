@@ -46,12 +46,15 @@ class MyPlanBloc extends Bloc<MyPlanEvents, MyPlanStates> {
 
     DateTime now = DateTime.now();
     if (await Network.isConnected()) {
-      now = await NTP.now();
+      now = await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
+        debugPrint("timeout");
+        return DateTime.now();
+      });
     }
 
     // DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
     //
-    // debugPrint("${lastDayOfMonth.month}/${lastDayOfMonth.day}");
+    debugPrint("${now.month}/${now.day}");
 
     months.add(DateTime(
       now.year,
