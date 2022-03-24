@@ -26,6 +26,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
   Stream<SplashState> validateAppVersion(SplashEvent event) async* {
     if (await Network.isConnected()) {
       Map<String, dynamic> input = HashMap<String, dynamic>();
+
       try {
         PackageInfo packageInfo = await PackageInfo.fromPlatform();
         input["app_version"] = packageInfo.version;
