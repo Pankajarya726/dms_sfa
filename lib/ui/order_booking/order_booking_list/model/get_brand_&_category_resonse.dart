@@ -57,7 +57,7 @@ class BrandAndCategoryModel {
   factory BrandAndCategoryModel.fromMap(Map<String, dynamic> json) =>
       BrandAndCategoryModel(
         id: json["id"] == null ? "" : json["id"].toString(),
-        name: json["name"] == null ? "" : json["name"].toString(),
+        name: json["brand_name"] == null ? "" : json["brand_name"].toString(),
         category: json["category"] == null
             ? []
             : List<Category>.from(
@@ -66,7 +66,7 @@ class BrandAndCategoryModel {
 
   Map<String, dynamic> toMap() => {
         "id": id,
-        "name": name,
+        "brand_name": name,
         "category": category == null
             ? []
             : List<dynamic>.from(category!.map((x) => x.toMap())),

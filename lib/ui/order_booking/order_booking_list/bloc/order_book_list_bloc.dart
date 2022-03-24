@@ -17,6 +17,9 @@ class OrderBookListBloc extends Bloc<OrderBookListEvents, OrderBookListStates> {
       yield OrderBookListLoadingState();
       yield* getBrandAndCategory(event);
     }
+    if (event is GetCategoryEvent) {
+      yield GetCategoryState(category: event.category);
+    }
   }
 
   Stream<OrderBookListStates> getBrandAndCategory(

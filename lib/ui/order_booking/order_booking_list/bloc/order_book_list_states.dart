@@ -23,3 +23,10 @@ class OrderBookListFailureState extends OrderBookListStates {
   @override
   List<Object> get props => [failureMessage];
 }
+
+class GetCategoryState extends OrderBookListStates {
+  final BrandAndCategoryModel category;
+  GetCategoryState({required this.category});
+  @override
+  List<Object> get props => [category];
+}
