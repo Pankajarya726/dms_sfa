@@ -4,7 +4,9 @@ import 'package:dms/listeners/select_category_listener.dart';
 import 'package:dms/main.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_brand_&_category_resonse.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
+import 'package:dms/ui/order_booking/order_booking_list/model/get_schemes_response.dart';
 import 'package:dms/ui/order_booking/order_booking_list/order_booking_list_item.dart';
+import 'package:dms/ui/order_booking/order_booking_list/scheme_product_list.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
@@ -15,6 +17,9 @@ class OrderBookingTab extends StatefulWidget {
   final String retailerId;
   final BrandAndCategoryModel brandAndCategoryModel;
   final Category category;
+  final Function(
+    BrandAndCategoryModel? brandAndCategoryModel,
+  ) onBrandSelect;
   final Function(SelectCategoryListener listener) onInit;
   const OrderBookingTab({
     Key? key,
@@ -24,6 +29,7 @@ class OrderBookingTab extends StatefulWidget {
     required this.brandAndCategoryModel,
     required this.category,
     required this.onInit,
+    required this.onBrandSelect,
   }) : super(key: key);
 
   @override
@@ -33,7 +39,10 @@ class OrderBookingTab extends StatefulWidget {
 class _OrderBookingTabState extends State<OrderBookingTab>
     implements SelectCategoryListener {
   List<ProductsModal> productList = [];
+  List<SchemesModal> schemesList = [];
   StreamController<List<ProductsModal>> productsStreamController =
+      StreamController();
+  StreamController<List<SchemesModal>> schemesStreamController =
       StreamController();
   BrandAndCategoryModel? brandAndCategoryModel;
   Category? category;
@@ -42,10 +51,15 @@ class _OrderBookingTabState extends State<OrderBookingTab>
   @override
   void initState() {
     debugPrint("initstate---> called");
-    brandAndCategoryModel = widget.brandAndCategoryModel;
+    brandAndCategoryModel ??= widget.brandAndCategoryModel;
     category = widget.category;
     widget.onInit(this);
-    if (widget.index != 0 || widget.index != 1) {
+    widget.onBrandSelect(brandAndCategoryModel!);
+    if (widget.index == 0) {
+      debugPrint("api nh bani abhi");
+    } else if (widget.index == 1) {
+      getSchemeProducts();
+    } else {
       getProducts();
     }
     super.initState();
@@ -55,55 +69,77 @@ class _OrderBookingTabState extends State<OrderBookingTab>
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // BeatsWidget(
-        //     tags: tags,
-        //     onSelect: (String tag) {
-        //       if (tag == "All") {
-        //         productsStreamController.add(flavours);
-        //       } else {
-        //         List<Flavours> filterList =
-        //             flavours.where((element) => element.mrp == tag).toList();
-        //         productsStreamController.add(filterList);
-        //       }
-        //     }),
-        Expanded(
-          child: StreamBuilder<List<ProductsModal>>(
-            stream: productsStreamController.stream,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text("${snapshot.error}"),
-                );
-              }
-              if (snapshot.hasData && snapshot.data!.isEmpty) {
-                return const Center(
-                  child: Text("flavours not found"),
-                );
-              }
+        widget.index == 0
+            ? Container()
+            : widget.index == 1
+                ? Expanded(
+                    child: StreamBuilder<List<SchemesModal>>(
+                      stream: schemesStreamController.stream,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (snapshot.hasError) {
+                          return Center(
+                            child: Text("${snapshot.error}"),
+                          );
+                        }
 
-              return ListView.separated(
-                padding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
-                itemCount: snapshot.data!.length,
-                separatorBuilder: (context, index) {
-                  return const SizedBox(
-                    height: 15,
-                  );
-                },
-                itemBuilder: (context, index) {
-                  return OrderBookingListItems(
-                    index: widget.index,
-                    products: snapshot.data![index],
-                  );
-                },
-              );
-            },
-          ),
-        ),
+                        return ListView.separated(
+                          padding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
+                          itemCount: snapshot.data!.length,
+                          separatorBuilder: (context, index) {
+                            return const SizedBox(
+                              height: 15,
+                            );
+                          },
+                          itemBuilder: (context, index) {
+                            return SchemeProductListItems(
+                              index: widget.index,
+                              schemes: snapshot.data![index],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  )
+                : Expanded(
+                    child: StreamBuilder<List<ProductsModal>>(
+                      stream: productsStreamController.stream,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (snapshot.hasError) {
+                          return Center(
+                            child: Text("${snapshot.error}"),
+                          );
+                        }
+
+                        return ListView.separated(
+                          padding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
+                          itemCount: snapshot.data!.length,
+                          separatorBuilder: (context, index) {
+                            return const SizedBox(
+                              height: 15,
+                            );
+                          },
+                          itemBuilder: (context, index) {
+                            return OrderBookingListItems(
+                              index: widget.index,
+                              products: snapshot.data![index],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  )
       ],
     );
   }
@@ -126,6 +162,22 @@ class _OrderBookingTabState extends State<OrderBookingTab>
       productsStreamController.add(productList);
     } else {
       productsStreamController.addError(response.message);
+    }
+  }
+
+  getSchemeProducts() async {
+    Map<String, dynamic> input = HashMap<String, dynamic>();
+
+    input["beat_id"] = "27";
+    input["retailer_id"] = "41";
+    // input["beat_id"] = widget.beatId;
+    // input["retailer_id"] = widget.retailerId;
+    GetSchemesResponse response = await repository.getSchemeProducts(input);
+    if (response.success) {
+      schemesList = response.data!;
+      schemesStreamController.add(schemesList);
+    } else {
+      schemesStreamController.addError(response.message);
     }
   }
 

@@ -17,6 +17,7 @@ class StringConst {
   static const outletInfo = "Outlet Info";
   static const ownerInfo = "Owner Info";
   static const productInfo = "Product Info";
+  static const schemeProductInfo = "Scheme Product Info";
   static const january = "January";
   static const february = "February";
   static const march = "March";

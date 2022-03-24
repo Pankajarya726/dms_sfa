@@ -37,4 +37,5 @@ class Url {
   static const String getRetailerOrderWise = "getRetailerOrderWise";
   static const String getRetailerInfo = "retailerInfo";
   static const String getProducts = "getAllProductBeatWise";
+  static const String getSchemeProducts = "getAllSchemeProduct";
 }
