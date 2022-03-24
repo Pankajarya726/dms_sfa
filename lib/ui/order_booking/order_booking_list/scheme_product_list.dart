@@ -3,17 +3,16 @@ import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/box_moq_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/scheme_product_info_bottom_sheet.dart';
 import 'package:dms/ui/order_booking/order_booking_list/full_screen_image_view.dart';
-import 'package:dms/ui/order_booking/order_booking_list/model/get_schemes_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 
+import 'model/get_products_response.dart';
+
 class SchemeProductListItems extends StatefulWidget {
   final int index;
-  final SchemesModal schemes;
+  final ProductsModal schemes;
 
-  const SchemeProductListItems(
-      {Key? key, required this.index, required this.schemes})
-      : super(key: key);
+  const SchemeProductListItems({Key? key, required this.index, required this.schemes}) : super(key: key);
 
   @override
   State<SchemeProductListItems> createState() => _SchemeProductListItemsState();
@@ -54,8 +53,7 @@ class _SchemeProductListItemsState extends State<SchemeProductListItems> {
                     ));
           },
           child: Padding(
-            padding:
-                const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
+            padding: const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
             child: Column(
               children: [
                 Row(
@@ -64,9 +62,7 @@ class _SchemeProductListItemsState extends State<SchemeProductListItems> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => FullScreenImageView(
-                                  productImage: widget.schemes.image)),
+                          MaterialPageRoute(builder: (context) => FullScreenImageView(productImage: widget.schemes.image)),
                         );
                       },
                       child: ClipRRect(
@@ -84,10 +80,8 @@ class _SchemeProductListItemsState extends State<SchemeProductListItems> {
                               fit: BoxFit.cover,
                             );
                           },
-                          errorWidget: (context, url, error) =>
-                              Image.asset("assets/placeholder.png"),
-                          placeholder: (context, url) =>
-                              Image.asset("assets/placeholder.png"),
+                          errorWidget: (context, url, error) => Image.asset("assets/placeholder.png"),
+                          placeholder: (context, url) => Image.asset("assets/placeholder.png"),
                         ),
                       ),
                     ),
@@ -183,10 +177,7 @@ class _SchemeProductListItemsState extends State<SchemeProductListItems> {
     return InkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: () async {
-        showModalBottomSheet(
-            context: context,
-            shape: bottomSheetShape,
-            builder: (context) => const BoxMoqSheet());
+        showModalBottomSheet(context: context, shape: bottomSheetShape, builder: (context) => const BoxMoqSheet());
       },
       child: Container(
         height: 28,

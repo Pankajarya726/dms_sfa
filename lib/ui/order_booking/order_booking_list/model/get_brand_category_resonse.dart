@@ -15,26 +15,20 @@ class GetBrandCategoryResponse {
   String message;
   List<BrandAndCategoryModel>? data;
 
-  factory GetBrandCategoryResponse.fromJson(String str) =>
-      GetBrandCategoryResponse.fromMap(json.decode(str));
+  factory GetBrandCategoryResponse.fromJson(String str) => GetBrandCategoryResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory GetBrandCategoryResponse.fromMap(Map<String, dynamic> json) =>
-      GetBrandCategoryResponse(
+  factory GetBrandCategoryResponse.fromMap(Map<String, dynamic> json) => GetBrandCategoryResponse(
         success: json["success"] ?? false,
         message: json["message"] ?? "",
-        data: json["data"] == null
-            ? []
-            : List<BrandAndCategoryModel>.from(
-                json["data"].map((x) => BrandAndCategoryModel.fromMap(x))),
+        data: json["data"] == null ? [] : List<BrandAndCategoryModel>.from(json["data"].map((x) => BrandAndCategoryModel.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
         "success": success,
         "message": message,
-        "data":
-            data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
+        "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
       };
 }
 
@@ -42,35 +36,33 @@ class BrandAndCategoryModel {
   BrandAndCategoryModel({
     required this.id,
     required this.name,
-    this.category,
+    required this.category,
   });
 
   String id;
   String name;
-  List<Category>? category;
+  List<Category> category;
 
-  factory BrandAndCategoryModel.fromJson(String str) =>
-      BrandAndCategoryModel.fromMap(json.decode(str));
+  factory BrandAndCategoryModel.fromJson(String str) => BrandAndCategoryModel.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory BrandAndCategoryModel.fromMap(Map<String, dynamic> json) =>
-      BrandAndCategoryModel(
+  factory BrandAndCategoryModel.fromMap(Map<String, dynamic> json) => BrandAndCategoryModel(
         id: json["id"] == null ? "" : json["id"].toString(),
         name: json["brand_name"] == null ? "" : json["brand_name"].toString(),
-        category: json["category"] == null
-            ? []
-            : List<Category>.from(
-                json["category"].map((x) => Category.fromMap(x))),
+        category: json["category"] == null ? [] : List<Category>.from(json["category"].map((x) => Category.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
         "id": id,
         "brand_name": name,
-        "category": category == null
-            ? []
-            : List<dynamic>.from(category!.map((x) => x.toMap())),
+        "category": category == null ? [] : List<dynamic>.from(category.map((x) => x.toMap())),
       };
+
+  @override
+  String toString() {
+    return 'BrandAndCategoryModel{id: $id, name: $name, category: $category}';
+  }
 }
 
 class Category {
@@ -88,13 +80,16 @@ class Category {
 
   factory Category.fromMap(Map<String, dynamic> json) => Category(
         id: json["id"] == null ? "" : json["id"].toString(),
-        categoryName: json["category_name"] == null
-            ? ""
-            : json["category_name"].toString(),
+        categoryName: json["category_name"] == null ? "" : json["category_name"].toString(),
       );
 
   Map<String, dynamic> toMap() => {
         "id": id,
         "category_name": categoryName,
       };
+
+  @override
+  String toString() {
+    return 'Category{id: $id, categoryName: $categoryName}';
+  }
 }

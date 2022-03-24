@@ -8,12 +8,9 @@ import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class OrderBookingListItems extends StatefulWidget {
-  final int index;
   final ProductsModal products;
 
-  const OrderBookingListItems(
-      {Key? key, required this.index, required this.products})
-      : super(key: key);
+  const OrderBookingListItems({Key? key, required this.products}) : super(key: key);
 
   @override
   State<OrderBookingListItems> createState() => _OrderBookingListItemsState();
@@ -26,11 +23,7 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(11),
-        color: widget.index == 0
-            ? Colors.transparent
-            : widget.index == 1
-                ? const Color.fromRGBO(197, 181, 0, 1)
-                : const Color.fromRGBO(44, 183, 67, 1),
+        color: widget.products.pkgQty == 0 && widget.products.moqQty == 0 ? Colors.transparent : const Color.fromRGBO(44, 183, 67, 1),
         boxShadow: const [
           BoxShadow(
             color: Colors.black12,
@@ -54,8 +47,7 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                     ));
           },
           child: Padding(
-            padding:
-                const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
+            padding: const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
             child: Column(
               children: [
                 Row(
@@ -64,9 +56,7 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => FullScreenImageView(
-                                  productImage: widget.products.image)),
+                          MaterialPageRoute(builder: (context) => FullScreenImageView(productImage: widget.products.image)),
                         );
                       },
                       child: ClipRRect(
@@ -84,10 +74,8 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                               fit: BoxFit.cover,
                             );
                           },
-                          errorWidget: (context, url, error) =>
-                              Image.asset("assets/placeholder.png"),
-                          placeholder: (context, url) =>
-                              Image.asset("assets/placeholder.png"),
+                          errorWidget: (context, url, error) => Image.asset("assets/placeholder.png"),
+                          placeholder: (context, url) => Image.asset("assets/placeholder.png"),
                         ),
                       ),
                     ),
@@ -160,8 +148,8 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                textFields("BOX", context),
-                                textFields("MOQ", context),
+                                textFields(widget.products.packagingName, context),
+                                textFields(widget.products.moqName, context),
                               ],
                             ),
                           ],
@@ -182,10 +170,7 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
     return InkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: () async {
-        showModalBottomSheet(
-            context: context,
-            shape: bottomSheetShape,
-            builder: (context) => const BoxMoqSheet());
+        showModalBottomSheet(context: context, shape: bottomSheetShape, builder: (context) => const BoxMoqSheet());
       },
       child: Container(
         height: 28,

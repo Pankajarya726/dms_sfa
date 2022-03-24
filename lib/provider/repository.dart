@@ -27,9 +27,8 @@ import 'package:dms/ui/drawer_menu/home_screen/model/get_menus_response.dart';
 import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart';
 import 'package:dms/ui/edit_profile/model/update_profile_response.dart';
 import 'package:dms/ui/login_screen/login_model/login_response.dart';
-import 'package:dms/ui/order_booking/order_booking_list/model/get_brand_&_category_resonse.dart';
+import 'package:dms/ui/order_booking/order_booking_list/model/get_brand_category_resonse.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
-import 'package:dms/ui/order_booking/order_booking_list/model/get_schemes_response.dart';
 import 'package:dms/ui/order_booking/retailer_detail/model/retailer_details_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
@@ -56,9 +55,7 @@ class ApiRepository {
   Future<SplashResponse> validateAppVersion(Map input) async {
     try {
       Response response = await dio.post(Url.validateAppVer,
-          data: input,
-          options: buildCacheOptions(const Duration(days: 7),
-              forceRefresh: true, maxStale: const Duration(days: 7)));
+          data: input, options: buildCacheOptions(const Duration(days: 7), forceRefresh: true, maxStale: const Duration(days: 7)));
       SplashResponse result = SplashResponse.fromJson(response.toString());
       return result;
     } catch (error, stacktrace) {
@@ -75,10 +72,7 @@ class ApiRepository {
   }
 
   Future<LoginResponse> login(String mobileNumber, String password) async {
-    Map<String, dynamic> data = {
-      "mobile_number": mobileNumber,
-      "password": password
-    };
+    Map<String, dynamic> data = {"mobile_number": mobileNumber, "password": password};
 
     try {
       Response response = await dio.post(
@@ -104,8 +98,7 @@ class ApiRepository {
     try {
       Response response = await dio.get(Url.getQuotesAndImages);
 
-      QuotesAndImagesResponse quotesAndImagesResponse =
-          QuotesAndImagesResponse.fromJson(response.toString());
+      QuotesAndImagesResponse quotesAndImagesResponse = QuotesAndImagesResponse.fromJson(response.toString());
       return quotesAndImagesResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -130,8 +123,7 @@ class ApiRepository {
     try {
       Response response = await dio.post(Url.startMyDay, data: formData);
 
-      StartMyDayResponse startMyDayResponse =
-          StartMyDayResponse.fromJson(response.toString());
+      StartMyDayResponse startMyDayResponse = StartMyDayResponse.fromJson(response.toString());
       return startMyDayResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -198,8 +190,7 @@ class ApiRepository {
     try {
       Response response = await dio.post(Url.endMyDay, data: data);
 
-      EndMyDayResponse endMyDayResponse =
-          EndMyDayResponse.fromJson(response.toString());
+      EndMyDayResponse endMyDayResponse = EndMyDayResponse.fromJson(response.toString());
       return endMyDayResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -238,18 +229,16 @@ class ApiRepository {
     }
   }
 
-  Future<UpdateProfileResponse> editProfile(
-      String name, String email, File? imgFile) async {
+  Future<UpdateProfileResponse> editProfile(String name, String email, File? imgFile) async {
     Map<String, dynamic> params = HashMap<String, dynamic>();
 
-    params["user_id"] =
-        await SharedPreference.getStringPreference(SharedPreference.userId);
+    params["user_id"] = await SharedPreference.getStringPreference(SharedPreference.userId);
     params["name"] = name;
     params["email"] = email;
 
     if (imgFile != null) {
-      params["profile_picture"] = await MultipartFile.fromFile(imgFile.path,
-          filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
+      params["profile_picture"] =
+          await MultipartFile.fromFile(imgFile.path, filename: DateTime.now().millisecondsSinceEpoch.toString() + ".jpg");
     }
     debugPrint("params-->$params");
 
@@ -260,8 +249,7 @@ class ApiRepository {
         data: data,
       );
 
-      UpdateProfileResponse result =
-          UpdateProfileResponse.fromJson(response.toString());
+      UpdateProfileResponse result = UpdateProfileResponse.fromJson(response.toString());
       return result;
     } catch (error, stacktrace) {
       String message = "";
@@ -279,8 +267,7 @@ class ApiRepository {
     }
   }
 
-  Future<ChangePassResponse> changePassword(String id, String currPassword,
-      String newPassword, String confPassword) async {
+  Future<ChangePassResponse> changePassword(String id, String currPassword, String newPassword, String confPassword) async {
     Map<String, dynamic> params = {
       "current_password": currPassword,
       "new_password": newPassword,
@@ -294,8 +281,7 @@ class ApiRepository {
         data: params,
       );
 
-      ChangePassResponse result =
-          ChangePassResponse.fromJson(response.toString());
+      ChangePassResponse result = ChangePassResponse.fromJson(response.toString());
       return result;
     } catch (error, stacktrace) {
       String message = "";
@@ -320,8 +306,7 @@ class ApiRepository {
         data: input,
       );
 
-      AddPlanResponse addPlanResponse =
-          AddPlanResponse.fromJson(response.toString());
+      AddPlanResponse addPlanResponse = AddPlanResponse.fromJson(response.toString());
       return addPlanResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -421,8 +406,7 @@ class ApiRepository {
         Url.getMyPlanByMonth,
         data: data,
       );
-      GetPlanResponse getAddPlanDataResponse =
-          GetPlanResponse.fromJson(response.toString());
+      GetPlanResponse getAddPlanDataResponse = GetPlanResponse.fromJson(response.toString());
       return getAddPlanDataResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -448,8 +432,7 @@ class ApiRepository {
         data: input,
       );
 
-      AddPlanUpdateDataResponse getAddPlanDataResponse =
-          AddPlanUpdateDataResponse.fromJson(response.toString());
+      AddPlanUpdateDataResponse getAddPlanDataResponse = AddPlanUpdateDataResponse.fromJson(response.toString());
       return getAddPlanDataResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -494,16 +477,13 @@ class ApiRepository {
 
   Future<GetAllTagResponse> getAllTags() async {
     try {
-      Map input = {
-        "user_id": await Utility.getStringPreference(SharedPreference.userId)
-      };
+      Map input = {"user_id": await Utility.getStringPreference(SharedPreference.userId)};
       Response response = await dio.post(
         Url.getAllTags,
         data: input,
       );
 
-      GetAllTagResponse baseResponse =
-          GetAllTagResponse.fromJson(response.toString());
+      GetAllTagResponse baseResponse = GetAllTagResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -525,8 +505,7 @@ class ApiRepository {
   Future<GetEnrollTypeResponse> getEnrolmentType() async {
     try {
       Response response = await dio.get(Url.getEnrollmentType);
-      GetEnrollTypeResponse baseResponse =
-          GetEnrollTypeResponse.fromJson(response.toString());
+      GetEnrollTypeResponse baseResponse = GetEnrollTypeResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -547,8 +526,7 @@ class ApiRepository {
   Future<SelectLanguageResponse> selectLanguage() async {
     try {
       Response response = await dio.get(Url.getLanguage);
-      SelectLanguageResponse baseResponse =
-          SelectLanguageResponse.fromJson(response.toString());
+      SelectLanguageResponse baseResponse = SelectLanguageResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -569,8 +547,7 @@ class ApiRepository {
   Future<SelectRetailerTypeResponse> selectRetailerType() async {
     try {
       Response response = await dio.get(Url.getRetailerType);
-      SelectRetailerTypeResponse baseResponse =
-          SelectRetailerTypeResponse.fromJson(response.toString());
+      SelectRetailerTypeResponse baseResponse = SelectRetailerTypeResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -591,8 +568,7 @@ class ApiRepository {
   Future<SelectRetailerCategoryResponse> selectRetailerCategory() async {
     try {
       Response response = await dio.get(Url.getRetailerCategory);
-      SelectRetailerCategoryResponse baseResponse =
-          SelectRetailerCategoryResponse.fromJson(response.toString());
+      SelectRetailerCategoryResponse baseResponse = SelectRetailerCategoryResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -613,8 +589,7 @@ class ApiRepository {
   Future<SelectDistrictResponse> selectDistrict() async {
     try {
       Response response = await dio.post(Url.getDistrict);
-      SelectDistrictResponse baseResponse =
-          SelectDistrictResponse.fromJson(response.toString());
+      SelectDistrictResponse baseResponse = SelectDistrictResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -638,8 +613,7 @@ class ApiRepository {
         Url.getDistributor,
         data: input,
       );
-      SelectDistributorResponse baseResponse =
-          SelectDistributorResponse.fromJson(response.toString());
+      SelectDistributorResponse baseResponse = SelectDistributorResponse.fromJson(response.toString());
 
       return baseResponse;
     } catch (error, stacktrace) {
@@ -661,8 +635,7 @@ class ApiRepository {
   Future<CallTimeSlotResponse> selectCallTimeslot() async {
     try {
       Response response = await dio.get(Url.getCallTimeSlot);
-      CallTimeSlotResponse baseResponse =
-          CallTimeSlotResponse.fromJson(response.toString());
+      CallTimeSlotResponse baseResponse = CallTimeSlotResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -683,8 +656,7 @@ class ApiRepository {
   Future<GetSurveyProduct> getSurveyProduct() async {
     try {
       Response response = await dio.get(Url.getRetailerProducts);
-      GetSurveyProduct getSurveyProduct =
-          GetSurveyProduct.fromJson(response.toString());
+      GetSurveyProduct getSurveyProduct = GetSurveyProduct.fromJson(response.toString());
       return getSurveyProduct;
     } catch (error, stacktrace) {
       String message = "";
@@ -706,8 +678,7 @@ class ApiRepository {
   Future<SelectBeatResponse> selectBeat(Map input) async {
     try {
       Response response = await dio.post(Url.getDistributorsBeat, data: input);
-      SelectBeatResponse baseResponse =
-          SelectBeatResponse.fromJson(response.toString());
+      SelectBeatResponse baseResponse = SelectBeatResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -728,8 +699,7 @@ class ApiRepository {
   Future<BaseResponse> registerRetailer(Map<String, dynamic> input) async {
     try {
       FormData data = FormData.fromMap(input);
-      Response response =
-          await dio.post(Url.retailerEnrollmentSave, data: data);
+      Response response = await dio.post(Url.retailerEnrollmentSave, data: data);
       BaseResponse baseResponse = BaseResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
@@ -772,8 +742,7 @@ class ApiRepository {
   Future<OrderBookingDayResponse> orderBookingDay(Map input) async {
     try {
       Response response = await dio.post(Url.getOrderBookingDay, data: input);
-      OrderBookingDayResponse baseResponse =
-          OrderBookingDayResponse.fromJson(response.toString());
+      OrderBookingDayResponse baseResponse = OrderBookingDayResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -794,8 +763,7 @@ class ApiRepository {
   Future<RetailersResponse> searchRetailer(Map input) async {
     try {
       Response response = await dio.post(Url.searchRetailer, data: input);
-      RetailersResponse baseResponse =
-          RetailersResponse.fromJson(response.toString());
+      RetailersResponse baseResponse = RetailersResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -816,8 +784,7 @@ class ApiRepository {
   Future<GetBrandCategoryResponse> getBrandAndCategory(Map input) async {
     try {
       Response response = await dio.post(Url.getBrandAndCategory, data: input);
-      GetBrandCategoryResponse baseResponse =
-          GetBrandCategoryResponse.fromJson(response.toString());
+      GetBrandCategoryResponse baseResponse = GetBrandCategoryResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -838,8 +805,7 @@ class ApiRepository {
   Future<GetAllBeatsResponse> getAllBeats() async {
     try {
       Response response = await dio.get(Url.getAllBeats);
-      GetAllBeatsResponse baseResponse =
-          GetAllBeatsResponse.fromJson(response.toString());
+      GetAllBeatsResponse baseResponse = GetAllBeatsResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -859,16 +825,13 @@ class ApiRepository {
 
   Future<GetAllBeatsResponse> getBeatByOrderBookingDay() async {
     try {
-      DateTime dateTime =
-          await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
+      DateTime dateTime = await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
         return DateTime.now();
       });
       Map<String, dynamic> input = {"day": DateFormat("EEEE").format(dateTime)};
 
-      Response response =
-          await dio.post(Url.getBeatByOrderBookingDay, data: input);
-      GetAllBeatsResponse baseResponse =
-          GetAllBeatsResponse.fromJson(response.toString());
+      Response response = await dio.post(Url.getBeatByOrderBookingDay, data: input);
+      GetAllBeatsResponse baseResponse = GetAllBeatsResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -889,8 +852,7 @@ class ApiRepository {
   Future<GetRetailersResponse> getRetailersOrderWise(Map input) async {
     try {
       Response response = await dio.post(Url.getRetailerOrderWise, data: input);
-      GetRetailersResponse baseResponse =
-          GetRetailersResponse.fromJson(response.toString());
+      GetRetailersResponse baseResponse = GetRetailersResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -911,8 +873,7 @@ class ApiRepository {
   Future<RetailersDetailsResponse> getRetailerInfo(Map input) async {
     try {
       Response response = await dio.post(Url.getRetailerInfo, data: input);
-      RetailersDetailsResponse baseResponse =
-          RetailersDetailsResponse.fromJson(response.toString());
+      RetailersDetailsResponse baseResponse = RetailersDetailsResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -933,8 +894,7 @@ class ApiRepository {
   Future<GetProductsResponse> getProducts(Map input) async {
     try {
       Response response = await dio.post(Url.getProducts, data: input);
-      GetProductsResponse baseResponse =
-          GetProductsResponse.fromJson(response.toString());
+      GetProductsResponse baseResponse = GetProductsResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -952,11 +912,10 @@ class ApiRepository {
     }
   }
 
-  Future<GetSchemesResponse> getSchemeProducts(Map input) async {
+  Future<GetProductsResponse> getSchemeProducts(Map input) async {
     try {
       Response response = await dio.post(Url.getSchemeProducts, data: input);
-      GetSchemesResponse baseResponse =
-          GetSchemesResponse.fromJson(response.toString());
+      GetProductsResponse baseResponse = GetProductsResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -967,7 +926,7 @@ class ApiRepository {
         message = StringConst.somethingWR;
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
-      return GetSchemesResponse(
+      return GetProductsResponse(
         success: false,
         message: message,
       );
