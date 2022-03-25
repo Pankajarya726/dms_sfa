@@ -1,17 +1,22 @@
-import 'package:dms/ui/common_bloc/common_bloc.dart';
-import 'package:dms/ui/common_bloc/common_bloc_events.dart';
-import 'package:dms/ui/common_bloc/common_bloc_states.dart';
+import 'dart:async';
+import 'dart:collection';
+import 'package:dms/main.dart';
+import 'package:dms/ui/order_booking/order_booking_list/model/get_filter_mrp_response.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FilterOrderBookingBottomSheet extends StatefulWidget {
-  final Function(String price) onPriceSelect;
-  final String selectedPrice;
-  const FilterOrderBookingBottomSheet(
-      {Key? key, required this.onPriceSelect, required this.selectedPrice})
-      : super(key: key);
+  final Function(FilterMrpModal? mrp) onMrpSelected;
+  final FilterMrpModal? filterMrpModal;
+  final String beatId;
+  const FilterOrderBookingBottomSheet({
+    Key? key,
+    required this.onMrpSelected,
+    required this.filterMrpModal,
+    required this.beatId,
+  }) : super(key: key);
 
   @override
   _FilterOrderBookingBottomSheetState createState() =>
@@ -28,15 +33,22 @@ class _FilterOrderBookingBottomSheetState
     "₹1000",
     "₹1200",
   ];
-  Object filterOrderBookingRadio = "";
-  String selectedPrice = "";
-  CommonBloc commonBloc = CommonBloc();
+  int groupValue = -1;
+  FilterMrpModal? filterMrpModal;
+  List<FilterMrpModal> mrpList = [];
+  StreamController<List<FilterMrpModal>> mrpStreamController =
+      StreamController();
 
   @override
   void initState() {
     super.initState();
-    filterOrderBookingRadio = widget.selectedPrice;
-    selectedPrice = widget.selectedPrice;
+    if (widget.filterMrpModal != null) {
+      debugPrint(
+          "widget.selectedDistrict!.id---->${widget.filterMrpModal!.id}");
+      groupValue = int.parse(widget.filterMrpModal!.id);
+      filterMrpModal = widget.filterMrpModal;
+    }
+    getFilterMrp();
   }
 
   @override
@@ -50,123 +62,126 @@ class _FilterOrderBookingBottomSheetState
           topLeft: Radius.circular(25),
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            StringConst.filter,
-            style: TextStyle(
-              fontSize: 19,
-              color: MColor.colorPrimary,
-              letterSpacing: 0.67,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Flexible(
-            child: ListView.builder(
-              controller: ScrollController(keepScrollOffset: false),
-              itemCount: names.length,
-              itemBuilder: (context, index) {
-                return BlocProvider(
-                  create: (context) => commonBloc,
-                  child: BlocBuilder<CommonBloc, CommonBlocStates>(
-                    builder: (context, state) {
-                      if (state is CommonBlocInitialState) {
-                        if (filterOrderBookingRadio == names[index]) {
-                          commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                              enrollmentRadioTag: index));
-                        }
-                      }
-                      if (state is CommonBlocEnrollRadioTagState) {
-                        filterOrderBookingRadio = state.enrollmentRadioTag;
-                      }
-                      return radioButtonWidget(
-                          filterOrderBookingRadio, index, names[index]);
-                    },
+      child: StreamBuilder<List<FilterMrpModal>>(
+          stream: mrpStreamController.stream,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (snapshot.hasError) {
+              return Center(
+                child: Text("${snapshot.error}"),
+              );
+            }
+
+            if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    StringConst.filter,
+                    style: TextStyle(
+                      fontSize: 19,
+                      color: MColor.colorPrimary,
+                      letterSpacing: 0.67,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                );
-              },
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                widget.onPriceSelect(selectedPrice);
-                Navigator.pop(context);
-              },
-              style: ButtonStyle(
-                fixedSize: MaterialStateProperty.all(const Size(220, 60)),
-                backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
-                elevation: MaterialStateProperty.all(0),
-                shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                  const SizedBox(
+                    height: 10,
                   ),
-                ),
-              ),
-              child: const Text(
-                StringConst.done,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-        ],
-      ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: List.generate(
+                          snapshot.data!.length,
+                          (index) {
+                            return RadioListTile<int>(
+                              contentPadding: const EdgeInsets.all(0),
+                              value: int.parse(snapshot.data![index].id),
+                              groupValue: groupValue,
+                              title: Text(
+                                "₹" + snapshot.data![index].mrp,
+                                style: const TextStyle(
+                                  fontSize: 17.0,
+                                  color: MColor.backButton,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              onChanged: (value) {
+                                groupValue = value!;
+                                mrpStreamController.add(snapshot.data!);
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).viewInsets.bottom),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        MaterialButton(
+                          onPressed: () {
+                            if (groupValue != -1) {
+                              filterMrpModal = mrpList.singleWhere((element) =>
+                                  element.id == groupValue.toString());
+                              widget.onMrpSelected(filterMrpModal!);
+                            }
+                            Navigator.pop(context);
+                          },
+                          height: 50,
+                          padding: const EdgeInsets.symmetric(horizontal: 55),
+                          color: MColor.colorPrimary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          elevation: 0,
+                          child: const Text(
+                            StringConst.done,
+                            style: TextStyle(
+                              letterSpacing: 0.67,
+                              color: Colors.white,
+                              fontSize: 23,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                ],
+              );
+            }
+            return Container();
+          }),
     );
   }
 
-  Widget radioButtonWidget(groupValue, value, label) {
-    return GestureDetector(
-      onTap: () {
-        commonBloc
-            .add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-        selectedPrice = names[value];
-      },
-      child: Row(
-        children: [
-          SizedBox(
-            width: 18,
-            child: Radio<dynamic>(
-              value: value,
-              groupValue: groupValue,
-              activeColor: MColor.colorPrimary,
-              fillColor: MaterialStateProperty.all(MColor.colorPrimary),
-              onChanged: (value) {
-                commonBloc.add(
-                    CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
-                selectedPrice = names[value].toString();
-              },
-            ),
-          ),
-          const SizedBox(
-            width: 10,
-          ),
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 17.0,
-              color: MColor.backButton,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(
-            width: 15,
-          ),
-        ],
-      ),
-    );
+  void getFilterMrp() async {
+    Map<String, dynamic> input = HashMap<String, dynamic>();
+    input["beat_id"] = widget.beatId;
+    GetFilterMrpResponse response = await repository.getFilterMrp(input);
+    if (await Network.isConnected()) {
+      if (response.success) {
+        mrpList = response.data!;
+        mrpStreamController.add(mrpList);
+      } else {
+        mrpStreamController.addError(response.message);
+      }
+    } else {
+      mrpStreamController.addError(StringConst.internetCheck);
+    }
   }
 }

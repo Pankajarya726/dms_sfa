@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:collection';
-
 import 'package:dms/listeners/select_category_listener.dart';
 import 'package:dms/main.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_brand_category_resonse.dart';
@@ -36,11 +35,14 @@ class OrderBookingTab extends StatefulWidget {
   _OrderBookingTabState createState() => _OrderBookingTabState();
 }
 
-class _OrderBookingTabState extends State<OrderBookingTab> implements SelectCategoryListener {
+class _OrderBookingTabState extends State<OrderBookingTab>
+    implements SelectCategoryListener {
   List<ProductsModal> productList = [];
   List<ProductsModal> schemesList = [];
-  StreamController<List<ProductsModal>> productsStreamController = StreamController();
-  StreamController<List<ProductsModal>> schemesStreamController = StreamController();
+  StreamController<List<ProductsModal>> productsStreamController =
+      StreamController();
+  StreamController<List<ProductsModal>> schemesStreamController =
+      StreamController();
   BrandAndCategoryModel? brandAndCategoryModel;
   Category? category;
   List<Category> categoryList = [];
@@ -73,7 +75,8 @@ class _OrderBookingTabState extends State<OrderBookingTab> implements SelectCate
                     child: StreamBuilder<List<ProductsModal>>(
                       stream: schemesStreamController.stream,
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return const Center(
                             child: CircularProgressIndicator(),
                           );
@@ -106,7 +109,8 @@ class _OrderBookingTabState extends State<OrderBookingTab> implements SelectCate
                     child: StreamBuilder<List<ProductsModal>>(
                       stream: productsStreamController.stream,
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return const Center(
                             child: CircularProgressIndicator(),
                           );
@@ -176,7 +180,8 @@ class _OrderBookingTabState extends State<OrderBookingTab> implements SelectCate
   }
 
   @override
-  void onCategorySelect(BrandAndCategoryModel brandAndCategoryModel, Category category) {
+  void onCategorySelect(
+      BrandAndCategoryModel brandAndCategoryModel, Category category) {
     this.brandAndCategoryModel = brandAndCategoryModel;
     this.category = category;
     getProducts();
@@ -233,7 +238,8 @@ class BeatsWidget extends StatefulWidget {
   final List<Category> tags;
   final Function(Category tag) onSelect;
 
-  const BeatsWidget({Key? key, required this.tags, required this.onSelect}) : super(key: key);
+  const BeatsWidget({Key? key, required this.tags, required this.onSelect})
+      : super(key: key);
 
   @override
   _BeatsWidgetState createState() => _BeatsWidgetState();
@@ -282,11 +288,17 @@ class _BeatsWidgetState extends State<BeatsWidget> {
               ),
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
               border: Border.all(
-                color: widget.tags[index].categoryName == tag.categoryName ? MColor.colorPrimary : const Color(0xffC5C5C5),
+                color: widget.tags[index].categoryName == tag.categoryName
+                    ? MColor.colorPrimary
+                    : const Color(0xffC5C5C5),
               ),
               singleItem: true,
-              activeColor: widget.tags[index].categoryName == tag.categoryName ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
-              color: widget.tags[index].categoryName == tag.categoryName ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
+              activeColor: widget.tags[index].categoryName == tag.categoryName
+                  ? const Color(0xffFFC9CC)
+                  : const Color(0xffFAFAFA),
+              color: widget.tags[index].categoryName == tag.categoryName
+                  ? const Color(0xffFFC9CC)
+                  : const Color(0xffFAFAFA),
               title: widget.tags[index].categoryName,
             ),
           );

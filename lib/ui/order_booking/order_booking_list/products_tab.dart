@@ -13,11 +13,14 @@ class ProductTabs extends StatefulWidget {
   final int index;
   final String beatId;
   final String retailerId;
-
   final BrandAndCategoryModel brands;
-
-  const ProductTabs({Key? key, required this.index, required this.brands, required this.beatId, required this.retailerId})
-      : super(key: key);
+  const ProductTabs({
+    Key? key,
+    required this.index,
+    required this.brands,
+    required this.beatId,
+    required this.retailerId,
+  }) : super(key: key);
 
   @override
   _ProductTabsState createState() => _ProductTabsState();
@@ -50,13 +53,13 @@ class _ProductTabsState extends State<ProductTabs> {
         getSchemeProduct();
       }
     }
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         widget.index > 1 && widget.brands.category.isNotEmpty
             ? BeatsWidget(
@@ -124,10 +127,15 @@ class _ProductTabsState extends State<ProductTabs> {
   ) async {
     Map<String, dynamic> input = HashMap<String, dynamic>();
 
-    input["brand_id"] = brandId;
-    input["category_id"] = categoryId;
-    input["beat_id"] = widget.beatId;
-    input["retailer_id"] = widget.retailerId;
+    // input["brand_id"] = brandId;
+    // input["category_id"] = categoryId;
+    // input["beat_id"] = widget.beatId;
+    // input["retailer_id"] = widget.retailerId;
+
+    input["brand_id"] = "1";
+    input["category_id"] = "";
+    input["beat_id"] = "27";
+    input["retailer_id"] = "27";
     GetProductsResponse response = await repository.getProducts(input);
     if (response.success) {
       productList = response.data!;
