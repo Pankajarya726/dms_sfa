@@ -1,6 +1,5 @@
 import 'dart:collection';
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:dms/main.dart';
@@ -41,8 +40,6 @@ import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:intl/intl.dart';
-import 'package:ntp/ntp.dart';
 
 class ApiRepository {
   static final ApiRepository repository = ApiRepository.internal();
@@ -857,14 +854,8 @@ class ApiRepository {
     }
   }
 
-  Future<GetAllBeatsResponse> getBeatByOrderBookingDay() async {
+  Future<GetAllBeatsResponse> getBeatByOrderBookingDay(input) async {
     try {
-      DateTime dateTime =
-          await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
-        return DateTime.now();
-      });
-      Map<String, dynamic> input = {"day": DateFormat("EEEE").format(dateTime)};
-
       Response response =
           await dio.post(Url.getBeatByOrderBookingDay, data: input);
       GetAllBeatsResponse baseResponse =

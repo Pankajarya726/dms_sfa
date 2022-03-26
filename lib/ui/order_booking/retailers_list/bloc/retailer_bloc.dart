@@ -9,6 +9,8 @@ import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:ntp/ntp.dart';
 
 class RetailersBloc extends Bloc<RetailerEvent, RetailerState> {
   RetailersBloc() : super(RetailerInitState());
@@ -26,8 +28,13 @@ class RetailersBloc extends Bloc<RetailerEvent, RetailerState> {
   Stream<RetailerState> getBeats(GetBeatEvent event) async* {
     yield BeatLoadingState();
     if (await Network.isConnected()) {
+      DateTime dateTime =
+          await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
+        return DateTime.now();
+      });
+      Map<String, dynamic> input = {"day": DateFormat("EEEE").format(dateTime)};
       GetAllBeatsResponse response =
-          await repository.getBeatByOrderBookingDay();
+          await repository.getBeatByOrderBookingDay(input);
       if (response.success) {
         List<BeatsModal> beats = [];
         beats.add(BeatsModal(id: "", name: "All"));
