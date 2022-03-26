@@ -8,6 +8,7 @@ import 'package:dms/ui/order_booking/order_booking_list/bloc/order_book_list_eve
 import 'package:dms/ui/order_booking/order_booking_list/bloc/order_book_list_states.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_brand_category_resonse.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_filter_mrp_response.dart';
+import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
 import 'package:dms/ui/order_booking/order_booking_list/products_tab.dart';
 import 'package:dms/ui/order_booking/order_confirmation/order_confirmation_screen.dart';
 import 'package:dms/ui/order_booking/search_products/search_product_screen.dart';
@@ -362,4 +363,67 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
       ),
     );
   }
+}
+
+class OrderBookingModal {
+  OrderBookingModal({
+    required this.brandName,
+    required this.categories,
+  });
+  String brandName;
+  List<Categories> categories;
+}
+
+class Categories {
+  Categories({
+    required this.categoryName,
+    required this.products,
+  });
+  String categoryName;
+  List<Products> products;
+}
+
+class Products {
+  Products({
+    required this.id,
+    required this.productName,
+    required this.mrp,
+    required this.ptr,
+    required this.image,
+    required this.skuRatePerPkg,
+    required this.skuRatePerMoq,
+    required this.skuRatePerPiece,
+    required this.moqName,
+    required this.packagingName,
+    required this.skuCode,
+    required this.weight,
+    required this.variantName,
+    required this.longDescription,
+    required this.pcsPerMoq,
+    required this.pcsPerPackaging,
+    required this.priceAfterDiscount,
+    required this.pkgQty,
+    required this.moqQty,
+    required this.schemes,
+  });
+  String id;
+  String productName;
+  String mrp;
+  String ptr;
+  String image;
+  String skuRatePerPkg;
+  String skuRatePerMoq;
+  String skuRatePerPiece;
+  String moqName;
+  String packagingName;
+  String skuCode;
+  String weight;
+  String variantName;
+  String longDescription;
+  String pcsPerMoq;
+  String pcsPerPackaging;
+  String priceAfterDiscount;
+  String pkgQty;
+  String moqQty;
+  List<Scheme>? schemes;
 }
