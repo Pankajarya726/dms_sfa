@@ -53,6 +53,8 @@ class ProductsModal {
     required this.pcsPerMoq,
     required this.pcsPerPackaging,
     required this.priceAfterDiscount,
+    required this.customerId,
+    required this.saleableStockPcs,
     required this.schemes,
   });
 
@@ -73,6 +75,8 @@ class ProductsModal {
   String pcsPerMoq;
   String pcsPerPackaging;
   String priceAfterDiscount;
+  String customerId;
+  String saleableStockPcs;
   List<Scheme>? schemes;
   int pkgQty = 0;
   int moqQty = 0;
@@ -117,6 +121,11 @@ class ProductsModal {
         priceAfterDiscount: json["price_after_discount"] == null
             ? ""
             : json["price_after_discount"].toString(),
+        customerId:
+            json["customer_id"] == null ? "" : json["customer_id"].toString(),
+        saleableStockPcs: json["saleable_stock_pcs"] == null
+            ? ""
+            : json["saleable_stock_pcs"].toString(),
         schemes: json["schemes"] == null
             ? []
             : List<Scheme>.from(json["schemes"].map((x) => Scheme.fromMap(x))),
@@ -140,6 +149,8 @@ class ProductsModal {
         "pcs_per_moq": pcsPerMoq,
         "pcs_per_packaging": pcsPerPackaging,
         "price_after_discount": priceAfterDiscount,
+        "customer_id": customerId,
+        "saleable_stock_pcs": saleableStockPcs,
         "schemes": schemes == null
             ? []
             : List<dynamic>.from(schemes!.map((x) => x.toMap())),

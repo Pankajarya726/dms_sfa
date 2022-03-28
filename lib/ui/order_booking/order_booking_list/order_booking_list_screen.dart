@@ -140,7 +140,10 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const OrderConfirmationScreen(),
+                        builder: (context) => OrderConfirmationScreen(
+                          beatId: widget.beatId,
+                          retailerId: widget.retailerId,
+                        ),
                       ),
                     );
                   },
@@ -233,8 +236,8 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
                           color: const Color(0xffEDEDED),
                           child: TabBar(
                             onTap: (value) {
-                              BlocProvider.of<OrderBookListBloc>(context)
-                                  .add(ChangeTabEvent(index: value));
+                              // BlocProvider.of<OrderBookListBloc>(context)
+                              //     .add(ChangeTabEvent(index: value));
                             },
                             isScrollable: true,
                             controller: tabController,

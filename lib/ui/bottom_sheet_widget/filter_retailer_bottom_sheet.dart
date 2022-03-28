@@ -1,5 +1,4 @@
 import 'dart:collection';
-
 import 'package:dms/main.dart';
 import 'package:dms/ui/custom_widget/drop_down_field.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailer_bloc.dart';
