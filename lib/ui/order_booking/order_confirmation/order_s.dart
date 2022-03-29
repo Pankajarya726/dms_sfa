@@ -22,81 +22,92 @@ class _OrderSState extends State<OrderS> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SfDataGrid(
-        source: employeeDataSource,
-        allowSwiping: false,
-        columns: [
-          GridColumn(
-            columnName: "sno",
-            label: Container(
-              alignment: Alignment.center,
-              child: const Text(
-                "S.No",
-                style: TextStyle(fontSize: 10),
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: SfDataGrid(
+          source: employeeDataSource,
+          columnWidthMode: ColumnWidthMode.fill,
+          gridLinesVisibility: GridLinesVisibility.both,
+          headerGridLinesVisibility: GridLinesVisibility.both,
+          columns: [
+            GridColumn(
+              maximumWidth: 30,
+              columnName: "sno",
+              label: Container(
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  "S.No",
+                  style: TextStyle(fontSize: 10),
+                ),
               ),
             ),
-          ),
-          GridColumn(
-            columnName: "skuDescription",
-            label: Container(
-              alignment: Alignment.center,
-              child: const Text(
-                "SKU Description",
-                style: TextStyle(fontSize: 10),
+            GridColumn(
+              columnName: "skuDescription",
+              label: Container(
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  "SKU Description",
+                  style: TextStyle(fontSize: 10),
+                ),
               ),
             ),
-          ),
-          GridColumn(
-            columnName: "mrp",
-            label: Container(
-              alignment: Alignment.center,
-              child: const Text(
-                "MRP",
-                style: TextStyle(fontSize: 10),
+            GridColumn(
+              columnName: "mrp",
+              maximumWidth: 50,
+              label: Container(
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  "MRP",
+                  style: TextStyle(fontSize: 10),
+                ),
               ),
             ),
-          ),
-          GridColumn(
-            columnName: "ptr",
-            label: Container(
-              alignment: Alignment.center,
-              child: const Text(
-                "PTR",
-                style: TextStyle(fontSize: 10),
+            GridColumn(
+              columnName: "ptr",
+              maximumWidth: 30,
+              label: Container(
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  "PTR",
+                  style: TextStyle(fontSize: 10),
+                ),
               ),
             ),
-          ),
-          GridColumn(
-            columnName: "qtyMoqs",
-            label: Container(
-              alignment: Alignment.center,
-              child: const Text(
-                "Qty(MOQs)",
-                style: TextStyle(fontSize: 10),
+            GridColumn(
+              columnName: "qtyMoqs",
+              maximumWidth: 40,
+              label: Container(
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  "Qty(MOQs)",
+                  style: TextStyle(fontSize: 10),
+                ),
               ),
             ),
-          ),
-          GridColumn(
-            columnName: "qtyBoxes",
-            label: Container(
-              alignment: Alignment.center,
-              child: const Text(
-                "Qty(Boxes)",
-                style: TextStyle(fontSize: 10),
+            GridColumn(
+              columnName: "qtyBoxes",
+              maximumWidth: 40,
+              label: Container(
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  "Qty(Boxes)",
+                  style: TextStyle(fontSize: 10),
+                ),
               ),
             ),
-          ),
-          GridColumn(
-            columnName: "totalValues",
-            label: Container(
-              alignment: Alignment.center,
-              child: const Text(
-                "Total Values",
-                style: TextStyle(fontSize: 10),
+            GridColumn(
+              columnName: "totalValues",
+              maximumWidth: 50,
+              label: Container(
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  "Total Values",
+                  style: TextStyle(fontSize: 10),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -128,11 +139,14 @@ class EmployeeDataSource extends DataGridSource {
   DataGridRowAdapter? buildRow(DataGridRow row) {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((dataGridCell) {
-      return Container(
-        alignment: Alignment.center,
-        child: Text(
-          dataGridCell.value.toString(),
-          style: const TextStyle(fontSize: 10),
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 1),
+        child: Container(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            dataGridCell.value.toString(),
+            style: const TextStyle(fontSize: 10),
+          ),
         ),
       );
     }).toList());
@@ -143,60 +157,62 @@ List<Empolyee> getEmployeeData() {
   return [
     Empolyee(
         sno: 1,
-        skuDescription: "rishabh",
-        mrp: "developer",
-        ptr: "50k",
+        skuDescription:
+            "YD Namkeen Ring Toma- to 13 gm 210 pkt Rs. 5 -With Race Toys",
+        mrp: "5.00",
+        ptr: "4.10",
         qtyMoqs: "4",
         qtyBoxes: "5",
-        totalValue: "10"),
+        totalValue: "299.27"),
     Empolyee(
-        sno: 1,
-        skuDescription: "rishabh",
-        mrp: "developer",
-        ptr: "50k",
+        sno: 2,
+        skuDescription: "YD Namkeen Mixture 24gm 360 pkt Rs 5",
+        mrp: "5.00",
+        ptr: "4.10",
         qtyMoqs: "4",
         qtyBoxes: "5",
-        totalValue: "10"),
+        totalValue: "299.27"),
     Empolyee(
-        sno: 1,
-        skuDescription: "rishabh",
-        mrp: "developer",
-        ptr: "50k",
+        sno: 3,
+        skuDescription: "RF Cup Cake Chocolate 18 gm 160 pkt Rs 5",
+        mrp: "5.00",
+        ptr: "4.10",
         qtyMoqs: "4",
         qtyBoxes: "5",
-        totalValue: "10"),
+        totalValue: "299.27"),
     Empolyee(
-        sno: 1,
-        skuDescription: "rishabh",
-        mrp: "developer",
-        ptr: "50k",
+        sno: 4,
+        skuDescription: "HO Glow Pop Animal Rs 5",
+        mrp: "5.00",
+        ptr: "4.10",
         qtyMoqs: "4",
         qtyBoxes: "5",
-        totalValue: "10"),
+        totalValue: "299.27"),
     Empolyee(
-        sno: 1,
-        skuDescription: "rishabh",
-        mrp: "developer",
-        ptr: "50k",
+        sno: 5,
+        skuDescription:
+            "YD Namkeen Ring Toma- to 13 gm 210 pkt Rs. 5 -With Race Toys",
+        mrp: "5.00",
+        ptr: "4.10",
         qtyMoqs: "4",
         qtyBoxes: "5",
-        totalValue: "10"),
+        totalValue: "299.27"),
     Empolyee(
-        sno: 1,
-        skuDescription: "rishabh",
-        mrp: "developer",
-        ptr: "50k",
+        sno: 6,
+        skuDescription: "YD Namkeen Mixture 24gm 360 pkt Rs 5",
+        mrp: "5.00",
+        ptr: "4.10",
         qtyMoqs: "4",
         qtyBoxes: "5",
-        totalValue: "10"),
+        totalValue: "299.27"),
     Empolyee(
-        sno: 1,
-        skuDescription: "rishabh",
-        mrp: "developer",
-        ptr: "50k",
+        sno: 7,
+        skuDescription: "RF Cup Cake Chocolate 18 gm 160 pkt Rs 5",
+        mrp: "5.00",
+        ptr: "4.10",
         qtyMoqs: "4",
         qtyBoxes: "5",
-        totalValue: "10"),
+        totalValue: "299.27"),
   ];
 }
 
@@ -222,16 +238,17 @@ class Empolyee {
 
 
 
+
 // import 'package:flutter/material.dart';
 
-// class TableScreen extends StatefulWidget {
-//   const TableScreen({Key? key}) : super(key: key);
+// class OrderS extends StatefulWidget {
+//   const OrderS({Key? key}) : super(key: key);
 
 //   @override
-//   _TableScreenState createState() => _TableScreenState();
+//   _OrderSState createState() => _OrderSState();
 // }
 
-// class _TableScreenState extends State<TableScreen> {
+// class _OrderSState extends State<OrderS> {
 //   List<String> tableHeadings = [
 //     "S.No",
 //     "SKU Description",
