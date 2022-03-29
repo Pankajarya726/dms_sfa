@@ -147,17 +147,20 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                               selectedDay = day;
                               selectedPrioType = type;
                               selectedBeat = beat;
-                              if (selectedBeat.isNotEmpty) {
-                                retailersBloc.add(GetBeatEvent());
-                              }
                               if (selectBeatListener != null) {
                                 selectBeatListener!.onBeatSelect(
                                     beatModal!, selectedDay, selectedPrioType);
                               }
                             },
-                            onBeatSelected: (beatsM) {
+                            onBeatSelected: (beatsM, beatList) {
                               if (beatsM != null) {
                                 beatModal = beatsM;
+                                beats = beatList;
+                                retailersBloc.add(GetBeatEvent());
+                              }
+                              if (selectBeatListener != null) {
+                                selectBeatListener!.onBeatSelect(
+                                    beatModal!, selectedDay, selectedPrioType);
                               }
                             },
                           );
@@ -293,10 +296,12 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                 if (state is RetailerInitState) {
                   retailersBloc.add(GetBeatEvent());
                 }
-                if (state is GetBeatState) {
-                  beats = state.beats;
-                  if (selectedBeat.isEmpty) {
-                    beatModal = beats.first;
+                if (beats.isEmpty) {
+                  if (state is GetBeatState) {
+                    beats = state.beats;
+                    if (selectedBeat.isEmpty) {
+                      beatModal = beats.first;
+                    }
                   }
                 }
 

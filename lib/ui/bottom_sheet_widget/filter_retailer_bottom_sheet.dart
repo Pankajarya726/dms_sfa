@@ -1,8 +1,13 @@
+import 'dart:collection';
+import 'package:dms/main.dart';
 import 'package:dms/ui/custom_widget/drop_down_field.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailer_bloc.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/constants.dart';
+import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,8 +16,13 @@ class FilterRetailerBottomSheet extends StatefulWidget {
   final String type;
   final String beat;
   final List<BeatsModal> beatList;
-  final Function(String day, String type, String selectedBeat) onFilter;
-  final Function(BeatsModal? beatsModal) onBeatSelected;
+  final Function(
+    String day,
+    String type,
+    String selectedBeat,
+  ) onFilter;
+  final Function(BeatsModal? beatsModal, List<BeatsModal> beatList)
+      onBeatSelected;
   const FilterRetailerBottomSheet({
     Key? key,
     required this.onFilter,
@@ -92,6 +102,8 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                 onSelect: (value) {
                   debugPrint("select-->$value");
                   selectedDay = value;
+                  beats.clear();
+                  getBeats();
                 },
                 hint: "Select Order Booking Day",
                 menuList: days,
@@ -140,7 +152,7 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                         widget.onFilter(
                             selectedDay, selectedPrioType, selectedBeat);
                         if (beatsModal != null) {
-                          widget.onBeatSelected(beatsModal!);
+                          widget.onBeatSelected(beatsModal!, beats);
                         }
                         Navigator.pop(context);
                       },
@@ -169,5 +181,22 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
         ),
       ),
     );
+  }
+
+  getBeats() async {
+    if (await Network.isConnected()) {
+      Map<String, dynamic> input = HashMap<String, dynamic>();
+      input["day"] = selectedDay;
+      GetAllBeatsResponse response =
+          await repository.getBeatByOrderBookingDay(input);
+      if (response.success) {
+        beats.add(BeatsModal(id: "", name: "All"));
+        beats.addAll(response.data!);
+      } else {
+        Utility.showToast(response.message);
+      }
+    } else {
+      Utility.showToast(Constants.internetAlert);
+    }
   }
 }

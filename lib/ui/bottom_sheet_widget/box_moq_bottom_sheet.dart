@@ -1,10 +1,18 @@
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/string_const.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class BoxMoqSheet extends StatefulWidget {
-  const BoxMoqSheet({Key? key}) : super(key: key);
+  final String sheetHeding;
+  final String sheetType;
+
+  const BoxMoqSheet({
+    Key? key,
+    required this.sheetHeding,
+    required this.sheetType,
+  }) : super(key: key);
 
   @override
   _BoxMoqSheetState createState() => _BoxMoqSheetState();
@@ -20,7 +28,7 @@ class _BoxMoqSheetState extends State<BoxMoqSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const BottomSheetHeading("MOQ"),
+                BottomSheetHeading(widget.sheetHeding),
                 Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: InkWell(
@@ -28,8 +36,11 @@ class _BoxMoqSheetState extends State<BoxMoqSheet> {
                       Navigator.pop(context);
                     },
                     child: const Text(
-                      "Done",
-                      style: TextStyle(color: MColor.colorPrimary, fontSize: 18, fontWeight: FontWeight.bold),
+                      StringConst.done,
+                      style: TextStyle(
+                          color: MColor.colorPrimary,
+                          fontSize: 20,
+                          letterSpacing: 0.67),
                     ),
                   ),
                 )
@@ -38,14 +49,29 @@ class _BoxMoqSheetState extends State<BoxMoqSheet> {
             SizedBox(
               height: 200,
               child: CupertinoPicker(
-                  diameterRatio: 3,
-                  itemExtent: 50,
-                  useMagnifier: true,
-                  magnification: 1,
-                  onSelectedItemChanged: (item) {
-                    debugPrint("item->$item");
-                  },
-                  children: List.generate(20, (index) => Text("${index + 1}"))),
+                // diameterRatio: 3,
+                // itemExtent: 50,
+                // useMagnifier: true,
+                // magnification: 1,
+                itemExtent: 25,
+                diameterRatio: 1,
+                useMagnifier: true,
+                scrollController: FixedExtentScrollController(initialItem: 0),
+                magnification: 1.0,
+                looping: true,
+                onSelectedItemChanged: (item) {
+                  debugPrint("item->$item");
+                },
+                children: List.generate(
+                  20,
+                  (index) => Text(
+                    "$index",
+                    style: const TextStyle(
+                      fontSize: 19,
+                    ),
+                  ),
+                ),
+              ),
             )
           ],
         ),

@@ -1,18 +1,25 @@
+import 'package:dms/ui/order_booking/order_confirmation/order_s.dart';
 import 'package:dms/utils/colors.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'focus_sku_tab.dart';
 import 'order_summery_tab.dart';
 
 class OrderConfirmationScreen extends StatefulWidget {
-  const OrderConfirmationScreen({Key? key}) : super(key: key);
+  final String beatId;
+  final String retailerId;
+  const OrderConfirmationScreen({
+    Key? key,
+    required this.beatId,
+    required this.retailerId,
+  }) : super(key: key);
 
   @override
-  _OrderConfirmationScreenState createState() => _OrderConfirmationScreenState();
+  _OrderConfirmationScreenState createState() =>
+      _OrderConfirmationScreenState();
 }
 
-class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with TickerProviderStateMixin {
+class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
+    with TickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -31,16 +38,19 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with 
           title: const Text("Order Confirmation"),
           actions: [
             IconButton(
-                onPressed: () {},
-                icon: Container(
-                    decoration: const BoxDecoration(color: MColor.colorSecondary, shape: BoxShape.circle),
-                    padding: const EdgeInsets.all(5),
-                    alignment: Alignment.center,
-                    child: const Icon(
-                      Icons.ten_k,
-                      color: Colors.white,
-                      size: 20,
-                    )))
+              onPressed: () {},
+              icon: Container(
+                decoration: const BoxDecoration(
+                    color: MColor.colorSecondary, shape: BoxShape.circle),
+                padding: const EdgeInsets.all(5),
+                alignment: Alignment.center,
+                child: const Icon(
+                  Icons.ten_k,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+            )
           ],
           bottom: TabBar(
             controller: _tabController,
@@ -74,7 +84,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with 
                 _tabController.animateTo(1);
               },
             ),
-            const OrderSummery(),
+            const OrderS(),
           ],
         ),
       ),
