@@ -5,20 +5,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class BoxMoqSheet extends StatefulWidget {
-  final String sheetHeding;
+  final String sheetHeading;
   final String sheetType;
 
-  const BoxMoqSheet({
-    Key? key,
-    required this.sheetHeding,
-    required this.sheetType,
-  }) : super(key: key);
+  final Function(int qty) onSelect;
+  const BoxMoqSheet({Key? key, required this.sheetHeading, required this.sheetType, required this.onSelect}) : super(key: key);
 
   @override
   _BoxMoqSheetState createState() => _BoxMoqSheetState();
 }
 
 class _BoxMoqSheetState extends State<BoxMoqSheet> {
+  int qty = 0;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -28,19 +27,17 @@ class _BoxMoqSheetState extends State<BoxMoqSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                BottomSheetHeading(widget.sheetHeding),
+                BottomSheetHeading(widget.sheetHeading),
                 Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: InkWell(
                     onTap: () {
+                      widget.onSelect(qty);
                       Navigator.pop(context);
                     },
                     child: const Text(
                       StringConst.done,
-                      style: TextStyle(
-                          color: MColor.colorPrimary,
-                          fontSize: 20,
-                          letterSpacing: 0.67),
+                      style: TextStyle(color: MColor.colorPrimary, fontSize: 20, letterSpacing: 0.67),
                     ),
                   ),
                 )
@@ -60,10 +57,11 @@ class _BoxMoqSheetState extends State<BoxMoqSheet> {
                 magnification: 1.0,
                 looping: true,
                 onSelectedItemChanged: (item) {
+                  qty = item;
                   debugPrint("item->$item");
                 },
                 children: List.generate(
-                  20,
+                  10,
                   (index) => Text(
                     "$index",
                     style: const TextStyle(

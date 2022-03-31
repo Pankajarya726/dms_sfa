@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dms/database/db_constant.dart';
+import 'package:dms/main.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/box_moq_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/product_info_bottom_sheet.dart';
@@ -7,27 +9,50 @@ import 'package:dms/ui/order_booking/order_booking_list/model/get_products_respo
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 
-class OrderBookingListItems extends StatefulWidget {
+class ProductListItem extends StatefulWidget {
   final ProductsModal products;
-  const OrderBookingListItems({
+
+  const ProductListItem({
     Key? key,
     required this.products,
   }) : super(key: key);
 
   @override
-  State<OrderBookingListItems> createState() => _OrderBookingListItemsState();
+  State<ProductListItem> createState() => _ProductListItemState();
 }
 
-class _OrderBookingListItemsState extends State<OrderBookingListItems> {
+class _ProductListItemState extends State<ProductListItem> {
+  int moqQty = 0;
+  int pkgQty = 0;
+
+  @override
+  void initState() {
+    debugPrint("ProductListItem---initState-->");
+    fetchProductFromCart();
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    debugPrint("ProductListItem---didChangeDependencies-->");
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didUpdateWidget(covariant ProductListItem oldWidget) {
+    debugPrint("ProductListItem---didUpdateWidget-->");
+    fetchProductFromCart();
+    super.didUpdateWidget(oldWidget);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
+      padding: const EdgeInsets.only(left: 5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(11),
-        color: widget.products.pkgQty == 0 && widget.products.moqQty == 0
-            ? Colors.transparent
-            : const Color.fromRGBO(44, 183, 67, 1),
+        color: pkgQty == 0 && moqQty == 0 ? Colors.white : const Color.fromRGBO(44, 183, 67, 1),
         boxShadow: const [
           BoxShadow(
             color: Colors.black12,
@@ -51,8 +76,7 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                     ));
           },
           child: Padding(
-            padding:
-                const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
+            padding: const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
             child: Column(
               children: [
                 Row(
@@ -61,9 +85,7 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => FullScreenImageView(
-                                  productImage: widget.products.image)),
+                          MaterialPageRoute(builder: (context) => FullScreenImageView(productImage: widget.products.image)),
                         );
                       },
                       child: ClipRRect(
@@ -81,10 +103,8 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                               fit: BoxFit.cover,
                             );
                           },
-                          errorWidget: (context, url, error) =>
-                              Image.asset("assets/placeholder.png"),
-                          placeholder: (context, url) =>
-                              Image.asset("assets/placeholder.png"),
+                          errorWidget: (context, url, error) => Image.asset("assets/placeholder.png"),
+                          placeholder: (context, url) => Image.asset("assets/placeholder.png"),
                         ),
                       ),
                     ),
@@ -120,7 +140,7 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                                     ),
                                     children: <TextSpan>[
                                       TextSpan(
-                                        text: "₹" + widget.products.mrp,
+                                        text: currencyFormat.format(double.parse(widget.products.mrp)),
                                         style: const TextStyle(
                                           letterSpacing: 0.67,
                                           color: Colors.black,
@@ -140,7 +160,7 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                                       ),
                                       children: <TextSpan>[
                                         TextSpan(
-                                          text: "₹" + widget.products.ptr,
+                                          text: currencyFormat.format(double.parse(widget.products.ptr)),
                                           style: const TextStyle(
                                             letterSpacing: 0.67,
                                             color: MColor.textColor,
@@ -157,10 +177,22 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                textFields(widget.products.packagingName,
-                                    context, "Packing"),
-                                textFields(
-                                    widget.products.moqName, context, "MOQ"),
+                                PkgWidget(
+                                  name: widget.products.packagingName,
+                                  qty: pkgQty,
+                                  productId: widget.products.id,
+                                  onChange: (int qty) {
+                                    updateQty(pkgQty: qty, moqQty: widget.products.moqQty);
+                                  },
+                                ),
+                                PkgWidget(
+                                  name: widget.products.moqName,
+                                  qty: moqQty,
+                                  productId: widget.products.id,
+                                  onChange: (int qty) {
+                                    updateQty(pkgQty: widget.products.pkgQty, moqQty: qty);
+                                  },
+                                ),
                               ],
                             ),
                           ],
@@ -177,7 +209,81 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
     );
   }
 
-  Widget textFields(textLabel, BuildContext context, String sheetType) {
+  void fetchProductFromCart() async {
+    Cart? cart = await databaseHelper.searchProductFromCart(widget.products.id);
+    if (cart != null) {
+      pkgQty = cart.pkgOty;
+      moqQty = cart.moqQty;
+      widget.products.pkgQty = cart.pkgOty;
+      widget.products.moqQty = cart.moqQty;
+      setState(() {});
+    }
+  }
+
+  void updateQty({required int pkgQty, required int moqQty}) async {
+    widget.products.pkgQty = pkgQty;
+    widget.products.moqQty = moqQty;
+
+    this.pkgQty = pkgQty;
+    this.moqQty = moqQty;
+    Cart cart = Cart(
+        packagingId: widget.products.packagingId,
+        moqId: widget.products.moqId,
+        variantId: widget.products.variant_id,
+        mrp: widget.products.mrp,
+        skuRatePerMoq: widget.products.skuRatePerMoq,
+        weight: widget.products.weight,
+        ptr: widget.products.ptr,
+        moqQty: moqQty,
+        productName: widget.products.productName,
+        skuCode: widget.products.skuCode,
+        variantName: widget.products.variantName,
+        productImage: widget.products.image,
+        buId: widget.products.bu_id,
+        skuRatePerPiece: widget.products.skuRatePerPiece,
+        productId: widget.products.id,
+        brandId: widget.products.brand_id,
+        pcsPerMoq: int.parse(widget.products.pcsPerMoq),
+        pcsPerPackaging: int.parse(widget.products.pcsPerPackaging),
+        pkgOty: pkgQty,
+        brandName: widget.products.brand_name,
+        customerId: widget.products.customerId,
+        skuRatePerPkg: widget.products.skuRatePerPkg,
+        description: widget.products.longDescription,
+        moqName: widget.products.moqName,
+        priceAfterDiscount: widget.products.priceAfterDiscount,
+        packagingName: widget.products.packagingName);
+    int updated = await databaseHelper.addProductToCart(cart);
+    debugPrint("update-->$updated");
+    setState(() {});
+  }
+}
+
+class PkgWidget extends StatefulWidget {
+  final int qty;
+  final String name;
+  final Function(int qty) onChange;
+  final String productId;
+
+  const PkgWidget({Key? key, required this.qty, required this.name, required this.onChange, required this.productId})
+      : super(key: key);
+
+  @override
+  _PkgWidgetState createState() => _PkgWidgetState();
+}
+
+class _PkgWidgetState extends State<PkgWidget> {
+  int qty = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    qty = widget.qty;
+    debugPrint("PkgWidget---initState-->$qty");
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: () async {
@@ -185,8 +291,13 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
             context: context,
             shape: bottomSheetShape,
             builder: (context) => BoxMoqSheet(
-                  sheetHeding: textLabel,
-                  sheetType: sheetType,
+                  sheetHeading: widget.name,
+                  sheetType: widget.name,
+                  onSelect: (int i) {
+                    qty = i;
+                    widget.onChange(qty);
+                    setState(() {});
+                  },
                 ));
       },
       child: Container(
@@ -203,7 +314,7 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              textLabel,
+              qty == 0 ? widget.name : qty.toString(),
               style: const TextStyle(
                 color: MColor.colorPrimary,
                 fontSize: 13,
@@ -224,19 +335,18 @@ class _OrderBookingListItemsState extends State<OrderBookingListItems> {
       ),
     );
   }
-}
 
-class Flavours {
-  String flavourName;
-  String mrp;
-  String ptr;
+  @override
+  void didChangeDependencies() {
+    debugPrint("PkgWidget---didChangeDependencies-->");
+    super.didChangeDependencies();
+  }
 
-  String image;
-
-  Flavours({
-    required this.flavourName,
-    required this.mrp,
-    required this.ptr,
-    required this.image,
-  });
+  @override
+  void didUpdateWidget(covariant PkgWidget oldWidget) {
+    debugPrint("PkgWidget---didUpdateWidget-->${widget.qty}");
+    qty = widget.qty;
+    setState(() {});
+    super.didUpdateWidget(oldWidget);
+  }
 }

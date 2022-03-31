@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:dms/database/database_helper.dart';
 import 'package:dms/navigation/navigation_service.dart';
 import 'package:dms/provider/repository.dart';
 import 'package:dms/provider/url.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 BaseOptions options = BaseOptions(
     responseType: ResponseType.json,
@@ -22,6 +24,7 @@ Dio dio = Dio(options);
 ApiRepository repository = ApiRepository();
 ImagePicker imagePicker = ImagePicker();
 NavigationService navigationService = NavigationService();
+DatabaseHelper databaseHelper = DatabaseHelper();
 configLoading() {
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)
@@ -37,6 +40,8 @@ configLoading() {
     ..userInteractions = false
     ..dismissOnTap = false;
 }
+
+final currencyFormat = NumberFormat.simpleCurrency(locale: "hi_IN", decimalDigits: 1);
 
 void main() {
   dio.interceptors.add(DioCacheManager(CacheConfig(baseUrl: Url.baseUrl)).interceptor);

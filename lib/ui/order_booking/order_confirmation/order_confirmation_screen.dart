@@ -1,12 +1,13 @@
 import 'package:dms/ui/order_booking/order_confirmation/order_s.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
+
 import 'focus_sku_tab.dart';
-import 'order_summery_tab.dart';
 
 class OrderConfirmationScreen extends StatefulWidget {
   final String beatId;
   final String retailerId;
+
   const OrderConfirmationScreen({
     Key? key,
     required this.beatId,
@@ -14,13 +15,12 @@ class OrderConfirmationScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _OrderConfirmationScreenState createState() =>
-      _OrderConfirmationScreenState();
+  _OrderConfirmationScreenState createState() => _OrderConfirmationScreenState();
 }
 
-class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
-    with TickerProviderStateMixin {
+class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with TickerProviderStateMixin {
   late TabController _tabController;
+  ValueNotifier<int> valueNotifier = ValueNotifier(0);
 
   @override
   void initState() {
@@ -37,42 +37,56 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
           elevation: 1,
           title: const Text("Order Confirmation"),
           actions: [
-            IconButton(
-              onPressed: () {},
-              icon: Container(
-                decoration: const BoxDecoration(
-                    color: MColor.colorSecondary, shape: BoxShape.circle),
-                padding: const EdgeInsets.all(5),
-                alignment: Alignment.center,
-                child: const Icon(
-                  Icons.ten_k,
-                  color: Colors.white,
-                  size: 20,
-                ),
-              ),
-            )
+            ValueListenableBuilder(
+                valueListenable: valueNotifier,
+                builder: (context, value, child) {
+                  return value == 1
+                      ? IconButton(
+                          onPressed: () {},
+                          icon: Container(
+                            decoration: const BoxDecoration(color: MColor.colorSecondary, shape: BoxShape.circle),
+                            padding: const EdgeInsets.all(5),
+                            alignment: Alignment.center,
+                            child: const Icon(
+                              Icons.ten_k,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                        )
+                      : Container();
+                })
           ],
-          bottom: TabBar(
-            controller: _tabController,
-            indicatorColor: MColor.colorPrimary,
-            indicatorWeight: 3,
-            labelPadding: const EdgeInsets.symmetric(horizontal: 15),
-            indicatorPadding: const EdgeInsets.symmetric(horizontal: 15),
-            physics: const NeverScrollableScrollPhysics(),
-            tabs: const [
-              Tab(
-                child: Text(
-                  "Focus SKU",
-                  style: TextStyle(color: MColor.textColor),
-                ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(50),
+            child: Container(
+              color: const Color(0xffEDEDED),
+              child: TabBar(
+                controller: _tabController,
+                indicatorColor: MColor.colorPrimary,
+                indicatorWeight: 4,
+                labelPadding: const EdgeInsets.symmetric(horizontal: 15),
+                indicatorPadding: const EdgeInsets.symmetric(horizontal: 15),
+                physics: const NeverScrollableScrollPhysics(),
+                onTap: (index) {
+                  valueNotifier.value = index;
+                },
+                tabs: const [
+                  Tab(
+                    child: Text(
+                      "Focus SKU",
+                      style: TextStyle(color: Color(0xff303030), fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Tab(
+                    child: Text(
+                      "Summary",
+                      style: TextStyle(color: Color(0xff303030), fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
               ),
-              Tab(
-                child: Text(
-                  "Summary",
-                  style: TextStyle(color: MColor.textColor),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
         body: TabBarView(
@@ -82,6 +96,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
             FocusSkyTab(
               onConfirm: () {
                 _tabController.animateTo(1);
+                valueNotifier.value = 1;
               },
             ),
             const OrderS(),

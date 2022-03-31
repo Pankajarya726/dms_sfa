@@ -1,5 +1,5 @@
 import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
-import 'package:dms/ui/order_booking/order_booking_list/order_booking_list_item.dart';
+import 'package:dms/ui/order_booking/order_booking_list/product_list_item.dart';
 import 'package:dms/ui/order_booking/order_confirmation/bloc%20/order_book_list_bloc.dart';
 import 'package:dms/ui/order_booking/order_confirmation/bloc%20/order_book_list_events.dart';
 import 'package:dms/ui/order_booking/order_confirmation/bloc%20/order_book_list_states.dart';
@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FocusSkyTab extends StatefulWidget {
   final Function() onConfirm;
+
   const FocusSkyTab({Key? key, required this.onConfirm}) : super(key: key);
 
   @override
@@ -16,12 +17,10 @@ class FocusSkyTab extends StatefulWidget {
 }
 
 class _FocusSkyTabState extends State<FocusSkyTab> {
-  List<Flavours> flavours = [];
   List<ProductsModal> focusSkuList = [];
 
   @override
   void initState() {
-    getFlavours();
     super.initState();
   }
 
@@ -40,8 +39,7 @@ class _FocusSkyTabState extends State<FocusSkyTab> {
                 "category_id": "",
                 "retailer_id": "17",
               };
-              BlocProvider.of<OrderConfirmationBloc>(context)
-                  .add(GetFocusSkuEvent(input: input));
+              BlocProvider.of<OrderConfirmationBloc>(context).add(GetFocusSkuEvent(input: input));
             }
             if (state is OrderConfirmationLoadingState) {
               return const Center(
@@ -65,7 +63,7 @@ class _FocusSkyTabState extends State<FocusSkyTab> {
                 );
               },
               itemBuilder: (context, index) {
-                return OrderBookingListItems(
+                return ProductListItem(
                   products: focusSkuList[index],
                 );
               },
@@ -96,51 +94,5 @@ class _FocusSkyTabState extends State<FocusSkyTab> {
         ),
       ),
     );
-  }
-
-  void getFlavours() async {
-    flavours.add(Flavours(
-      flavourName: "Glow Pop Red Rose",
-      mrp: "MRP: 5₹",
-      ptr: "PTR: ₹12.5",
-      image:
-          "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
-    ));
-    flavours.add(Flavours(
-      flavourName: "Trumpet Pop Strawberry",
-      mrp: "MRP: 15₹",
-      ptr: "PTR: ₹15.67",
-      image:
-          "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
-    ));
-    flavours.add(Flavours(
-      flavourName: "Lollipop Mango Strawberry",
-      mrp: "MRP: 25₹",
-      ptr: "PTR: ₹27.09",
-      image:
-          "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
-    ));
-    flavours.add(Flavours(
-      flavourName: "Surprise Egg Dexter's",
-      mrp: "MRP: 50₹",
-      ptr: "PTR: ₹17.23",
-      image:
-          "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
-    ));
-    flavours.add(Flavours(
-      flavourName: "Jelly Mix Fruits",
-      mrp: "MRP: 100₹",
-      ptr: "PTR: ₹24.01",
-      image:
-          "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
-    ));
-    flavours.add(Flavours(
-      flavourName: "Mix Shake",
-      mrp: "MRP: 150₹",
-      ptr: "PTR: ₹56.08",
-      image:
-          "https://learn.g2.com/hubfs/Stock%20images/Digital%20image%20of%20globe%20with%20conceptual%20icons.%20Globalization%20concept.%20Elements%20of%20this%20image%20are%20furnished%20by%20NASA.jpeg",
-    ));
-    setState(() {});
   }
 }

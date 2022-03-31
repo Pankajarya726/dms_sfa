@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:collection';
+
 import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
-import 'package:dms/ui/order_booking/order_booking_list/order_booking_list_item.dart';
+import 'package:dms/ui/order_booking/order_booking_list/product_list_item.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
 import 'package:flutter/material.dart';
+
 import '../../../main.dart';
 
 class SearchProductScreen extends StatefulWidget {
@@ -40,8 +42,7 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
               onChanged: (text) {
                 if (text.trim().isEmpty) {
                   products.clear();
-                  searchStream
-                      .addError("Enter product name to search products");
+                  searchStream.addError("Enter product name to search products");
                 } else {
                   searchApi(text);
                 }
@@ -53,18 +54,15 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide:
-                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide:
-                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide:
-                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   suffixIcon: IconButton(
                     splashRadius: 20,
                     icon: const Icon(
@@ -75,8 +73,7 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
                       if (edtSearch.text.trim().isNotEmpty) {
                         edtSearch.clear();
                         products.clear();
-                        searchStream
-                            .addError("Enter product name to search products");
+                        searchStream.addError("Enter product name to search products");
                       } else {
                         Navigator.pop(context);
                       }
@@ -110,7 +107,7 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
                   );
                 },
                 itemBuilder: (context, index) {
-                  return OrderBookingListItems(
+                  return ProductListItem(
                     products: snapshot.data![index],
                   );
                 });
@@ -136,8 +133,10 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
   void searchApi(String text) async {
     if (await Network.isConnected()) {
       Map<String, dynamic> input = HashMap<String, dynamic>();
-      input["beat_id"] = widget.beatId;
-      input["retailer_id"] = widget.retailerId;
+      // input["beat_id"] = widget.beatId;
+      input["beat_id"] = "27";
+      // input["retailer_id"] = widget.retailerId;
+      input["retailer_id"] = "27";
       input["search"] = text;
       searchStream.addError("loading");
       GetProductsResponse response = await repository.searchProduct(input);

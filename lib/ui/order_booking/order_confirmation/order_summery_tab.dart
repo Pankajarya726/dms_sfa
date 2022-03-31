@@ -4,7 +4,6 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class OrderSummery extends StatefulWidget {
   const OrderSummery({Key? key}) : super(key: key);
-
   @override
   _OrderSummeryState createState() => _OrderSummeryState();
 }
@@ -21,14 +20,12 @@ class _OrderSummeryState extends State<OrderSummery> {
   void initState() {
     super.initState();
     isWebOrDesktop = false;
-    dataSource =
-        OrderInfoDataGridSource(isWebOrDesktop: true, orderDataCount: 100);
+    dataSource = OrderInfoDataGridSource(isWebOrDesktop: true, orderDataCount: 100);
   }
 
   @override
   void didChangeDependencies() {
-    isLandscapeInMobileView = !isWebOrDesktop &&
-        MediaQuery.of(context).orientation == Orientation.landscape;
+    isLandscapeInMobileView = !isWebOrDesktop && MediaQuery.of(context).orientation == Orientation.landscape;
     super.didChangeDependencies();
   }
 
@@ -41,18 +38,12 @@ class _OrderSummeryState extends State<OrderSummery> {
       stackedHeaderRows: [
         StackedHeaderRow(
           cells: [
-            StackedHeaderCell(
-                columnNames: ["name"],
-                child: const Expanded(child: Center(child: Text("asdf")))),
-            StackedHeaderCell(
-                columnNames: ["freight"],
-                child: const Expanded(child: Center(child: Text("asdf1"))))
+            StackedHeaderCell(columnNames: ["name"], child: const Expanded(child: Center(child: Text("asdf")))),
+            StackedHeaderCell(columnNames: ["freight"], child: const Expanded(child: Center(child: Text("asdf1"))))
           ],
         ),
       ],
-      columnWidthMode: isWebOrDesktop || isLandscapeInMobileView
-          ? ColumnWidthMode.fill
-          : ColumnWidthMode.auto,
+      columnWidthMode: isWebOrDesktop || isLandscapeInMobileView ? ColumnWidthMode.fill : ColumnWidthMode.auto,
       columnWidthCalculationRange: ColumnWidthCalculationRange.allRows,
     );
   }
@@ -66,24 +57,15 @@ class _OrderSummeryState extends State<OrderSummery> {
           title: 'Total Order Count: {count}',
           // titleColumnSpan: 2,
           columns: <GridSummaryColumn>[
-            const GridSummaryColumn(
-                name: 'price',
-                columnName: 'price',
-                summaryType: GridSummaryType.sum),
+            const GridSummaryColumn(name: 'price', columnName: 'price', summaryType: GridSummaryType.sum),
           ],
           position: GridTableSummaryRowPosition.top),
       GridTableSummaryRow(
           color: color,
           showSummaryInRow: false,
           columns: <GridSummaryColumn>[
-            const GridSummaryColumn(
-                name: 'freight',
-                columnName: 'freight',
-                summaryType: GridSummaryType.sum),
-            const GridSummaryColumn(
-                name: 'price',
-                columnName: 'price',
-                summaryType: GridSummaryType.sum),
+            const GridSummaryColumn(name: 'freight', columnName: 'freight', summaryType: GridSummaryType.sum),
+            const GridSummaryColumn(name: 'price', columnName: 'price', summaryType: GridSummaryType.sum),
           ],
           position: GridTableSummaryRowPosition.bottom),
     ];

@@ -42,6 +42,7 @@ dependencies:
   image_picker:
   syncfusion_flutter_datepicker: ^19.4.42
   syncfusion_flutter_datagrid: ^19.4.42
+  syncfusion_flutter_core:
   intl: ^0.17.0
   connectivity:
   fluttertoast:
@@ -63,10 +64,8 @@ dependencies:
 #  for review and rate the app on store
   in_app_review:
   rxdart:
-
-
-
-
+#  Sqlite for local database
+  sqflite:
 
   # webview_flutter:
   photo_view: 
