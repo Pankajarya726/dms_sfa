@@ -30,7 +30,6 @@ import 'package:dms/ui/login_screen/login_model/login_response.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_brand_category_resonse.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_filter_mrp_response.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
-import 'package:dms/ui/order_booking/order_booking_list/model/get_suggested_response.dart';
 import 'package:dms/ui/order_booking/order_confirmation/model/get_reason_response.dart';
 import 'package:dms/ui/order_booking/retailer_detail/model/retailer_details_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
@@ -994,9 +993,8 @@ class ApiRepository {
 
   Future<GetProductsResponse> getSuggestedProducts(Map input) async {
     try {
-      Response response = await dio.post(Url.getSuggestedProducts, data: input);
-      GetProductsResponse baseResponse =
-          GetProductsResponse.fromJson(response.toString());
+      Response response = await dio.post(Url.getSuggestedProduct, data: input);
+      GetProductsResponse baseResponse = GetProductsResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -1017,8 +1015,7 @@ class ApiRepository {
   Future<GetProductsResponse> getFocusSku(Map input) async {
     try {
       Response response = await dio.post(Url.getFocusSku, data: input);
-      GetProductsResponse baseResponse =
-          GetProductsResponse.fromJson(response.toString());
+      GetProductsResponse baseResponse = GetProductsResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
@@ -1039,8 +1036,7 @@ class ApiRepository {
   Future<GetReasonsResponse> getReasons() async {
     try {
       Response response = await dio.get(Url.getReasons);
-      GetReasonsResponse baseResponse =
-          GetReasonsResponse.fromJson(response.toString());
+      GetReasonsResponse baseResponse = GetReasonsResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
       String message = "";
