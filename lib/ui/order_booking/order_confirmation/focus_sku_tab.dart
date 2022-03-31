@@ -6,6 +6,7 @@ import 'package:dms/ui/order_booking/order_confirmation/bloc%20/order_book_list_
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 class FocusSkyTab extends StatefulWidget {
   final Function() onConfirm;
@@ -36,8 +37,6 @@ class _FocusSkyTabState extends State<FocusSkyTab> {
             if (state is OrderConfirmationInitialState) {
               Map<String, dynamic> input = {
                 "beat_id": "27",
-                "brand_id": "1",
-                "category_id": "",
                 "retailer_id": "17",
               };
               BlocProvider.of<OrderConfirmationBloc>(context)
@@ -83,15 +82,27 @@ class _FocusSkyTabState extends State<FocusSkyTab> {
         shape: const RoundedRectangleBorder(),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text(
+          children: [
+            const Text(
               "GO TO SUMMARY",
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                letterSpacing: 0.67,
+              ),
             ),
-            Icon(
-              Icons.forward,
-              color: Colors.white,
-            )
+            SizedBox(
+              width: 20,
+              height: 15,
+              child: SvgPicture.asset(
+                "assets/arrow_right.svg",
+                height: 20,
+                fit: BoxFit.contain,
+                width: 15,
+                allowDrawingOutsideViewBox: false,
+                matchTextDirection: true,
+              ),
+            ),
           ],
         ),
       ),

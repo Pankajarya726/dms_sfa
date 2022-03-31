@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:developer';
-
 import 'package:dms/main.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_brand_category_resonse.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
@@ -121,10 +120,7 @@ class _ProductTabsState extends State<ProductTabs> {
     );
   }
 
-  void getProduct(
-    String brandId,
-    String categoryId,
-  ) async {
+  void getProduct(String brandId, String categoryId) async {
     Map<String, dynamic> input = HashMap<String, dynamic>();
 
     // input["brand_id"] = brandId;
@@ -148,9 +144,12 @@ class _ProductTabsState extends State<ProductTabs> {
   void getSuggestedProduct() async {
     Map<String, dynamic> input = HashMap<String, dynamic>();
 
-    input["beat_id"] = widget.beatId;
-    input["retailer_id"] = widget.retailerId;
-    GetProductsResponse response = await repository.getProducts(input);
+    // input["beat_id"] = widget.beatId;
+    // input["retailer_id"] = widget.retailerId;
+
+    input["beat_id"] = "27";
+    input["retailer_id"] = "41";
+    GetProductsResponse response = await repository.getSuggestedProducts(input);
     if (response.success) {
       productList = response.data!;
       productStream.add(productList);
@@ -162,8 +161,8 @@ class _ProductTabsState extends State<ProductTabs> {
   void getSchemeProduct() async {
     Map<String, dynamic> input = HashMap<String, dynamic>();
 
-    input["beat_id"] = widget.beatId;
-    input["retailer_id"] = widget.retailerId;
+    input["beat_id"] = "27";
+    input["retailer_id"] = "41";
     GetProductsResponse response = await repository.getSchemeProducts(input);
     if (response.success) {
       productList = response.data!;

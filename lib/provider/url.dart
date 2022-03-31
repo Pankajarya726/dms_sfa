@@ -37,7 +37,10 @@ class Url {
   static const String getRetailerOrderWise = "getRetailerOrderWise";
   static const String getRetailerInfo = "retailerInfo";
   static const String getProducts = "getAllProductBeatWise";
+  static const String getSuggestedProducts = "getSuggestedProduct";
   static const String getSchemeProducts = "getAllSchemeProduct";
   static const String getFilterMrp = "getFilterMrp";
   static const String searchProducts = "searchProduct";
+  static const String getFocusSku = "getFocusSku";
+  static const String getReasons = "getReason";
 }

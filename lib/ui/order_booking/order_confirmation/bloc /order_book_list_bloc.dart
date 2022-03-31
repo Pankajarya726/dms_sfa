@@ -25,7 +25,7 @@ class OrderConfirmationBloc
 
   Stream<OrderConfirmationStates> getFocusSku(GetFocusSkuEvent event) async* {
     if (await Network.isConnected()) {
-      GetProductsResponse response = await repository.getProducts(event.input);
+      GetProductsResponse response = await repository.getFocusSku(event.input);
       if (response.success) {
         yield GetFocusSkuState(prouductsModal: response.data!);
       } else {

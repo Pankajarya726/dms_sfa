@@ -13,11 +13,16 @@ class SelectBeatNameBottomSheet extends StatefulWidget {
   final Function(BeatsModal? beatsModal) onBeatNameSelect;
   final BeatsModal? beatsModal;
   final String customerCode;
-  const SelectBeatNameBottomSheet({Key? key, required this.onBeatNameSelect, required this.beatsModal, required this.customerCode})
+  const SelectBeatNameBottomSheet(
+      {Key? key,
+      required this.onBeatNameSelect,
+      required this.beatsModal,
+      required this.customerCode})
       : super(key: key);
 
   @override
-  _SelectBeatNameBottomSheetState createState() => _SelectBeatNameBottomSheetState();
+  _SelectBeatNameBottomSheetState createState() =>
+      _SelectBeatNameBottomSheetState();
 }
 
 class _SelectBeatNameBottomSheetState extends State<SelectBeatNameBottomSheet> {
@@ -116,14 +121,17 @@ class _SelectBeatNameBottomSheetState extends State<SelectBeatNameBottomSheet> {
                     child: ElevatedButton(
                       onPressed: () {
                         if (groupValue != -1) {
-                          beatsModal = beatList.singleWhere((element) => element.id == groupValue.toString());
+                          beatsModal = beatList.singleWhere(
+                              (element) => element.id == groupValue.toString());
                           widget.onBeatNameSelect(beatsModal!);
                         }
                         Navigator.pop(context);
                       },
                       style: ButtonStyle(
-                        fixedSize: MaterialStateProperty.all(const Size(180, 55)),
-                        backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
+                        fixedSize:
+                            MaterialStateProperty.all(const Size(180, 55)),
+                        backgroundColor:
+                            MaterialStateProperty.all(MColor.colorPrimary),
                         elevation: MaterialStateProperty.all(0),
                         shape: MaterialStateProperty.all(
                           RoundedRectangleBorder(
