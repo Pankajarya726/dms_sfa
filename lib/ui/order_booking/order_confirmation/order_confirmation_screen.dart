@@ -1,8 +1,8 @@
 import 'package:dms/ui/order_booking/order_confirmation/order_s.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
-
 import 'focus_sku_tab.dart';
+import 'order_summery_tab.dart';
 
 class OrderConfirmationScreen extends StatefulWidget {
   final String beatId;
@@ -15,10 +15,12 @@ class OrderConfirmationScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _OrderConfirmationScreenState createState() => _OrderConfirmationScreenState();
+  _OrderConfirmationScreenState createState() =>
+      _OrderConfirmationScreenState();
 }
 
-class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with TickerProviderStateMixin {
+class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
+    with TickerProviderStateMixin {
   late TabController _tabController;
   ValueNotifier<int> valueNotifier = ValueNotifier(0);
 

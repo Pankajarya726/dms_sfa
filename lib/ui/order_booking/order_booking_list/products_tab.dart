@@ -6,9 +6,7 @@ import 'package:dms/main.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_brand_category_resonse.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
 import 'package:dms/ui/order_booking/order_booking_list/product_list_item.dart';
-import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_tags_x/flutter_tags_x.dart';
 
 class ProductTabs extends StatefulWidget {
   final int index;
