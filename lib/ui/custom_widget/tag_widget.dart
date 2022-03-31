@@ -31,10 +31,10 @@ class _TagWidgetState extends State<TagWidget> {
             selectedItem = item.customData;
             setState(() {});
           },
-          singleItem: true,
+          singleItem: false,
           customData: widget.items[index],
           activeColor: const Color(0xffFFC9CC),
-          border: Border.all(color: selectedItem == widget.items[index] ? const Color(0xffF24B55) : const Color(0xffC5C5C5), width: 1),
+          // border: Border.all(color: selectedItem == widget.items[index] ? const Color(0xffF24B55) : const Color(0xffC5C5C5), width: 1),
           color: const Color(0xffFAFAFA),
         );
       },

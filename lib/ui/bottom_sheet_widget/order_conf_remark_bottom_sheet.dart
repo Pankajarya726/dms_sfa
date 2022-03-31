@@ -1,28 +1,25 @@
 import 'dart:async';
+
 import 'package:dms/main.dart';
 import 'package:dms/ui/custom_widget/tag_widget.dart';
 import 'package:dms/ui/order_booking/order_confirmation/model/get_reason_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
-import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 
 class OrderConfRemarkBottomSheet extends StatefulWidget {
   const OrderConfRemarkBottomSheet({Key? key}) : super(key: key);
 
   @override
-  _OrderConfRemarkBottomSheetState createState() =>
-      _OrderConfRemarkBottomSheetState();
+  _OrderConfRemarkBottomSheetState createState() => _OrderConfRemarkBottomSheetState();
 }
 
-class _OrderConfRemarkBottomSheetState
-    extends State<OrderConfRemarkBottomSheet> {
+class _OrderConfRemarkBottomSheetState extends State<OrderConfRemarkBottomSheet> {
   List<ReasonsModal> reasons = [];
   int groupValue = -1;
   bool issueResolve = false;
-  StreamController<List<ReasonsModal>> reasonStreamController =
-      StreamController();
+  StreamController<List<ReasonsModal>> reasonStreamController = StreamController();
   List buList = ["Yellow diamond", "Hoppin", "Shree", "Anik", "Tiny Tush"];
 
   @override
@@ -111,8 +108,7 @@ class _OrderConfRemarkBottomSheetState
                   minLines: 3,
                   maxLines: 5,
                   decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 15),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                     border: OutlineInputBorder(
                       borderSide: BorderSide.none,
                       borderRadius: BorderRadius.circular(10),
@@ -158,8 +154,7 @@ class _OrderConfRemarkBottomSheetState
                     },
                     style: ButtonStyle(
                       fixedSize: MaterialStateProperty.all(const Size(160, 50)),
-                      backgroundColor:
-                          MaterialStateProperty.all(MColor.colorPrimary),
+                      backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
                       elevation: MaterialStateProperty.all(0),
                       shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(

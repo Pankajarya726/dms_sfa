@@ -1,3 +1,5 @@
+import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
+import 'package:dms/ui/bottom_sheet_widget/order_conf_remark_bottom_sheet.dart';
 import 'package:dms/ui/order_booking/order_confirmation/order_s.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +44,14 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with 
                 builder: (context, value, child) {
                   return value == 1
                       ? IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              shape: bottomSheetShape,
+                              isScrollControlled: false,
+                              builder: (context) => const OrderConfRemarkBottomSheet(),
+                            );
+                          },
                           icon: Container(
                             decoration: const BoxDecoration(color: MColor.colorSecondary, shape: BoxShape.circle),
                             padding: const EdgeInsets.all(5),
