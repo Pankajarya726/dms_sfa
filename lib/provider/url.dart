@@ -43,4 +43,5 @@ class Url {
   static const String searchProducts = "searchProduct";
   static const String getFocusSku = "getFocusSku";
   static const String getReasons = "getReason";
+  static const String getBU = "getBusinessUnit";
 }

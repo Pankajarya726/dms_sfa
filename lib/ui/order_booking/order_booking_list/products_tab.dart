@@ -182,7 +182,8 @@ class BeatsWidget extends StatefulWidget {
   final List<Category> tags;
   final Function(Category tag) onSelect;
 
-  const BeatsWidget({Key? key, required this.tags, required this.onSelect}) : super(key: key);
+  const BeatsWidget({Key? key, required this.tags, required this.onSelect})
+      : super(key: key);
 
   @override
   _BeatsWidgetState createState() => _BeatsWidgetState();
@@ -231,11 +232,17 @@ class _BeatsWidgetState extends State<BeatsWidget> {
               ),
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
               border: Border.all(
-                color: widget.tags[index].categoryName == tag.categoryName ? MColor.colorPrimary : const Color(0xffC5C5C5),
+                color: widget.tags[index].categoryName == tag.categoryName
+                    ? MColor.colorPrimary
+                    : const Color(0xffC5C5C5),
               ),
               singleItem: true,
-              activeColor: widget.tags[index].categoryName == tag.categoryName ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
-              color: widget.tags[index].categoryName == tag.categoryName ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
+              activeColor: widget.tags[index].categoryName == tag.categoryName
+                  ? const Color(0xffFFC9CC)
+                  : const Color(0xffFAFAFA),
+              color: widget.tags[index].categoryName == tag.categoryName
+                  ? const Color(0xffFFC9CC)
+                  : const Color(0xffFAFAFA),
               title: widget.tags[index].categoryName,
             ),
           );
