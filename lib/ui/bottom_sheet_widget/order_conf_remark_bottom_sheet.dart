@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:dms/main.dart';
 import 'package:dms/ui/order_booking/order_confirmation/model/get_bu_response.dart';
 import 'package:dms/ui/order_booking/order_confirmation/model/get_reason_response.dart';
@@ -13,9 +14,8 @@ class OrderConfRemarkBottomSheet extends StatefulWidget {
   final String remark;
   final List<BUModal> buList;
   final bool issueResolve;
-  final Function(
-          String reason, String remark, List<BUModal> buList, bool issueResolve)
-      onReasonSelected;
+  final Function(String reason, String remark, List<BUModal> buList, bool issueResolve) onReasonSelected;
+
   const OrderConfRemarkBottomSheet({
     Key? key,
     required this.onReasonSelected,
@@ -26,20 +26,16 @@ class OrderConfRemarkBottomSheet extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _OrderConfRemarkBottomSheetState createState() =>
-      _OrderConfRemarkBottomSheetState();
+  _OrderConfRemarkBottomSheetState createState() => _OrderConfRemarkBottomSheetState();
 }
 
-class _OrderConfRemarkBottomSheetState
-    extends State<OrderConfRemarkBottomSheet> {
+class _OrderConfRemarkBottomSheetState extends State<OrderConfRemarkBottomSheet> {
   List<ReasonsModal> reasons = [];
   List<BUModal> buList = [];
-  BUModal selectedItem = BUModal(id: "", businessUnit: "");
   int groupValue = -1;
   bool issueResolve = false;
-  StreamController<List<ReasonsModal>> reasonStreamController =
-      StreamController();
-  StreamController<BUModal> buStreamController = StreamController();
+  StreamController<List<ReasonsModal>> reasonStreamController = StreamController();
+  StreamController<List<BUModal>> buStreamController = StreamController();
   StreamController<bool> issueStreamController = StreamController();
   TextEditingController txtRemarkController = TextEditingController();
   List<BUModal> selectedBUList = [];
@@ -138,8 +134,7 @@ class _OrderConfRemarkBottomSheetState
                   maxLines: 5,
                   controller: txtRemarkController,
                   decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 15),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                     border: OutlineInputBorder(
                       borderSide: BorderSide.none,
                       borderRadius: BorderRadius.circular(10),
@@ -157,7 +152,7 @@ class _OrderConfRemarkBottomSheetState
                 const SizedBox(
                   height: 10,
                 ),
-                StreamBuilder<BUModal>(
+                StreamBuilder<List<BUModal>>(
                   stream: buStreamController.stream,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -177,7 +172,7 @@ class _OrderConfRemarkBottomSheetState
                     }
 
                     if (snapshot.hasData) {
-                      selectedItem = snapshot.data!;
+                      buList = snapshot.data!;
                     }
 
                     return Tags(
@@ -191,27 +186,20 @@ class _OrderConfRemarkBottomSheetState
                           customData: buList[index],
                           title: buList[index].businessUnit,
                           textColor: MColor.textColor,
-                          active: selectedItem == buList[index],
+                          active: buList[index].selected,
                           textActiveColor: MColor.activeTextColor,
                           pressEnabled: true,
                           onPressed: (item) {
-                            selectedItem = item.customData;
-                            if (item.active == true) {
-                              selectedBUList.add(item.customData);
-                            } else {
-                              for (int i = 0; i < selectedBUList.length; i++) {
-                                if (selectedBUList[i] == item.customData) {
-                                  selectedBUList.removeAt(i);
-                                }
-                              }
-                            }
-                            buStreamController.add(item.customData);
+                            buList[index].selected = !buList[index].selected;
+
+                            selectedBUList = buList.where((element) => element.selected).toList();
+
+                            buStreamController.add(buList);
                           },
                           singleItem: false,
                           elevation: 0,
                           activeColor: const Color(0xffFFC9CC),
-                          border: Border.all(
-                              color: const Color(0xffC5C5C5), width: 1),
+                          border: Border.all(color: buList[index].selected ? MColor.colorPrimary : const Color(0xffC5C5C5), width: 1),
                           color: const Color(0xffFAFAFA),
                         );
                       },
@@ -235,8 +223,7 @@ class _OrderConfRemarkBottomSheetState
                             SizedBox(
                               width: 20,
                               child: Checkbox(
-                                fillColor: MaterialStateProperty.all(
-                                    MColor.colorPrimary),
+                                fillColor: MaterialStateProperty.all(MColor.colorPrimary),
                                 value: issueResolve,
                                 onChanged: (value) {
                                   issueResolve = value!;
@@ -260,17 +247,12 @@ class _OrderConfRemarkBottomSheetState
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      widget.onReasonSelected(
-                          groupValue.toString(),
-                          txtRemarkController.text,
-                          selectedBUList,
-                          issueResolve);
+                      widget.onReasonSelected(groupValue.toString(), txtRemarkController.text, selectedBUList, issueResolve);
                       Navigator.pop(context);
                     },
                     style: ButtonStyle(
                       fixedSize: MaterialStateProperty.all(const Size(160, 50)),
-                      backgroundColor:
-                          MaterialStateProperty.all(MColor.colorPrimary),
+                      backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
                       elevation: MaterialStateProperty.all(0),
                       shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
@@ -315,7 +297,15 @@ class _OrderConfRemarkBottomSheetState
       GetBuResponse response = await repository.getBu();
       if (response.success) {
         buList = response.data!;
-        buStreamController.add(selectedItem);
+
+        await Future.forEach(widget.buList, (BUModal bu) {
+          int i = buList.indexWhere((element) => element.id == bu.id);
+          if (i != -1) {
+            buList[i].selected = true;
+          }
+        });
+
+        buStreamController.add(buList);
       } else {
         buStreamController.addError(response.message);
       }

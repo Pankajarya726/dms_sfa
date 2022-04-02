@@ -11,24 +11,20 @@ class GetBuResponse {
   String message;
   List<BUModal>? data;
 
-  factory GetBuResponse.fromJson(String str) =>
-      GetBuResponse.fromMap(json.decode(str));
+  factory GetBuResponse.fromJson(String str) => GetBuResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
   factory GetBuResponse.fromMap(Map<String, dynamic> json) => GetBuResponse(
         success: json["success"] ?? false,
         message: json["message"] ?? "",
-        data: json["data"] == null
-            ? []
-            : List<BUModal>.from(json["data"].map((x) => BUModal.fromMap(x))),
+        data: json["data"] == null ? [] : List<BUModal>.from(json["data"].map((x) => BUModal.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
         "success": success,
         "message": message,
-        "data":
-            data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
+        "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
       };
 }
 
@@ -40,6 +36,7 @@ class BUModal {
 
   String id;
   String businessUnit;
+  bool selected = false;
 
   factory BUModal.fromJson(String str) => BUModal.fromMap(json.decode(str));
 
@@ -47,9 +44,7 @@ class BUModal {
 
   factory BUModal.fromMap(Map<String, dynamic> json) => BUModal(
         id: json["id"] == null ? "" : json["id"].toString(),
-        businessUnit: json["business_unit"] == null
-            ? ""
-            : json["business_unit"].toString(),
+        businessUnit: json["business_unit"] == null ? "" : json["business_unit"].toString(),
       );
 
   Map<String, dynamic> toMap() => {

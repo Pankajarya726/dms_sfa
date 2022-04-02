@@ -1,5 +1,7 @@
 import 'package:dms/database/db_constant.dart';
+import 'package:dms/listeners/reason_listener.dart';
 import 'package:dms/main.dart';
+import 'package:dms/ui/order_booking/order_confirmation/model/get_bu_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,7 +12,7 @@ class OrderS extends StatefulWidget {
   final String beatId;
   final String retailerId;
   final Function(ReasonsListener? reasonsListener) onInit;
-  const OrderS({Key? key, required this.onInit,required this.beatId, required this.retailerId}) : super(key: key);
+  const OrderS({Key? key, required this.onInit, required this.beatId, required this.retailerId}) : super(key: key);
 
   @override
   State<OrderS> createState() => _OrderSState();
@@ -23,6 +25,7 @@ class _OrderSState extends State<OrderS> implements ReasonsListener {
   String remark = "";
   List<BUModal> buList = [];
   bool issueResolve = false;
+  String isReadyStock = "No";
 
   @override
   void initState() {
@@ -290,16 +293,11 @@ class _OrderSState extends State<OrderS> implements ReasonsListener {
   }
 
   @override
-  void onReasonSelect(
-      String reason, String remark, List<BUModal> buList, bool issueResolve) {
+  void onReasonSelect(String reason, String remark, List<BUModal> buList, bool issueResolve) {
     this.reason = reason;
     this.remark = remark;
     this.buList = buList;
     this.issueResolve = issueResolve;
-    debugPrint("order summary sheet reason ${this.reason}");
-    debugPrint("order summary sheet remark ${this.remark}");
-    debugPrint("order summary sheet buList ${this.buList.first.businessUnit}");
-    debugPrint("order summary sheet issueResolve ${this.issueResolve}");
   }
 }
 
