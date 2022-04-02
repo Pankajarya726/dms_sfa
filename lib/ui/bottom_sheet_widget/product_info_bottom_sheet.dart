@@ -128,21 +128,15 @@ class _ProductInfoBottomSheetState extends State<ProductInfoBottomSheet> {
               children: [
                 getText(
                   textLabel2[0],
-                  widget.products.schemes!.isNotEmpty
-                      ? widget.products.schemes!.first.discountPercentage
-                      : "",
+                  widget.products.schemes.isNotEmpty ? widget.products.schemes.first.discountPercentage : "",
                 ),
                 getText(
                   textLabel2[1],
-                  widget.products.schemes!.isNotEmpty
-                      ? widget.products.schemes!.first.fromDate
-                      : "",
+                  widget.products.schemes.isNotEmpty ? widget.products.schemes.first.fromDate : "",
                 ),
                 getText(
                   textLabel2[2],
-                  widget.products.schemes!.isNotEmpty
-                      ? widget.products.schemes!.first.toDate
-                      : "",
+                  widget.products.schemes.isNotEmpty ? widget.products.schemes.first.toDate : "",
                 ),
               ],
             ),

@@ -33,7 +33,7 @@ class ProductsModal {
     required this.id,
     required this.productName,
     required this.mrp,
-    required this.ptr,
+    required this.schemeRatePerPcs,
     required this.image,
     required this.skuRatePerPkg,
     required this.skuRatePerMoq,
@@ -45,10 +45,13 @@ class ProductsModal {
     required this.skuCode,
     required this.weight,
     required this.variantName,
-    required this.variant_id,
-    required this.brand_id,
-    required this.brand_name,
-    required this.bu_id,
+    required this.variantId,
+    required this.brandId,
+    required this.brandName,
+    required this.buId,
+    required this.categoryId,
+    required this.categoryName,
+    required this.rateCategoryId,
     required this.longDescription,
     required this.pcsPerMoq,
     required this.pcsPerPackaging,
@@ -61,7 +64,7 @@ class ProductsModal {
   String id;
   String productName;
   String mrp;
-  String ptr;
+  String schemeRatePerPcs;
   String image;
   String skuRatePerPkg;
   String skuRatePerMoq;
@@ -73,17 +76,20 @@ class ProductsModal {
   String skuCode;
   String weight;
   String variantName;
-  String variant_id;
-  String brand_id;
-  String brand_name;
-  String bu_id;
+  String variantId;
+  String brandId;
+  String brandName;
+  String buId;
+  String categoryId;
+  String rateCategoryId;
+  String categoryName;
   String longDescription;
   String pcsPerMoq;
   String pcsPerPackaging;
   String priceAfterDiscount;
   String customerId;
   String saleableStockPcs;
-  List<Scheme>? schemes;
+  List<Scheme> schemes;
   int pkgQty = 0;
   int moqQty = 0;
 
@@ -94,12 +100,12 @@ class ProductsModal {
   factory ProductsModal.fromMap(Map<String, dynamic> json) => ProductsModal(
         id: json["id"] == null ? "" : json["id"].toString(),
         productName: json["product_name"] == null ? "" : json["product_name"].toString(),
-        mrp: json["mrp"] == null ? "" : json["mrp"].toString(),
-        ptr: json["ptr"] == null ? "" : json["ptr"].toString(),
+        mrp: json["mrp"] == null ? "0" : json["mrp"].toString(),
+        schemeRatePerPcs: json["scheme_rate_per_pcs"] == null ? "0" : json["scheme_rate_per_pcs"].toString(),
         image: json["image"] == null ? "" : json["image"].toString(),
-        skuRatePerPkg: json["sku_rate_per_pkg"] == null ? "" : json["sku_rate_per_pkg"].toString(),
-        skuRatePerMoq: json["sku_rate_per_moq"] == null ? "" : json["sku_rate_per_moq"].toString(),
-        skuRatePerPiece: json["sku_rate_per_piece"] == null ? "" : json["sku_rate_per_piece"].toString(),
+        skuRatePerPkg: json["sku_rate_per_pkg"] == null ? "0" : json["sku_rate_per_pkg"].toString(),
+        skuRatePerMoq: json["sku_rate_per_moq"] == null ? "0" : json["sku_rate_per_moq"].toString(),
+        skuRatePerPiece: json["sku_rate_per_piece"] == null ? "0" : json["sku_rate_per_piece"].toString(),
         moqName: json["moq_name"] == null ? "" : json["moq_name"].toString(),
         moqId: json["moq_id"] == null ? "" : json["moq_id"].toString(),
         packagingName: json["packaging_name"] == null ? "" : json["packaging_name"].toString(),
@@ -107,16 +113,19 @@ class ProductsModal {
         skuCode: json["sku_code"] == null ? "" : json["sku_code"].toString(),
         weight: json["weight"] == null ? "" : json["weight"].toString(),
         variantName: json["variant_name"] == null ? "" : json["variant_name"].toString(),
-        variant_id: json["variant_id"] == null ? "" : json["variant_id"].toString(),
-        brand_id: json["brand_id"] == null ? "" : json["brand_id"].toString(),
-        brand_name: json["brand_name"] == null ? "" : json["brand_name"].toString(),
-        bu_id: json["bu_id"] == null ? "" : json["bu_id"].toString(),
+        variantId: json["variant_id"] == null ? "" : json["variant_id"].toString(),
+        brandId: json["brand_id"] == null ? "" : json["brand_id"].toString(),
+        brandName: json["brand_name"] == null ? "" : json["brand_name"].toString(),
+        buId: json["bu_id"] == null ? "" : json["bu_id"].toString(),
+        categoryId: json["category_id"] == null ? "" : json["category_id"].toString(),
+        categoryName: json["category_name"] == null ? "" : json["category_name"].toString(),
+        rateCategoryId: json["rate_category_id"] == null ? "" : json["rate_category_id"].toString(),
         longDescription: json["long_description"] == null ? "" : json["long_description"].toString(),
-        pcsPerMoq: json["pcs_per_moq"] == null ? "" : json["pcs_per_moq"].toString(),
-        pcsPerPackaging: json["pcs_per_packaging"] == null ? "" : json["pcs_per_packaging"].toString(),
-        priceAfterDiscount: json["price_after_discount"] == null ? "" : json["price_after_discount"].toString(),
+        pcsPerMoq: json["pcs_per_moq"] == null ? "0" : json["pcs_per_moq"].toString(),
+        pcsPerPackaging: json["pcs_per_packaging"] == null ? "0" : json["pcs_per_packaging"].toString(),
+        priceAfterDiscount: json["price_after_discount"] == null ? "0" : json["price_after_discount"].toString(),
         customerId: json["customer_id"] == null ? "" : json["customer_id"].toString(),
-        saleableStockPcs: json["saleable_stock_pcs"] == null ? "" : json["saleable_stock_pcs"].toString(),
+        saleableStockPcs: json["saleable_stock_pcs"] == null ? "0" : json["saleable_stock_pcs"].toString(),
         schemes: json["schemes"] == null ? [] : List<Scheme>.from(json["schemes"].map((x) => Scheme.fromMap(x))),
       );
 
@@ -124,7 +133,7 @@ class ProductsModal {
         "id": id,
         "product_name": productName,
         "mrp": mrp,
-        "ptr": ptr,
+        "scheme_rate_per_pcs": schemeRatePerPcs,
         "image": image,
         "sku_rate_per_pkg": skuRatePerPkg,
         "sku_rate_per_moq": skuRatePerMoq,
@@ -136,17 +145,20 @@ class ProductsModal {
         "sku_code": skuCode,
         "weight": weight,
         "variant_name": variantName,
-        "variant_id": variant_id,
-        "brand_id": brand_id,
-        "brand_name": brand_name,
-        "bu_id": bu_id,
+        "variant_id": variantId,
+        "brand_id": brandId,
+        "brand_name": brandName,
+        "bu_id": buId,
+        "category_id": categoryId,
+        "category_name": categoryName,
+        "rate_category_id": rateCategoryId,
         "long_description": longDescription,
         "pcs_per_moq": pcsPerMoq,
         "pcs_per_packaging": pcsPerPackaging,
         "price_after_discount": priceAfterDiscount,
         "customer_id": customerId,
         "saleable_stock_pcs": saleableStockPcs,
-        "schemes": schemes == null ? [] : List<dynamic>.from(schemes!.map((x) => x.toMap())),
+        "schemes": schemes == null ? [] : List<dynamic>.from(schemes.map((x) => x.toMap())),
       };
 }
 

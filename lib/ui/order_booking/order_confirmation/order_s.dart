@@ -2,10 +2,15 @@ import 'package:dms/database/db_constant.dart';
 import 'package:dms/main.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/utility.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class OrderS extends StatefulWidget {
-  const OrderS({Key? key}) : super(key: key);
+  final String beatId;
+  final String retailerId;
+
+  const OrderS({Key? key, required this.beatId, required this.retailerId}) : super(key: key);
 
   @override
   State<OrderS> createState() => _OrderSState();
@@ -23,79 +28,109 @@ class _OrderSState extends State<OrderS> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        SliverList(
-          delegate: SliverChildListDelegate([
-            ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return Container(child: rowList[index]);
-                },
-                separatorBuilder: (context, index) {
-                  return const Divider(
-                    thickness: 0.6,
-                    color: Color(0xff555555),
-                    height: 0.6,
-                  );
-                },
-                itemCount: rowList.length),
-            const SizedBox(
-              height: 10,
-            ),
-            const Padding(
-              padding: EdgeInsets.all(15.0),
-              child: Text(
-                "Is this a ready stock bill?",
-                style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverList(
+            delegate: SliverChildListDelegate([
+              ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return Container(child: rowList[index]);
+                  },
+                  separatorBuilder: (context, index) {
+                    return const Divider(
+                      thickness: 0.6,
+                      color: Color(0xff555555),
+                      height: 0.6,
+                    );
+                  },
+                  itemCount: rowList.length),
+              const SizedBox(
+                height: 10,
               ),
-            ),
-            PopupMenuButton(
-              itemBuilder: (context) {
-                return [
-                  const PopupMenuItem(
-                    value: "No",
-                    child: ListTile(
-                      title: Text("No"),
+              const Padding(
+                padding: EdgeInsets.all(15.0),
+                child: Text(
+                  "Is this a ready stock bill?",
+                  style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
+              PopupMenuButton(
+                itemBuilder: (context) {
+                  return [
+                    const PopupMenuItem(
+                      value: "No",
+                      child: ListTile(
+                        title: Text("No"),
+                      ),
                     ),
+                    const PopupMenuItem(
+                      value: "Yes",
+                      child: ListTile(
+                        title: Text("Yes"),
+                      ),
+                    )
+                  ];
+                },
+                initialValue: "No",
+                onSelected: (item) {
+                  debugPrint("item---->$item");
+                  isReadyStock = item.toString();
+                  setState(() {});
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 15),
+                  decoration: BoxDecoration(
+                    color: const Color(0xffF2F2F2),
+                    borderRadius: BorderRadius.circular(25),
                   ),
-                  const PopupMenuItem(
-                    value: "Yes",
-                    child: ListTile(
-                      title: Text("Yes"),
-                    ),
-                  )
-                ];
-              },
-              initialValue: "No",
-              onSelected: (item) {
-                debugPrint("item---->$item");
-                isReadyStock = item.toString();
-                setState(() {});
-              },
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 15),
-                decoration: BoxDecoration(
-                  color: const Color(0xffF2F2F2),
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                height: 50,
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                alignment: Alignment.centerLeft,
-                width: MediaQuery.of(context).size.width,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(isReadyStock),
-                    const Icon(Icons.keyboard_arrow_down),
-                  ],
+                  height: 50,
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  alignment: Alignment.centerLeft,
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(isReadyStock),
+                      const Icon(Icons.keyboard_arrow_down),
+                    ],
+                  ),
                 ),
               ),
-            )
-          ]),
-        )
-      ],
+            ]),
+          ),
+        ],
+      ),
+      bottomNavigationBar: Container(
+        height: 50,
+        width: MediaQuery.of(context).size.width,
+        child: MaterialButton(
+          onPressed: () {
+            submit(context);
+          },
+          color: MColor.colorSecondary,
+          minWidth: MediaQuery.of(context).size.width,
+          height: 50,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                "CONFIRM",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 0.5),
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              Image.asset(
+                "assets/arrow.png",
+                height: 27,
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -166,7 +201,7 @@ class _OrderSState extends State<OrderS> {
                 DataCell(value: "$i", flex: 1),
                 DataCell(value: item.description, flex: 6),
                 DataCell(value: item.mrp, flex: 2),
-                DataCell(value: item.ptr, flex: 2),
+                DataCell(value: item.schemeRatePerPcs, flex: 2),
                 DataCell(value: item.moqQty.toString(), flex: 2),
                 DataCell(value: item.pkgOty.toString(), flex: 2),
                 DataCell(value: total.toStringAsFixed(2), flex: 3),
@@ -203,6 +238,50 @@ class _OrderSState extends State<OrderS> {
     } else {
       Utility.showToast("No item in your cart");
     }
+  }
+
+  void submit(BuildContext context) async {
+    List<Cart> products = await databaseHelper.getCart();
+    List<Map<String, dynamic>> productListMap = [];
+    Map<String, dynamic> input = {};
+
+    int totalMoq = 0;
+    int totalPkg = 0;
+    double totalAmount = 0;
+    await Future.forEach(products, (Cart product) {
+      Map<String, dynamic> productMap = {};
+
+      productMap["sku_id"] = product.skuCode;
+      // productMap["category_id"]=product.
+      productMap["variant_id"] = product.variantId;
+      productMap["mrp"] = product.mrp;
+      productMap["ptr_pcs_price"] = product.skuRatePerPiece;
+      productMap["ptr_moq_price"] = product.skuRatePerMoq;
+      productMap["scheme_pcs_price"] = product.priceAfterDiscount;
+      productMap["scheme_moq_price"] = product.priceAfterDiscount;
+      productMap["qty_pkg"] = product.pkgOty;
+      productMap["qty_moq"] = product.moqQty;
+      // productMap["rate_category_id"]=product.rat
+      // productMap["scheme_id"]=product
+      productMap["amount"] =
+          (product.moqQty * double.parse(product.skuRatePerMoq)) + (product.pkgOty + double.parse(product.skuRatePerPkg));
+      productMap["customer_id"] = product.customerId;
+      productMap["bu_id"] = product.buId;
+      productMap["brand_id"] = product.brandId;
+
+      totalMoq += product.moqQty;
+      totalPkg += product.pkgOty;
+      totalAmount += (product.moqQty * double.parse(product.skuRatePerMoq)) + (product.pkgOty + double.parse(product.skuRatePerPkg));
+
+      productListMap.add(productMap);
+    });
+
+    input["beat_id"] = widget.beatId;
+    input["retailer_id"] = widget.retailerId;
+    input["total_pkg"] = totalPkg;
+    input["total_moq"] = totalMoq;
+    input["total_amount"] = totalAmount;
+    input["is_ready_stock_bill"] = isReadyStock == "Yes" ? 1 : 0;
   }
 }
 

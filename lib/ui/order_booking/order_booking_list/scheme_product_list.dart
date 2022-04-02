@@ -137,7 +137,7 @@ class _SchemeProductListItemsState extends State<SchemeProductListItems> {
                                       ),
                                       children: <TextSpan>[
                                         TextSpan(
-                                          text: "₹" + widget.schemes.ptr,
+                                          text: "₹" + widget.schemes.schemeRatePerPcs,
                                           style: const TextStyle(
                                             letterSpacing: 0.67,
                                             color: MColor.textColor,

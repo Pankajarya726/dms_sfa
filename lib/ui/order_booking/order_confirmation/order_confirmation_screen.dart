@@ -108,7 +108,10 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with 
                 valueNotifier.value = 1;
               },
             ),
-            const OrderS(),
+            OrderS(
+              beatId: widget.beatId,
+              retailerId: widget.retailerId,
+            ),
           ],
         ),
       ),

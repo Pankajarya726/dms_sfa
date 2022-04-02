@@ -6,7 +6,6 @@ import 'package:dms/ui/order_booking/order_confirmation/bloc%20/order_book_list_
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 
 class FocusSkyTab extends StatefulWidget {
   final Function() onConfirm;
@@ -86,21 +85,17 @@ class _FocusSkyTabState extends State<FocusSkyTab> {
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
-                letterSpacing: 0.67,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
               ),
             ),
-            SizedBox(
-              width: 20,
-              height: 15,
-              child: SvgPicture.asset(
-                "assets/arrow_right.svg",
-                height: 20,
-                fit: BoxFit.contain,
-                width: 15,
-                allowDrawingOutsideViewBox: false,
-                matchTextDirection: true,
-              ),
+            const SizedBox(
+              width: 5,
             ),
+            Image.asset(
+              "assets/arrow.png",
+              height: 27,
+            )
           ],
         ),
       ),

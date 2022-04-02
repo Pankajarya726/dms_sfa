@@ -7,6 +7,7 @@ import 'package:dms/ui/bottom_sheet_widget/product_info_bottom_sheet.dart';
 import 'package:dms/ui/order_booking/order_booking_list/full_screen_image_view.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ProductListItem extends StatefulWidget {
@@ -153,14 +154,27 @@ class _ProductListItemState extends State<ProductListItem> {
                                 Flexible(
                                   child: RichText(
                                     text: TextSpan(
-                                      text: "PTR: ",
+                                      text: "Ptc: ",
                                       style: const TextStyle(
                                         letterSpacing: 0.67,
                                         color: MColor.textColor,
                                       ),
                                       children: <TextSpan>[
                                         TextSpan(
-                                          text: currencyFormat.format(double.parse(widget.products.ptr)),
+                                          text: currencyFormat.format(double.parse(widget.products.skuRatePerPiece)),
+                                          style: TextStyle(
+                                              letterSpacing: 0.67,
+                                              color: MColor.textColor,
+                                              overflow: TextOverflow.ellipsis,
+                                              fontWeight: FontWeight.bold,
+                                              decoration: double.parse(widget.products.skuRatePerPiece) == 0.0
+                                                  ? TextDecoration.none
+                                                  : TextDecoration.lineThrough),
+                                        ),
+                                        TextSpan(
+                                          text: double.parse(widget.products.skuRatePerPiece) == 0.0
+                                              ? ""
+                                              : currencyFormat.format(double.parse(widget.products.skuRatePerPiece)),
                                           style: const TextStyle(
                                             letterSpacing: 0.67,
                                             color: MColor.textColor,
@@ -211,11 +225,15 @@ class _ProductListItemState extends State<ProductListItem> {
 
   void fetchProductFromCart() async {
     Cart? cart = await databaseHelper.searchProductFromCart(widget.products.id);
+
     if (cart != null) {
       pkgQty = cart.pkgOty;
       moqQty = cart.moqQty;
       widget.products.pkgQty = cart.pkgOty;
       widget.products.moqQty = cart.moqQty;
+
+      debugPrint("scheme--->${cart.scheme}");
+
       setState(() {});
     }
   }
@@ -229,30 +247,36 @@ class _ProductListItemState extends State<ProductListItem> {
     Cart cart = Cart(
         packagingId: widget.products.packagingId,
         moqId: widget.products.moqId,
-        variantId: widget.products.variant_id,
+        variantId: widget.products.variantId,
         mrp: widget.products.mrp,
         skuRatePerMoq: widget.products.skuRatePerMoq,
         weight: widget.products.weight,
-        ptr: widget.products.ptr,
+        schemeRatePerPcs: widget.products.schemeRatePerPcs,
         moqQty: moqQty,
         productName: widget.products.productName,
         skuCode: widget.products.skuCode,
         variantName: widget.products.variantName,
         productImage: widget.products.image,
-        buId: widget.products.bu_id,
+        buId: widget.products.buId,
         skuRatePerPiece: widget.products.skuRatePerPiece,
         productId: widget.products.id,
-        brandId: widget.products.brand_id,
+        brandId: widget.products.brandId,
         pcsPerMoq: int.parse(widget.products.pcsPerMoq),
         pcsPerPackaging: int.parse(widget.products.pcsPerPackaging),
         pkgOty: pkgQty,
-        brandName: widget.products.brand_name,
+        categoryId: widget.products.categoryId,
+        categoryName: widget.products.categoryName,
+        rateCategoryId: widget.products.rateCategoryId,
+        schemeId: widget.products.schemes.isEmpty ? "" : widget.products.schemes.first.id,
+        schemeOn: widget.products.schemes.isEmpty ? "" : widget.products.schemes.first.uom,
+        brandName: widget.products.brandName,
         customerId: widget.products.customerId,
         skuRatePerPkg: widget.products.skuRatePerPkg,
         description: widget.products.longDescription,
         moqName: widget.products.moqName,
         priceAfterDiscount: widget.products.priceAfterDiscount,
-        packagingName: widget.products.packagingName);
+        packagingName: widget.products.packagingName,
+        scheme: widget.products.schemes.isEmpty ? "" : widget.products.schemes.first.toJson());
     int updated = await databaseHelper.addProductToCart(cart);
     debugPrint("update-->$updated");
     setState(() {});
