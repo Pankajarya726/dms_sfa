@@ -36,6 +36,7 @@ class StringConst {
   static const primaryTag = "Primary Tag";
   static const secondaryTag = "Secondary Tag";
   static const remark = "Remark";
+  static const reason = "Reason";
   static const writeYourRemark = "Write Your Remark";
 // static const getMeeting = "Get Meeting";
   static const getMeeting = "Gate Meeting";

@@ -9,19 +9,24 @@ import 'package:flutter/widgets.dart';
 class OrderS extends StatefulWidget {
   final String beatId;
   final String retailerId;
-
-  const OrderS({Key? key, required this.beatId, required this.retailerId}) : super(key: key);
+  final Function(ReasonsListener? reasonsListener) onInit;
+  const OrderS({Key? key, required this.onInit,required this.beatId, required this.retailerId}) : super(key: key);
 
   @override
   State<OrderS> createState() => _OrderSState();
 }
 
-class _OrderSState extends State<OrderS> {
+class _OrderSState extends State<OrderS> implements ReasonsListener {
   List<Widget> rowList = [];
-  String isReadyStock = "No";
+  TextEditingController txtReadyStockController = TextEditingController();
+  String reason = "";
+  String remark = "";
+  List<BUModal> buList = [];
+  bool issueResolve = false;
 
   @override
   void initState() {
+    widget.onInit(this);
     getProduct();
     super.initState();
   }
@@ -282,6 +287,19 @@ class _OrderSState extends State<OrderS> {
     input["total_moq"] = totalMoq;
     input["total_amount"] = totalAmount;
     input["is_ready_stock_bill"] = isReadyStock == "Yes" ? 1 : 0;
+  }
+
+  @override
+  void onReasonSelect(
+      String reason, String remark, List<BUModal> buList, bool issueResolve) {
+    this.reason = reason;
+    this.remark = remark;
+    this.buList = buList;
+    this.issueResolve = issueResolve;
+    debugPrint("order summary sheet reason ${this.reason}");
+    debugPrint("order summary sheet remark ${this.remark}");
+    debugPrint("order summary sheet buList ${this.buList.first.businessUnit}");
+    debugPrint("order summary sheet issueResolve ${this.issueResolve}");
   }
 }
 

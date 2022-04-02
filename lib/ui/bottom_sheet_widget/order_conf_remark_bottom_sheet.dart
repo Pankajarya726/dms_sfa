@@ -1,36 +1,66 @@
 import 'dart:async';
-
 import 'package:dms/main.dart';
-import 'package:dms/ui/custom_widget/tag_widget.dart';
+import 'package:dms/ui/order_booking/order_confirmation/model/get_bu_response.dart';
 import 'package:dms/ui/order_booking/order_confirmation/model/get_reason_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tags_x/flutter_tags_x.dart';
 
 class OrderConfRemarkBottomSheet extends StatefulWidget {
-  const OrderConfRemarkBottomSheet({Key? key}) : super(key: key);
+  final String reason;
+  final String remark;
+  final List<BUModal> buList;
+  final bool issueResolve;
+  final Function(
+          String reason, String remark, List<BUModal> buList, bool issueResolve)
+      onReasonSelected;
+  const OrderConfRemarkBottomSheet({
+    Key? key,
+    required this.onReasonSelected,
+    required this.reason,
+    required this.remark,
+    required this.buList,
+    required this.issueResolve,
+  }) : super(key: key);
 
   @override
-  _OrderConfRemarkBottomSheetState createState() => _OrderConfRemarkBottomSheetState();
+  _OrderConfRemarkBottomSheetState createState() =>
+      _OrderConfRemarkBottomSheetState();
 }
 
-class _OrderConfRemarkBottomSheetState extends State<OrderConfRemarkBottomSheet> {
+class _OrderConfRemarkBottomSheetState
+    extends State<OrderConfRemarkBottomSheet> {
   List<ReasonsModal> reasons = [];
+  List<BUModal> buList = [];
+  BUModal selectedItem = BUModal(id: "", businessUnit: "");
   int groupValue = -1;
   bool issueResolve = false;
-  StreamController<List<ReasonsModal>> reasonStreamController = StreamController();
-  List buList = ["Yellow diamond", "Hoppin", "Shree", "Anik", "Tiny Tush"];
+  StreamController<List<ReasonsModal>> reasonStreamController =
+      StreamController();
+  StreamController<BUModal> buStreamController = StreamController();
+  StreamController<bool> issueStreamController = StreamController();
+  TextEditingController txtRemarkController = TextEditingController();
+  List<BUModal> selectedBUList = [];
 
   @override
   void initState() {
+    if (widget.reason.isNotEmpty) {
+      groupValue = int.parse(widget.reason);
+    }
+    txtRemarkController.text = widget.remark;
+    issueResolve = widget.issueResolve;
+    selectedBUList = widget.buList;
     getReasons();
+    getBu();
     super.initState();
   }
 
   @override
   void dispose() {
     reasonStreamController.close();
+    buStreamController.close();
     super.dispose();
   }
 
@@ -43,11 +73,10 @@ class _OrderConfRemarkBottomSheetState extends State<OrderConfRemarkBottomSheet>
           padding: MediaQuery.of(context).viewInsets,
           child: SingleChildScrollView(
             child: Column(
-              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  StringConst.remark,
+                  StringConst.reason,
                   style: TextStyle(
                     fontSize: 19,
                     color: MColor.colorPrimary,
@@ -107,8 +136,10 @@ class _OrderConfRemarkBottomSheetState extends State<OrderConfRemarkBottomSheet>
                 TextFormField(
                   minLines: 3,
                   maxLines: 5,
+                  controller: txtRemarkController,
                   decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 15),
                     border: OutlineInputBorder(
                       borderSide: BorderSide.none,
                       borderRadius: BorderRadius.circular(10),
@@ -126,35 +157,120 @@ class _OrderConfRemarkBottomSheetState extends State<OrderConfRemarkBottomSheet>
                 const SizedBox(
                   height: 10,
                 ),
-                TagWidget(items: buList),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  children: [
-                    Checkbox(
-                      value: issueResolve,
-                      onChanged: (value) {
-                        issueResolve = value!;
-                        setState(() {});
+                StreamBuilder<BUModal>(
+                  stream: buStreamController.stream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text(snapshot.error.toString()),
+                      );
+                    }
+
+                    if (buList.isEmpty) {
+                      return Container();
+                    }
+
+                    if (snapshot.hasData) {
+                      selectedItem = snapshot.data!;
+                    }
+
+                    return Tags(
+                      itemCount: buList.length,
+                      runSpacing: 8,
+                      spacing: 10,
+                      alignment: WrapAlignment.start,
+                      itemBuilder: (index) {
+                        return ItemTags(
+                          index: index,
+                          customData: buList[index],
+                          title: buList[index].businessUnit,
+                          textColor: MColor.textColor,
+                          active: selectedItem == buList[index],
+                          textActiveColor: MColor.activeTextColor,
+                          pressEnabled: true,
+                          onPressed: (item) {
+                            selectedItem = item.customData;
+                            if (item.active == true) {
+                              selectedBUList.add(item.customData);
+                            } else {
+                              for (int i = 0; i < selectedBUList.length; i++) {
+                                if (selectedBUList[i] == item.customData) {
+                                  selectedBUList.removeAt(i);
+                                }
+                              }
+                            }
+                            buStreamController.add(item.customData);
+                          },
+                          singleItem: false,
+                          elevation: 0,
+                          activeColor: const Color(0xffFFC9CC),
+                          border: Border.all(
+                              color: const Color(0xffC5C5C5), width: 1),
+                          color: const Color(0xffFAFAFA),
+                        );
                       },
-                      splashRadius: 15,
-                      visualDensity: VisualDensity.compact,
-                    ),
-                    const Text("Issue Resolve"),
-                  ],
+                    );
+                  },
                 ),
+                const SizedBox(
+                  height: 10,
+                ),
+                StreamBuilder<bool>(
+                    stream: issueStreamController.stream,
+                    initialData: false,
+                    builder: (context, snapshot) {
+                      return InkWell(
+                        onTap: () {
+                          issueResolve = !issueResolve;
+                          issueStreamController.add(issueResolve);
+                        },
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 20,
+                              child: Checkbox(
+                                fillColor: MaterialStateProperty.all(
+                                    MColor.colorPrimary),
+                                value: issueResolve,
+                                onChanged: (value) {
+                                  issueResolve = value!;
+                                  issueStreamController.add(issueResolve);
+                                },
+                                splashRadius: 0,
+                                visualDensity: VisualDensity.compact,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            const Text("Issue Resolve"),
+                          ],
+                        ),
+                      );
+                    }),
                 const SizedBox(
                   height: 10,
                 ),
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
+                      widget.onReasonSelected(
+                          groupValue.toString(),
+                          txtRemarkController.text,
+                          selectedBUList,
+                          issueResolve);
                       Navigator.pop(context);
                     },
                     style: ButtonStyle(
                       fixedSize: MaterialStateProperty.all(const Size(160, 50)),
-                      backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
+                      backgroundColor:
+                          MaterialStateProperty.all(MColor.colorPrimary),
                       elevation: MaterialStateProperty.all(0),
                       shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
@@ -191,6 +307,20 @@ class _OrderConfRemarkBottomSheetState extends State<OrderConfRemarkBottomSheet>
       }
     } else {
       reasonStreamController.addError(StringConst.internetCheck);
+    }
+  }
+
+  void getBu() async {
+    if (await Network.isConnected()) {
+      GetBuResponse response = await repository.getBu();
+      if (response.success) {
+        buList = response.data!;
+        buStreamController.add(selectedItem);
+      } else {
+        buStreamController.addError(response.message);
+      }
+    } else {
+      buStreamController.addError(StringConst.internetCheck);
     }
   }
 }

@@ -23,6 +23,11 @@ class OrderConfirmationScreen extends StatefulWidget {
 class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with TickerProviderStateMixin {
   late TabController _tabController;
   ValueNotifier<int> valueNotifier = ValueNotifier(0);
+  String reason = "";
+  String remark = "";
+  List<BUModal> buList = [];
+  bool issueResolve = false;
+  ReasonsListener? reasonsListener;
 
   @override
   void initState() {
@@ -49,11 +54,32 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with 
                               context: context,
                               shape: bottomSheetShape,
                               isScrollControlled: false,
-                              builder: (context) => const OrderConfRemarkBottomSheet(),
+                              builder: (context) => OrderConfRemarkBottomSheet(
+                                reason: reason,
+                                remark: remark,
+                                buList: buList,
+                                issueResolve: issueResolve,
+                                onReasonSelected:
+                                    (reason, remark, buList, issueResolve) {
+                                  this.reason = reason;
+                                  this.remark = remark;
+                                  this.buList = buList;
+                                  this.issueResolve = issueResolve;
+                                  if (reasonsListener != null) {
+                                    reasonsListener!.onReasonSelect(
+                                        this.reason,
+                                        this.remark,
+                                        this.buList,
+                                        this.issueResolve);
+                                  }
+                                },
+                              ),
                             );
                           },
                           icon: Container(
-                            decoration: const BoxDecoration(color: MColor.colorSecondary, shape: BoxShape.circle),
+                            decoration: const BoxDecoration(
+                                color: MColor.colorSecondary,
+                                shape: BoxShape.circle),
                             padding: const EdgeInsets.all(5),
                             alignment: Alignment.center,
                             child: const Icon(
@@ -111,6 +137,9 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with 
             OrderS(
               beatId: widget.beatId,
               retailerId: widget.retailerId,
+              onInit: (listener) {
+                reasonsListener = listener;
+              },
             ),
           ],
         ),
