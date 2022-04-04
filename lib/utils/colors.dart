@@ -17,4 +17,5 @@ class MColor {
   static const Color enableBgColor = Color(0xffFFC9CC);
   static const Color activeTextColor = Color(0xff000000);
   static const Color inactiveTextColor = Color(0xff555555);
+  static const Color colorYellow = Color(0xffDAA520);
 }

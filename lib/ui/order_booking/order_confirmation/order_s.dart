@@ -1,10 +1,6 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:dms/database/db_constant.dart';
 import 'package:dms/listeners/reason_listener.dart';
 import 'package:dms/main.dart';
-import 'package:dms/model/base_response.dart';
 import 'package:dms/ui/order_booking/order_confirmation/model/get_bu_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/constants.dart';
@@ -19,7 +15,6 @@ class OrderS extends StatefulWidget {
   final String beatId;
   final String retailerId;
   final Function(ReasonsListener? reasonsListener) onInit;
-
   const OrderS({Key? key, required this.onInit, required this.beatId, required this.retailerId}) : super(key: key);
 
   @override

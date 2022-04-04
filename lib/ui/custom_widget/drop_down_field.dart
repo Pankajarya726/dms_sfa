@@ -28,11 +28,7 @@ class _DropDownFieldState extends State<DropDownField> {
 
   @override
   void initState() {
-    if (widget.prevSelected.isEmpty) {
-      selected = widget.hint ?? "Select";
-    } else {
-      selected = widget.prevSelected;
-    }
+    selected = widget.prevSelected.isEmpty ? widget.hint! : widget.prevSelected;
     super.initState();
   }
 
@@ -59,22 +55,6 @@ class _DropDownFieldState extends State<DropDownField> {
           },
         );
       },
-      // itemBuilder: (context) {
-      //   return [
-      //     const PopupMenuItem(
-      //       value: "Day1",
-      //       child: ListTile(
-      //         title: Text("Day1"),
-      //       ),
-      //     ),
-      //     const PopupMenuItem(
-      //       child: ListTile(
-      //         title: Text("Day2"),
-      //       ),
-      //       value: "Day2",
-      //     ),
-      //   ];
-      // },
       initialValue: selected,
       onSelected: (item) {
         debugPrint("item---->$item");

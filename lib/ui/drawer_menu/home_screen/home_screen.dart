@@ -6,6 +6,7 @@ import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_events.dart';
 import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_states.dart';
 import 'package:dms/ui/my_plan/my_plan.dart';
 import 'package:dms/ui/order_booking/retailers_list/retailers_list_screen.dart';
+import 'package:dms/ui/task/task/task_list_screen.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
@@ -331,7 +332,9 @@ class _HomeScreenState extends State<HomeScreen>
         Fluttertoast.showToast(msg: StringConst.comingSoon);
         break;
       case 2:
-        Fluttertoast.showToast(msg: StringConst.comingSoon);
+        // Fluttertoast.showToast(msg: StringConst.comingSoon);
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const TaskListScreen()));
         break;
       case 3:
         Fluttertoast.showToast(msg: StringConst.comingSoon);
