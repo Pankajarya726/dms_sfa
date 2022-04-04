@@ -12,34 +12,29 @@ import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class FilterRetailerBottomSheet extends StatefulWidget {
+class FilterTaskBottomSheet extends StatefulWidget {
   final String day;
-  final String type;
+
   final String beat;
   final List<BeatsModal> beatList;
   final Function(
     String day,
-    String type,
     String selectedBeat,
   ) onFilter;
-  final Function(BeatsModal? beatsModal, List<BeatsModal> beatList)
-      onBeatSelected;
-  const FilterRetailerBottomSheet({
+
+  const FilterTaskBottomSheet({
     Key? key,
     required this.onFilter,
     required this.day,
-    required this.type,
     required this.beat,
     required this.beatList,
-    required this.onBeatSelected,
   }) : super(key: key);
 
   @override
-  _FilterRetailerBottomSheetState createState() =>
-      _FilterRetailerBottomSheetState();
+  _FilterTaskBottomSheetState createState() => _FilterTaskBottomSheetState();
 }
 
-class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
+class _FilterTaskBottomSheetState extends State<FilterTaskBottomSheet> {
   TextEditingController edtBookingDay = TextEditingController();
   TextEditingController edtPriority = TextEditingController();
 
@@ -57,7 +52,6 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
     StringConst.teleRetailer,
   ];
   String selectedDay = "";
-  String selectedPrioType = "";
   String selectedBeat = "";
   List<BeatsModal> beats = [];
   BeatsModal? beatsModal;
@@ -66,9 +60,8 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
   @override
   void initState() {
     selectedDay = widget.day;
-    selectedPrioType = widget.type;
     selectedBeat = widget.beat;
-    debugPrint("FilterRetailerBottomSheet");
+    debugPrint("FilterTaskBottomSheet");
     beats = widget.beatList;
     super.initState();
   }
@@ -82,7 +75,6 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
           create: (context) => RetailersBloc(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            // shrinkWrap: false,
             children: [
               const SizedBox(
                 height: 10,
@@ -105,6 +97,7 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                   debugPrint("select-->$value");
                   selectedDay = value;
                   beats.clear();
+
                   getBeats();
                 },
                 hint: "Select Order Booking Day",
@@ -129,18 +122,6 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                 },
               ),
               const SizedBox(
-                height: 20,
-              ),
-              DropDownField(
-                prevSelected: selectedPrioType,
-                onSelect: (value) {
-                  debugPrint("select-->");
-                  selectedPrioType = value;
-                },
-                hint: "Select Priority Type",
-                menuList: priorityType,
-              ),
-              const SizedBox(
                 height: 35,
               ),
               Padding(
@@ -151,11 +132,7 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                   children: [
                     MaterialButton(
                       onPressed: () {
-                        widget.onFilter(
-                            selectedDay, selectedPrioType, selectedBeat);
-                        if (beatsModal != null) {
-                          widget.onBeatSelected(beatsModal!, beats);
-                        }
+                        widget.onFilter(selectedDay, selectedBeat);
                         Navigator.pop(context);
                       },
                       height: 50,

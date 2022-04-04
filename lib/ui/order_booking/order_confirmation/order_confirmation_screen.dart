@@ -19,10 +19,12 @@ class OrderConfirmationScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _OrderConfirmationScreenState createState() => _OrderConfirmationScreenState();
+  _OrderConfirmationScreenState createState() =>
+      _OrderConfirmationScreenState();
 }
 
-class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with TickerProviderStateMixin {
+class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
+    with TickerProviderStateMixin {
   late TabController _tabController;
   ValueNotifier<int> valueNotifier = ValueNotifier(0);
   String reason = "";
@@ -34,6 +36,44 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with 
   @override
   void initState() {
     _tabController = TabController(length: 2, initialIndex: 0, vsync: this);
+    Future.delayed(Duration.zero, () {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              contentPadding: const EdgeInsets.fromLTRB(25, 10, 0, 0),
+              title: const Text(
+                "Are you sure you want to End day?",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              actions: [
+                MaterialButton(
+                  child: const Text("Cancel",
+                      style: TextStyle(
+                          color: Colors.grey, fontWeight: FontWeight.w600)),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                MaterialButton(
+                  child: const Text(
+                    "End day",
+                    style: TextStyle(
+                      color: Color(0xfff4511e),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  onPressed: () async {},
+                ),
+              ],
+            );
+          });
+    });
+
     super.initState();
   }
 
@@ -61,20 +101,27 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with 
                                 remark: remark,
                                 buList: buList,
                                 issueResolve: issueResolve,
-                                onReasonSelected: (reason, remark, buList, issueResolve) {
+                                onReasonSelected:
+                                    (reason, remark, buList, issueResolve) {
                                   this.reason = reason;
                                   this.remark = remark;
                                   this.buList = buList;
                                   this.issueResolve = issueResolve;
                                   if (reasonsListener != null) {
-                                    reasonsListener!.onReasonSelect(this.reason, this.remark, this.buList, this.issueResolve);
+                                    reasonsListener!.onReasonSelect(
+                                        this.reason,
+                                        this.remark,
+                                        this.buList,
+                                        this.issueResolve);
                                   }
                                 },
                               ),
                             );
                           },
                           icon: Container(
-                            decoration: const BoxDecoration(color: MColor.colorSecondary, shape: BoxShape.circle),
+                            decoration: const BoxDecoration(
+                                color: MColor.colorSecondary,
+                                shape: BoxShape.circle),
                             padding: const EdgeInsets.all(5),
                             alignment: Alignment.center,
                             child: const Icon(
@@ -105,13 +152,19 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with 
                   Tab(
                     child: Text(
                       "Focus SKU",
-                      style: TextStyle(color: Color(0xff303030), fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: Color(0xff303030),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                   Tab(
                     child: Text(
                       "Summary",
-                      style: TextStyle(color: Color(0xff303030), fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: Color(0xff303030),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],

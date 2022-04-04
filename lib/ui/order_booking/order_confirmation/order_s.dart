@@ -12,7 +12,12 @@ class OrderS extends StatefulWidget {
   final String beatId;
   final String retailerId;
   final Function(ReasonsListener? reasonsListener) onInit;
-  const OrderS({Key? key, required this.onInit, required this.beatId, required this.retailerId}) : super(key: key);
+  const OrderS(
+      {Key? key,
+      required this.onInit,
+      required this.beatId,
+      required this.retailerId})
+      : super(key: key);
 
   @override
   State<OrderS> createState() => _OrderSState();
@@ -62,7 +67,10 @@ class _OrderSState extends State<OrderS> implements ReasonsListener {
                 padding: EdgeInsets.all(15.0),
                 child: Text(
                   "Is this a ready stock bill?",
-                  style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
               PopupMenuButton(
@@ -126,7 +134,11 @@ class _OrderSState extends State<OrderS> implements ReasonsListener {
             children: [
               const Text(
                 "CONFIRM",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 0.5),
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 0.5),
               ),
               const SizedBox(
                 width: 5,
@@ -200,7 +212,8 @@ class _OrderSState extends State<OrderS> implements ReasonsListener {
 
         await Future.forEach(brand.cartList, (Cart item) {
           double total = 0;
-          total = double.parse(item.skuRatePerPkg) * item.pkgOty + double.parse(item.skuRatePerMoq) * item.moqQty;
+          total = double.parse(item.skuRatePerPkg) * item.pkgOty +
+              double.parse(item.skuRatePerMoq) * item.moqQty;
           rowList.add(IntrinsicHeight(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -272,14 +285,16 @@ class _OrderSState extends State<OrderS> implements ReasonsListener {
       // productMap["rate_category_id"]=product.rat
       // productMap["scheme_id"]=product
       productMap["amount"] =
-          (product.moqQty * double.parse(product.skuRatePerMoq)) + (product.pkgOty + double.parse(product.skuRatePerPkg));
+          (product.moqQty * double.parse(product.skuRatePerMoq)) +
+              (product.pkgOty + double.parse(product.skuRatePerPkg));
       productMap["customer_id"] = product.customerId;
       productMap["bu_id"] = product.buId;
       productMap["brand_id"] = product.brandId;
 
       totalMoq += product.moqQty;
       totalPkg += product.pkgOty;
-      totalAmount += (product.moqQty * double.parse(product.skuRatePerMoq)) + (product.pkgOty + double.parse(product.skuRatePerPkg));
+      totalAmount += (product.moqQty * double.parse(product.skuRatePerMoq)) +
+          (product.pkgOty + double.parse(product.skuRatePerPkg));
 
       productListMap.add(productMap);
     });
@@ -293,7 +308,8 @@ class _OrderSState extends State<OrderS> implements ReasonsListener {
   }
 
   @override
-  void onReasonSelect(String reason, String remark, List<BUModal> buList, bool issueResolve) {
+  void onReasonSelect(
+      String reason, String remark, List<BUModal> buList, bool issueResolve) {
     this.reason = reason;
     this.remark = remark;
     this.buList = buList;
@@ -305,14 +321,17 @@ class DataCell extends StatelessWidget {
   final String value;
   final int flex;
 
-  const DataCell({Key? key, required this.value, required this.flex}) : super(key: key);
+  const DataCell({Key? key, required this.value, required this.flex})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Flexible(
       child: Container(
         padding: const EdgeInsets.all(5),
-        decoration: const BoxDecoration(border: Border(right: BorderSide(width: 0.6, color: Color(0xff555555)))),
+        decoration: const BoxDecoration(
+            border: Border(
+                right: BorderSide(width: 0.6, color: Color(0xff555555)))),
         alignment: Alignment.center,
         child: Text(
           value,

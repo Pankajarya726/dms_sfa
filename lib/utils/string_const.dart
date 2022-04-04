@@ -123,4 +123,5 @@ class StringConst {
   static const getRoute = "Get Route";
   static const selectBeat = "Select Beat";
   static const selectEnrolmentType = "Select Enrolment Type";
+  static const task = "Task";
 }

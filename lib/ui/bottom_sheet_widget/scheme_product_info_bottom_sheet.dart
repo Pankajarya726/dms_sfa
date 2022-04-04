@@ -130,20 +130,20 @@ class _SchemeProductInfoBottomSheetState
               children: [
                 getText(
                   textLabel2[0],
-                  widget.schemes.schemes!.isNotEmpty
-                      ? widget.schemes.schemes!.first.discountPercentage
+                  widget.schemes.schemes.isNotEmpty
+                      ? widget.schemes.schemes.first.discountPercentage
                       : "",
                 ),
                 getText(
                   textLabel2[1],
-                  widget.schemes.schemes!.isNotEmpty
-                      ? widget.schemes.schemes!.first.fromDate
+                  widget.schemes.schemes.isNotEmpty
+                      ? widget.schemes.schemes.first.fromDate
                       : "",
                 ),
                 getText(
                   textLabel2[2],
-                  widget.schemes.schemes!.isNotEmpty
-                      ? widget.schemes.schemes!.first.toDate
+                  widget.schemes.schemes.isNotEmpty
+                      ? widget.schemes.schemes.first.toDate
                       : "",
                 ),
               ],
