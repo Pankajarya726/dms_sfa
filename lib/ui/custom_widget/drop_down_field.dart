@@ -28,7 +28,7 @@ class _DropDownFieldState extends State<DropDownField> {
 
   @override
   void initState() {
-    selected = widget.prevSelected;
+    selected = widget.prevSelected.isEmpty ? widget.hint! : widget.prevSelected;
     super.initState();
   }
 
