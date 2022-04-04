@@ -167,10 +167,9 @@ class _TaskListItemsState extends State<TaskListItems> {
                       ),
                     ),
                     Container(
-                      height: 25,
-                      width: 25,
+                      height: 24,
+                      width: 32,
                       alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(vertical: 5),
                       decoration: BoxDecoration(
                         color: MColor.colorYellow,
                         borderRadius: BorderRadius.circular(3),
