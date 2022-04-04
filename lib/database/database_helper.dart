@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dms/database/db_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
@@ -113,14 +115,16 @@ class DatabaseHelper {
         debugPrint("brand--->$brand");
         List<Map<String, dynamic>> result =
             await db.query(DBConstant.cartTable, where: DBConstant.brandId + " = ?", whereArgs: [brand]);
-        debugPrint('result--->$result');
+        log('result--->$result');
 
         String moq = "0";
         String pkg = "0";
         String total = "0";
 
+        //  String moqSumQuery =
+        //      "SELECT SUM(${DBConstant.moqQty}) AS total_moq_qty, SUM(${DBConstant.pkgOty}) AS total_pkg_qty, (SUM(${DBConstant.pkgOty}*${DBConstant.skuRatePerPiece}*${DBConstant.pcsPerPackaging})+SUM(${DBConstant.moqQty}*${DBConstant.skuRatePerPiece}*${DBConstant.pcsPerMoq})) AS total_amount FROM ${DBConstant.cartTable} WHERE ${DBConstant.brandId} = $brand";
         String moqSumQuery =
-            "SELECT SUM(${DBConstant.moqQty}) AS total_moq_qty, SUM(${DBConstant.pkgOty}) AS total_pkg_qty, (SUM(${DBConstant.pkgOty}*${DBConstant.skuRatePerPkg})+SUM(${DBConstant.moqQty}*${DBConstant.skuRatePerMoq})) AS total_amount FROM ${DBConstant.cartTable} WHERE ${DBConstant.brandId} = $brand";
+            "SELECT SUM(${DBConstant.moqQty}) AS total_moq_qty, SUM(${DBConstant.pkgOty}) AS total_pkg_qty, SUM(${DBConstant.totalPrice}) AS total_amount FROM ${DBConstant.cartTable} WHERE ${DBConstant.brandId} = $brand";
         List<Map<String, dynamic>> sum = await db.rawQuery(moqSumQuery);
         debugPrint('sum--->$sum');
 
@@ -181,7 +185,7 @@ class DatabaseHelper {
 
       List<Map<String, dynamic>> result =
           await db.query(DBConstant.cartTable, where: DBConstant.productId + " = ?", whereArgs: [productId]);
-      debugPrint('result--->$result');
+      log('result--->$result');
       if (result.isNotEmpty) {
         return cart = Cart.fromMap(result.first);
       }

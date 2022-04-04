@@ -35,6 +35,7 @@ class DBConstant {
   static const categoryId = "category_id";
   static const categoryName = "category_name";
   static const scheme = "scheme";
+  static const totalPrice = "total_price";
 
   //crate table query
   static const String createCartTable = "CREATE TABLE " +
@@ -104,6 +105,8 @@ class DBConstant {
       " INTEGER," +
       scheme +
       " TEXT," +
+      totalPrice +
+      " TEXT," +
       description +
       " TEXT )";
 }
@@ -139,6 +142,7 @@ class Cart {
   String weight = "0";
   String description = "";
   String scheme = "";
+  String totalPrice = "";
   int moqQty = 0;
   int pkgOty = 0;
 
@@ -174,6 +178,7 @@ class Cart {
       required this.description,
       required this.moqQty,
       required this.scheme,
+      required this.totalPrice,
       required this.pkgOty});
 
   Map<String, dynamic> toMap() {
@@ -209,6 +214,7 @@ class Cart {
       "moq_qty": moqQty,
       "pkg_qty": pkgOty,
       "scheme": scheme,
+      "total_price": totalPrice,
       "description": description,
     };
   }
@@ -246,6 +252,7 @@ class Cart {
         pkgOty: json["pkg_qty"],
         description: json["description"],
         scheme: json["scheme"],
+        totalPrice: json["total_price"],
       );
 }
 

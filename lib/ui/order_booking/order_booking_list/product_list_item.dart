@@ -154,7 +154,7 @@ class _ProductListItemState extends State<ProductListItem> {
                                 Flexible(
                                   child: RichText(
                                     text: TextSpan(
-                                      text: "Ptc: ",
+                                      text: "PTR: ",
                                       style: const TextStyle(
                                         letterSpacing: 0.67,
                                         color: MColor.textColor,
@@ -167,14 +167,14 @@ class _ProductListItemState extends State<ProductListItem> {
                                               color: MColor.textColor,
                                               overflow: TextOverflow.ellipsis,
                                               fontWeight: FontWeight.bold,
-                                              decoration: double.parse(widget.products.skuRatePerPiece) == 0.0
+                                              decoration: double.parse(widget.products.schemeRatePerPcs) == 0.0
                                                   ? TextDecoration.none
                                                   : TextDecoration.lineThrough),
                                         ),
                                         TextSpan(
-                                          text: double.parse(widget.products.skuRatePerPiece) == 0.0
+                                          text: double.parse(widget.products.schemeRatePerPcs) == 0.0
                                               ? ""
-                                              : currencyFormat.format(double.parse(widget.products.skuRatePerPiece)),
+                                              : currencyFormat.format(double.parse(widget.products.schemeRatePerPcs)),
                                           style: const TextStyle(
                                             letterSpacing: 0.67,
                                             color: MColor.textColor,
@@ -241,9 +241,18 @@ class _ProductListItemState extends State<ProductListItem> {
   void updateQty({required int pkgQty, required int moqQty}) async {
     widget.products.pkgQty = pkgQty;
     widget.products.moqQty = moqQty;
-
     this.pkgQty = pkgQty;
     this.moqQty = moqQty;
+
+    double total = 0;
+    if (widget.products.schemes.isEmpty) {
+      total = (double.parse(widget.products.skuRatePerPiece) * double.parse(widget.products.pcsPerMoq) * moqQty) +
+          (double.parse(widget.products.skuRatePerPiece) * double.parse(widget.products.pcsPerPackaging) * pkgQty);
+    } else {
+      total = (double.parse(widget.products.schemeRatePerPcs) * double.parse(widget.products.pcsPerMoq) * moqQty) +
+          (double.parse(widget.products.schemeRatePerPcs) * double.parse(widget.products.pcsPerPackaging) * pkgQty);
+    }
+
     Cart cart = Cart(
         packagingId: widget.products.packagingId,
         moqId: widget.products.moqId,
@@ -276,7 +285,8 @@ class _ProductListItemState extends State<ProductListItem> {
         moqName: widget.products.moqName,
         priceAfterDiscount: widget.products.priceAfterDiscount,
         packagingName: widget.products.packagingName,
-        scheme: widget.products.schemes.isEmpty ? "" : widget.products.schemes.first.toJson());
+        scheme: widget.products.schemes.isEmpty ? "" : widget.products.schemes.first.toJson(),
+        totalPrice: total.toStringAsFixed(2));
     int updated = await databaseHelper.addProductToCart(cart);
     debugPrint("update-->$updated");
     setState(() {});
