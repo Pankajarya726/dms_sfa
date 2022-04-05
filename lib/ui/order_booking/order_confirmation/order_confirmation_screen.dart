@@ -36,43 +36,6 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
   @override
   void initState() {
     _tabController = TabController(length: 2, initialIndex: 0, vsync: this);
-    Future.delayed(Duration.zero, () {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              contentPadding: const EdgeInsets.fromLTRB(25, 10, 0, 0),
-              title: const Text(
-                "Are you sure you want to End day?",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              actions: [
-                MaterialButton(
-                  child: const Text("Cancel",
-                      style: TextStyle(
-                          color: Colors.grey, fontWeight: FontWeight.w600)),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                MaterialButton(
-                  child: const Text(
-                    "End day",
-                    style: TextStyle(
-                      color: Color(0xfff4511e),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  onPressed: () async {},
-                ),
-              ],
-            );
-          });
-    });
 
     super.initState();
   }

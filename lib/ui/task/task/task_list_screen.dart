@@ -140,20 +140,20 @@ class _TaskListScreenState extends State<TaskListScreen>
                     color: const Color(0xffEDEDED),
                     child: TabBar(
                       controller: tabController,
-                      indicatorSize: TabBarIndicatorSize.tab,
+                      indicatorSize: TabBarIndicatorSize.label,
                       indicatorWeight: 3,
                       indicatorColor: MColor.colorPrimary,
-                      labelPadding: const EdgeInsets.symmetric(horizontal: 5),
+                      labelPadding: const EdgeInsets.symmetric(horizontal: 0),
                       onTap: (index) {
                         debugPrint("select-tag-->${beatModal!.name}");
                       },
                       tabs: [
                         Tab(
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               const SizedBox(
-                                width: 5,
+                                width: 10,
                               ),
                               const Image(
                                 width: 20,
@@ -176,13 +176,19 @@ class _TaskListScreenState extends State<TaskListScreen>
                                       ),
                                     ),
                               ),
+                              const SizedBox(
+                                width: 10,
+                              ),
                             ],
                           ),
                         ),
                         Tab(
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
+                              const SizedBox(
+                                width: 10,
+                              ),
                               const Image(
                                 width: 20,
                                 image: AssetImage("assets/hit.png"),
@@ -204,13 +210,19 @@ class _TaskListScreenState extends State<TaskListScreen>
                                       ),
                                     ),
                               ),
+                              const SizedBox(
+                                width: 10,
+                              ),
                             ],
                           ),
                         ),
                         Tab(
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
+                              const SizedBox(
+                                width: 10,
+                              ),
                               const Image(
                                 width: 20,
                                 image: AssetImage("assets/special.png"),
@@ -218,27 +230,36 @@ class _TaskListScreenState extends State<TaskListScreen>
                               const SizedBox(
                                 width: 5,
                               ),
-                              Text(
-                                "Special",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2!
-                                    .merge(
-                                      TextStyle(
-                                        color: const Color(0xff303030)
-                                            .withOpacity(0.85),
-                                        letterSpacing: 0.5,
-                                        fontWeight: FontWeight.w600,
+                              Flexible(
+                                child: Text(
+                                  "Special",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .merge(
+                                        TextStyle(
+                                          color: const Color(0xff303030)
+                                              .withOpacity(0.85),
+                                          letterSpacing: 0.5,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
-                                    ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
                               ),
                             ],
                           ),
                         ),
                         Tab(
+                          iconMargin: EdgeInsets.zero,
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
+                              const SizedBox(
+                                width: 10,
+                              ),
                               const Image(
                                 width: 20,
                                 image: AssetImage("assets/key.png"),
@@ -259,6 +280,9 @@ class _TaskListScreenState extends State<TaskListScreen>
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
+                              ),
+                              const SizedBox(
+                                width: 10,
                               ),
                             ],
                           ),

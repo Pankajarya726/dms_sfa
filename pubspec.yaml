@@ -69,6 +69,8 @@ dependencies:
 
   # webview_flutter:
   photo_view: 
+  maps_launcher: ^2.0.1
+
 
 
 dev_dependencies:

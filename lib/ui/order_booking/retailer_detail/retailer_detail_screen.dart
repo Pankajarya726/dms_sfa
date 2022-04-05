@@ -311,6 +311,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                         child: TextFormField(
                           maxLines: 5,
                           minLines: 3,
+                          enabled: false,
                           controller: txtRemark,
                           style: const TextStyle(
                             fontSize: 16,
@@ -354,68 +355,120 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                                   blurRadius: 10,
                                 )
                               ]),
-                          child: Column(
-                            children: List.generate(
-                              retailer!.orderHistory!.length,
-                              (index) => Material(
-                                child: InkWell(
-                                  onTap: () {
-                                    Utility.hideKeyboard();
-                                    FocusScope.of(context).unfocus();
-                                    showModalBottomSheet(
-                                      context: context,
-                                      shape: bottomSheetShape,
-                                      builder: (context) =>
-                                          OrderHistoryBottomSheet(
-                                        product: retailer!
-                                            .orderHistory![index].products!,
-                                      ),
-                                    );
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.symmetric(
-                                        vertical: 5, horizontal: 10),
-                                    height: 50,
-                                    decoration: const BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
-                                            color: Color(0xffC5C5C5),
-                                            width: 0.5),
-                                      ),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "Date: ${retailer!.orderHistory![index].orderDate}",
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.normal,
-                                            color: Color(0xff555555),
-                                            letterSpacing: 0.67,
-                                            fontSize: 15,
+                          child: retailer!.orderHistory!.isNotEmpty
+                              ? Column(
+                                  children: List.generate(
+                                    retailer!.orderHistory!.length,
+                                    (index) => Material(
+                                      child: InkWell(
+                                        onTap: () {
+                                          Utility.hideKeyboard();
+                                          FocusScope.of(context).unfocus();
+                                          showModalBottomSheet(
+                                            context: context,
+                                            shape: bottomSheetShape,
+                                            builder: (context) =>
+                                                OrderHistoryBottomSheet(
+                                              product: retailer!
+                                                  .orderHistory![index]
+                                                  .products!,
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 5, horizontal: 10),
+                                          height: 50,
+                                          decoration: const BoxDecoration(
+                                            border: Border(
+                                              bottom: BorderSide(
+                                                  color: Color(0xffC5C5C5),
+                                                  width: 0.5),
+                                            ),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                "Date: ${retailer!.orderHistory![index].orderDate}",
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.normal,
+                                                  color: Color(0xff555555),
+                                                  letterSpacing: 0.67,
+                                                  fontSize: 15,
+                                                ),
+                                              ),
+                                              Text(
+                                                "Value: ₹${retailer!.orderHistory![index].amount}",
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.normal,
+                                                  color: Color(0xff555555),
+                                                  letterSpacing: 0.67,
+                                                  fontSize: 15,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        Text(
-                                          "Value: ₹${retailer!.orderHistory![index].amount}",
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.normal,
-                                            color: Color(0xff555555),
-                                            letterSpacing: 0.67,
-                                            fontSize: 15,
-                                          ),
-                                        ),
-                                      ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                            ),
+                                )
+                              : const Text("Orders not found"),
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(
+                            left: 15, right: 10, bottom: 0, top: 10),
+                        child: Text(
+                          "No Order yet",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 20,
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 15, right: 10, bottom: 10, top: 5),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: List.generate(
+                              5,
+                              (index) {
+                                return Padding(
+                                  padding: index == 0 || index == 4
+                                      ? const EdgeInsets.symmetric(
+                                          horizontal: 0)
+                                      : const EdgeInsets.symmetric(
+                                          horizontal: 10),
+                                  child: Container(
+                                    height: 45,
+                                    width: 100,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10)),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Color.fromRGBO(
+                                              237, 237, 237, 0.25),
+                                          blurRadius: 10,
+                                        )
+                                      ],
+                                    ),
+                                    child: const Image(
+                                      image:
+                                          AssetImage("assets/brand_image.png"),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
