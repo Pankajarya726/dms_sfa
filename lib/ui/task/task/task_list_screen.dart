@@ -1,4 +1,4 @@
-import 'package:dms/listeners/select_beat_listener.dart';
+import 'package:dms/listeners/select_beat_listerner.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/filter_task_bottom_sheet.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailer_bloc.dart';
@@ -21,7 +21,8 @@ class TaskListScreen extends StatefulWidget {
   _TaskListScreenState createState() => _TaskListScreenState();
 }
 
-class _TaskListScreenState extends State<TaskListScreen> with TickerProviderStateMixin {
+class _TaskListScreenState extends State<TaskListScreen>
+    with TickerProviderStateMixin {
   late TabController tabController;
   RetailersBloc retailersBloc = RetailersBloc();
   List<BeatsModal> beats = [];
@@ -93,7 +94,10 @@ class _TaskListScreenState extends State<TaskListScreen> with TickerProviderStat
                       style: const TextStyle(fontSize: 16),
                       readOnly: true,
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchRetailerScreen()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const SearchRetailerScreen()));
                       },
                       decoration: InputDecoration(
                         fillColor: Colors.white,
@@ -136,20 +140,20 @@ class _TaskListScreenState extends State<TaskListScreen> with TickerProviderStat
                     color: const Color(0xffEDEDED),
                     child: TabBar(
                       controller: tabController,
-                      indicatorSize: TabBarIndicatorSize.tab,
+                      indicatorSize: TabBarIndicatorSize.label,
                       indicatorWeight: 3,
                       indicatorColor: MColor.colorPrimary,
-                      labelPadding: const EdgeInsets.symmetric(horizontal: 5),
+                      labelPadding: const EdgeInsets.symmetric(horizontal: 0),
                       onTap: (index) {
                         debugPrint("select-tag-->${beatModal!.name}");
                       },
                       tabs: [
                         Tab(
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               const SizedBox(
-                                width: 5,
+                                width: 10,
                               ),
                               const Image(
                                 width: 20,
@@ -160,21 +164,31 @@ class _TaskListScreenState extends State<TaskListScreen> with TickerProviderStat
                               ),
                               Text(
                                 "All",
-                                style: Theme.of(context).textTheme.bodyText1!.merge(
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .merge(
                                       TextStyle(
-                                        color: const Color(0xff303030).withOpacity(0.85),
+                                        color: const Color(0xff303030)
+                                            .withOpacity(0.85),
                                         letterSpacing: 0.5,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
+                              ),
+                              const SizedBox(
+                                width: 10,
                               ),
                             ],
                           ),
                         ),
                         Tab(
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
+                              const SizedBox(
+                                width: 10,
+                              ),
                               const Image(
                                 width: 20,
                                 image: AssetImage("assets/hit.png"),
@@ -184,21 +198,31 @@ class _TaskListScreenState extends State<TaskListScreen> with TickerProviderStat
                               ),
                               Text(
                                 "Hit",
-                                style: Theme.of(context).textTheme.bodyText2!.merge(
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2!
+                                    .merge(
                                       TextStyle(
-                                        color: const Color(0xff303030).withOpacity(0.85),
+                                        color: const Color(0xff303030)
+                                            .withOpacity(0.85),
                                         letterSpacing: 0.5,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
+                              ),
+                              const SizedBox(
+                                width: 10,
                               ),
                             ],
                           ),
                         ),
                         Tab(
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
+                              const SizedBox(
+                                width: 10,
+                              ),
                               const Image(
                                 width: 20,
                                 image: AssetImage("assets/special.png"),
@@ -206,23 +230,36 @@ class _TaskListScreenState extends State<TaskListScreen> with TickerProviderStat
                               const SizedBox(
                                 width: 5,
                               ),
-                              Text(
-                                "Special",
-                                style: Theme.of(context).textTheme.bodyText2!.merge(
-                                      TextStyle(
-                                        color: const Color(0xff303030).withOpacity(0.85),
-                                        letterSpacing: 0.5,
-                                        fontWeight: FontWeight.w600,
+                              Flexible(
+                                child: Text(
+                                  "Special",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .merge(
+                                        TextStyle(
+                                          color: const Color(0xff303030)
+                                              .withOpacity(0.85),
+                                          letterSpacing: 0.5,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
-                                    ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
                               ),
                             ],
                           ),
                         ),
                         Tab(
+                          iconMargin: EdgeInsets.zero,
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
+                              const SizedBox(
+                                width: 10,
+                              ),
                               const Image(
                                 width: 20,
                                 image: AssetImage("assets/key.png"),
@@ -232,13 +269,20 @@ class _TaskListScreenState extends State<TaskListScreen> with TickerProviderStat
                               ),
                               Text(
                                 "Key",
-                                style: Theme.of(context).textTheme.bodyText2!.merge(
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2!
+                                    .merge(
                                       TextStyle(
-                                        color: const Color(0xff303030).withOpacity(0.85),
+                                        color: const Color(0xff303030)
+                                            .withOpacity(0.85),
                                         letterSpacing: 0.5,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
+                              ),
+                              const SizedBox(
+                                width: 10,
                               ),
                             ],
                           ),
@@ -253,7 +297,8 @@ class _TaskListScreenState extends State<TaskListScreen> with TickerProviderStat
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              BlocBuilder<RetailersBloc, RetailerState>(builder: (context, state) {
+              BlocBuilder<RetailersBloc, RetailerState>(
+                  builder: (context, state) {
                 if (state is RetailerInitState) {
                   retailersBloc.add(GetBeatEvent());
                 }
@@ -271,7 +316,8 @@ class _TaskListScreenState extends State<TaskListScreen> with TickerProviderStat
                       debugPrint("onBeatSelect-->${tag.name}");
                       beatModal = tag;
                       if (selectBeatListener != null) {
-                        selectBeatListener!.onBeatSelect(beatModal!, selectedDay, "");
+                        selectBeatListener!
+                            .onBeatSelect(beatModal!, selectedDay, "");
                       }
                     },
                   ),
@@ -282,28 +328,36 @@ class _TaskListScreenState extends State<TaskListScreen> with TickerProviderStat
                   controller: tabController,
                   children: [
                     TaskTab(
-                      selectedBeat: beatModal == null ? BeatsModal(id: "", name: "All") : beatModal!,
+                      selectedBeat: beatModal == null
+                          ? BeatsModal(id: "", name: "All")
+                          : beatModal!,
                       index: 1,
                       onInit: (SelectBeatListener listener) {
                         selectBeatListener = listener;
                       },
                     ),
                     TaskTab(
-                      selectedBeat: beatModal == null ? BeatsModal(id: "", name: "All") : beatModal!,
+                      selectedBeat: beatModal == null
+                          ? BeatsModal(id: "", name: "All")
+                          : beatModal!,
                       index: 2,
                       onInit: (SelectBeatListener listener) {
                         selectBeatListener = listener;
                       },
                     ),
                     TaskTab(
-                      selectedBeat: beatModal == null ? BeatsModal(id: "", name: "All") : beatModal!,
+                      selectedBeat: beatModal == null
+                          ? BeatsModal(id: "", name: "All")
+                          : beatModal!,
                       index: 3,
                       onInit: (SelectBeatListener listener) {
                         selectBeatListener = listener;
                       },
                     ),
                     TaskTab(
-                      selectedBeat: beatModal == null ? BeatsModal(id: "", name: "All") : beatModal!,
+                      selectedBeat: beatModal == null
+                          ? BeatsModal(id: "", name: "All")
+                          : beatModal!,
                       index: 4,
                       onInit: (SelectBeatListener listener) {
                         selectBeatListener = listener;

@@ -79,7 +79,7 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
               }
 
               return ListView.separated(
-                padding: const EdgeInsets.all(15),
+                padding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
                 itemCount: snapshot.data!.length,
                 separatorBuilder: (context, index) {
                   return const SizedBox(

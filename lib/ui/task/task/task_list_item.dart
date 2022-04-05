@@ -3,6 +3,7 @@ import 'package:dms/ui/order_booking/retailer_detail/retailer_detail_screen.dart
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 
 class TaskListItems extends StatefulWidget {
   final int index;
@@ -31,19 +32,14 @@ class _TaskListItemsState extends State<TaskListItems> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(left: 5),
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(11),
-        color: widget.index == 0
-            ? Colors.transparent
-            : widget.index == 1
-                ? const Color.fromRGBO(197, 181, 0, 1)
-                : const Color.fromRGBO(44, 183, 67, 1),
+        color: Colors.transparent,
         boxShadow: const [
           BoxShadow(
             color: Colors.black12,
-            blurRadius: 8,
+            blurRadius: 15,
           ),
         ],
       ),
@@ -104,9 +100,19 @@ class _TaskListItemsState extends State<TaskListItems> {
                         ],
                       ),
                     ),
-                    const Image(
-                      width: 20,
-                      image: AssetImage("assets/location_green.png"),
+                    IconButton(
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: () {
+                        MapsLauncher.launchCoordinates(
+                          double.parse(widget.retailer.lat),
+                          double.parse(widget.retailer.lng),
+                        );
+                      },
+                      icon: const Image(
+                        width: 25,
+                        image: AssetImage("assets/location_green.png"),
+                      ),
                     )
                   ],
                 ),
@@ -144,7 +150,7 @@ class _TaskListItemsState extends State<TaskListItems> {
                           children: [
                             Text(
                               widget.retailer.primaryAddress,
-                              maxLines: 3,
+                              // maxLines: 3,
                               style: const TextStyle(
                                 letterSpacing: 0.67,
                                 fontWeight: FontWeight.w600,
@@ -166,33 +172,41 @@ class _TaskListItemsState extends State<TaskListItems> {
                         ),
                       ),
                     ),
-                    Container(
-                      height: 25,
-                      width: 25,
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      decoration: BoxDecoration(
-                        color: MColor.colorYellow,
-                        borderRadius: BorderRadius.circular(3),
-                      ),
-                      child: const Text(
-                        "5",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
+                    SizedBox(
+                      height: 50,
+                      child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: Container(
+                          height: 20,
+                          width: 28,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: MColor.colorYellow,
+                            borderRadius: BorderRadius.circular(3.5),
+                          ),
+                          child: const Text(
+                            "5",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                    Container(
-                      height: 40,
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: Image(
-                        width: 40,
-                        height: 40,
-                        image: AssetImage(
-                          widget.retailer.enrollmentTypeId == "1"
-                              ? "assets/retailer.png"
-                              : "assets/tele.png",
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    SizedBox(
+                      height: 50,
+                      child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: Image(
+                          image: AssetImage(
+                            widget.retailer.enrollmentTypeId == "1"
+                                ? "assets/key.png"
+                                : "assets/hit.png",
+                          ),
                         ),
                       ),
                     )
