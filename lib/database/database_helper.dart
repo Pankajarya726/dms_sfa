@@ -52,7 +52,7 @@ class DatabaseHelper {
     try {
       final db = await getDatabase();
 
-      int i = await db.rawDelete(DBConstant.cartTable);
+      int i = await db.delete(DBConstant.cartTable);
       return i;
     } catch (error) {
       debugPrint("error---->$error");

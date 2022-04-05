@@ -1,4 +1,3 @@
-import 'package:dms/ui/custom_widget/drop_down_field.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailer_bloc.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailers_event.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailers_state.dart';
@@ -63,8 +62,7 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
                   letterSpacing: 0.67,
                 ),
               ),
-              BlocBuilder<RetailersBloc, RetailerState>(
-                  builder: (context, state) {
+              BlocBuilder<RetailersBloc, RetailerState>(builder: (context, state) {
                 if (state is RetailerInitState) {
                   BlocProvider.of<RetailersBloc>(context).add(GetBeatEvent());
                 }
@@ -76,7 +74,7 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
                   height: 70,
                   width: MediaQuery.of(context).size.width,
                   child: BeatWidget(
-                    selectedBeat: "",
+                    selectedBeat: beatModal,
                     tags: beats,
                     onSelect: (BeatsModal tag) {
                       debugPrint("onBeatSelect-->${tag.name}");
@@ -123,8 +121,7 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
                 height: 25,
               ),
               Padding(
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:math';
 
-import 'package:dms/listeners/select_beat_listerner.dart';
+import 'package:dms/listeners/select_beat_listener.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/retailer_list_item.dart';
@@ -23,12 +23,14 @@ import '../../../main.dart';
 class RetailerTab extends StatefulWidget {
   final int index;
   final BeatsModal selectedBeat;
+  final String day;
   final Function(SelectBeatListener listener) onInit;
 
   const RetailerTab({
     Key? key,
     required this.index,
     required this.onInit,
+    required this.day,
     required this.selectedBeat,
   }) : super(key: key);
 
@@ -36,29 +38,36 @@ class RetailerTab extends StatefulWidget {
   _RetailerTabState createState() => _RetailerTabState();
 }
 
-class _RetailerTabState extends State<RetailerTab>
-    implements SelectBeatListener {
+class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener {
   List<RetailersModal> retailers = [];
-  List<BeatsModal> beatList = [];
   BeatsModal? selectedBeat;
   String tag = "All";
-  StreamController<List<RetailersModal>> retailerStreamController =
-      StreamController();
+  StreamController<List<RetailersModal>> retailerStreamController = StreamController();
   String day = "";
   String retailerType = "";
-  // RetailersBloc retailersBloc = RetailersBloc();
+
   double latitude = 0.0;
   double longitude = 0.0;
   String sortingType = "";
 
   @override
   void initState() {
-    debugPrint("initState--->${widget.selectedBeat.id}");
+    debugPrint("RetailerTab-->initState--->${widget.selectedBeat.name}");
     widget.onInit(this);
     selectedBeat ??= widget.selectedBeat;
-    day = DateFormat.EEEE().format(DateTime.now());
+    day = widget.day.isEmpty ? DateFormat.EEEE().format(DateTime.now()) : widget.day;
     getRetailers();
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant RetailerTab oldWidget) {
+    debugPrint("RetailerTab-->didUpdateWidget--->${widget.selectedBeat.id}");
+    debugPrint("RetailerTab-->didUpdateWidget--->${oldWidget.selectedBeat.id}");
+    selectedBeat = widget.selectedBeat;
+    day = widget.day;
+    getRetailers();
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -69,8 +78,7 @@ class _RetailerTabState extends State<RetailerTab>
         builder: (context, state) {
           debugPrint("state---->$state");
           if (state is UserLocationInitialState) {
-            BlocProvider.of<UserLocationBloc>(context)
-                .add(GetUserLocationEvent());
+            BlocProvider.of<UserLocationBloc>(context).add(GetUserLocationEvent());
           }
 
           if (state is GetUserLocationState) {
@@ -79,8 +87,7 @@ class _RetailerTabState extends State<RetailerTab>
           }
 
           if (state is UserLocationFailureState) {
-            Fluttertoast.showToast(
-                msg: "Please turn on GPS to get current location");
+            Fluttertoast.showToast(msg: "Please turn on GPS to get current location");
           }
           return Container();
         },
@@ -89,15 +96,6 @@ class _RetailerTabState extends State<RetailerTab>
 
     return Column(
       children: [
-        // BeatWidget(
-        //     tags: beatList,
-        //     onSelect: (BeatsModal tag) {
-        //       if (selectedBeat != tag) {
-        //         selectedBeat = tag;
-        //         getRetailers();
-        //       }
-        //     }),
-
         userLocation,
         Expanded(
           child: StreamBuilder<List<RetailersModal>>(
@@ -157,8 +155,7 @@ class _RetailerTabState extends State<RetailerTab>
       input["beat_id"] = selectedBeat!.id;
       input["day"] = day;
       input["retailer_type"] = retailerType;
-      GetRetailersResponse response =
-          await repository.getRetailersOrderWise(input);
+      GetRetailersResponse response = await repository.getRetailersOrderWise(input);
       if (response.success) {
         retailers = response.data!;
         for (var element in retailers) {
@@ -204,20 +201,17 @@ class _RetailerTabState extends State<RetailerTab>
   void onSorting(String type) {
     sortingType = type;
     if (type == StringConst.retailer) {
-      retailers.sort((a, b) =>
-          a.enrollmentTypeId.compareTo(b.enrollmentTypeId)); // ascending order
+      retailers.sort((a, b) => a.enrollmentTypeId.compareTo(b.enrollmentTypeId)); // ascending order
       retailerStreamController.add(retailers);
     }
 
     if (type == StringConst.teleRetailer) {
-      retailers.sort((a, b) =>
-          b.enrollmentTypeId.compareTo(a.enrollmentTypeId)); // descending order
+      retailers.sort((a, b) => b.enrollmentTypeId.compareTo(a.enrollmentTypeId)); // descending order
       retailerStreamController.add(retailers);
     }
 
     if (type == StringConst.nearby) {
-      retailers
-          .sort((a, b) => a.distance.compareTo(b.distance)); // ascending order
+      retailers.sort((a, b) => a.distance.compareTo(b.distance)); // ascending order
       retailerStreamController.add(retailers);
     }
   }
@@ -237,9 +231,7 @@ class _RetailerTabState extends State<RetailerTab>
     double lon2 = double.parse(passedLng);
     var p = 0.017453292519943295;
     var c = cos;
-    var a = 0.5 -
-        c((lat2 - lat1) * p) / 2 +
-        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    var a = 0.5 - c((lat2 - lat1) * p) / 2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     double d = 12742 * asin(sqrt(a));
     // print("distance after converting into kilometers = $d");
     return d.toStringAsFixed(2);
@@ -249,7 +241,7 @@ class _RetailerTabState extends State<RetailerTab>
 class BeatWidget extends StatefulWidget {
   final List<BeatsModal> tags;
   final Function(BeatsModal tag) onSelect;
-  final String selectedBeat;
+  final BeatsModal? selectedBeat;
 
   const BeatWidget({
     Key? key,
@@ -274,8 +266,10 @@ class _BeatWidgetState extends State<BeatWidget> {
   @override
   void didUpdateWidget(BeatWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.selectedBeat.isNotEmpty) {
-      tag.name = widget.selectedBeat;
+    if (widget.selectedBeat != null) {
+      tag = widget.selectedBeat!;
+    } else {
+      tag = BeatsModal(name: "All", id: "");
     }
   }
 
@@ -298,21 +292,12 @@ class _BeatWidgetState extends State<BeatWidget> {
           textActiveColor: Colors.black,
           textColor: const Color(0xff555555),
           elevation: 0,
-          textStyle: const TextStyle(
-              fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          border: Border.all(
-              color: widget.tags[index].name == tag.name
-                  ? MColor.colorPrimary
-                  : const Color(0xffC5C5C5),
-              width: 1.5),
+          border: Border.all(color: widget.tags[index].name == tag.name ? MColor.colorPrimary : const Color(0xffC5C5C5), width: 1.5),
           singleItem: true,
-          activeColor: widget.tags[index].name == tag.name
-              ? const Color(0xffFFC9CC)
-              : const Color(0xffFAFAFA),
-          color: widget.tags[index].name == tag.name
-              ? const Color(0xffFFC9CC)
-              : const Color(0xffFAFAFA),
+          activeColor: widget.tags[index].name == tag.name ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
+          color: widget.tags[index].name == tag.name ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
           title: widget.tags[index].name,
         );
       },

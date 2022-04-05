@@ -54,4 +54,9 @@ class BeatsModal {
         "id": id,
         "name": name,
       };
+
+  @override
+  String toString() {
+    return 'BeatsModal{id: $id, name: $name}';
+  }
 }

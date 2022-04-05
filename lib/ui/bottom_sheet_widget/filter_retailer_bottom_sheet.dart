@@ -1,5 +1,5 @@
 import 'dart:collection';
-import 'package:dms/listeners/drop_down_field_listener.dart';
+
 import 'package:dms/main.dart';
 import 'package:dms/ui/custom_widget/drop_down_field.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailer_bloc.dart';
@@ -15,15 +15,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class FilterRetailerBottomSheet extends StatefulWidget {
   final String day;
   final String type;
-  final String beat;
+  final BeatsModal beat;
   final List<BeatsModal> beatList;
-  final Function(
-    String day,
-    String type,
-    String selectedBeat,
-  ) onFilter;
-  final Function(BeatsModal? beatsModal, List<BeatsModal> beatList)
-      onBeatSelected;
+  final Function(String day, String type, BeatsModal selectedBeat, List<BeatsModal> beatList) onFilter;
+
   const FilterRetailerBottomSheet({
     Key? key,
     required this.onFilter,
@@ -31,12 +26,10 @@ class FilterRetailerBottomSheet extends StatefulWidget {
     required this.type,
     required this.beat,
     required this.beatList,
-    required this.onBeatSelected,
   }) : super(key: key);
 
   @override
-  _FilterRetailerBottomSheetState createState() =>
-      _FilterRetailerBottomSheetState();
+  _FilterRetailerBottomSheetState createState() => _FilterRetailerBottomSheetState();
 }
 
 class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
@@ -57,16 +50,14 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
     StringConst.teleRetailer,
   ];
   String selectedDay = "";
-  String selectedPrioType = "";
-  String selectedBeat = "";
+  String selectedEnrollmentType = "";
+  BeatsModal? selectedBeat;
   List<BeatsModal> beats = [];
-  BeatsModal? beatsModal;
-  DropDownFieldListener? dropDownFieldListener;
 
   @override
   void initState() {
     selectedDay = widget.day;
-    selectedPrioType = widget.type;
+    selectedEnrollmentType = widget.type;
     selectedBeat = widget.beat;
     debugPrint("FilterRetailerBottomSheet");
     beats = widget.beatList;
@@ -114,17 +105,17 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                 height: 20,
               ),
               DropDownField(
-                prevSelected: selectedBeat,
+                prevSelected: selectedBeat!.name,
                 onSelect: (value) {
                   debugPrint("select-->$value");
-                  selectedBeat = value;
+                  // selectedBeat!.name = value;
                 },
                 hint: "Select Beat",
                 menuList: days,
                 beats: beats,
                 onBeatSelected: (beatsM) {
                   if (beatsM != null) {
-                    beatsModal = beatsM;
+                    selectedBeat = beatsM;
                   }
                 },
               ),
@@ -132,30 +123,26 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                 height: 20,
               ),
               DropDownField(
-                prevSelected: selectedPrioType,
+                prevSelected: selectedEnrollmentType,
                 onSelect: (value) {
                   debugPrint("select-->");
-                  selectedPrioType = value;
+                  selectedEnrollmentType = value;
                 },
-                hint: "Select Priority Type",
+                hint: "Select Outlat Type",
                 menuList: priorityType,
               ),
               const SizedBox(
                 height: 35,
               ),
               Padding(
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     MaterialButton(
                       onPressed: () {
-                        widget.onFilter(
-                            selectedDay, selectedPrioType, selectedBeat);
-                        if (beatsModal != null) {
-                          widget.onBeatSelected(beatsModal!, beats);
-                        }
+                        widget.onFilter(selectedDay, selectedEnrollmentType, selectedBeat!, beats);
+
                         Navigator.pop(context);
                       },
                       height: 50,
@@ -189,11 +176,12 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
     if (await Network.isConnected()) {
       Map<String, dynamic> input = HashMap<String, dynamic>();
       input["day"] = selectedDay;
-      GetAllBeatsResponse response =
-          await repository.getBeatByOrderBookingDay(input);
+      GetAllBeatsResponse response = await repository.getBeatByOrderBookingDay(input);
       if (response.success) {
+        beats.clear();
         beats.add(BeatsModal(id: "", name: "All"));
         beats.addAll(response.data!);
+        selectedBeat = beats.first;
       } else {
         Utility.showToast(response.message);
       }

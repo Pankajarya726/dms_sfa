@@ -1,7 +1,12 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:dms/database/db_constant.dart';
 import 'package:dms/listeners/reason_listener.dart';
 import 'package:dms/main.dart';
+import 'package:dms/model/base_response.dart';
 import 'package:dms/ui/order_booking/order_confirmation/model/get_bu_response.dart';
+import 'package:dms/ui/order_booking/retailers_list/retailers_list_screen.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
@@ -11,17 +16,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
-class OrderS extends StatefulWidget {
+class OrderSummery extends StatefulWidget {
   final String beatId;
   final String retailerId;
   final Function(ReasonsListener? reasonsListener) onInit;
-  const OrderS({Key? key, required this.onInit, required this.beatId, required this.retailerId}) : super(key: key);
+
+  const OrderSummery({Key? key, required this.onInit, required this.beatId, required this.retailerId}) : super(key: key);
 
   @override
-  State<OrderS> createState() => _OrderSState();
+  State<OrderSummery> createState() => _OrderSummeryState();
 }
 
-class _OrderSState extends State<OrderS> implements ReasonsListener {
+class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener {
   List<Widget> rowList = [];
   TextEditingController txtReadyStockController = TextEditingController();
   String reason = "";
@@ -302,7 +308,11 @@ class _OrderSState extends State<OrderS> implements ReasonsListener {
         BaseResponse response = await repository.saveOrder(input);
         EasyLoading.dismiss();
         Utility.showToast(response.message);
-        if (response.success) {}
+        if (response.success) {
+          await databaseHelper.clearCart();
+          Navigator.of(context)
+              .pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const RetailerListScreen()), (Route<dynamic> route) => false);
+        }
       } else {
         Utility.showToast(Constants.internetAlert);
       }
