@@ -1,4 +1,4 @@
-import 'package:dms/listeners/select_beat_listerner.dart';
+import 'package:dms/listeners/select_beat_listener.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/filter_task_bottom_sheet.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailer_bloc.dart';
@@ -101,7 +101,7 @@ class _TaskListScreenState extends State<TaskListScreen>
                       },
                       decoration: InputDecoration(
                         fillColor: Colors.white,
-                        hintText: "Search",
+                        hintText: StringConst.search,
                         hintStyle: const TextStyle(fontSize: 16),
                         contentPadding: const EdgeInsets.all(10),
                         border: OutlineInputBorder(
@@ -163,7 +163,7 @@ class _TaskListScreenState extends State<TaskListScreen>
                                 width: 5,
                               ),
                               Text(
-                                "All",
+                                StringConst.all,
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyText1!
@@ -197,7 +197,7 @@ class _TaskListScreenState extends State<TaskListScreen>
                                 width: 5,
                               ),
                               Text(
-                                "Hit",
+                                StringConst.hit,
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyText2!
@@ -232,7 +232,7 @@ class _TaskListScreenState extends State<TaskListScreen>
                               ),
                               Flexible(
                                 child: Text(
-                                  "Special",
+                                  StringConst.special,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText2!
@@ -268,7 +268,7 @@ class _TaskListScreenState extends State<TaskListScreen>
                                 width: 5,
                               ),
                               Text(
-                                "Key",
+                                StringConst.key,
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyText2!
@@ -306,6 +306,12 @@ class _TaskListScreenState extends State<TaskListScreen>
                 if (state is GetBeatState) {
                   beats = state.beats;
                   beatModal = beats.first;
+                }
+
+                if (beats.isEmpty) {
+                  return Container(
+                    padding: const EdgeInsets.only(top: 5),
+                  );
                 }
 
                 return SizedBox(

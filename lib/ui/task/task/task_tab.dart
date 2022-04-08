@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:collection';
-
 import 'package:dms/listeners/select_beat_listener.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
@@ -11,7 +10,6 @@ import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:intl/intl.dart';
-
 import '../../../main.dart';
 
 class TaskTab extends StatefulWidget {
@@ -34,8 +32,9 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
   List<RetailersModal> retailers = [];
   List<BeatsModal> beatList = [];
   BeatsModal? selectedBeat;
-  String tag = "All";
-  StreamController<List<RetailersModal>> retailerStreamController = StreamController();
+  String tag = StringConst.all;
+  StreamController<List<RetailersModal>> retailerStreamController =
+      StreamController();
   String day = "";
   String retailerType = "";
   double latitude = 0.0;
@@ -119,7 +118,8 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
       input["beat_id"] = "";
       input["day"] = "Saturday";
       input["retailer_type"] = "";
-      GetRetailersResponse response = await repository.getRetailersOrderWise(input);
+      GetRetailersResponse response =
+          await repository.getRetailersOrderWise(input);
       if (response.success) {
         retailers = response.data!;
         debugPrint("response = ${response.message}");
@@ -166,7 +166,7 @@ class TaskBeatWidget extends StatefulWidget {
 }
 
 class _TaskBeatWidgetState extends State<TaskBeatWidget> {
-  BeatsModal tag = BeatsModal(name: "All", id: "");
+  BeatsModal tag = BeatsModal(name: StringConst.all, id: "");
 
   @override
   void initState() {
@@ -207,12 +207,21 @@ class _TaskBeatWidgetState extends State<TaskBeatWidget> {
             textActiveColor: Colors.black,
             textColor: const Color(0xff555555),
             elevation: 0,
-            textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+            textStyle: const TextStyle(
+                fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
             padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-            border: Border.all(color: widget.tags[index].name == tag.name ? MColor.colorPrimary : const Color(0xffC5C5C5), width: 1.5),
+            border: Border.all(
+                color: widget.tags[index].name == tag.name
+                    ? MColor.colorPrimary
+                    : const Color(0xffC5C5C5),
+                width: 1.5),
             singleItem: true,
-            activeColor: widget.tags[index].name == tag.name ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
-            color: widget.tags[index].name == tag.name ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
+            activeColor: widget.tags[index].name == tag.name
+                ? const Color(0xffFFC9CC)
+                : const Color(0xffFAFAFA),
+            color: widget.tags[index].name == tag.name
+                ? const Color(0xffFFC9CC)
+                : const Color(0xffFAFAFA),
             title: widget.tags[index].name,
           ),
         );
