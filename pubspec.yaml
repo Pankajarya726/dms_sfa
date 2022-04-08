@@ -61,6 +61,7 @@ dependencies:
   dio_http_cache:
   flutter_icons:
   in_app_update:
+  url_launcher:
 #  for review and rate the app on store
   in_app_review:
   rxdart:
@@ -70,6 +71,7 @@ dependencies:
   # webview_flutter:
   photo_view: 
   maps_launcher: ^2.0.1
+  group_radio_button:
 
 
 

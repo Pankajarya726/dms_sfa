@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dms/ui/order_booking/order_details/order_detail_screen.dart';
 import 'package:dms/ui/order_booking/retailer_detail/retailer_detail_screen.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 
 class RetailerListItems extends StatefulWidget {
   final int index;
@@ -25,6 +27,7 @@ class RetailerListItems extends StatefulWidget {
 class _RetailerListItemsState extends State<RetailerListItems> {
   @override
   void initState() {
+    debugPrint("widget.index-->${widget.index}");
     super.initState();
   }
 
@@ -35,9 +38,9 @@ class _RetailerListItemsState extends State<RetailerListItems> {
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(11),
-        color: widget.index == 0
+        color: widget.index == 1
             ? Colors.transparent
-            : widget.index == 1
+            : widget.index == 2
                 ? const Color.fromRGBO(197, 181, 0, 1)
                 : const Color.fromRGBO(44, 183, 67, 1),
         boxShadow: const [
@@ -54,18 +57,28 @@ class _RetailerListItemsState extends State<RetailerListItems> {
             borderRadius: BorderRadius.circular(10),
           ),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => RetailerDetailScreen(
-                  storeId: widget.retailer.userId,
+            if (widget.index == 3) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => OrderDetailScreen(
+                    retailer: widget.retailer,
+                  ),
                 ),
-              ),
-            );
+              );
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => RetailerDetailScreen(
+                    retailer: widget.retailer,
+                  ),
+                ),
+              );
+            }
           },
           child: Padding(
-            padding:
-                const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
+            padding: const EdgeInsets.only(top: 5, bottom: 10, left: 15, right: 15),
             child: Column(
               children: [
                 Row(
@@ -104,9 +117,24 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                         ],
                       ),
                     ),
-                    const Image(
-                      width: 20,
-                      image: AssetImage("assets/location_green.png"),
+                    IconButton(
+                      padding: const EdgeInsets.all(0),
+                      iconSize: 25,
+                      constraints: const BoxConstraints(maxHeight: 30),
+                      splashRadius: 15,
+                      onPressed: () async {
+                        if (widget.retailer.lat.isEmpty || widget.retailer.lng.isEmpty) {
+                          String url = await MapsLauncher.createCoordinatesUrl(22.55, 75.55);
+                          print("url-->$url");
+                          await MapsLauncher.launchQuery(widget.retailer.primaryAddress);
+                        } else {
+                          await MapsLauncher.launchCoordinates(double.parse(widget.retailer.lat), double.parse(widget.retailer.lng));
+                        }
+                      },
+                      icon: const Image(
+                        width: 20,
+                        image: AssetImage("assets/location_green.png"),
+                      ),
                     )
                   ],
                 ),
@@ -172,10 +200,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                       child: Image(
                         width: 40,
                         height: 40,
-                        image: AssetImage(
-                            widget.retailer.enrollmentTypeId == "1"
-                                ? "assets/retailer.png"
-                                : "assets/tele.png"),
+                        image: AssetImage(widget.retailer.enrollmentTypeId == "1" ? "assets/retailer.png" : "assets/tele.png"),
                       ),
                     )
                   ],

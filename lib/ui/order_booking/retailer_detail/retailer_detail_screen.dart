@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dms/main.dart';
+import 'package:dms/model/base_response.dart';
 import 'package:dms/ui/add_store/outlet_information/outlet_information.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/last_visit_bottom_sheet.dart';
@@ -12,16 +14,20 @@ import 'package:dms/ui/order_booking/retailer_detail/bloc/retailer_details_bloc.
 import 'package:dms/ui/order_booking/retailer_detail/bloc/retailer_details_events.dart';
 import 'package:dms/ui/order_booking/retailer_detail/bloc/retailer_details_states.dart';
 import 'package:dms/ui/order_booking/retailer_detail/model/retailer_details_response.dart';
+import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/constants.dart';
+import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class RetailerDetailScreen extends StatefulWidget {
-  final String storeId;
-  const RetailerDetailScreen({Key? key, required this.storeId})
-      : super(key: key);
+  final RetailersModal retailer;
+
+  const RetailerDetailScreen({Key? key, required this.retailer}) : super(key: key);
 
   @override
   _RetailerDetailScreenState createState() => _RetailerDetailScreenState();
@@ -35,67 +41,64 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => RetailerDetailsBloc(),
-      child: BlocBuilder<RetailerDetailsBloc, RetailerDetailStates>(
-        builder: (context, state) {
-          if (state is RetailerDetailInitialState) {
-            BlocProvider.of<RetailerDetailsBloc>(context)
-                .add(GetRetailerDetailsEvent(storeId: widget.storeId));
-          }
-          if (state is RetailerDetailLodingState) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (state is GetRetailerDetailState) {
-            retailer = state.retailer;
-            if (txtRemark.text.isEmpty) {
-              if (txtRemark.text != retailer!.remark) {
-                txtRemark.text = state.retailer.remark;
+      child: Scaffold(
+        backgroundColor: const Color(0xffF7F7F7),
+        appBar: _appBar(AppBar().preferredSize.height),
+        body: BlocBuilder<RetailerDetailsBloc, RetailerDetailStates>(
+          builder: (context, state) {
+            if (state is RetailerDetailInitialState) {
+              BlocProvider.of<RetailerDetailsBloc>(context).add(GetRetailerDetailsEvent(storeId: widget.retailer.customerId));
+            }
+            if (state is RetailerDetailLodingState) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (state is GetRetailerDetailState) {
+              retailer = state.retailer;
+              if (txtRemark.text.isEmpty) {
+                if (txtRemark.text != retailer!.remark) {
+                  txtRemark.text = state.retailer.remark;
+                }
               }
             }
-          }
-          if (state is RetailerDetailFailureState) {
-            return Center(
-              child: Text(state.failureMessage),
-            );
-          }
-          if (retailer == null) {
-            return Container();
-          }
+            if (state is RetailerDetailFailureState) {
+              return Center(
+                child: Text(state.failureMessage),
+              );
+            }
+            if (retailer == null) {
+              return Container();
+            }
 
-          return Scaffold(
-            appBar: _appBar(AppBar().preferredSize.height),
-            backgroundColor: const Color(0xffF7F7F7),
-            body: CustomScrollView(
+            return CustomScrollView(
               slivers: [
                 SliverGrid(
                   delegate: SliverChildListDelegate(
                     [
                       DetailGritItem(
-                        value: retailer!.lastVisit!.isNotEmpty
-                            ? retailer!.lastVisit!.first.orderDate
-                            : "",
+                        value: retailer!.lastVisit.isNotEmpty ? retailer!.lastVisit.first.orderDate : "No visit yet!",
                         image: "assets/store.png",
                         name: "Last visit",
                         type: 1,
                         retailerDetails: retailer!,
                       ),
-                      const DetailGritItem(
-                        value: "3",
+                      DetailGritItem(
+                        value: retailer!.pendingTask,
                         image: "assets/task.png",
                         name: "Task",
                         type: 2,
                       ),
-                      const DetailGritItem(
-                        value: "No Order",
+                      DetailGritItem(
+                        value: retailer!.tcStatus,
                         image: "assets/phone.png",
                         name: "TC Status",
                         type: 3,
                       ),
                       DetailGritItem(
-                        value: "Potential",
+                        value: currencyFormat.format(double.parse(retailer!.potential)),
                         image: "assets/experience.png",
-                        name: retailer!.potential,
+                        name: "Potential",
                         type: 4,
                       ),
                     ],
@@ -111,8 +114,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                   delegate: SliverChildListDelegate(
                     [
                       Padding(
-                        padding: const EdgeInsets.only(
-                            left: 15, right: 10, bottom: 0, top: 10),
+                        padding: const EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 10),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -128,9 +130,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                               onPressed: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const OutletInformation()),
+                                  MaterialPageRoute(builder: (context) => const OutletInformation()),
                                 );
                               },
                               padding: EdgeInsets.zero,
@@ -140,8 +140,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                                 width: 25,
                                 decoration: const BoxDecoration(
                                   color: MColor.colorSecondary,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(15)),
+                                  borderRadius: BorderRadius.all(Radius.circular(15)),
                                 ),
                                 child: const Center(
                                   child: Icon(
@@ -156,11 +155,9 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 0),
+                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 5, vertical: 10),
+                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
                           decoration: const BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -174,8 +171,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                           child: Column(
                             children: [
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     child: RetailerDetailItem(
@@ -193,9 +189,9 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                                   const SizedBox(
                                     width: 5,
                                   ),
-                                  const Expanded(
+                                  Expanded(
                                     child: RetailerDetailItem(
-                                      value: "Friday",
+                                      value: retailer!.orderBookingDay,
                                       image: "assets/telephone.png",
                                       name: "Calling Day",
                                       type: 1,
@@ -207,8 +203,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                                 height: 15,
                               ),
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     child: RetailerDetailItem(
@@ -228,7 +223,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                                   ),
                                   Expanded(
                                     child: RetailerDetailItem(
-                                      value: retailer!.secondaryMobile,
+                                      value: retailer!.secondaryMobile.isEmpty ? "Not Given" : retailer!.secondaryMobile,
                                       image: "assets/phone_call.png",
                                       name: "Secondary No.",
                                       type: 1,
@@ -240,8 +235,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                                 height: 15,
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 0, vertical: 5),
+                                padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,8 +250,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                                     ),
                                     Column(
                                       mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         const Text(
                                           "Address",
@@ -271,10 +264,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                                           height: 5,
                                         ),
                                         SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.75,
+                                          width: MediaQuery.of(context).size.width * 0.75,
                                           child: Text(
                                             retailer!.primaryAddress,
                                             overflow: TextOverflow.clip,
@@ -295,8 +285,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                         ),
                       ),
                       const Padding(
-                        padding: EdgeInsets.only(
-                            left: 15, right: 10, bottom: 0, top: 10),
+                        padding: EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 10),
                         child: Text(
                           StringConst.remark,
                           style: TextStyle(
@@ -306,12 +295,11 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(
-                            left: 15, right: 10, bottom: 0, top: 5),
+                        padding: const EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 5),
                         child: TextFormField(
                           maxLines: 5,
                           minLines: 3,
-                          enabled: false,
+                          readOnly: true,
                           controller: txtRemark,
                           style: const TextStyle(
                             fontSize: 16,
@@ -321,16 +309,14 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                             filled: true,
                             fillColor: Colors.white,
                             border: UnderlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
+                              borderRadius: BorderRadius.all(Radius.circular(10)),
                               borderSide: BorderSide.none,
                             ),
                           ),
                         ),
                       ),
                       const Padding(
-                        padding: EdgeInsets.only(
-                            left: 15, right: 10, bottom: 0, top: 10),
+                        padding: EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 10),
                         child: Text(
                           "Order History",
                           style: TextStyle(
@@ -340,25 +326,22 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(
-                            left: 15, right: 10, bottom: 0, top: 5),
+                        padding: const EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 5),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 5, vertical: 10),
+                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
                           decoration: const BoxDecoration(
                               color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
+                              borderRadius: BorderRadius.all(Radius.circular(10)),
                               boxShadow: [
                                 BoxShadow(
                                   color: Color.fromRGBO(237, 237, 237, 0.25),
                                   blurRadius: 10,
                                 )
                               ]),
-                          child: retailer!.orderHistory!.isNotEmpty
+                          child: retailer!.orderHistory.isNotEmpty
                               ? Column(
                                   children: List.generate(
-                                    retailer!.orderHistory!.length,
+                                    retailer!.orderHistory.length,
                                     (index) => Material(
                                       child: InkWell(
                                         onTap: () {
@@ -367,31 +350,24 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                                           showModalBottomSheet(
                                             context: context,
                                             shape: bottomSheetShape,
-                                            builder: (context) =>
-                                                OrderHistoryBottomSheet(
-                                              product: retailer!
-                                                  .orderHistory![index]
-                                                  .products!,
+                                            builder: (context) => OrderHistoryBottomSheet(
+                                              product: retailer!.orderHistory[index].products,
                                             ),
                                           );
                                         },
                                         child: Container(
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 5, horizontal: 10),
+                                          margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                                           height: 50,
                                           decoration: const BoxDecoration(
                                             border: Border(
-                                              bottom: BorderSide(
-                                                  color: Color(0xffC5C5C5),
-                                                  width: 0.5),
+                                              bottom: BorderSide(color: Color(0xffC5C5C5), width: 0.5),
                                             ),
                                           ),
                                           child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                "Date: ${retailer!.orderHistory![index].orderDate}",
+                                                "Date: ${retailer!.orderHistory[index].orderDate}",
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.normal,
                                                   color: Color(0xff555555),
@@ -400,7 +376,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                                                 ),
                                               ),
                                               Text(
-                                                "Value: ₹${retailer!.orderHistory![index].amount}",
+                                                "Value: ₹${retailer!.orderHistory[index].amount}",
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.normal,
                                                   color: Color(0xff555555),
@@ -415,14 +391,13 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                                     ),
                                   ),
                                 )
-                              : const Text("Orders not found"),
+                              : const Text("No orders taken yet!"),
                         ),
                       ),
                       const Padding(
-                        padding: EdgeInsets.only(
-                            left: 15, right: 10, bottom: 0, top: 10),
+                        padding: EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 10),
                         child: Text(
-                          "No Order yet",
+                          "BU Not Ordered yet",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
@@ -430,8 +405,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(
-                            left: 15, right: 10, bottom: 10, top: 5),
+                        padding: const EdgeInsets.only(left: 15, right: 10, bottom: 10, top: 5),
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
@@ -440,28 +414,23 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                               (index) {
                                 return Padding(
                                   padding: index == 0 || index == 4
-                                      ? const EdgeInsets.symmetric(
-                                          horizontal: 0)
-                                      : const EdgeInsets.symmetric(
-                                          horizontal: 10),
+                                      ? const EdgeInsets.symmetric(horizontal: 0)
+                                      : const EdgeInsets.symmetric(horizontal: 10),
                                   child: Container(
                                     height: 45,
                                     width: 100,
                                     decoration: const BoxDecoration(
                                       color: Colors.white,
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
+                                      borderRadius: BorderRadius.all(Radius.circular(10)),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Color.fromRGBO(
-                                              237, 237, 237, 0.25),
+                                          color: Color.fromRGBO(237, 237, 237, 0.25),
                                           blurRadius: 10,
                                         )
                                       ],
                                     ),
                                     child: const Image(
-                                      image:
-                                          AssetImage("assets/brand_image.png"),
+                                      image: AssetImage("assets/brand_image.png"),
                                     ),
                                   ),
                                 );
@@ -474,65 +443,55 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                   ),
                 )
               ],
-            ),
-            bottomNavigationBar: SizedBox(
-              height: 50,
-              width: MediaQuery.of(context).size.width,
-              child: Row(
-                children: [
-                  MaterialButton(
-                    onPressed: () {
-                      Utility.hideKeyboard();
-                      FocusScope.of(context).unfocus();
-                      showModalBottomSheet(
-                          context: context,
-                          shape: bottomSheetShape,
-                          isScrollControlled: true,
-                          builder: (context) => const NoOrderReasonSheet());
-                    },
-                    shape: const RoundedRectangleBorder(),
-                    child: const Text(
-                      "NO ORDER",
-                      style: TextStyle(
-                          color: Color(0xffFFFFFF),
-                          fontSize: 20,
-                          letterSpacing: 0.72),
-                    ),
-                    color: const Color(0xff3D8FFF),
-                    height: 50,
-                    elevation: 0,
-                    minWidth: MediaQuery.of(context).size.width / 2,
-                  ),
-                  MaterialButton(
-                    onPressed: () {
-                      Utility.hideKeyboard();
-                      FocusScope.of(context).unfocus();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => OrderBookingListScreen(
-                                    beatId: retailer!.beatId,
-                                    retailerId: retailer!.customerId,
-                                  )));
-                    },
-                    shape: const RoundedRectangleBorder(),
-                    child: const Text(
-                      "ORDER",
-                      style: TextStyle(
-                          color: Color(0xffFFFFFF),
-                          fontSize: 20,
-                          letterSpacing: 0.72),
-                    ),
-                    color: MColor.colorSecondary,
-                    height: 50,
-                    elevation: 0,
-                    minWidth: MediaQuery.of(context).size.width / 2,
-                  ),
-                ],
+            );
+          },
+        ),
+        bottomNavigationBar: SizedBox(
+          height: 50,
+          width: MediaQuery.of(context).size.width,
+          child: Row(
+            children: [
+              MaterialButton(
+                onPressed: () {
+                  Utility.hideKeyboard();
+                  FocusScope.of(context).unfocus();
+                  noOrder(context);
+                },
+                shape: const RoundedRectangleBorder(),
+                child: const Text(
+                  "NO ORDER",
+                  style: TextStyle(color: Color(0xffFFFFFF), fontSize: 20, letterSpacing: 0.72),
+                ),
+                color: const Color(0xff3D8FFF),
+                height: 50,
+                elevation: 0,
+                minWidth: MediaQuery.of(context).size.width / 2,
               ),
-            ),
-          );
-        },
+              MaterialButton(
+                onPressed: () {
+                  Utility.hideKeyboard();
+                  FocusScope.of(context).unfocus();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => OrderBookingListScreen(
+                                beatId: widget.retailer.beatId,
+                                retailerId: widget.retailer.customerId,
+                              )));
+                },
+                shape: const RoundedRectangleBorder(),
+                child: const Text(
+                  "ORDER",
+                  style: TextStyle(color: Color(0xffFFFFFF), fontSize: 20, letterSpacing: 0.72),
+                ),
+                color: MColor.colorSecondary,
+                height: 50,
+                elevation: 0,
+                minWidth: MediaQuery.of(context).size.width / 2,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -592,8 +551,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
               child: AppBar(
                 elevation: 5,
                 toolbarHeight: 60,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                 backgroundColor: Colors.white,
                 primary: false,
                 automaticallyImplyLeading: false,
@@ -605,7 +563,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                         width: 45,
                         height: 45,
                         fit: BoxFit.cover,
-                        imageUrl: retailer!.outletPicture,
+                        imageUrl: widget.retailer.outletPicture,
                         imageBuilder: (context, imageProvider) {
                           return Image(
                             image: imageProvider,
@@ -614,10 +572,8 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                             fit: BoxFit.cover,
                           );
                         },
-                        errorWidget: (context, url, error) =>
-                            Image.asset("assets/placeholder.png"),
-                        placeholder: (context, url) =>
-                            Image.asset("assets/placeholder.png"),
+                        errorWidget: (context, url, error) => Image.asset("assets/placeholder.png"),
+                        placeholder: (context, url) => Image.asset("assets/placeholder.png"),
                       ),
                     ),
                     const SizedBox(
@@ -630,7 +586,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            retailer!.outlatName,
+                            widget.retailer.outlatName,
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 20,
@@ -642,7 +598,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                             height: 5,
                           ),
                           Text(
-                            retailer!.beatName,
+                            widget.retailer.beatName,
                             style: const TextStyle(
                               fontWeight: FontWeight.w500,
                               color: Colors.black,
@@ -661,9 +617,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                         child: Image(
                           width: 25,
                           height: 25,
-                          image: AssetImage(retailer!.enrollmentTypeId == "1"
-                              ? "assets/retailer.png"
-                              : "assets/tele.png"),
+                          image: AssetImage(widget.retailer.enrollmentTypeId == "1" ? "assets/retailer.png" : "assets/tele.png"),
                         ),
                       ),
                     )
@@ -674,6 +628,55 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
           ],
         ),
       );
+
+  void noOrder(BuildContext context) async {
+    if (retailer!.pendingTask.isNotEmpty && int.parse(retailer!.pendingTask) > 0) {
+      bool? save = await Utility.showConfirmAlert(
+          title: 'There are ${retailer!.pendingTask} pending Task',
+          subTitle: "Do you want to resolve?",
+          context: context,
+          cancelText: "No",
+          confirmText: "Yes");
+
+      if (save != null && save) {
+      } else {
+        saveNoOrder(context);
+      }
+    } else {
+      saveNoOrder(context);
+    }
+  }
+
+  void saveNoOrder(BuildContext context) async {
+    var res = await showModalBottomSheet(
+        isDismissible: false,
+        context: context,
+        shape: bottomSheetShape,
+        isScrollControlled: true,
+        builder: (context) => const NoOrderReasonSheet());
+
+    if (res != null) {
+      Map<String, dynamic> input = res as Map<String, dynamic>;
+      input["retailer_id"] = retailer!.customerId;
+      noOrderApi(input);
+    }
+  }
+
+  void noOrderApi(Map<String, dynamic> input) async {
+    if (await Network.isConnected()) {
+      EasyLoading.show(status: "Loading...");
+      BaseResponse response = await repository.saveNoOrder(input);
+      EasyLoading.dismiss();
+      if (response.success) {
+        Utility.showToast(response.message);
+        Navigator.pop(context);
+      } else {
+        Utility.showToast(response.message);
+      }
+    } else {
+      Utility.showToast(Constants.internetAlert);
+    }
+  }
 }
 
 class DetailGritItem extends StatefulWidget {
@@ -713,10 +716,7 @@ class _DetailGritItemState extends State<DetailGritItem> {
         }
         if (widget.type == 2) {
           showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              shape: bottomSheetShape,
-              builder: (context) => const TaskBottomSheet());
+              context: context, isScrollControlled: true, shape: bottomSheetShape, builder: (context) => const TaskBottomSheet());
         }
         if (widget.type == 3) {
           showModalBottomSheet(
@@ -729,15 +729,12 @@ class _DetailGritItemState extends State<DetailGritItem> {
       child: Container(
         margin: const EdgeInsets.only(left: 10, right: 10),
         padding: const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
-        decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            boxShadow: [
-              BoxShadow(
-                color: Color.fromRGBO(237, 237, 237, 0.25),
-                blurRadius: 10,
-              )
-            ]),
+        decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10)), boxShadow: [
+          BoxShadow(
+            color: Color.fromRGBO(237, 237, 237, 0.25),
+            blurRadius: 10,
+          )
+        ]),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -757,20 +754,14 @@ class _DetailGritItemState extends State<DetailGritItem> {
               children: [
                 Text(
                   widget.name,
-                  style: const TextStyle(
-                      color: Color(0xff303030),
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold),
+                  style: const TextStyle(color: Color(0xff303030), fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(
                   height: 5,
                 ),
                 Text(
                   widget.value,
-                  style: const TextStyle(
-                      color: Color(0xff555555),
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold),
+                  style: const TextStyle(color: Color(0xff555555), fontSize: 14, fontWeight: FontWeight.bold),
                 ),
               ],
             )
@@ -787,12 +778,7 @@ class RetailerDetailItem extends StatefulWidget {
   final String value;
   final int type;
 
-  const RetailerDetailItem(
-      {Key? key,
-      required this.image,
-      required this.name,
-      required this.value,
-      required this.type})
+  const RetailerDetailItem({Key? key, required this.image, required this.name, required this.value, required this.type})
       : super(key: key);
 
   @override
@@ -823,10 +809,7 @@ class _RetailerDetailItemState extends State<RetailerDetailItem> {
             children: [
               Text(
                 widget.name,
-                style: const TextStyle(
-                    color: Color(0xff303030),
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold),
+                style: const TextStyle(color: Color(0xff303030), fontSize: 15, fontWeight: FontWeight.bold),
               ),
               const SizedBox(
                 height: 5,
@@ -836,10 +819,7 @@ class _RetailerDetailItemState extends State<RetailerDetailItem> {
                 child: Text(
                   widget.value,
                   overflow: TextOverflow.clip,
-                  style: const TextStyle(
-                      color: Color(0xff555555),
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold),
+                  style: const TextStyle(color: Color(0xff555555), fontSize: 14, fontWeight: FontWeight.bold),
                 ),
               ),
             ],

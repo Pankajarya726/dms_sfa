@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dms/ui/order_booking/retailer_detail/retailer_detail_screen.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
@@ -50,18 +49,17 @@ class _TaskListItemsState extends State<TaskListItems> {
             borderRadius: BorderRadius.circular(10),
           ),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => RetailerDetailScreen(
-                  storeId: widget.retailer.userId,
-                ),
-              ),
-            );
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (_) => RetailerDetailScreen(
+            //       re: widget.retailer.userId,
+            //     ),
+            //   ),
+            // );
           },
           child: Padding(
-            padding:
-                const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
+            padding: const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
             child: Column(
               children: [
                 Row(
@@ -203,9 +201,7 @@ class _TaskListItemsState extends State<TaskListItems> {
                         alignment: Alignment.bottomRight,
                         child: Image(
                           image: AssetImage(
-                            widget.retailer.enrollmentTypeId == "1"
-                                ? "assets/key.png"
-                                : "assets/hit.png",
+                            widget.retailer.enrollmentTypeId == "1" ? "assets/key.png" : "assets/hit.png",
                           ),
                         ),
                       ),

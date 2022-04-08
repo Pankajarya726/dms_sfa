@@ -49,6 +49,7 @@ class UserLocationBloc extends Bloc<UserLocationEvents, UserLocationStates> {
         pincode: postalCode,
       );
     } catch (exception) {
+      debugPrint("exception-->$exception");
       yield UserLocationFailureState(failureMessage: "Click here to get current location!");
     }
   }

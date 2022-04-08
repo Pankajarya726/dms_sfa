@@ -15,14 +15,13 @@ class LastVisitBottomSheet extends StatefulWidget {
 }
 
 class _LastVisitBottomSheetState extends State<LastVisitBottomSheet> {
-  LastVisit lastVisit = LastVisit(
-      orderId: "", orderDate: "", amount: "", remark: "", products: []);
+  LastVisit lastVisit = LastVisit(orderId: "", orderDate: "", amount: "", remark: "", products: []);
   String orderStatus = "";
 
   @override
   void initState() {
-    if (widget.retailerDetails!.lastVisit!.isNotEmpty) {
-      lastVisit = widget.retailerDetails!.lastVisit!.first;
+    if (widget.retailerDetails!.lastVisit.isNotEmpty) {
+      lastVisit = widget.retailerDetails!.lastVisit.first;
     }
     if (widget.retailerDetails!.connectionStatus == "1") {
       orderStatus = "Not Connected";
@@ -47,34 +46,28 @@ class _LastVisitBottomSheetState extends State<LastVisitBottomSheet> {
           children: [
             const Text(
               "Last Visit Status",
-              style: TextStyle(
-                  color: MColor.colorPrimary,
-                  fontSize: 20,
-                  letterSpacing: 0.67),
+              style: TextStyle(color: MColor.colorPrimary, fontSize: 20, letterSpacing: 0.67),
             ),
             const SizedBox(
               height: 15,
             ),
             const Text(
               "Order Status",
-              style: TextStyle(
-                  color: Colors.black, fontSize: 16, letterSpacing: 0.67),
+              style: TextStyle(color: Colors.black, fontSize: 16, letterSpacing: 0.67),
             ),
             const SizedBox(
               height: 5,
             ),
             Text(
               orderStatus,
-              style: const TextStyle(
-                  color: MColor.textColor, fontSize: 16, letterSpacing: 0.67),
+              style: const TextStyle(color: MColor.textColor, fontSize: 16, letterSpacing: 0.67),
             ),
             const SizedBox(
               height: 10,
             ),
             const Text(
               StringConst.remark,
-              style: TextStyle(
-                  color: Colors.black, fontSize: 16, letterSpacing: 0.67),
+              style: TextStyle(color: Colors.black, fontSize: 16, letterSpacing: 0.67),
             ),
             const SizedBox(
               height: 5,

@@ -105,7 +105,7 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                           context: context,
                           shape: bottomSheetShape,
                           builder: (context) {
-                            return const RouteBottomSheet();
+                            return RouteBottomSheet(day: selectedDay);
                           });
                     },
                     child: const Padding(

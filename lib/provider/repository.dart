@@ -32,6 +32,7 @@ import 'package:dms/ui/order_booking/order_booking_list/model/get_filter_mrp_res
 import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
 import 'package:dms/ui/order_booking/order_confirmation/model/get_bu_response.dart';
 import 'package:dms/ui/order_booking/order_confirmation/model/get_reason_response.dart';
+import 'package:dms/ui/order_booking/order_details/model/get_order_response.dart';
 import 'package:dms/ui/order_booking/retailer_detail/model/retailer_details_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
@@ -880,10 +881,7 @@ class ApiRepository {
         message = StringConst.somethingWR;
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
-      return RetailersDetailsResponse(
-        success: false,
-        message: message,
-      );
+      return RetailersDetailsResponse(success: false, message: message, data: []);
     }
   }
 
@@ -1048,10 +1046,7 @@ class ApiRepository {
         message = StringConst.somethingWR;
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
-      return GetReasonsResponse(
-        success: false,
-        message: message,
-      );
+      return GetReasonsResponse(success: false, message: message, data: []);
     }
   }
 
@@ -1078,7 +1073,7 @@ class ApiRepository {
 
   Future<BaseResponse> saveOrder(Map input) async {
     try {
-      Response response = await dio.post(Url.saveOrder,data: input);
+      Response response = await dio.post(Url.saveOrder, data: input);
       BaseResponse baseResponse = BaseResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
@@ -1093,6 +1088,51 @@ class ApiRepository {
       return BaseResponse(
         success: false,
         message: message,
+      );
+    }
+  }
+
+  Future<BaseResponse> saveNoOrder(Map input) async {
+    try {
+      Response response = await dio.post(Url.saveNoOrder, data: input);
+      BaseResponse baseResponse = BaseResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = StringConst.somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return BaseResponse(
+        success: false,
+        message: message,
+      );
+    }
+  }
+
+  Future<GetOrderResponse> getOrder(Map<String, dynamic> input) async {
+    try {
+      Response response = await dio.post(Url.getOrder, data: input);
+      GetOrderResponse baseResponse = GetOrderResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = StringConst.somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return GetOrderResponse(
+        success: false,
+        message: "",
+        orders: [],
+        task: [],
+        data: [],
       );
     }
   }

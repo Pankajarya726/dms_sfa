@@ -23,7 +23,9 @@ class BottomSheetHeading extends StatelessWidget {
 
 class DoneButton extends StatelessWidget {
   final Function() onPressed;
-  const DoneButton({Key? key, required this.onPressed}) : super(key: key);
+  final String title;
+
+  const DoneButton({Key? key, required this.onPressed, this.title = "Done"}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +34,9 @@ class DoneButton extends StatelessWidget {
       color: MColor.colorPrimary,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       elevation: 5,
-      child: const Text(
-        "Done",
-        style: TextStyle(color: Colors.white, fontSize: 16),
+      child: Text(
+        title,
+        style: const TextStyle(color: Colors.white, fontSize: 16),
       ),
     );
   }

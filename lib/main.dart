@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:dms/database/database_helper.dart';
@@ -45,7 +47,13 @@ final currencyFormat = NumberFormat.simpleCurrency(locale: "hi_IN", decimalDigit
 
 void main() {
   dio.interceptors.add(DioCacheManager(CacheConfig(baseUrl: Url.baseUrl)).interceptor);
-  dio.interceptors.add(LogInterceptor(requestHeader: true, requestBody: true, responseBody: true));
+  dio.interceptors.add(LogInterceptor(
+      requestHeader: true,
+      requestBody: true,
+      responseBody: true,
+      logPrint: (text) {
+        log(text.toString());
+      }));
   configLoading();
   runApp(const MyApp());
 }
