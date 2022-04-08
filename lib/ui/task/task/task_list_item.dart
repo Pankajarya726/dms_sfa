@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
+import 'package:dms/ui/task/task_details/task_detail_screen.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:maps_launcher/maps_launcher.dart';
@@ -38,7 +39,7 @@ class _TaskListItemsState extends State<TaskListItems> {
         boxShadow: const [
           BoxShadow(
             color: Colors.black12,
-            blurRadius: 15,
+            blurRadius: 10,
           ),
         ],
       ),
@@ -49,30 +50,34 @@ class _TaskListItemsState extends State<TaskListItems> {
             borderRadius: BorderRadius.circular(10),
           ),
           onTap: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (_) => RetailerDetailScreen(
-            //       re: widget.retailer.userId,
-            //     ),
-            //   ),
-            // );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => TaskDetailScreen(
+                  storeId: widget.retailer.userId,
+                ),
+              ),
+            );
           },
           child: Padding(
-            padding: const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
+            padding:
+                const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Expanded(
                       child: Row(
                         children: [
-                          Text(
-                            widget.retailer.uniqueCode,
-                            style: const TextStyle(
-                              color: Color(0XFF555555),
-                              letterSpacing: 0.67,
-                              fontWeight: FontWeight.w600,
+                          Flexible(
+                            child: Text(
+                              widget.retailer.uniqueCode,
+                              style: const TextStyle(
+                                color: Color(0XFF555555),
+                                letterSpacing: 0.67,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                           const SizedBox(
@@ -86,13 +91,16 @@ class _TaskListItemsState extends State<TaskListItems> {
                           const SizedBox(
                             width: 10,
                           ),
-                          Text(
-                            widget.retailer.outlatName,
-                            style: const TextStyle(
-                              color: Color(0XFF555555),
-                              letterSpacing: 0.67,
-                              fontWeight: FontWeight.w600,
-                              overflow: TextOverflow.ellipsis,
+                          Flexible(
+                            flex: 2,
+                            child: Text(
+                              widget.retailer.outlatName,
+                              style: const TextStyle(
+                                color: Color(0XFF555555),
+                                letterSpacing: 0.67,
+                                fontWeight: FontWeight.w600,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
                         ],
@@ -118,6 +126,7 @@ class _TaskListItemsState extends State<TaskListItems> {
                   height: 5,
                 ),
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(5),
@@ -140,68 +149,72 @@ class _TaskListItemsState extends State<TaskListItems> {
                       width: 10,
                     ),
                     Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              widget.retailer.primaryAddress,
-                              // maxLines: 3,
-                              style: const TextStyle(
-                                letterSpacing: 0.67,
-                                fontWeight: FontWeight.w600,
+                      child: SizedBox(
+                        height: 50,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 1, bottom: 0.5),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  widget.retailer.primaryAddress,
+                                  style: const TextStyle(
+                                    letterSpacing: 0.67,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              widget.retailer.beatName,
-                              style: const TextStyle(
-                                letterSpacing: 0.67,
-                                color: MColor.backButton,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 50,
-                      child: Align(
-                        alignment: Alignment.bottomRight,
-                        child: Container(
-                          height: 20,
-                          width: 28,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: MColor.colorYellow,
-                            borderRadius: BorderRadius.circular(3.5),
-                          ),
-                          child: const Text(
-                            "5",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    SizedBox(
-                      height: 50,
-                      child: Align(
-                        alignment: Alignment.bottomRight,
-                        child: Image(
-                          image: AssetImage(
-                            widget.retailer.enrollmentTypeId == "1" ? "assets/key.png" : "assets/hit.png",
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      widget.retailer.beatName,
+                                      style: const TextStyle(
+                                        letterSpacing: 0.67,
+                                        color: MColor.backButton,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: Container(
+                                      height: 20,
+                                      width: 28,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        color: MColor.colorYellow,
+                                        borderRadius:
+                                            BorderRadius.circular(3.5),
+                                      ),
+                                      child: const Text(
+                                        "5",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                  Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: Image(
+                                      image: AssetImage(
+                                        widget.retailer.enrollmentTypeId == "1"
+                                            ? "assets/key.png"
+                                            : "assets/hit.png",
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
                           ),
                         ),
                       ),

@@ -5,6 +5,12 @@ class StringConst {
   static const updateCaps = "UPDATE";
   static const nextCaps = "NEXT";
   static const submitCaps = "SUBMIT";
+  static const outletInfoCaps = "OUTLET INFO";
+  static const exitCaps = "EXIT";
+  static const closeCaps = "CLOSE";
+  static const viewCaps = "VIEW";
+  static const escalateCaps = "ESCALATE";
+  static const doneCaps = "DONE";
   static const retailers = "Retailers";
   static const retailer = "Retailer";
   static const login = "Login";
@@ -124,4 +130,20 @@ class StringConst {
   static const selectBeat = "Select Beat";
   static const selectEnrolmentType = "Select Enrolment Type";
   static const task = "Task";
+  static const taskHistory = "Task History";
+  static const lastOrder = "Last Order";
+  static const lastEscalation = "Last Escalation";
+  static const pendingTask = "Pending Task";
+  static const taskNotFound = "Task not found";
+  static const totalTask = "Total Task";
+  static const taskDetails = "Task Details";
+  static const escalatedRemark = "Escalated Remark";
+  static const taskElapseDays = "Task Elapse Days: ";
+  static const enterComments = "Enter your comments";
+  static const close = "Close";
+  static const search = "Search";
+  static const all = "All";
+  static const hit = "Hit";
+  static const special = "Special";
+  static const key = "Key";
 }

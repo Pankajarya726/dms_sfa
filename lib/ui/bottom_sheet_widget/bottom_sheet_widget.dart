@@ -1,8 +1,9 @@
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 
-const ShapeBorder bottomSheetShape =
-    RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)));
+const ShapeBorder bottomSheetShape = RoundedRectangleBorder(
+    borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(15), topRight: Radius.circular(15)));
 
 class BottomSheetHeading extends StatelessWidget {
   final String heading;
@@ -15,7 +16,8 @@ class BottomSheetHeading extends StatelessWidget {
       padding: const EdgeInsets.all(15.0),
       child: Text(
         heading,
-        style: const TextStyle(color: MColor.colorPrimary, fontSize: 20, letterSpacing: 0.67),
+        style: const TextStyle(
+            color: MColor.colorPrimary, fontSize: 20, letterSpacing: 0.67),
       ),
     );
   }
