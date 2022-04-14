@@ -68,94 +68,100 @@ class _FilterTaskBottomSheetState extends State<FilterTaskBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: IntrinsicHeight(
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.80,
+        minHeight: MediaQuery.of(context).size.height * 0.20,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
         child: BlocProvider(
           create: (context) => RetailersBloc(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(
-                height: 10,
-              ),
-              const Text(
-                StringConst.filter,
-                style: TextStyle(
-                  color: MColor.colorPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.67,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 10,
                 ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              DropDownField(
-                prevSelected: selectedDay,
-                onSelect: (value) {
-                  debugPrint("select-->$value");
-                  selectedDay = value;
-                  beats.clear();
+                const Text(
+                  StringConst.filter,
+                  style: TextStyle(
+                    color: MColor.colorPrimary,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.67,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                DropDownField(
+                  prevSelected: selectedDay,
+                  onSelect: (value) {
+                    debugPrint("select-->$value");
+                    selectedDay = value;
+                    beats.clear();
 
-                  getBeats();
-                },
-                hint: "Select Order Booking Day",
-                menuList: days,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              DropDownField(
-                prevSelected: selectedBeat,
-                onSelect: (value) {
-                  debugPrint("select-->$value");
-                  selectedBeat = value;
-                },
-                hint: "Select Beat",
-                menuList: days,
-                beats: beats,
-                onBeatSelected: (beatsM) {
-                  if (beatsM != null) {
-                    beatsModal = beatsM;
-                  }
-                },
-              ),
-              const SizedBox(
-                height: 35,
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    MaterialButton(
-                      onPressed: () {
-                        widget.onFilter(selectedDay, selectedBeat);
-                        Navigator.pop(context);
-                      },
-                      height: 50,
-                      padding: const EdgeInsets.symmetric(horizontal: 55),
-                      color: MColor.colorPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 0,
-                      child: const Text(
-                        StringConst.done,
-                        style: TextStyle(
-                          letterSpacing: 0.67,
-                          color: Colors.white,
-                          fontSize: 23,
-                          fontWeight: FontWeight.bold,
+                    getBeats();
+                  },
+                  hint: "Select Order Booking Day",
+                  menuList: days,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                DropDownField(
+                  prevSelected: selectedBeat,
+                  onSelect: (value) {
+                    debugPrint("select-->$value");
+                    selectedBeat = value;
+                  },
+                  hint: "Select Beat",
+                  menuList: days,
+                  beats: beats,
+                  onBeatSelected: (beatsM) {
+                    if (beatsM != null) {
+                      beatsModal = beatsM;
+                    }
+                  },
+                ),
+                const SizedBox(
+                  height: 35,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      MaterialButton(
+                        onPressed: () {
+                          widget.onFilter(selectedDay, selectedBeat);
+                          Navigator.pop(context);
+                        },
+                        height: 50,
+                        padding: const EdgeInsets.symmetric(horizontal: 55),
+                        color: MColor.colorPrimary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        elevation: 0,
+                        child: const Text(
+                          StringConst.done,
+                          style: TextStyle(
+                            letterSpacing: 0.67,
+                            color: Colors.white,
+                            fontSize: 23,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

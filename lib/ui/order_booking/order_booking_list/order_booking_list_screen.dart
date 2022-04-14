@@ -76,9 +76,6 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
             // BlocProvider.of<OrderBookListBloc>(context).add(ChangeTabEvent(index: 0));
           }
           if (state is GetBrandsFailureState) {
-            if (widget.showOrder) {
-              tabList.add(BrandAndCategoryModel(id: "", name: "Order", category: []));
-            }
             tabList.add(BrandAndCategoryModel(id: "", name: "Suggested", category: []));
             tabList.add(BrandAndCategoryModel(id: "", name: "Scheme", category: []));
             tabController = TabController(length: tabList.length, vsync: this, initialIndex: 0);
@@ -115,6 +112,7 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
                     showModalBottomSheet(
                       context: context,
                       shape: bottomSheetShape,
+                      isScrollControlled: true,
                       builder: (context) => FilterOrderBookingBottomSheet(
                         beatId: widget.beatId,
                         onMrpSelected: (mrp) {

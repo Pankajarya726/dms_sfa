@@ -1,11 +1,11 @@
 import 'package:dms/listeners/select_beat_listener.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/filter_task_bottom_sheet.dart';
-import 'package:dms/ui/order_booking/retailers_list/bloc/retailer_bloc.dart';
-import 'package:dms/ui/order_booking/retailers_list/bloc/retailers_event.dart';
-import 'package:dms/ui/order_booking/retailers_list/bloc/retailers_state.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
-import 'package:dms/ui/order_booking/search_retailers/search_retailier_screen.dart';
+import 'package:dms/ui/task/search_task/search_task_screen.dart';
+import 'package:dms/ui/task/task/bloc/retailer_task_bloc.dart';
+import 'package:dms/ui/task/task/bloc/retailers_task_event.dart';
+import 'package:dms/ui/task/task/bloc/retailers_task_state.dart';
 import 'package:dms/ui/task/task/task_tab.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
@@ -24,7 +24,7 @@ class TaskListScreen extends StatefulWidget {
 class _TaskListScreenState extends State<TaskListScreen>
     with TickerProviderStateMixin {
   late TabController tabController;
-  RetailersBloc retailersBloc = RetailersBloc();
+  RetailersTaskBloc retailersTaskBloc = RetailersTaskBloc();
   List<BeatsModal> beats = [];
   BeatsModal? beatModal;
   SelectBeatListener? selectBeatListener;
@@ -41,8 +41,8 @@ class _TaskListScreenState extends State<TaskListScreen>
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 4,
-      child: BlocProvider<RetailersBloc>(
-        create: (context) => retailersBloc,
+      child: BlocProvider<RetailersTaskBloc>(
+        create: (context) => retailersTaskBloc,
         child: Scaffold(
           appBar: AppBar(
             title: const Text(
@@ -57,6 +57,7 @@ class _TaskListScreenState extends State<TaskListScreen>
                   showModalBottomSheet(
                       context: context,
                       shape: bottomSheetShape,
+                      isScrollControlled: true,
                       builder: (context) {
                         return FilterTaskBottomSheet(
                           beatList: beats,
@@ -89,7 +90,7 @@ class _TaskListScreenState extends State<TaskListScreen>
               child: Column(
                 children: [
                   Container(
-                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 8),
+                    padding: const EdgeInsets.fromLTRB(15, 0, 15, 8),
                     child: TextFormField(
                       style: const TextStyle(fontSize: 16),
                       readOnly: true,
@@ -97,27 +98,19 @@ class _TaskListScreenState extends State<TaskListScreen>
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => const SearchRetailerScreen()));
+                                builder: (_) => const SearchTaskScreen()));
                       },
                       decoration: InputDecoration(
                         fillColor: Colors.white,
                         hintText: StringConst.search,
                         hintStyle: const TextStyle(fontSize: 16),
                         contentPadding: const EdgeInsets.all(10),
-                        border: OutlineInputBorder(
+                        enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5),
                           gapPadding: 2,
                           borderSide: const BorderSide(
                             width: 1,
-                            color: Color(0xffC5C5C5),
-                          ),
-                        ),
-                        disabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          gapPadding: 2,
-                          borderSide: const BorderSide(
-                            width: 1,
-                            color: Color(0xffC5C5C5),
+                            color: Color(0xFF6E6E6E),
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
@@ -125,7 +118,7 @@ class _TaskListScreenState extends State<TaskListScreen>
                           gapPadding: 2,
                           borderSide: const BorderSide(
                             width: 1,
-                            color: Color(0xffC5C5C5),
+                            color: Color(0xFF6E6E6E),
                           ),
                         ),
                         prefixIcon: const Icon(
@@ -149,90 +142,51 @@ class _TaskListScreenState extends State<TaskListScreen>
                       },
                       tabs: [
                         Tab(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              const Image(
-                                width: 20,
-                                image: AssetImage("assets/all.png"),
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                StringConst.all,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .merge(
-                                      TextStyle(
-                                        color: const Color(0xff303030)
-                                            .withOpacity(0.85),
-                                        letterSpacing: 0.5,
-                                        fontWeight: FontWeight.w600,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Image(
+                                  width: 20,
+                                  image: AssetImage("assets/all.png"),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  StringConst.all,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .merge(
+                                        TextStyle(
+                                          color: const Color(0xff303030)
+                                              .withOpacity(0.85),
+                                          letterSpacing: 0.5,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
-                                    ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                            ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         Tab(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              const Image(
-                                width: 20,
-                                image: AssetImage("assets/hit.png"),
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                StringConst.hit,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2!
-                                    .merge(
-                                      TextStyle(
-                                        color: const Color(0xff303030)
-                                            .withOpacity(0.85),
-                                        letterSpacing: 0.5,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                            ],
-                          ),
-                        ),
-                        Tab(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              const Image(
-                                width: 20,
-                                image: AssetImage("assets/special.png"),
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              Flexible(
-                                child: Text(
-                                  StringConst.special,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Image(
+                                  width: 20,
+                                  image: AssetImage("assets/hit.png"),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  StringConst.hit,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText2!
@@ -245,46 +199,73 @@ class _TaskListScreenState extends State<TaskListScreen>
                                         ),
                                       ),
                                 ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                            ],
+                              ],
+                            ),
+                          ),
+                        ),
+                        Tab(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Image(
+                                  width: 20,
+                                  image: AssetImage("assets/special.png"),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Flexible(
+                                  child: Text(
+                                    StringConst.special,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText2!
+                                        .merge(
+                                          TextStyle(
+                                            color: const Color(0xff303030)
+                                                .withOpacity(0.85),
+                                            letterSpacing: 0.5,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         Tab(
                           iconMargin: EdgeInsets.zero,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              const Image(
-                                width: 20,
-                                image: AssetImage("assets/key.png"),
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                StringConst.key,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2!
-                                    .merge(
-                                      TextStyle(
-                                        color: const Color(0xff303030)
-                                            .withOpacity(0.85),
-                                        letterSpacing: 0.5,
-                                        fontWeight: FontWeight.w600,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Image(
+                                  width: 20,
+                                  image: AssetImage("assets/key.png"),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  StringConst.key,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .merge(
+                                        TextStyle(
+                                          color: const Color(0xff303030)
+                                              .withOpacity(0.85),
+                                          letterSpacing: 0.5,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
-                                    ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                            ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -297,10 +278,10 @@ class _TaskListScreenState extends State<TaskListScreen>
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              BlocBuilder<RetailersBloc, RetailerState>(
+              BlocBuilder<RetailersTaskBloc, RetailerTaskState>(
                   builder: (context, state) {
-                if (state is RetailerInitState) {
-                  retailersBloc.add(GetBeatEvent());
+                if (state is RetailerTaskInitState) {
+                  retailersTaskBloc.add(GetBeatEvent());
                 }
 
                 if (state is GetBeatState) {

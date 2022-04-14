@@ -48,4 +48,6 @@ class Url {
   static const String editUpdate = "OrderUpdate";
   static const String saveNoOrder = "saveNoOrder";
   static const String getOrder = "getOrderForEdit";
+  static const String noOrderYet = "getNoOrderYet";
+  static const String getRetailersTaskWise = "getRetailerTaskWise";
 }

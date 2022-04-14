@@ -3,6 +3,7 @@ import 'package:dms/ui/order_booking/order_details/order_detail_screen.dart';
 import 'package:dms/ui/order_booking/retailer_detail/retailer_detail_screen.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 
@@ -78,7 +79,8 @@ class _RetailerListItemsState extends State<RetailerListItems> {
             }
           },
           child: Padding(
-            padding: const EdgeInsets.only(top: 5, bottom: 10, left: 15, right: 15),
+            padding:
+                const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
             child: Column(
               children: [
                 Row(
@@ -119,20 +121,19 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                     ),
                     IconButton(
                       padding: const EdgeInsets.all(0),
-                      iconSize: 25,
-                      constraints: const BoxConstraints(maxHeight: 30),
-                      splashRadius: 15,
+                      constraints: const BoxConstraints(),
                       onPressed: () async {
-                        if (widget.retailer.lat.isEmpty || widget.retailer.lng.isEmpty) {
-                          String url = await MapsLauncher.createCoordinatesUrl(22.55, 75.55);
-                          print("url-->$url");
-                          await MapsLauncher.launchQuery(widget.retailer.primaryAddress);
+                        if (widget.retailer.lat.isEmpty ||
+                            widget.retailer.lng.isEmpty) {
+                          Utility.showToast("Coordinates not found");
                         } else {
-                          await MapsLauncher.launchCoordinates(double.parse(widget.retailer.lat), double.parse(widget.retailer.lng));
+                          await MapsLauncher.launchCoordinates(
+                              double.parse(widget.retailer.lat),
+                              double.parse(widget.retailer.lng));
                         }
                       },
                       icon: const Image(
-                        width: 20,
+                        width: 25,
                         image: AssetImage("assets/location_green.png"),
                       ),
                     )
@@ -164,43 +165,49 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                       width: 10,
                     ),
                     Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              widget.retailer.primaryAddress,
-                              maxLines: 3,
-                              style: const TextStyle(
-                                letterSpacing: 0.67,
-                                fontWeight: FontWeight.w600,
+                      child: SizedBox(
+                        height: 50,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 1, bottom: 1),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  widget.retailer.primaryAddress,
+                                  style: const TextStyle(
+                                    letterSpacing: 0.67,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              widget.retailer.beatName,
-                              style: const TextStyle(
-                                letterSpacing: 0.67,
-                                color: MColor.backButton,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      widget.retailer.beatName,
+                                      style: const TextStyle(
+                                        letterSpacing: 0.67,
+                                        color: MColor.backButton,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  Image(
+                                    image: AssetImage(
+                                      widget.retailer.enrollmentTypeId == "1"
+                                          ? "assets/retailer.png"
+                                          : "assets/tele.png",
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                    Container(
-                      height: 40,
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: Image(
-                        width: 40,
-                        height: 40,
-                        image: AssetImage(widget.retailer.enrollmentTypeId == "1" ? "assets/retailer.png" : "assets/tele.png"),
                       ),
                     )
                   ],

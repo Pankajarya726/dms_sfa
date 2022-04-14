@@ -142,7 +142,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       const SizedBox(
                         width: 10,
                       ),
-                      textWidget(StringConst.ownerName),
+                      textWidget(StringConst.ownerNameMand),
                     ],
                   ),
                   sizedBoxWidget(12.0),
@@ -670,7 +670,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
   void openBottomSheet(BuildContext context, txtController) async {
     showModalBottomSheet(
         context: context,
-        // isScrollControlled: true,
+        isScrollControlled: true,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
         ),

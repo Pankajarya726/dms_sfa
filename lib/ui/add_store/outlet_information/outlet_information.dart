@@ -859,7 +859,7 @@ class _OutletInformationState extends State<OutletInformation> {
     FocusScope.of(context).unfocus();
     showModalBottomSheet(
         context: context,
-        // isScrollControlled: true,
+        isScrollControlled: true,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
         ),

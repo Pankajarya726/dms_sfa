@@ -53,119 +53,131 @@ class _FilterOrderBookingBottomSheetState
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 5),
-      width: MediaQuery.of(context).size.width,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(25),
-          topLeft: Radius.circular(25),
-        ),
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.80,
+        minHeight: MediaQuery.of(context).size.height * 0.20,
       ),
-      child: StreamBuilder<List<FilterMrpModal>>(
-          stream: mrpStreamController.stream,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (snapshot.hasError) {
-              return Center(
-                child: Text("${snapshot.error}"),
-              );
-            }
+      child: Container(
+        margin: const EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 5),
+        width: MediaQuery.of(context).size.width,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(25),
+            topLeft: Radius.circular(25),
+          ),
+        ),
+        child: StreamBuilder<List<FilterMrpModal>>(
+            stream: mrpStreamController.stream,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const IntrinsicHeight(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+              if (snapshot.hasError) {
+                return IntrinsicHeight(
+                  child: Center(
+                    child: Text("${snapshot.error}"),
+                  ),
+                );
+              }
 
-            if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    StringConst.filter,
-                    style: TextStyle(
-                      fontSize: 19,
-                      color: MColor.colorPrimary,
-                      letterSpacing: 0.67,
-                      fontWeight: FontWeight.bold,
+              if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      StringConst.filter,
+                      style: TextStyle(
+                        fontSize: 19,
+                        color: MColor.colorPrimary,
+                        letterSpacing: 0.67,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: List.generate(
-                          snapshot.data!.length,
-                          (index) {
-                            return RadioListTile<int>(
-                              contentPadding: const EdgeInsets.all(0),
-                              value: int.parse(snapshot.data![index].id),
-                              groupValue: groupValue,
-                              title: Text(
-                                "₹" + snapshot.data![index].mrp,
-                                style: const TextStyle(
-                                  fontSize: 17.0,
-                                  color: MColor.backButton,
-                                  fontWeight: FontWeight.bold,
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Flexible(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: List.generate(
+                            snapshot.data!.length,
+                            (index) {
+                              return RadioListTile<int>(
+                                contentPadding: const EdgeInsets.all(0),
+                                value: int.parse(snapshot.data![index].id),
+                                groupValue: groupValue,
+                                title: Text(
+                                  "₹" + snapshot.data![index].mrp,
+                                  style: const TextStyle(
+                                    fontSize: 17.0,
+                                    color: MColor.backButton,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              onChanged: (value) {
-                                groupValue = value!;
-                                mrpStreamController.add(snapshot.data!);
-                              },
-                            );
-                          },
+                                onChanged: (value) {
+                                  groupValue = value!;
+                                  mrpStreamController.add(snapshot.data!);
+                                },
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).viewInsets.bottom),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        MaterialButton(
-                          onPressed: () {
-                            if (groupValue != -1) {
-                              filterMrpModal = mrpList.singleWhere((element) =>
-                                  element.id == groupValue.toString());
-                              widget.onMrpSelected(filterMrpModal!);
-                            }
-                            Navigator.pop(context);
-                          },
-                          height: 50,
-                          padding: const EdgeInsets.symmetric(horizontal: 55),
-                          color: MColor.colorPrimary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          elevation: 0,
-                          child: const Text(
-                            StringConst.done,
-                            style: TextStyle(
-                              letterSpacing: 0.67,
-                              color: Colors.white,
-                              fontSize: 23,
-                              fontWeight: FontWeight.bold,
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          MaterialButton(
+                            onPressed: () {
+                              if (groupValue != -1) {
+                                filterMrpModal = mrpList.singleWhere(
+                                    (element) =>
+                                        element.id == groupValue.toString());
+                                widget.onMrpSelected(filterMrpModal!);
+                              }
+                              Navigator.pop(context);
+                            },
+                            height: 50,
+                            padding: const EdgeInsets.symmetric(horizontal: 55),
+                            color: MColor.colorPrimary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            elevation: 0,
+                            child: const Text(
+                              StringConst.done,
+                              style: TextStyle(
+                                letterSpacing: 0.67,
+                                color: Colors.white,
+                                fontSize: 23,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                ],
-              );
-            }
-            return Container();
-          }),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                  ],
+                );
+              }
+              return Container();
+            }),
+      ),
     );
   }
 

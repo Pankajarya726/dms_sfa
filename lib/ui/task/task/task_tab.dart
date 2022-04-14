@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'package:dms/listeners/select_beat_listener.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
-import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
+import 'package:dms/ui/task/task/model/get_retailers_task_response.dart';
 import 'package:dms/ui/task/task/task_list_item.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/network.dart';
@@ -29,17 +29,13 @@ class TaskTab extends StatefulWidget {
 }
 
 class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
-  List<RetailersModal> retailers = [];
+  List<RetailersTaskModal> retailers = [];
   List<BeatsModal> beatList = [];
   BeatsModal? selectedBeat;
   String tag = StringConst.all;
-  StreamController<List<RetailersModal>> retailerStreamController =
+  StreamController<List<RetailersTaskModal>> retailerStreamController =
       StreamController();
   String day = "";
-  String retailerType = "";
-  double latitude = 0.0;
-  double longitude = 0.0;
-  String sortingType = "";
 
   @override
   void initState() {
@@ -47,7 +43,7 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
     widget.onInit(this);
     selectedBeat ??= widget.selectedBeat;
     day = DateFormat.EEEE().format(DateTime.now());
-    getRetailers();
+    getTaskRetailers();
     super.initState();
   }
 
@@ -56,7 +52,7 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
     return Column(
       children: [
         Expanded(
-          child: StreamBuilder<List<RetailersModal>>(
+          child: StreamBuilder<List<RetailersTaskModal>>(
             stream: retailerStreamController.stream,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -105,21 +101,19 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
     );
   }
 
-  void getRetailers() async {
+  void getTaskRetailers() async {
     retailerStreamController.addError("loading");
     if (await Network.isConnected()) {
       Map<String, dynamic> input = HashMap<String, dynamic>();
-      // input["order_status"] = widget.index;
+      // input["task_status"] = widget.index;
       // input["beat_id"] = selectedBeat!.id;
       // input["day"] = day;
-      // input["retailer_type"] = retailerType;
 
-      input["order_status"] = widget.index;
+      input["task_status"] = widget.index;
       input["beat_id"] = "";
       input["day"] = "Saturday";
-      input["retailer_type"] = "";
-      GetRetailersResponse response =
-          await repository.getRetailersOrderWise(input);
+      GetRetailersTaskResponse response =
+          await repository.getRetailersTaskWise(input);
       if (response.success) {
         retailers = response.data!;
         debugPrint("response = ${response.message}");
@@ -144,7 +138,7 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
     } else {
       this.day = day;
     }
-    getRetailers();
+    getTaskRetailers();
   }
 
   @override
@@ -191,7 +185,7 @@ class _TaskBeatWidgetState extends State<TaskBeatWidget> {
       itemBuilder: (index) {
         return Padding(
           padding: index == 0
-              ? const EdgeInsets.only(left: 5)
+              ? const EdgeInsets.only(left: 10)
               : widget.tags[index] == widget.tags.last
                   ? const EdgeInsets.only(right: 10)
                   : const EdgeInsets.all(0),

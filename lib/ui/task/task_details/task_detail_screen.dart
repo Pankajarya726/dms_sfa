@@ -125,15 +125,15 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                               ? const EdgeInsets.fromLTRB(5, 10, 5, 0)
                               : const EdgeInsets.fromLTRB(5, 5, 5, 5),
                           decoration: const BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color.fromRGBO(237, 237, 237, 0.25),
-                                  blurRadius: 10,
-                                )
-                              ]),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color.fromRGBO(237, 237, 237, 0.25),
+                                blurRadius: 10,
+                              )
+                            ],
+                          ),
                           child: retailer!.orderHistory.isNotEmpty
                               ? Column(
                                   children: List.generate(

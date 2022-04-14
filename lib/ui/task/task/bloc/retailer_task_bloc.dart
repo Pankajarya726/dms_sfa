@@ -1,9 +1,9 @@
 import 'dart:collection';
 import 'package:dms/main.dart';
-import 'package:dms/ui/order_booking/retailers_list/bloc/retailers_event.dart';
-import 'package:dms/ui/order_booking/retailers_list/bloc/retailers_state.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
-import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
+import 'package:dms/ui/task/task/bloc/retailers_task_event.dart';
+import 'package:dms/ui/task/task/bloc/retailers_task_state.dart';
+import 'package:dms/ui/task/task/model/get_retailers_task_response.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
@@ -12,20 +12,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
 
-class RetailersBloc extends Bloc<RetailerEvent, RetailerState> {
-  RetailersBloc() : super(RetailerInitState());
+class RetailersTaskBloc extends Bloc<RetailerTaskEvent, RetailerTaskState> {
+  RetailersTaskBloc() : super(RetailerTaskInitState());
 
   @override
-  Stream<RetailerState> mapEventToState(RetailerEvent event) async* {
+  Stream<RetailerTaskState> mapEventToState(RetailerTaskEvent event) async* {
     if (event is GetBeatEvent) {
       yield* getBeats(event);
     }
-    if (event is GetRetailerEvent) {
+    if (event is GetRetailerTaskEvent) {
       yield* getRetailers(event);
     }
   }
 
-  Stream<RetailerState> getBeats(GetBeatEvent event) async* {
+  Stream<RetailerTaskState> getBeats(GetBeatEvent event) async* {
     yield BeatLoadingState();
     if (await Network.isConnected()) {
       DateTime dateTime =
@@ -42,31 +42,30 @@ class RetailersBloc extends Bloc<RetailerEvent, RetailerState> {
         yield GetBeatState(beats: beats);
       } else {
         Utility.showToast(response.message);
-        yield RetailerFailureState(msg: response.message);
+        yield RetailerTaskFailureState(msg: response.message);
       }
     } else {
       Utility.showToast(Constants.internetAlert);
-      yield RetailerFailureState(msg: Constants.internetAlert);
+      yield RetailerTaskFailureState(msg: Constants.internetAlert);
     }
   }
 
-  Stream<RetailerState> getRetailers(GetRetailerEvent event) async* {
-    yield RetailerLoadingState();
+  Stream<RetailerTaskState> getRetailers(GetRetailerTaskEvent event) async* {
+    yield RetailerTaskLoadingState();
     if (await Network.isConnected()) {
       Map<String, dynamic> input = HashMap<String, dynamic>();
-      input["order_status"] = event.status;
+      input["task_status"] = event.status;
       input["beat_id"] = event.beatId;
-      input["day"] = event.day;
-      input["retailer_type"] = event.retailerType;
-      GetRetailersResponse response =
-          await repository.getRetailersOrderWise(input);
+      // input["day"] = event.day;
+      GetRetailersTaskResponse response =
+          await repository.getRetailersTaskWise(input);
       if (response.success) {
-        yield GetRetailersState(retailers: response.data!);
+        yield GetRetailersTaskState(retailers: response.data!);
       } else {
-        yield RetailerFailureState(msg: response.message);
+        yield RetailerTaskFailureState(msg: response.message);
       }
     } else {
-      yield RetailerFailureState(msg: StringConst.internetCheck);
+      yield RetailerTaskFailureState(msg: StringConst.internetCheck);
       Utility.showToast(Constants.internetAlert);
     }
   }

@@ -19,27 +19,32 @@ class _TeleCallerStatusSheetState extends State<TeleCallerStatusSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-        expand: false,
-        initialChildSize: 0.3,
-        maxChildSize: 0.8,
-        minChildSize: 0.3,
-        builder: (context, scrollControle) {
-          return ListView.builder(
-            controller: scrollControle,
-            itemCount: itemList.length,
-            itemBuilder: (context, index) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.80,
+        minHeight: MediaQuery.of(context).size.height * 0.20,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(
+            itemList.length,
+            (index) {
               return itemList[index];
             },
-          );
-        });
+          ),
+        ),
+      ),
+    );
   }
 
   Widget heading = const Padding(
     padding: EdgeInsets.all(15.0),
     child: Text(
       "Summary",
-      style: TextStyle(color: MColor.colorPrimary, fontSize: 20, letterSpacing: 0.67),
+      style: TextStyle(
+          color: MColor.colorPrimary, fontSize: 20, letterSpacing: 0.67),
     ),
   );
 
@@ -55,7 +60,8 @@ class _TeleCallerStatusSheetState extends State<TeleCallerStatusSheet> {
                   : "Call Back",
           attempt: i,
           time: "12:15 PM",
-          summery: "Lorem Ipsum is simply dummy text of the printing and typesetting lorem ops industry.");
+          summery:
+              "Lorem Ipsum is simply dummy text of the printing and typesetting lorem ops industry.");
 
       itemList.add(TCStatusWidget(
         status: status,
@@ -73,7 +79,11 @@ class TCStatusWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xffC5C5C5), width: 0.5))),
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Color(0xffC5C5C5), width: 0.5),
+        ),
+      ),
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       child: Column(
         children: [
@@ -82,11 +92,13 @@ class TCStatusWidget extends StatelessWidget {
             children: [
               Text(
                 "Attempt Number: ${status.attempt}",
-                style: const TextStyle(color: MColor.textColor, fontSize: 14, letterSpacing: 0.67),
+                style: const TextStyle(
+                    color: MColor.textColor, fontSize: 14, letterSpacing: 0.67),
               ),
               Text(
                 status.status,
-                style: const TextStyle(color: MColor.textColor, fontSize: 14, letterSpacing: 0.67),
+                style: const TextStyle(
+                    color: MColor.textColor, fontSize: 14, letterSpacing: 0.67),
               ),
             ],
           ),
@@ -95,7 +107,8 @@ class TCStatusWidget extends StatelessWidget {
           ),
           Text(
             "Attempt Number: ${status.summery}",
-            style: const TextStyle(color: MColor.textColor, fontSize: 14, letterSpacing: 0.67),
+            style: const TextStyle(
+                color: MColor.textColor, fontSize: 14, letterSpacing: 0.67),
           ),
           const SizedBox(
             height: 5,
@@ -105,7 +118,8 @@ class TCStatusWidget extends StatelessWidget {
             children: [
               Text(
                 status.time,
-                style: const TextStyle(color: MColor.textColor, fontSize: 14, letterSpacing: 0.67),
+                style: const TextStyle(
+                    color: MColor.textColor, fontSize: 14, letterSpacing: 0.67),
               ),
             ],
           ),
@@ -121,5 +135,9 @@ class TcStatus {
   String time;
   String summery;
 
-  TcStatus({required this.status, required this.attempt, required this.time, required this.summery});
+  TcStatus(
+      {required this.status,
+      required this.attempt,
+      required this.time,
+      required this.summery});
 }

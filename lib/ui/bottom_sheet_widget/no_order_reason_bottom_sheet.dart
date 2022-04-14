@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:dms/main.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
@@ -10,6 +11,8 @@ import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:group_radio_button/group_radio_button.dart';
+import 'package:intl/intl.dart';
+import 'package:ntp/ntp.dart';
 
 class NoOrderReasonSheet extends StatefulWidget {
   const NoOrderReasonSheet({Key? key}) : super(key: key);
@@ -24,7 +27,8 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
   List<ReasonsModal> reasonList = [];
   List<BUModal> buList = [];
   ReasonsModal groupValue = ReasonsModal(id: "", tagName: "", taskType: "");
-  StreamController<List<ReasonsModal>> reasonStreamController = StreamController();
+  StreamController<List<ReasonsModal>> reasonStreamController =
+      StreamController();
   StreamController<List<BUModal>> buStreamController = StreamController();
 
   TextEditingController edtRemark = TextEditingController();
@@ -39,20 +43,23 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.6,
-      minChildSize: 0.6,
-      maxChildSize: 0.9,
-      expand: false,
-      builder: (context, scrollController) {
-        return Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: Column(
-            children: [
-              const BottomSheetHeading("Reason for no order"),
-              Expanded(
-                child: ListView(
-                  controller: scrollController,
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.80,
+        minHeight: MediaQuery.of(context).size.height * 0.20,
+      ),
+      child: Padding(
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const BottomSheetHeading("Reason for no order"),
+            Flexible(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     StreamBuilder<List<ReasonsModal>>(
                         stream: reasonStreamController.stream,
@@ -81,15 +88,19 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                         minLines: 3,
                         maxLines: 5,
                         decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                            border: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.circular(10))),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 15),
+                            border: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                                borderRadius: BorderRadius.circular(10))),
                       ),
                     ),
                     const Padding(
                       padding: EdgeInsets.all(15.0),
                       child: Text(
                         "Select BU",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
                     Padding(
@@ -97,7 +108,8 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                       child: StreamBuilder<List<BUModal>>(
                         stream: buStreamController.stream,
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return const Center(
                               child: CircularProgressIndicator(),
                             );
@@ -132,7 +144,8 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                                 textActiveColor: MColor.activeTextColor,
                                 pressEnabled: true,
                                 onPressed: (item) {
-                                  buList[index].selected = !buList[index].selected;
+                                  buList[index].selected =
+                                      !buList[index].selected;
 
                                   buStreamController.add(buList);
                                 },
@@ -140,7 +153,10 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                                 elevation: 0,
                                 activeColor: const Color(0xffFFC9CC),
                                 border: Border.all(
-                                    color: buList[index].selected ? MColor.colorPrimary : const Color(0xffc5c5c5), width: 1),
+                                    color: buList[index].selected
+                                        ? MColor.colorPrimary
+                                        : const Color(0xffc5c5c5),
+                                    width: 1),
                                 color: const Color(0xffFAFAFA),
                               );
                             },
@@ -172,44 +188,45 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                   ],
                 ),
               ),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  DoneButton(onPressed: () async {
-                    List<BUModal> bus = buList.where((element) => element.selected).toList();
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                DoneButton(onPressed: () async {
+                  List<BUModal> bus =
+                      buList.where((element) => element.selected).toList();
 
-                    String selectedBu = "";
+                  String selectedBu = "";
 
-                    for (int i = 0; i < bus.length; i++) {
-                      if (i == bus.length - 1) {
-                        selectedBu += bus[i].id;
-                      } else {
-                        selectedBu += bus[i].id + ",";
-                      }
+                  for (int i = 0; i < bus.length; i++) {
+                    if (i == bus.length - 1) {
+                      selectedBu += bus[i].id;
+                    } else {
+                      selectedBu += bus[i].id + ",";
                     }
+                  }
 
-                    Map<String, dynamic> input = {
-                      "bu": selectedBu,
-                      "reason": groupValue.tagName,
-                      "task_type": groupValue.taskType,
-                      "remark": edtRemark.text.trim(),
-                      "is_resolve": issueResolve ? 1 : 0
-                    };
+                  Map<String, dynamic> input = {
+                    "bu": selectedBu,
+                    "reason": groupValue.tagName,
+                    "task_type": groupValue.taskType,
+                    "remark": edtRemark.text.trim(),
+                    "is_resolve": issueResolve ? 1 : 0
+                  };
 
-                    Navigator.pop(context, input);
-                  }),
-                  DoneButton(
-                      title: "Cancel",
-                      onPressed: () {
-                        Navigator.pop(context, {});
-                      }),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
+                  Navigator.pop(context, input);
+                }),
+                DoneButton(
+                    title: "Cancel",
+                    onPressed: () {
+                      Navigator.pop(context, {});
+                    }),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -225,6 +242,11 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
 
   void getBu() async {
     if (await Network.isConnected()) {
+      DateTime dateTime =
+          await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
+        return DateTime.now();
+      });
+      Map<String, dynamic> input = {"day": DateFormat("EEEE").format(dateTime)};
       GetBuResponse response = await repository.getBu();
       if (response.success) {
         buList = response.data!;
