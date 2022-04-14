@@ -8,38 +8,34 @@ import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
+import 'package:group_radio_button/group_radio_button.dart';
 
 class OrderConfRemarkBottomSheet extends StatefulWidget {
-  final String reason;
+  final ReasonsModal? reason;
   final String remark;
   final List<BUModal> buList;
   final bool issueResolve;
-  final Function(
-          String reason, String remark, List<BUModal> buList, bool issueResolve)
-      onReasonSelected;
+  final Function(ReasonsModal reason, String remark, List<BUModal> buList, bool issueResolve) onReasonSelected;
 
   const OrderConfRemarkBottomSheet({
     Key? key,
     required this.onReasonSelected,
-    required this.reason,
+    this.reason,
     required this.remark,
     required this.buList,
     required this.issueResolve,
   }) : super(key: key);
 
   @override
-  _OrderConfRemarkBottomSheetState createState() =>
-      _OrderConfRemarkBottomSheetState();
+  _OrderConfRemarkBottomSheetState createState() => _OrderConfRemarkBottomSheetState();
 }
 
-class _OrderConfRemarkBottomSheetState
-    extends State<OrderConfRemarkBottomSheet> {
+class _OrderConfRemarkBottomSheetState extends State<OrderConfRemarkBottomSheet> {
   List<ReasonsModal> reasons = [];
   List<BUModal> buList = [];
-  int groupValue = -1;
+  ReasonsModal groupValue = ReasonsModal(taskType: "", id: "", tagName: "");
   bool issueResolve = false;
-  StreamController<List<ReasonsModal>> reasonStreamController =
-      StreamController();
+  StreamController<List<ReasonsModal>> reasonStreamController = StreamController();
   StreamController<List<BUModal>> buStreamController = StreamController();
   StreamController<bool> issueStreamController = StreamController();
   TextEditingController txtRemarkController = TextEditingController();
@@ -47,8 +43,8 @@ class _OrderConfRemarkBottomSheetState
 
   @override
   void initState() {
-    if (widget.reason.isNotEmpty) {
-      groupValue = int.parse(widget.reason);
+    if (widget.reason != null) {
+      groupValue = widget.reason!;
     }
     txtRemarkController.text = widget.remark;
     issueResolve = widget.issueResolve;
@@ -72,7 +68,7 @@ class _OrderConfRemarkBottomSheetState
     return ConstrainedBox(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.80,
-        minHeight: MediaQuery.of(context).size.height * 0.20,
+        minHeight: MediaQuery.of(context).size.height * 0.40,
       ),
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -111,28 +107,14 @@ class _OrderConfRemarkBottomSheetState
                       }
 
                       if (snapshot.hasData) {
-                        return Column(
-                          children: List.generate(
-                            reasons.length,
-                            (index) {
-                              return RadioListTile<int>(
-                                contentPadding: const EdgeInsets.all(0),
-                                value: int.parse(snapshot.data![index].id),
-                                groupValue: groupValue,
-                                title: Text(
-                                  snapshot.data![index].tagName,
-                                  style: const TextStyle(
-                                    fontSize: 17.0,
-                                    color: MColor.backButton,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                onChanged: (value) {
-                                  groupValue = value!;
-                                  reasonStreamController.add(snapshot.data!);
-                                },
-                              );
-                            },
+                        return RadioGroup<ReasonsModal>.builder(
+                          groupValue: groupValue,
+                          onChanged: (value) => setState(() {
+                            groupValue = value!;
+                          }),
+                          items: snapshot.data!,
+                          itemBuilder: (item) => RadioButtonBuilder(
+                            item.tagName,
                           ),
                         );
                       }
@@ -146,8 +128,7 @@ class _OrderConfRemarkBottomSheetState
                   maxLines: 5,
                   controller: txtRemarkController,
                   decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 15),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                     border: OutlineInputBorder(
                       borderSide: BorderSide.none,
                       borderRadius: BorderRadius.circular(10),
@@ -205,20 +186,14 @@ class _OrderConfRemarkBottomSheetState
                           onPressed: (item) {
                             buList[index].selected = !buList[index].selected;
 
-                            selectedBUList = buList
-                                .where((element) => element.selected)
-                                .toList();
+                            selectedBUList = buList.where((element) => element.selected).toList();
 
                             buStreamController.add(buList);
                           },
                           singleItem: false,
                           elevation: 0,
                           activeColor: const Color(0xffFFC9CC),
-                          border: Border.all(
-                              color: buList[index].selected
-                                  ? MColor.colorPrimary
-                                  : const Color(0xffC5C5C5),
-                              width: 1),
+                          border: Border.all(color: buList[index].selected ? MColor.colorPrimary : const Color(0xffC5C5C5), width: 1),
                           color: const Color(0xffFAFAFA),
                         );
                       },
@@ -242,8 +217,7 @@ class _OrderConfRemarkBottomSheetState
                             SizedBox(
                               width: 20,
                               child: Checkbox(
-                                fillColor: MaterialStateProperty.all(
-                                    MColor.colorPrimary),
+                                fillColor: MaterialStateProperty.all(MColor.colorPrimary),
                                 value: issueResolve,
                                 onChanged: (value) {
                                   issueResolve = value!;
@@ -267,17 +241,12 @@ class _OrderConfRemarkBottomSheetState
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      widget.onReasonSelected(
-                          groupValue.toString(),
-                          txtRemarkController.text,
-                          selectedBUList,
-                          issueResolve);
+                      widget.onReasonSelected(groupValue, txtRemarkController.text, selectedBUList, issueResolve);
                       Navigator.pop(context);
                     },
                     style: ButtonStyle(
                       fixedSize: MaterialStateProperty.all(const Size(160, 50)),
-                      backgroundColor:
-                          MaterialStateProperty.all(MColor.colorPrimary),
+                      backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
                       elevation: MaterialStateProperty.all(0),
                       shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(

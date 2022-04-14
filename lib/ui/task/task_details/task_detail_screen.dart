@@ -34,8 +34,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       child: BlocBuilder<TaskDetailsBloc, TaskDetailStates>(
         builder: (context, state) {
           if (state is TaskDetailInitialState) {
-            BlocProvider.of<TaskDetailsBloc>(context)
-                .add(GetTaskDetailsEvent(storeId: widget.storeId));
+            BlocProvider.of<TaskDetailsBloc>(context).add(GetTaskDetailsEvent(storeId: widget.storeId));
           }
           if (state is TaskDetailLodingState) {
             return const Center(
@@ -105,8 +104,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                   delegate: SliverChildListDelegate(
                     [
                       const Padding(
-                        padding: EdgeInsets.only(
-                            left: 15, right: 10, bottom: 5, top: 15),
+                        padding: EdgeInsets.only(left: 15, right: 10, bottom: 5, top: 15),
                         child: Text(
                           StringConst.pendingTask,
                           style: TextStyle(
@@ -118,8 +116,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(
-                            left: 15, right: 15, bottom: 10, top: 5),
+                        padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10, top: 5),
                         child: Container(
                           padding: retailer!.orderHistory.isNotEmpty
                               ? const EdgeInsets.fromLTRB(5, 10, 5, 0)
@@ -142,8 +139,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                       color: Colors.white,
                                       child: InkWell(
                                         customBorder: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
+                                          borderRadius: BorderRadius.circular(10),
                                         ),
                                         onTap: () {
                                           Utility.hideKeyboard();
@@ -152,45 +148,33 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                               context: context,
                                               shape: bottomSheetShape,
                                               isScrollControlled: true,
-                                              builder: (context) => index == 0
-                                                  ? const TaskDetailsBottomSheet()
-                                                  : const EscalatedBottomSheet());
+                                              builder: (context) =>
+                                                  index == 0 ? const TaskDetailsBottomSheet() : const EscalatedBottomSheet());
                                         },
                                         child: Container(
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 5, horizontal: 5),
-                                          decoration: retailer!
-                                                      .orderHistory[index] !=
-                                                  retailer!.orderHistory.last
+                                          margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                          decoration: retailer!.orderHistory[index] != retailer!.orderHistory.last
                                               ? const BoxDecoration(
                                                   border: Border(
-                                                    bottom: BorderSide(
-                                                        color:
-                                                            Color(0xffC5C5C5),
-                                                        width: 0.5),
+                                                    bottom: BorderSide(color: Color(0xffC5C5C5), width: 0.5),
                                                   ),
                                                 )
                                               : null,
                                           child: Column(
                                             children: [
                                               Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
                                                   Flexible(
                                                     flex: 4,
                                                     child: Text(
                                                       retailer!.uniqueCode,
                                                       style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.normal,
-                                                        color:
-                                                            Color(0xff555555),
+                                                        fontWeight: FontWeight.normal,
+                                                        color: Color(0xff555555),
                                                         letterSpacing: 0.67,
                                                         fontSize: 15,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
+                                                        overflow: TextOverflow.ellipsis,
                                                       ),
                                                     ),
                                                   ),
@@ -199,14 +183,11 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                                     child: Text(
                                                       "10-03-2022",
                                                       style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.normal,
-                                                        color:
-                                                            Color(0xff777777),
+                                                        fontWeight: FontWeight.normal,
+                                                        color: Color(0xff777777),
                                                         letterSpacing: 0.67,
                                                         fontSize: 15,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
+                                                        overflow: TextOverflow.ellipsis,
                                                       ),
                                                     ),
                                                   ),
@@ -214,19 +195,15 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                               ),
                                               const SizedBox(height: 10),
                                               Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: const [
                                                   Flexible(
                                                     child: Text(
                                                       "Partial delivery failure",
                                                       maxLines: 3,
                                                       style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color:
-                                                            Color(0xff272727),
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Color(0xff272727),
                                                         letterSpacing: 0.67,
                                                         fontSize: 15,
                                                       ),
@@ -241,8 +218,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                               ),
                                               const SizedBox(height: 10),
                                               Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
+                                                mainAxisAlignment: MainAxisAlignment.start,
                                                 children: const [
                                                   Image(
                                                     image: AssetImage(
@@ -256,14 +232,11 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                                     child: Text(
                                                       "5 days pending",
                                                       style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.normal,
-                                                        color:
-                                                            Color(0xff555555),
+                                                        fontWeight: FontWeight.normal,
+                                                        color: Color(0xff555555),
                                                         letterSpacing: 0.67,
                                                         fontSize: 13,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
+                                                        overflow: TextOverflow.ellipsis,
                                                       ),
                                                     ),
                                                   ),
@@ -390,8 +363,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
               child: AppBar(
                 elevation: 5,
                 toolbarHeight: 60,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                 backgroundColor: Colors.white,
                 primary: false,
                 automaticallyImplyLeading: false,
@@ -413,10 +385,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                             fit: BoxFit.cover,
                           );
                         },
-                        errorWidget: (context, url, error) =>
-                            Image.asset("assets/placeholder.png"),
-                        placeholder: (context, url) =>
-                            Image.asset("assets/placeholder.png"),
+                        errorWidget: (context, url, error) => Image.asset("assets/placeholder.png"),
+                        placeholder: (context, url) => Image.asset("assets/placeholder.png"),
                       ),
                     ),
                     const SizedBox(
@@ -472,9 +442,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                           width: 25,
                           height: 25,
                           image: AssetImage(
-                            retailer!.enrollmentTypeId == "1"
-                                ? "assets/key.png"
-                                : "assets/hit.png",
+                            retailer!.enrollmentTypeId == "1" ? "assets/key.png" : "assets/hit.png",
                           ),
                         ),
                       ),
@@ -538,8 +506,7 @@ class _DetailGritItemState extends State<DetailGritItem> {
                         context: context,
                         isScrollControlled: true,
                         shape: bottomSheetShape,
-                        builder: (context) =>
-                            const LastEscalationBottomSheet());
+                        builder: (context) => const LastEscalationBottomSheet());
                   }
                   if (widget.type == 4) {
                     showModalBottomSheet(
@@ -551,8 +518,7 @@ class _DetailGritItemState extends State<DetailGritItem> {
                 }
               : null,
           child: Padding(
-            padding:
-                const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
+            padding: const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -612,13 +578,7 @@ class TaskDetailItem extends StatefulWidget {
   final String value;
   final int type;
 
-  const TaskDetailItem(
-      {Key? key,
-      required this.image,
-      required this.name,
-      required this.value,
-      required this.type})
-      : super(key: key);
+  const TaskDetailItem({Key? key, required this.image, required this.name, required this.value, required this.type}) : super(key: key);
 
   @override
   _TaskDetailItemState createState() => _TaskDetailItemState();
@@ -648,10 +608,7 @@ class _TaskDetailItemState extends State<TaskDetailItem> {
             children: [
               Text(
                 widget.name,
-                style: const TextStyle(
-                    color: Color(0xff303030),
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold),
+                style: const TextStyle(color: Color(0xff303030), fontSize: 15, fontWeight: FontWeight.bold),
               ),
               const SizedBox(
                 height: 5,
@@ -661,10 +618,7 @@ class _TaskDetailItemState extends State<TaskDetailItem> {
                 child: Text(
                   widget.value,
                   overflow: TextOverflow.clip,
-                  style: const TextStyle(
-                      color: Color(0xff555555),
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold),
+                  style: const TextStyle(color: Color(0xff555555), fontSize: 14, fontWeight: FontWeight.bold),
                 ),
               ),
             ],

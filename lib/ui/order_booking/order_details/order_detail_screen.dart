@@ -119,7 +119,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       builder: (_) => OrderBookingListScreen(
                             showOrder: true,
                             beatId: widget.retailer.beatId.toString(),
-                            retailerId: widget.retailer.userId.toString(),
+                            retailerId: widget.retailer.customerId.toString(),
                             orderId: order!.orderId.toString(),
                           )));
                 },

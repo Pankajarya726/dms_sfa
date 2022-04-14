@@ -16,6 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
+import 'model/get_reason_response.dart';
+
 class OrderSummery extends StatefulWidget {
   final String beatId;
   final String retailerId;
@@ -32,7 +34,7 @@ class OrderSummery extends StatefulWidget {
 class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener {
   List<Widget> rowList = [];
   TextEditingController txtReadyStockController = TextEditingController();
-  String reason = "";
+  ReasonsModal reason = ReasonsModal(taskType: "", id: "", tagName: "");
   String remark = "";
   List<BUModal> buList = [];
   bool issueResolve = false;
@@ -307,11 +309,22 @@ class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener 
     input["is_ready_stock_bill"] = isReadyStock == "Yes" ? 1 : 0;
 
     if (widget.orderId.isEmpty) {
-      input["task_type"] = "HIT";
-      input["escalation_id"] = "1";
-      input["escalation_tag"] = "ful delvery fail";
-      input["task_remark"] = "noe";
-      input["bu_id"] = "1,2,3";
+      input["task_type"] = reason.taskType;
+      input["escalation_id"] = reason.id;
+      input["escalation_tag"] = reason.tagName;
+      input["task_remark"] = remark;
+
+      String buIds = "";
+
+      for (int i = 0; i < buList.length; i++) {
+        if (i == buList.length - 1) {
+          buIds += buList[i].id;
+        } else {
+          buIds += buList[i].id + ",";
+        }
+      }
+
+      input["bu_id"] = buIds;
     } else {
       input["order_id"] = widget.orderId;
     }
@@ -343,7 +356,7 @@ class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener 
   }
 
   @override
-  void onReasonSelect(String reason, String remark, List<BUModal> buList, bool issueResolve) {
+  void onReasonSelect(ReasonsModal reason, String remark, List<BUModal> buList, bool issueResolve) {
     this.reason = reason;
     this.remark = remark;
     this.buList = buList;

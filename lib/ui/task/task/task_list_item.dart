@@ -61,8 +61,7 @@ class _TaskListItemsState extends State<TaskListItems> {
             );
           },
           child: Padding(
-            padding:
-                const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
+            padding: const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -111,8 +110,7 @@ class _TaskListItemsState extends State<TaskListItems> {
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                       onPressed: () {
-                        if (widget.retailer.latitude.isEmpty ||
-                            widget.retailer.longitude.isEmpty) {
+                        if (widget.retailer.latitude.isEmpty || widget.retailer.longitude.isEmpty) {
                           Utility.showToast("Coordinates not found");
                         }
                         MapsLauncher.launchCoordinates(
@@ -192,8 +190,7 @@ class _TaskListItemsState extends State<TaskListItems> {
                                       alignment: Alignment.center,
                                       decoration: BoxDecoration(
                                         color: MColor.colorYellow,
-                                        borderRadius:
-                                            BorderRadius.circular(3.5),
+                                        borderRadius: BorderRadius.circular(3.5),
                                       ),
                                       child: Text(
                                         widget.retailer.pendingTask,
