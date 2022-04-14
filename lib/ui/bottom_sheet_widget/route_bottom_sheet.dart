@@ -2,13 +2,9 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:dms/main.dart';
-import 'package:dms/ui/order_booking/order_confirmation/model/get_bu_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailer_bloc.dart';
-import 'package:dms/ui/order_booking/retailers_list/bloc/retailers_event.dart';
-import 'package:dms/ui/order_booking/retailers_list/bloc/retailers_state.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
-import 'package:dms/ui/order_booking/retailers_list/retailers_tab.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/my_location.dart';
@@ -145,11 +141,7 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
                           singleItem: false,
                           elevation: 0,
                           activeColor: const Color(0xffFFC9CC),
-                          border: Border.all(
-                              color: beats[index].selected
-                                  ? MColor.colorPrimary
-                                  : const Color(0xffc5c5c5),
-                              width: 1),
+                          border: Border.all(color: beats[index].selected ? MColor.colorPrimary : const Color(0xffc5c5c5), width: 1),
                           color: const Color(0xffFAFAFA),
                         );
                       },
@@ -197,13 +189,14 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
                   height: 25,
                 ),
                 Padding(
-                  padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       MaterialButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          getRetailers();
+                        },
                         height: 50,
                         padding: const EdgeInsets.symmetric(horizontal: 40),
                         color: MColor.colorPrimary,
@@ -234,13 +227,11 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
 
   void getBeats() async {
     if (await Network.isConnected()) {
-      DateTime dateTime =
-          await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
+      DateTime dateTime = await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
         return DateTime.now();
       });
       Map<String, dynamic> input = {"day": DateFormat("EEEE").format(dateTime)};
-      GetAllBeatsResponse response =
-          await repository.getBeatByOrderBookingDay(input);
+      GetAllBeatsResponse response = await repository.getBeatByOrderBookingDay(input);
       if (response.success) {
         beats = response.data!;
 
@@ -260,6 +251,34 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
     }
   }
 
+  void getRetailers() async {
+    if (await Network.isConnected()) {
+      Map<String, dynamic> input = HashMap<String, dynamic>();
+      input["order_status"] = "1";
+      input["beat_id"] = beatModal.id;
+      input["day"] = widget.day;
+      input["retailer_type"] = retailerCheck && teleRetailerCheck
+          ? ""
+          : retailerCheck
+              ? "1"
+              : teleRetailerCheck
+                  ? "2"
+                  : "";
+      EasyLoading.show(status: "Loading...");
+      GetRetailersResponse response = await repository.getRetailersOrderWise(input);
+      EasyLoading.dismiss();
+      if (response.success) {
+        if (response.data!.isNotEmpty) {
+          getRoute(response.data!);
+        }
+      } else {
+        Utility.showToast(response.message);
+      }
+    } else {
+      Utility.showToast(Constants.internetAlert);
+    }
+  }
+
   void getRoute(List<RetailersModal> list) async {
     try {
       String waypoint = "";
@@ -267,8 +286,7 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
       String source = "";
 
       Position position = await MyLocation.getCurrentLocation();
-      source =
-          position.latitude.toString() + "," + position.longitude.toString();
+      source = position.latitude.toString() + "," + position.longitude.toString();
 
       String url = "";
 
@@ -288,9 +306,6 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
       } else {
         destination = list.first.lat + "," + list.first.lng;
       }
-      debugPrint("source---->$source");
-      debugPrint("destination---->$destination");
-      debugPrint("waypoint---->$waypoint");
 
       // source = "22.715088511443923,75.86964084100623";
       // destination = "22.71776838847584,75.85447157736643";
