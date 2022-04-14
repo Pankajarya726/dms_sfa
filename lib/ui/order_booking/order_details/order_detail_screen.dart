@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/ui/drawer_menu/home_screen/home_screen.dart';
+import 'package:dms/ui/order_booking/order_booking_list/order_booking_list_screen.dart';
 import 'package:dms/ui/order_booking/order_confirmation/order_summery_table.dart';
 import 'package:dms/ui/order_booking/order_details/bloc/order_detail_bloc.dart';
 import 'package:dms/ui/order_booking/order_details/bloc/order_detail_event.dart';
@@ -25,6 +26,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
   String orderId = "";
   List<Product> product = [];
+  Order? order;
   Task? task;
 
   @override
@@ -54,6 +56,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     product = state.products;
                     orderId = state.orders.orderId.toString();
                     task = state.task;
+                    order = state.orders;
 
                     return const OrderSummeryTable();
                   }
@@ -111,7 +114,15 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               ),
               MaterialButton(
                 elevation: 0,
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => OrderBookingListScreen(
+                            showOrder: true,
+                            beatId: widget.retailer.beatId.toString(),
+                            retailerId: widget.retailer.userId.toString(),
+                            orderId: order!.orderId.toString(),
+                          )));
+                },
                 shape: const RoundedRectangleBorder(),
                 height: 50,
                 color: const Color(0xff2CB743),

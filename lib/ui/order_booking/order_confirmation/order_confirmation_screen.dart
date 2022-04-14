@@ -11,12 +11,9 @@ import 'focus_sku_tab.dart';
 class OrderConfirmationScreen extends StatefulWidget {
   final String beatId;
   final String retailerId;
+  final String orderId;
 
-  const OrderConfirmationScreen({
-    Key? key,
-    required this.beatId,
-    required this.retailerId,
-  }) : super(key: key);
+  const OrderConfirmationScreen({Key? key, required this.beatId, required this.retailerId, required this.orderId}) : super(key: key);
 
   @override
   _OrderConfirmationScreenState createState() => _OrderConfirmationScreenState();
@@ -133,6 +130,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with 
             OrderSummery(
               beatId: widget.beatId,
               retailerId: widget.retailerId,
+              orderId: widget.orderId,
               onInit: (listener) {
                 reasonsListener = listener;
               },

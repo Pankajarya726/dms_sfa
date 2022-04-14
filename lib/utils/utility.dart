@@ -42,7 +42,9 @@ class Utility {
   }
 
   static showToast(String message) {
-    Fluttertoast.showToast(msg: message);
+    if (message.trim().isNotEmpty) {
+      Fluttertoast.showToast(msg: message);
+    }
   }
 
   static hideKeyboard() {

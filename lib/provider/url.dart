@@ -45,6 +45,7 @@ class Url {
   static const String getReasons = "getReason";
   static const String getBU = "getBusinessUnit";
   static const String saveOrder = "orderSubmit";
+  static const String editUpdate = "OrderUpdate";
   static const String saveNoOrder = "saveNoOrder";
   static const String getOrder = "getOrderForEdit";
 }

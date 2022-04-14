@@ -121,7 +121,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         padding: const EdgeInsets.only(
                             left: 15, right: 15, bottom: 10, top: 5),
                         child: Container(
-                          padding: retailer!.orderHistory!.isNotEmpty
+                          padding: retailer!.orderHistory.isNotEmpty
                               ? const EdgeInsets.fromLTRB(5, 10, 5, 0)
                               : const EdgeInsets.fromLTRB(5, 5, 5, 5),
                           decoration: const BoxDecoration(
@@ -134,10 +134,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                   blurRadius: 10,
                                 )
                               ]),
-                          child: retailer!.orderHistory!.isNotEmpty
+                          child: retailer!.orderHistory.isNotEmpty
                               ? Column(
                                   children: List.generate(
-                                    retailer!.orderHistory!.length,
+                                    retailer!.orderHistory.length,
                                     (index) => Material(
                                       color: Colors.white,
                                       child: InkWell(
@@ -160,8 +160,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                           margin: const EdgeInsets.symmetric(
                                               vertical: 5, horizontal: 5),
                                           decoration: retailer!
-                                                      .orderHistory![index] !=
-                                                  retailer!.orderHistory!.last
+                                                      .orderHistory[index] !=
+                                                  retailer!.orderHistory.last
                                               ? const BoxDecoration(
                                                   border: Border(
                                                     bottom: BorderSide(

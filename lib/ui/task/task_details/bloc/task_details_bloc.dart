@@ -1,4 +1,5 @@
 import 'dart:collection';
+
 import 'package:dms/main.dart';
 import 'package:dms/ui/order_booking/retailer_detail/model/retailer_details_response.dart';
 import 'package:dms/ui/task/task_details/bloc/task_details_events.dart';
@@ -22,10 +23,9 @@ class TaskDetailsBloc extends Bloc<TaskDetailEvents, TaskDetailStates> {
     if (await Network.isConnected()) {
       Map<String, dynamic> input = HashMap<String, dynamic>();
       input["retailer_id"] = event.storeId;
-      RetailersDetailsResponse response =
-          await repository.getRetailerInfo(input);
+      RetailersDetailsResponse response = await repository.getRetailerInfo(input);
       if (response.success) {
-        yield GetTaskDetailState(retailer: response.data!.first);
+        yield GetTaskDetailState(retailer: response.data.first);
       } else {
         yield TaskDetailFailureState(failureMessage: response.message);
       }

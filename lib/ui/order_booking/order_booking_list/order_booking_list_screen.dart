@@ -10,6 +10,7 @@ import 'package:dms/ui/order_booking/order_booking_list/bloc/order_book_list_sta
 import 'package:dms/ui/order_booking/order_booking_list/model/get_brand_category_resonse.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_filter_mrp_response.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
+import 'package:dms/ui/order_booking/order_booking_list/ordered_product_list.dart';
 import 'package:dms/ui/order_booking/order_booking_list/products_tab.dart';
 import 'package:dms/ui/order_booking/order_confirmation/order_confirmation_screen.dart';
 import 'package:dms/ui/order_booking/search_products/search_product_screen.dart';
@@ -21,11 +22,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class OrderBookingListScreen extends StatefulWidget {
   final String retailerId;
   final String beatId;
+  final bool showOrder;
+  final String orderId;
 
   const OrderBookingListScreen({
     Key? key,
     required this.retailerId,
     required this.beatId,
+    this.showOrder = false,
+    this.orderId = "",
   }) : super(key: key);
 
   @override
@@ -61,6 +66,9 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
       child: BlocListener<OrderBookListBloc, OrderBookListStates>(
         listener: (context, state) {
           if (state is GetBrandAndCatgState) {
+            if (widget.showOrder) {
+              tabList.add(BrandAndCategoryModel(id: "", name: "Order", category: []));
+            }
             tabList.add(BrandAndCategoryModel(id: "", name: "Suggested", category: []));
             tabList.add(BrandAndCategoryModel(id: "", name: "Scheme", category: []));
             tabList.addAll(state.brandAndCategoryModal);
@@ -68,6 +76,9 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
             // BlocProvider.of<OrderBookListBloc>(context).add(ChangeTabEvent(index: 0));
           }
           if (state is GetBrandsFailureState) {
+            if (widget.showOrder) {
+              tabList.add(BrandAndCategoryModel(id: "", name: "Order", category: []));
+            }
             tabList.add(BrandAndCategoryModel(id: "", name: "Suggested", category: []));
             tabList.add(BrandAndCategoryModel(id: "", name: "Scheme", category: []));
             tabController = TabController(length: tabList.length, vsync: this, initialIndex: 0);
@@ -137,6 +148,7 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
                         builder: (context) => OrderConfirmationScreen(
                           beatId: widget.beatId,
                           retailerId: widget.retailerId,
+                          orderId: widget.orderId,
                         ),
                       ),
                     );
@@ -274,12 +286,16 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
               return TabBarView(
                 controller: tabController,
                 children: List.generate(tabList.length, (index) {
-                  return ProductTabs(
-                    index: index,
-                    brands: tabList[index],
-                    retailerId: widget.retailerId,
-                    beatId: widget.beatId,
-                  );
+                  if (widget.showOrder && index == 0) {
+                    return const OrderedProductList();
+                  } else {
+                    return ProductTabs(
+                      index: index,
+                      brands: tabList[index],
+                      retailerId: widget.retailerId,
+                      beatId: widget.beatId,
+                    );
+                  }
                 }),
               );
               // debugPrint("tabIndex-->$tabIndex");

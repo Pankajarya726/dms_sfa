@@ -19,9 +19,11 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 class OrderSummery extends StatefulWidget {
   final String beatId;
   final String retailerId;
+  final String orderId;
   final Function(ReasonsListener? reasonsListener) onInit;
 
-  const OrderSummery({Key? key, required this.onInit, required this.beatId, required this.retailerId}) : super(key: key);
+  const OrderSummery({Key? key, required this.onInit, required this.beatId, required this.orderId, required this.retailerId})
+      : super(key: key);
 
   @override
   State<OrderSummery> createState() => _OrderSummeryState();
@@ -301,13 +303,18 @@ class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener 
     input["total_pkg"] = totalPkg;
     input["total_moq"] = totalMoq;
     input["total_amount"] = totalAmount;
-    input["is_ready_stock_bill"] = isReadyStock == "Yes" ? 1 : 0;
     input["products"] = productListMap;
-    input["task_type"] = "HIT";
-    input["escalation_id"] = "1";
-    input["escalation_tag"] = "ful delvery fail";
-    input["task_remark"] = "noe";
-    input["bu_id"] = "1,2,3";
+    input["is_ready_stock_bill"] = isReadyStock == "Yes" ? 1 : 0;
+
+    if (widget.orderId.isEmpty) {
+      input["task_type"] = "HIT";
+      input["escalation_id"] = "1";
+      input["escalation_tag"] = "ful delvery fail";
+      input["task_remark"] = "noe";
+      input["bu_id"] = "1,2,3";
+    } else {
+      input["order_id"] = widget.orderId;
+    }
 
     log("input--->${jsonEncode(input)}");
     bool? save = await Utility.showConfirmAlert(
@@ -315,7 +322,13 @@ class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener 
     if (save != null && save) {
       if (await Network.isConnected()) {
         EasyLoading.show();
-        BaseResponse response = await repository.saveOrder(input);
+        BaseResponse response;
+        if (widget.orderId.isEmpty) {
+          response = await repository.saveOrder(input);
+        } else {
+          response = await repository.updateOrder(input);
+        }
+
         EasyLoading.dismiss();
         Utility.showToast(response.message);
         if (response.success) {
