@@ -11,3 +11,10 @@ class GetRetailerDetailsEvent extends RetailerDetailEvents {
   @override
   List<Object> get props => [storeId];
 }
+
+class NoOrderYetEvent extends RetailerDetailEvents {
+  final String retailerId;
+  NoOrderYetEvent({required this.retailerId});
+  @override
+  List<Object> get props => [retailerId];
+}

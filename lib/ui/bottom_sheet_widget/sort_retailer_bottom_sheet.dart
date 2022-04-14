@@ -38,89 +38,100 @@ class _SortingRetailersBottomSheetState
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 5),
-      width: MediaQuery.of(context).size.width,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(25),
-          topLeft: Radius.circular(25),
-        ),
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.80,
+        minHeight: MediaQuery.of(context).size.height * 0.20,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            StringConst.sorting,
-            style: TextStyle(
-              fontSize: 19,
-              color: MColor.colorPrimary,
-              letterSpacing: 0.67,
-              fontWeight: FontWeight.bold,
+      child: Container(
+        margin: const EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 5),
+        width: MediaQuery.of(context).size.width,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(25),
+            topLeft: Radius.circular(25),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              StringConst.sorting,
+              style: TextStyle(
+                fontSize: 19,
+                color: MColor.colorPrimary,
+                letterSpacing: 0.67,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Flexible(
-            child: ListView.builder(
-              controller: ScrollController(keepScrollOffset: false),
-              itemCount: sortingList.length,
-              itemBuilder: (context, index) {
-                return BlocProvider(
-                  create: (context) => commonBloc,
-                  child: BlocBuilder<CommonBloc, CommonBlocStates>(
-                    builder: (context, state) {
-                      if (state is CommonBlocInitialState) {
-                        if (sortRetailersRadio == sortingList[index]) {
-                          commonBloc.add(CommonBlocEnrollTypeRadioEvent(
-                              enrollmentRadioTag: index));
-                        }
-                      }
-                      if (state is CommonBlocEnrollRadioTagState) {
-                        sortRetailersRadio = state.enrollmentRadioTag;
-                      }
-                      return radioButtonWidget(
-                          sortRetailersRadio, index, sortingList[index]);
+            const SizedBox(
+              height: 10,
+            ),
+            Flexible(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: List.generate(
+                    sortingList.length,
+                    (index) {
+                      return BlocProvider(
+                        create: (context) => commonBloc,
+                        child: BlocBuilder<CommonBloc, CommonBlocStates>(
+                          builder: (context, state) {
+                            if (state is CommonBlocInitialState) {
+                              if (sortRetailersRadio == sortingList[index]) {
+                                commonBloc.add(CommonBlocEnrollTypeRadioEvent(
+                                    enrollmentRadioTag: index));
+                              }
+                            }
+                            if (state is CommonBlocEnrollRadioTagState) {
+                              sortRetailersRadio = state.enrollmentRadioTag;
+                            }
+                            return radioButtonWidget(
+                                sortRetailersRadio, index, sortingList[index]);
+                          },
+                        ),
+                      );
                     },
                   ),
-                );
-              },
+                ),
+              ),
             ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                widget.onSelect(selectedType);
-                Navigator.pop(context);
-              },
-              style: ButtonStyle(
-                fixedSize: MaterialStateProperty.all(const Size(180, 55)),
-                backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
-                elevation: MaterialStateProperty.all(0),
-                shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+            const SizedBox(
+              height: 20,
+            ),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  widget.onSelect(selectedType);
+                  Navigator.pop(context);
+                },
+                style: ButtonStyle(
+                  fixedSize: MaterialStateProperty.all(const Size(180, 55)),
+                  backgroundColor:
+                      MaterialStateProperty.all(MColor.colorPrimary),
+                  elevation: MaterialStateProperty.all(0),
+                  shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                ),
+                child: const Text(
+                  StringConst.done,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              child: const Text(
-                StringConst.done,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-        ],
+            const SizedBox(
+              height: 10,
+            ),
+          ],
+        ),
       ),
     );
   }

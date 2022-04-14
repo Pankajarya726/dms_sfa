@@ -26,75 +26,70 @@ class _TaskHistoryBottomSheetState extends State<TaskHistoryBottomSheet> {
         maxHeight: MediaQuery.of(context).size.height * 0.80,
         minHeight: MediaQuery.of(context).size.height * 0.20,
       ),
-      child: Stack(
-        alignment: Alignment.bottomCenter,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: List.generate(
-                    itemList.length,
-                    (index) {
-                      return itemList[index];
-                    },
-                  ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: List.generate(
+                  itemList.length,
+                  (index) {
+                    return itemList[index];
+                  },
                 ),
-              ],
+              ),
             ),
           ),
-          Positioned(
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: MaterialButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    shape: const RoundedRectangleBorder(),
-                    child: const Text(
-                      StringConst.closeCaps,
-                      style: TextStyle(
-                        color: Color(0xffFFFFFF),
-                        fontSize: 20,
-                        letterSpacing: 0.72,
-                      ),
+          Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: MaterialButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  shape: const RoundedRectangleBorder(),
+                  child: const Text(
+                    StringConst.closeCaps,
+                    style: TextStyle(
+                      color: Color(0xffFFFFFF),
+                      fontSize: 20,
+                      letterSpacing: 0.72,
                     ),
-                    color: const Color(0XFFB7B7B7),
-                    height: 50,
-                    elevation: 0,
-                    minWidth: MediaQuery.of(context).size.width / 2,
                   ),
+                  color: const Color(0XFFB7B7B7),
+                  height: 50,
+                  elevation: 0,
+                  minWidth: MediaQuery.of(context).size.width / 2,
                 ),
-                Expanded(
-                  flex: 1,
-                  child: MaterialButton(
-                    shape: const RoundedRectangleBorder(),
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const TaskHistory()));
-                    },
-                    child: const Text(
-                      StringConst.viewCaps,
-                      style: TextStyle(
-                        color: Color(0xffFFFFFF),
-                        fontSize: 20,
-                        letterSpacing: 0.72,
-                      ),
+              ),
+              Expanded(
+                flex: 1,
+                child: MaterialButton(
+                  shape: const RoundedRectangleBorder(),
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const TaskHistory()));
+                  },
+                  child: const Text(
+                    StringConst.viewCaps,
+                    style: TextStyle(
+                      color: Color(0xffFFFFFF),
+                      fontSize: 20,
+                      letterSpacing: 0.72,
                     ),
-                    color: MColor.colorSecondary,
-                    height: 50,
-                    elevation: 0,
-                    minWidth: MediaQuery.of(context).size.width / 2,
                   ),
+                  color: MColor.colorSecondary,
+                  height: 50,
+                  elevation: 0,
+                  minWidth: MediaQuery.of(context).size.width / 2,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),
@@ -116,7 +111,7 @@ class _TaskHistoryBottomSheetState extends State<TaskHistoryBottomSheet> {
     );
     itemList.add(heading);
 
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 10; i++) {
       TaskHistoryModal status = TaskHistoryModal(
         icons: "assets/hit.png",
         reason: "Full delivery failure",
@@ -127,7 +122,7 @@ class _TaskHistoryBottomSheetState extends State<TaskHistoryBottomSheet> {
       ));
     }
     Widget total = Padding(
-      padding: const EdgeInsets.only(top: 15, bottom: 70),
+      padding: const EdgeInsets.only(top: 15, bottom: 20),
       child: Container(
         padding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
         margin: const EdgeInsets.symmetric(horizontal: 10),

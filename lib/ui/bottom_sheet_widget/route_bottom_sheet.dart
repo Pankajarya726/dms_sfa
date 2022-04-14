@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:dms/main.dart';
+import 'package:dms/ui/order_booking/order_confirmation/model/get_bu_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailer_bloc.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailers_event.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailers_state.dart';
@@ -16,7 +18,10 @@ import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
+import 'package:ntp/ntp.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RouteBottomSheet extends StatefulWidget {
@@ -40,163 +45,218 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
   BeatsModal beatModal = BeatsModal(id: "", name: "All");
   bool retailerCheck = false;
   bool teleRetailerCheck = false;
+  StreamController<List<BeatsModal>> beatsStreamController = StreamController();
+
+  @override
+  void initState() {
+    getBeats();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: IntrinsicHeight(
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.80,
+        minHeight: MediaQuery.of(context).size.height * 0.20,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
         child: BlocProvider(
           create: (context) => RetailersBloc(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            // shrinkWrap: false,
-            children: [
-              const SizedBox(
-                height: 10,
-              ),
-              const Text(
-                StringConst.route,
-                style: TextStyle(
-                  color: MColor.colorPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.67,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 10,
                 ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              const Text(
-                StringConst.selectBeat,
-                style: TextStyle(
-                  color: MColor.inactiveTextColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.67,
-                ),
-              ),
-              BlocBuilder<RetailersBloc, RetailerState>(builder: (context, state) {
-                if (state is RetailerInitState) {
-                  BlocProvider.of<RetailersBloc>(context).add(GetBeatEvent());
-                }
-                if (state is GetBeatState) {
-                  beats = state.beats;
-                  beatModal = beats.first;
-                }
-                return SizedBox(
-                  height: 70,
-                  width: MediaQuery.of(context).size.width,
-                  child: BeatWidget(
-                    selectedBeat: beatModal,
-                    tags: beats,
-                    onSelect: (BeatsModal tag) {
-                      debugPrint("onBeatSelect-->${tag.name}");
-                      beatModal = tag;
-                    },
+                const Text(
+                  StringConst.route,
+                  style: TextStyle(
+                    color: MColor.colorPrimary,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.67,
                   ),
-                );
-              }),
-              const Text(
-                StringConst.selectEnrolmentType,
-                style: TextStyle(
-                  color: MColor.textColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.67,
                 ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              CheckboxListTile(
-                title: const Text(StringConst.retailer),
-                value: retailerCheck,
-                contentPadding: EdgeInsets.zero,
-                controlAffinity: ListTileControlAffinity.leading,
-                onChanged: (bool? value) {
-                  setState(() {
-                    retailerCheck = value!;
-                  });
-                },
-              ),
-              CheckboxListTile(
-                title: const Text(StringConst.teleRetailer),
-                value: teleRetailerCheck,
-                contentPadding: EdgeInsets.zero,
-                controlAffinity: ListTileControlAffinity.leading,
-                onChanged: (bool? value) {
-                  setState(() {
-                    teleRetailerCheck = value!;
-                  });
-                },
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    MaterialButton(
-                      onPressed: () {
-                        getRetailers();
+                const SizedBox(
+                  height: 20,
+                ),
+                const Text(
+                  StringConst.selectBeat,
+                  style: TextStyle(
+                    color: MColor.inactiveTextColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.67,
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                StreamBuilder<List<BeatsModal>>(
+                  stream: beatsStreamController.stream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
 
-                        // Navigator.pop(context, data);
-                      },
-                      height: 50,
-                      padding: const EdgeInsets.symmetric(horizontal: 40),
-                      color: MColor.colorPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 0,
-                      child: const Text(
-                        StringConst.getRoute,
-                        style: TextStyle(
+                    if (snapshot.hasError) {
+                      return Text(
+                        snapshot.error.toString(),
+                        style: const TextStyle(
+                          fontSize: 16,
                           letterSpacing: 0.67,
-                          color: Colors.white,
-                          fontSize: 23,
-                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    }
+
+                    if (beats.isEmpty) {
+                      return Container();
+                    }
+
+                    if (snapshot.hasData) {
+                      beats = snapshot.data!;
+                    }
+
+                    return Tags(
+                      itemCount: beats.length,
+                      runSpacing: 8,
+                      spacing: 10,
+                      alignment: WrapAlignment.start,
+                      itemBuilder: (index) {
+                        return ItemTags(
+                          index: index,
+                          customData: beats[index],
+                          title: beats[index].name,
+                          textColor: MColor.textColor,
+                          active: beats[index].selected,
+                          textActiveColor: MColor.activeTextColor,
+                          pressEnabled: true,
+                          onPressed: (item) {
+                            beats[index].selected = !beats[index].selected;
+
+                            beatsStreamController.add(beats);
+                          },
+                          singleItem: false,
+                          elevation: 0,
+                          activeColor: const Color(0xffFFC9CC),
+                          border: Border.all(
+                              color: beats[index].selected
+                                  ? MColor.colorPrimary
+                                  : const Color(0xffc5c5c5),
+                              width: 1),
+                          color: const Color(0xffFAFAFA),
+                        );
+                      },
+                    );
+                  },
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                const Text(
+                  StringConst.selectEnrolmentType,
+                  style: TextStyle(
+                    color: MColor.textColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.67,
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                CheckboxListTile(
+                  title: const Text(StringConst.retailer),
+                  value: retailerCheck,
+                  contentPadding: EdgeInsets.zero,
+                  controlAffinity: ListTileControlAffinity.leading,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      retailerCheck = value!;
+                    });
+                  },
+                ),
+                CheckboxListTile(
+                  title: const Text(StringConst.teleRetailer),
+                  value: teleRetailerCheck,
+                  contentPadding: EdgeInsets.zero,
+                  controlAffinity: ListTileControlAffinity.leading,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      teleRetailerCheck = value!;
+                    });
+                  },
+                ),
+                const SizedBox(
+                  height: 25,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      MaterialButton(
+                        onPressed: () {},
+                        height: 50,
+                        padding: const EdgeInsets.symmetric(horizontal: 40),
+                        color: MColor.colorPrimary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        elevation: 0,
+                        child: const Text(
+                          StringConst.getRoute,
+                          style: TextStyle(
+                            letterSpacing: 0.67,
+                            color: Colors.white,
+                            fontSize: 23,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  void getRetailers() async {
+  void getBeats() async {
     if (await Network.isConnected()) {
-      Map<String, dynamic> input = HashMap<String, dynamic>();
-      input["order_status"] = "1";
-      input["beat_id"] = beatModal.id;
-      input["day"] = widget.day;
-      input["retailer_type"] = retailerCheck && teleRetailerCheck
-          ? ""
-          : retailerCheck
-              ? "1"
-              : teleRetailerCheck
-                  ? "2"
-                  : "";
-      EasyLoading.show(status: "Loading...");
-      GetRetailersResponse response = await repository.getRetailersOrderWise(input);
-      EasyLoading.dismiss();
+      DateTime dateTime =
+          await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
+        return DateTime.now();
+      });
+      Map<String, dynamic> input = {"day": DateFormat("EEEE").format(dateTime)};
+      GetAllBeatsResponse response =
+          await repository.getBeatByOrderBookingDay(input);
       if (response.success) {
-        if (response.data!.isNotEmpty) {
-          getRoute(response.data!);
-        }
+        beats = response.data!;
+
+        await Future.forEach(beats, (BeatsModal bu) {
+          int i = beats.indexWhere((element) => element.id == bu.id);
+          if (i != -1) {
+            beats[i].selected = true;
+          }
+        });
+
+        beatsStreamController.add(beats);
       } else {
-        Utility.showToast(response.message);
+        beatsStreamController.addError(response.message);
       }
     } else {
-      Utility.showToast(Constants.internetAlert);
+      beatsStreamController.addError(StringConst.internetCheck);
     }
   }
 
@@ -207,7 +267,8 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
       String source = "";
 
       Position position = await MyLocation.getCurrentLocation();
-      source = position.latitude.toString() + "," + position.longitude.toString();
+      source =
+          position.latitude.toString() + "," + position.longitude.toString();
 
       String url = "";
 

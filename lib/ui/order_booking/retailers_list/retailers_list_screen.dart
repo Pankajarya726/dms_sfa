@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-
 import 'package:dms/listeners/select_beat_listener.dart';
 import 'package:dms/main.dart';
 import 'package:dms/ui/add_store/outlet_information/outlet_information.dart';
@@ -32,7 +31,8 @@ class RetailerListScreen extends StatefulWidget {
   _RetailerListScreenState createState() => _RetailerListScreenState();
 }
 
-class _RetailerListScreenState extends State<RetailerListScreen> with TickerProviderStateMixin {
+class _RetailerListScreenState extends State<RetailerListScreen>
+    with TickerProviderStateMixin {
   late TabController tabController;
   RetailersBloc retailersBloc = RetailersBloc();
   List<BeatsModal> beatList = [];
@@ -58,7 +58,10 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
         if (Navigator.canPop(context)) {
           Navigator.pop(context);
         } else {
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const DrawerScreen()), ModalRoute.withName("/"));
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => const DrawerScreen()),
+              ModalRoute.withName("/"));
         }
         return true;
       },
@@ -77,6 +80,7 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                       showModalBottomSheet(
                           context: context,
                           shape: bottomSheetShape,
+                          isScrollControlled: true,
                           builder: (context) {
                             return SortingRetailersBottomSheet(
                               selectedType: sortSelected,
@@ -104,6 +108,7 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                       showModalBottomSheet(
                           context: context,
                           shape: bottomSheetShape,
+                          isScrollControlled: true,
                           builder: (context) {
                             return RouteBottomSheet(day: selectedDay);
                           });
@@ -155,15 +160,23 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                       showModalBottomSheet(
                           context: context,
                           shape: bottomSheetShape,
+                          isScrollControlled: true,
                           builder: (context) {
                             return FilterRetailerBottomSheet(
                               beatList: beatList,
                               day: selectedDay,
                               type: selectedEnrollmentType,
-                              beat: selectedBeat!,
-                              onFilter: (String day, String enrollmentType, BeatsModal selectedBeat, List<BeatsModal> beats) {
+                              beat: selectedBeat != null
+                                  ? selectedBeat!
+                                  : BeatsModal(id: "", name: ""),
+                              onFilter: (String day,
+                                  String enrollmentType,
+                                  BeatsModal selectedBeat,
+                                  List<BeatsModal> beats) {
                                 log("filter--->${beats.toList()}");
-                                selectedDay = day.isEmpty ? DateFormat("EEEE").format(DateTime.now()) : day;
+                                selectedDay = day.isEmpty
+                                    ? DateFormat("EEEE").format(DateTime.now())
+                                    : day;
                                 selectedEnrollmentType = enrollmentType;
                                 this.selectedBeat = selectedBeat;
                                 if (beats.isNotEmpty) {
@@ -172,7 +185,8 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                                 }
 
                                 if (selectBeatListener != null) {
-                                  selectBeatListener!.onBeatSelect(selectedBeat, selectedDay, selectedEnrollmentType);
+                                  selectBeatListener!.onBeatSelect(selectedBeat,
+                                      selectedDay, selectedEnrollmentType);
                                 }
                               },
                             );
@@ -193,7 +207,9 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                     Navigator.pop(context);
                   } else {
                     Navigator.pushAndRemoveUntil(
-                        context, MaterialPageRoute(builder: (_) => const DrawerScreen()), ModalRoute.withName("/"));
+                        context,
+                        MaterialPageRoute(builder: (_) => const DrawerScreen()),
+                        ModalRoute.withName("/"));
                   }
                 },
                 icon: const Image(
@@ -203,33 +219,41 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
               ),
               titleSpacing: 0,
               bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(120),
+                preferredSize: const Size.fromHeight(100),
                 child: Column(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(15),
+                      padding: const EdgeInsets.fromLTRB(15, 0, 15, 8),
                       child: TextFormField(
                         style: const TextStyle(fontSize: 16),
                         readOnly: true,
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchRetailerScreen()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) =>
+                                      const SearchRetailerScreen()));
                         },
                         decoration: InputDecoration(
-                            hintText: "Search",
+                            hintText: StringConst.search,
                             hintStyle: const TextStyle(fontSize: 16),
                             contentPadding: const EdgeInsets.all(10),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5),
-                                gapPadding: 2,
-                                borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
-                            disabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5),
-                                gapPadding: 2,
-                                borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5),
+                              gapPadding: 2,
+                              borderSide: const BorderSide(
+                                width: 1,
+                                color: Color(0xFF6E6E6E),
+                              ),
+                            ),
                             focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5),
-                                gapPadding: 2,
-                                borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                              borderRadius: BorderRadius.circular(5),
+                              gapPadding: 2,
+                              borderSide: const BorderSide(
+                                width: 1,
+                                color: Color(0xFF6E6E6E),
+                              ),
+                            ),
                             prefixIcon: const Icon(
                               Icons.search,
                               color: Color(0xff555555),
@@ -241,11 +265,11 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                       color: const Color(0xffEDEDED),
                       child: TabBar(
                           controller: tabController,
-                          indicatorSize: TabBarIndicatorSize.tab,
+                          indicatorSize: TabBarIndicatorSize.label,
                           indicatorWeight: 3,
                           indicatorColor: MColor.colorPrimary,
-                          labelPadding: const EdgeInsets.symmetric(horizontal: 5),
-                          indicatorPadding: const EdgeInsets.symmetric(horizontal: 5),
+                          labelPadding:
+                              const EdgeInsets.symmetric(horizontal: 0),
                           onTap: (index) {
                             tabStream.add(index + 1);
                             // if (selectBeatListener != null) {
@@ -255,30 +279,54 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                           },
                           tabs: [
                             Tab(
-                              child: Text(
-                                "Not Connected",
-                                style: Theme.of(context).textTheme.bodyText1!.merge(TextStyle(
-                                    color: const Color(0xff303030).withOpacity(0.85),
-                                    letterSpacing: 0.5,
-                                    fontWeight: FontWeight.w600)),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Text(
+                                  StringConst.notConnected,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .merge(TextStyle(
+                                          color: const Color(0xff303030)
+                                              .withOpacity(0.85),
+                                          letterSpacing: 0.5,
+                                          fontWeight: FontWeight.w600)),
+                                ),
                               ),
                             ),
                             Tab(
-                              child: Text(
-                                "No Order",
-                                style: Theme.of(context).textTheme.bodyText2!.merge(TextStyle(
-                                    color: const Color(0xff303030).withOpacity(0.85),
-                                    letterSpacing: 0.5,
-                                    fontWeight: FontWeight.w600)),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Text(
+                                  StringConst.noOrder,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .merge(TextStyle(
+                                          color: const Color(0xff303030)
+                                              .withOpacity(0.85),
+                                          letterSpacing: 0.5,
+                                          fontWeight: FontWeight.w600)),
+                                ),
                               ),
                             ),
                             Tab(
-                              child: Text(
-                                "Order",
-                                style: Theme.of(context).textTheme.bodyText2!.merge(TextStyle(
-                                    color: const Color(0xff303030).withOpacity(0.85),
-                                    letterSpacing: 0.5,
-                                    fontWeight: FontWeight.w600)),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Text(
+                                  StringConst.order,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .merge(TextStyle(
+                                          color: const Color(0xff303030)
+                                              .withOpacity(0.85),
+                                          letterSpacing: 0.5,
+                                          fontWeight: FontWeight.w600)),
+                                ),
                               ),
                             ),
                           ]),
@@ -297,7 +345,7 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
 
                         log("filter--->${beats.toList()}");
                         return SizedBox(
-                          height: 70,
+                          height: 50,
                           width: MediaQuery.of(context).size.width,
                           child: BeatWidget(
                             tags: beats,
@@ -306,7 +354,8 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                               debugPrint("onBeatSelect-->${tag.name}");
                               selectedBeat = tag;
                               if (selectBeatListener != null) {
-                                selectBeatListener!.onBeatSelect(selectedBeat!, selectedDay, selectedEnrollmentType);
+                                selectBeatListener!.onBeatSelect(selectedBeat!,
+                                    selectedDay, selectedEnrollmentType);
                               }
                             },
                           ),
@@ -351,7 +400,9 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                   builder: (context, snap) {
                     if (snap.hasData) {
                       return RetailerTab(
-                        selectedBeat: selectedBeat == null ? BeatsModal(id: "", name: "All") : selectedBeat!,
+                        selectedBeat: selectedBeat == null
+                            ? BeatsModal(id: "", name: "All")
+                            : selectedBeat!,
                         index: snap.data!,
                         day: selectedDay,
                         onInit: (SelectBeatListener listener) {
@@ -404,11 +455,13 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
 
   getBeats() async {
     if (await Network.isConnected()) {
-      DateTime dateTime = await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
+      DateTime dateTime =
+          await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
         return DateTime.now();
       });
       Map<String, dynamic> input = {"day": DateFormat("EEEE").format(dateTime)};
-      GetAllBeatsResponse response = await repository.getBeatByOrderBookingDay(input);
+      GetAllBeatsResponse response =
+          await repository.getBeatByOrderBookingDay(input);
       if (response.success) {
         if (response.data!.length > 1) {
           beatList.add(BeatsModal(id: "", name: "All"));

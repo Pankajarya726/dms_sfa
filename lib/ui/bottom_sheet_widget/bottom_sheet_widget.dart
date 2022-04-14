@@ -17,7 +17,11 @@ class BottomSheetHeading extends StatelessWidget {
       child: Text(
         heading,
         style: const TextStyle(
-            color: MColor.colorPrimary, fontSize: 20, letterSpacing: 0.67),
+          color: MColor.colorPrimary,
+          fontSize: 20,
+          letterSpacing: 0.67,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
@@ -27,7 +31,8 @@ class DoneButton extends StatelessWidget {
   final Function() onPressed;
   final String title;
 
-  const DoneButton({Key? key, required this.onPressed, this.title = "Done"}) : super(key: key);
+  const DoneButton({Key? key, required this.onPressed, this.title = "Done"})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

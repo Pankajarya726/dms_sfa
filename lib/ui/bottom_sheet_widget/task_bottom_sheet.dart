@@ -1,5 +1,6 @@
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:intl/intl.dart';
@@ -23,34 +24,61 @@ class _TaskBottomSheetState extends State<TaskBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.4,
-      minChildSize: 0.4,
-      maxChildSize: 0.9,
-      expand: false,
-      builder: (BuildContext context, ScrollController scrollController) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const BottomSheetHeading("Task"),
-            Expanded(
-              child: ListView.builder(
-                  controller: scrollController,
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.80,
+        minHeight: MediaQuery.of(context).size.height * 0.20,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const BottomSheetHeading("Task"),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: List.generate(
+                  items.length,
+                  (index) {
                     return items[index];
-                  }),
-            ),
-            Center(
-              child: DoneButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+                  },
+                ),
               ),
             ),
-          ],
-        );
-      },
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: ButtonStyle(
+                fixedSize: MaterialStateProperty.all(const Size(160, 50)),
+                backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
+                elevation: MaterialStateProperty.all(0),
+                shape: MaterialStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+              ),
+              child: const Text(
+                StringConst.done,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          )
+        ],
+      ),
     );
   }
 
@@ -66,8 +94,11 @@ class _TaskBottomSheetState extends State<TaskBottomSheet> {
           minLines: 3,
           maxLines: 5,
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide.none),
           ),
         ),
       ),
@@ -89,7 +120,9 @@ class _TaskItemState extends State<TaskItem> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-      decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 0.5, color: Color(0xffC5C5C5)))),
+      decoration: const BoxDecoration(
+          border:
+              Border(bottom: BorderSide(width: 0.5, color: Color(0xffC5C5C5)))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -127,7 +160,8 @@ class _TaskItemState extends State<TaskItem> {
           const SizedBox(
             height: 5,
           ),
-          const Text("Lorem Ipsum is simply dummy text of the printing and typesetting. "),
+          const Text(
+              "Lorem Ipsum is simply dummy text of the printing and typesetting. "),
           Align(
             alignment: Alignment.bottomRight,
             child: Text(DateFormat("dd-MM-yyyy").format(DateTime.now())),

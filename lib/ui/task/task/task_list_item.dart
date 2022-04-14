@@ -1,13 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
+import 'package:dms/ui/task/task/model/get_retailers_task_response.dart';
 import 'package:dms/ui/task/task_details/task_detail_screen.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 
 class TaskListItems extends StatefulWidget {
   final int index;
-  final RetailersModal retailer;
+  final RetailersTaskModal retailer;
   final String beatId;
   final int orderStatus;
 
@@ -54,7 +55,7 @@ class _TaskListItemsState extends State<TaskListItems> {
               context,
               MaterialPageRoute(
                 builder: (_) => TaskDetailScreen(
-                  storeId: widget.retailer.userId,
+                  storeId: widget.retailer.retailerId,
                 ),
               ),
             );
@@ -94,7 +95,7 @@ class _TaskListItemsState extends State<TaskListItems> {
                           Flexible(
                             flex: 2,
                             child: Text(
-                              widget.retailer.outlatName,
+                              widget.retailer.outletName,
                               style: const TextStyle(
                                 color: Color(0XFF555555),
                                 letterSpacing: 0.67,
@@ -110,9 +111,13 @@ class _TaskListItemsState extends State<TaskListItems> {
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                       onPressed: () {
+                        if (widget.retailer.latitude.isEmpty ||
+                            widget.retailer.longitude.isEmpty) {
+                          Utility.showToast("Coordinates not found");
+                        }
                         MapsLauncher.launchCoordinates(
-                          double.parse(widget.retailer.lat),
-                          double.parse(widget.retailer.lng),
+                          double.parse(widget.retailer.latitude),
+                          double.parse(widget.retailer.longitude),
                         );
                       },
                       icon: const Image(
@@ -190,9 +195,9 @@ class _TaskListItemsState extends State<TaskListItems> {
                                         borderRadius:
                                             BorderRadius.circular(3.5),
                                       ),
-                                      child: const Text(
-                                        "5",
-                                        style: TextStyle(
+                                      child: Text(
+                                        widget.retailer.pendingTask,
+                                        style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 15,
                                         ),
@@ -206,9 +211,11 @@ class _TaskListItemsState extends State<TaskListItems> {
                                     alignment: Alignment.bottomRight,
                                     child: Image(
                                       image: AssetImage(
-                                        widget.retailer.enrollmentTypeId == "1"
-                                            ? "assets/key.png"
-                                            : "assets/hit.png",
+                                        widget.retailer.taskType == "HIT"
+                                            ? "assets/hit.png"
+                                            : widget.retailer.taskType == "ST"
+                                                ? "assets/special.png"
+                                                : "assets/key.png",
                                       ),
                                     ),
                                   ),

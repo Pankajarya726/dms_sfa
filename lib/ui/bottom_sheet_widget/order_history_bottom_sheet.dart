@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 
 class OrderHistoryBottomSheet extends StatefulWidget {
   final List<Product> product;
-  const OrderHistoryBottomSheet({Key? key, required this.product}) : super(key: key);
+  const OrderHistoryBottomSheet({Key? key, required this.product})
+      : super(key: key);
 
   @override
-  _OrderHistoryBottomSheetState createState() => _OrderHistoryBottomSheetState();
+  _OrderHistoryBottomSheetState createState() =>
+      _OrderHistoryBottomSheetState();
 }
 
 class _OrderHistoryBottomSheetState extends State<OrderHistoryBottomSheet> {
@@ -23,24 +25,29 @@ class _OrderHistoryBottomSheetState extends State<OrderHistoryBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-      expand: false,
-      initialChildSize: 0.6,
-      maxChildSize: 1,
-      minChildSize: 0.6,
-      builder: (BuildContext context, ScrollController scrollController) {
-        return widget.product.isNotEmpty
-            ? ListView.builder(
-                controller: scrollController,
-                itemCount: itemList.length,
-                itemBuilder: (context, index) {
-                  return itemList[index];
-                },
-              )
-            : const Center(
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.80,
+        minHeight: MediaQuery.of(context).size.height * 0.20,
+      ),
+      child: widget.product.isNotEmpty
+          ? SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: List.generate(
+                  itemList.length,
+                  (index) {
+                    return itemList[index];
+                  },
+                ),
+              ),
+            )
+          : const IntrinsicHeight(
+              child: Center(
                 child: Text("Products not found!"),
-              );
-      },
+              ),
+            ),
     );
   }
 
@@ -48,9 +55,12 @@ class _OrderHistoryBottomSheetState extends State<OrderHistoryBottomSheet> {
     itemList.add(heading);
     for (int i = 0; i < widget.product.length; i++) {
       OrderHistory history = OrderHistory(
-        name: widget.product[i].categoryName + " " + widget.product[i].variantName,
+        name: widget.product[i].categoryName +
+            " " +
+            widget.product[i].variantName,
         quantity: widget.product[i].qtyPkg + " | " + widget.product[i].qtyMoq,
-        price: currencyFormat.format(double.parse(widget.product[i].totalAmount)),
+        price:
+            currencyFormat.format(double.parse(widget.product[i].totalAmount)),
       );
 
       itemList.add(
@@ -98,7 +108,8 @@ class OrderHistoryWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Color(0xffC5C5C5), width: 0.5)),
+        border:
+            Border(bottom: BorderSide(color: Color(0xffC5C5C5), width: 0.5)),
       ),
       padding: const EdgeInsets.fromLTRB(15, 15, 15, 10),
       child: Column(

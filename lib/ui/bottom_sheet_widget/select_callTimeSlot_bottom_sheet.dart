@@ -47,121 +47,135 @@ class _SelectCallTimeSlotBottomSheetState
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 5),
-      width: MediaQuery.of(context).size.width,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(25),
-          topLeft: Radius.circular(25),
-        ),
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.80,
+        minHeight: MediaQuery.of(context).size.height * 0.20,
       ),
-      child: StreamBuilder<List<CallTimeSlotModel>>(
-          stream: callTimeSlotStream.stream,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (failureMessage == StringConst.internetCheck) {
-              return Center(
-                child: Text(failureMessage),
-              );
-            }
-            if (snapshot.data!.isEmpty) {
-              return Center(
-                child: Text(failureMessage),
-              );
-            }
-            if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    StringConst.callTimeSlot,
-                    style: TextStyle(
-                      fontSize: 19,
-                      color: MColor.colorPrimary,
-                      letterSpacing: 0.67,
-                      fontWeight: FontWeight.bold,
-                    ),
+      child: Container(
+        margin: const EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 5),
+        width: MediaQuery.of(context).size.width,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(25),
+            topLeft: Radius.circular(25),
+          ),
+        ),
+        child: StreamBuilder<List<CallTimeSlotModel>>(
+            stream: callTimeSlotStream.stream,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const IntrinsicHeight(
+                  child: Center(
+                    child: CircularProgressIndicator(),
                   ),
-                  const SizedBox(
-                    height: 10,
+                );
+              }
+              if (failureMessage == StringConst.internetCheck) {
+                return IntrinsicHeight(
+                  child: Center(
+                    child: Text(failureMessage),
                   ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: List.generate(snapshot.data!.length, (index) {
-                          time = snapshot.data![index].from +
-                              " to " +
-                              snapshot.data![index].to;
-                          return RadioListTile<int>(
-                            contentPadding: const EdgeInsets.all(0),
-                            value: snapshot.data![index].id,
-                            groupValue: groupValue,
-                            title: Text(
-                              time,
-                              style: const TextStyle(
-                                fontSize: 17.0,
-                                color: MColor.backButton,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            onChanged: (value) {
-                              groupValue = value!;
-                              callTimeSlotStream.add(snapshot.data!);
-                            },
-                          );
-                        }),
+                );
+              }
+              if (snapshot.data!.isEmpty) {
+                return IntrinsicHeight(
+                  child: Center(
+                    child: Text(failureMessage),
+                  ),
+                );
+              }
+              if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      StringConst.callTimeSlot,
+                      style: TextStyle(
+                        fontSize: 19,
+                        color: MColor.colorPrimary,
+                        letterSpacing: 0.67,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (groupValue != -1) {
-                          callTimeSlotModel = callTimeSlotList.singleWhere(
-                              (element) => element.id == groupValue);
-                          widget.onCallTimeSlotSelect(callTimeSlotModel);
-                        }
-                        Navigator.pop(context);
-                      },
-                      style: ButtonStyle(
-                        fixedSize:
-                            MaterialStateProperty.all(const Size(180, 55)),
-                        backgroundColor:
-                            MaterialStateProperty.all(MColor.colorPrimary),
-                        elevation: MaterialStateProperty.all(0),
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Flexible(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children:
+                              List.generate(snapshot.data!.length, (index) {
+                            time = snapshot.data![index].from +
+                                " to " +
+                                snapshot.data![index].to;
+                            return RadioListTile<int>(
+                              contentPadding: const EdgeInsets.all(0),
+                              value: snapshot.data![index].id,
+                              groupValue: groupValue,
+                              title: Text(
+                                time,
+                                style: const TextStyle(
+                                  fontSize: 17.0,
+                                  color: MColor.backButton,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              onChanged: (value) {
+                                groupValue = value!;
+                                callTimeSlotStream.add(snapshot.data!);
+                              },
+                            );
+                          }),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (groupValue != -1) {
+                            callTimeSlotModel = callTimeSlotList.singleWhere(
+                                (element) => element.id == groupValue);
+                            widget.onCallTimeSlotSelect(callTimeSlotModel);
+                          }
+                          Navigator.pop(context);
+                        },
+                        style: ButtonStyle(
+                          fixedSize:
+                              MaterialStateProperty.all(const Size(180, 55)),
+                          backgroundColor:
+                              MaterialStateProperty.all(MColor.colorPrimary),
+                          elevation: MaterialStateProperty.all(0),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                        ),
+                        child: const Text(
+                          StringConst.done,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                      child: const Text(
-                        StringConst.done,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                ],
-              );
-            }
-            return Container();
-          }),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                  ],
+                );
+              }
+              return Container();
+            }),
+      ),
     );
   }
 

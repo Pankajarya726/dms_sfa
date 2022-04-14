@@ -11,6 +11,8 @@ class StringConst {
   static const viewCaps = "VIEW";
   static const escalateCaps = "ESCALATE";
   static const doneCaps = "DONE";
+  static const orderCaps = "ORDER";
+  static const noOrderCaps = "NO ORDER";
   static const retailers = "Retailers";
   static const retailer = "Retailer";
   static const login = "Login";
@@ -62,7 +64,8 @@ class StringConst {
   static const orderBookingDay = "Order Booking Day";
   static const orderBooking = "Order Booking";
   static const outletName = "Outlet Name *";
-  static const ownerName = "Owner Name *";
+  static const ownerNameMand = "Owner Name *";
+  static const ownerName = "Owner Name";
   static const latitude = "Latitude";
   static const longitude = "Longitude";
   static const address = "Address";
@@ -100,7 +103,8 @@ class StringConst {
   static const done = "Done";
   static const selectLangFirst = "Select Language ";
   static const selectLangSecond = "Select Language ";
-  static const whatsAppSms = "Does retailer want to opt-in for Whatsapp message / SMS? *";
+  static const whatsAppSms =
+      "Does retailer want to opt-in for Whatsapp message / SMS? *";
   static const filter = "Filter";
   static const productInformation = "Product Info";
   static const schemeInfo = "Scheme Info";
@@ -146,4 +150,17 @@ class StringConst {
   static const hit = "Hit";
   static const special = "Special";
   static const key = "Key";
+  static const notConnected = "Not Connected";
+  static const noOrder = "No Order";
+  static const order = "Order";
+  static const lastVisit = "Last Visit";
+  static const tcStatus = "TC Status";
+  static const potential = "Potential";
+  static const storeInfo = "Store Info";
+  static const callingDay = "Calling Day";
+  static const primaryNo = "Primary No.";
+  static const secondaryNo = "Secondary No.";
+  static const orderHistory = "Order History";
+  static const noOrdersTaken = "No orders taken yet!";
+  static const buNotOrdered = "BU not ordered yet";
 }

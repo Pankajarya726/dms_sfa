@@ -25,7 +25,7 @@ class TaskDetailsBloc extends Bloc<TaskDetailEvents, TaskDetailStates> {
       RetailersDetailsResponse response =
           await repository.getRetailerInfo(input);
       if (response.success) {
-        yield GetTaskDetailState(retailer: response.data!.first);
+        yield GetTaskDetailState(retailer: response.data.first);
       } else {
         yield TaskDetailFailureState(failureMessage: response.message);
       }

@@ -121,23 +121,23 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         padding: const EdgeInsets.only(
                             left: 15, right: 15, bottom: 10, top: 5),
                         child: Container(
-                          padding: retailer!.orderHistory!.isNotEmpty
+                          padding: retailer!.orderHistory.isNotEmpty
                               ? const EdgeInsets.fromLTRB(5, 10, 5, 0)
                               : const EdgeInsets.fromLTRB(5, 5, 5, 5),
                           decoration: const BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color.fromRGBO(237, 237, 237, 0.25),
-                                  blurRadius: 10,
-                                )
-                              ]),
-                          child: retailer!.orderHistory!.isNotEmpty
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color.fromRGBO(237, 237, 237, 0.25),
+                                blurRadius: 10,
+                              )
+                            ],
+                          ),
+                          child: retailer!.orderHistory.isNotEmpty
                               ? Column(
                                   children: List.generate(
-                                    retailer!.orderHistory!.length,
+                                    retailer!.orderHistory.length,
                                     (index) => Material(
                                       color: Colors.white,
                                       child: InkWell(
@@ -160,8 +160,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                           margin: const EdgeInsets.symmetric(
                                               vertical: 5, horizontal: 5),
                                           decoration: retailer!
-                                                      .orderHistory![index] !=
-                                                  retailer!.orderHistory!.last
+                                                      .orderHistory[index] !=
+                                                  retailer!.orderHistory.last
                                               ? const BoxDecoration(
                                                   border: Border(
                                                     bottom: BorderSide(
@@ -649,9 +649,10 @@ class _TaskDetailItemState extends State<TaskDetailItem> {
               Text(
                 widget.name,
                 style: const TextStyle(
-                    color: Color(0xff303030),
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold),
+                  color: Color(0xff303030),
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(
                 height: 5,
