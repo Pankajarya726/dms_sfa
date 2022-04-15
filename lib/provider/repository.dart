@@ -43,6 +43,8 @@ import 'package:dms/ui/start_my_day/model/quotes_and_images_response.dart';
 import 'package:dms/ui/start_my_day/model/start_my_day_response.dart.dart';
 import 'package:dms/ui/task/task/model/get_retailers_task_response.dart';
 import 'package:dms/ui/task/task_details/model/retailer_details_response.dart';
+import 'package:dms/ui/task/task_details/model/task_escalate_response.dart';
+import 'package:dms/ui/task/task_history/model/task_history_respone.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
@@ -1270,6 +1272,73 @@ class ApiRepository {
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return GetPendingTaskResponse(
+        success: false,
+        message: "",
+      );
+    }
+  }
+
+  Future<GetRetailersTaskResponse> searchTaskRetailers(
+      Map<String, dynamic> input) async {
+    try {
+      Response response = await dio.post(Url.searchTaskRetailers, data: input);
+      GetRetailersTaskResponse baseResponse =
+          GetRetailersTaskResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = StringConst.somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return GetRetailersTaskResponse(
+        success: false,
+        message: "",
+      );
+    }
+  }
+
+  Future<TaskEscalateResponse> taskEscalate(Map<String, dynamic> input) async {
+    try {
+      Response response = await dio.post(Url.taskEscalate, data: input);
+      TaskEscalateResponse baseResponse =
+          TaskEscalateResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = StringConst.somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return TaskEscalateResponse(
+        success: false,
+        message: "",
+      );
+    }
+  }
+
+  Future<TaskHistoryResponse> getTaskHistory(Map<String, dynamic> input) async {
+    try {
+      Response response = await dio.post(Url.getTaskHistory, data: input);
+      TaskHistoryResponse baseResponse =
+          TaskHistoryResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = StringConst.somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return TaskHistoryResponse(
         success: false,
         message: "",
       );

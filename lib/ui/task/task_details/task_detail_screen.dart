@@ -31,6 +31,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   TextEditingController txtRemark = TextEditingController();
   List<PendingTaskModal> pendingTaskList = [];
   DateTime? currentDate;
+  TaskDetailsBloc taskDetailsBloc = TaskDetailsBloc();
 
   @override
   void initState() {
@@ -40,97 +41,83 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var dateWidget = BlocProvider(
-      create: (context) => CommonBloc(),
-      child: BlocBuilder<CommonBloc, CommonBlocStates>(
-        builder: (context, state) {
-          if (state is CommonBlocCurrentDateState) {
-            currentDate = state.currentDate;
-          }
-          return Container();
-        },
-      ),
-    );
-
     return Scaffold(
       appBar: _appBar(AppBar().preferredSize.height),
       backgroundColor: const Color(0xffF7F7F7),
-      body: CustomScrollView(
-        slivers: [
-          SliverGrid(
-            delegate: SliverChildListDelegate(
-              [
-                DetailGritItem(
-                  value: widget.modal.lastOrder.isNotEmpty
-                      ? widget.modal.lastOrder
-                      : "",
-                  image: "assets/last_order.png",
-                  name: StringConst.lastOrder,
-                  type: 1,
-                ),
-                DetailGritItem(
-                  value:
-                      widget.modal.lastEscalation.first.reassignDate.isNotEmpty
-                          ? widget.modal.lastEscalation.first.reassignDate
-                          : "",
-                  image: "assets/escalation.png",
-                  name: StringConst.lastEscalation,
-                  type: 2,
-                  lastEscalation: widget.modal.lastEscalation.isNotEmpty
-                      ? widget.modal.lastEscalation.first
-                      : null,
-                ),
-                DetailGritItem(
-                  value: widget.modal.pendingTask.isNotEmpty
-                      ? widget.modal.pendingTask
-                      : "",
-                  image: "assets/pending_task.png",
-                  name: StringConst.pendingTask,
-                  type: 3,
-                ),
-                DetailGritItem(
-                  value: widget.modal.taskHistory.isNotEmpty
-                      ? widget.modal.taskHistory
-                      : "",
-                  image: "assets/task_history.png",
-                  name: StringConst.taskHistory,
-                  type: 4,
-                ),
-              ],
+      body: BlocProvider(
+        create: (context) => taskDetailsBloc,
+        child: CustomScrollView(
+          slivers: [
+            SliverGrid(
+              delegate: SliverChildListDelegate(
+                [
+                  DetailGritItem(
+                    value: widget.modal.lastOrder.isNotEmpty
+                        ? widget.modal.lastOrder
+                        : "",
+                    image: "assets/last_order.png",
+                    name: StringConst.lastOrder,
+                    type: 1,
+                  ),
+                  DetailGritItem(
+                    value: widget
+                            .modal.lastEscalation.first.reassignDate.isNotEmpty
+                        ? widget.modal.lastEscalation.first.reassignDate
+                        : "",
+                    image: "assets/escalation.png",
+                    name: StringConst.lastEscalation,
+                    type: 2,
+                    lastEscalation: widget.modal.lastEscalation.isNotEmpty
+                        ? widget.modal.lastEscalation.first
+                        : null,
+                  ),
+                  DetailGritItem(
+                    value: widget.modal.pendingTask.isNotEmpty
+                        ? widget.modal.pendingTask
+                        : "",
+                    image: "assets/pending_task.png",
+                    name: StringConst.pendingTask,
+                    type: 3,
+                  ),
+                  DetailGritItem(
+                    value: widget.modal.taskHistory.isNotEmpty
+                        ? widget.modal.taskHistory
+                        : "",
+                    image: "assets/task_history.png",
+                    name: StringConst.taskHistory,
+                    type: 4,
+                  ),
+                ],
+              ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 2.6,
+                mainAxisSpacing: 15,
+                crossAxisSpacing: 0,
+              ),
             ),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 2.6,
-              mainAxisSpacing: 15,
-              crossAxisSpacing: 0,
-            ),
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                dateWidget,
-                const Padding(
-                  padding:
-                      EdgeInsets.only(left: 15, right: 10, bottom: 5, top: 15),
-                  child: Text(
-                    StringConst.pendingTask,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 17,
-                      color: Color(0xff000000),
-                      letterSpacing: 0.67,
+            SliverList(
+              delegate: SliverChildListDelegate(
+                [
+                  const Padding(
+                    padding: EdgeInsets.only(
+                        left: 15, right: 10, bottom: 5, top: 15),
+                    child: Text(
+                      StringConst.pendingTask,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                        color: Color(0xff000000),
+                        letterSpacing: 0.67,
+                      ),
                     ),
                   ),
-                ),
-                BlocProvider(
-                  create: (context) => TaskDetailsBloc(),
-                  child: BlocBuilder<TaskDetailsBloc, TaskDetailStates>(
+                  BlocBuilder<TaskDetailsBloc, TaskDetailStates>(
                     builder: (context, state) {
                       if (state is TaskDetailInitialState) {
-                        BlocProvider.of<TaskDetailsBloc>(context).add(
-                            GetPendingTaskEvent(
-                                retailerId: widget.modal.retailerId,
-                                beatId: widget.modal.beatId));
+                        taskDetailsBloc.add(GetPendingTaskEvent(
+                            retailerId: widget.modal.retailerId,
+                            beatId: widget.modal.beatId));
                       }
 
                       if (state is TaskDetailLodingState) {
@@ -144,8 +131,24 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                       }
 
                       if (state is TaskDetailFailureState) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                              left: 15, right: 15, bottom: 10, top: 5),
+                          child: Container(
+                            padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color.fromRGBO(237, 237, 237, 0.25),
+                                  blurRadius: 10,
+                                )
+                              ],
+                            ),
+                            child: const Text(StringConst.taskNotFound),
+                          ),
                         );
                       }
 
@@ -175,7 +178,21 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                   children: List.generate(
                                     pendingTaskList.length,
                                     (index) {
+                                      String days = "";
                                       String daysPending = "";
+                                      if (pendingTaskList[index]
+                                          .taskDate
+                                          .isNotEmpty) {
+                                        DateTime enrolledDate = DateTime.parse(
+                                            pendingTaskList[index].taskDate);
+                                        days = currentDate!
+                                            .difference(enrolledDate)
+                                            .inDays
+                                            .toString();
+                                        daysPending =
+                                            days.toString() + " days pending";
+                                      }
+
                                       return Material(
                                         color: Colors.white,
                                         child: InkWell(
@@ -190,9 +207,28 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                                 context: context,
                                                 shape: bottomSheetShape,
                                                 isScrollControlled: true,
-                                                builder: (context) => index == 0
-                                                    ? const TaskDetailsBottomSheet()
-                                                    : const EscalatedBottomSheet());
+                                                builder: (context) =>
+                                                    pendingTaskList[index]
+                                                            .escalationTo
+                                                            .isEmpty
+                                                        ? TaskDetailsBottomSheet(
+                                                            pendingTaskModal:
+                                                                pendingTaskList[
+                                                                    index],
+                                                            elapseDays: days,
+                                                            retailerId: widget
+                                                                .modal
+                                                                .retailerId,
+                                                          )
+                                                        : EscalatedBottomSheet(
+                                                            pendingTaskModal:
+                                                                pendingTaskList[
+                                                                    index],
+                                                            retailerId: widget
+                                                                .modal
+                                                                .retailerId,
+                                                            elapseDays: days,
+                                                          ));
                                           },
                                           child: Container(
                                             margin: const EdgeInsets.symmetric(
@@ -291,19 +327,19 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                                 Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.start,
-                                                  children: const [
-                                                    Image(
+                                                  children: [
+                                                    const Image(
                                                       image: AssetImage(
                                                         "assets/time.png",
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       width: 5,
                                                     ),
                                                     Flexible(
                                                       child: Text(
-                                                        "5 days pending",
-                                                        style: TextStyle(
+                                                        daysPending,
+                                                        style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.normal,
                                                           color:
@@ -333,11 +369,11 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                       );
                     },
                   ),
-                ),
-              ],
-            ),
-          )
-        ],
+                ],
+              ),
+            )
+          ],
+        ),
       ),
       bottomNavigationBar: Row(
         children: [

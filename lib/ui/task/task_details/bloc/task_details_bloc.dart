@@ -3,6 +3,7 @@ import 'package:dms/main.dart';
 import 'package:dms/ui/task/task_details/bloc/task_details_events.dart';
 import 'package:dms/ui/task/task_details/bloc/task_details_states.dart';
 import 'package:dms/ui/task/task_details/model/retailer_details_response.dart';
+import 'package:dms/ui/task/task_details/model/task_escalate_response.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,6 +17,10 @@ class TaskDetailsBloc extends Bloc<TaskDetailEvents, TaskDetailStates> {
     if (event is GetPendingTaskEvent) {
       yield TaskDetailLodingState();
       yield* getPendingTask(event);
+    }
+    if (event is EscalateTaskEvent) {
+      yield EscalateTaskLodingState();
+      yield* escalateTask(event);
     }
   }
 
@@ -37,6 +42,20 @@ class TaskDetailsBloc extends Bloc<TaskDetailEvents, TaskDetailStates> {
       }
     } else {
       yield TaskDetailFailureState(failureMessage: StringConst.internetCheck);
+    }
+  }
+
+  Stream<TaskDetailStates> escalateTask(EscalateTaskEvent event) async* {
+    if (await Network.isConnected()) {
+      TaskEscalateResponse response =
+          await repository.taskEscalate(event.input);
+      if (response.success) {
+        yield EscalateTaskState(responseMessage: response.message);
+      } else {
+        yield EscalateTaskFailureState(failureMessage: response.message);
+      }
+    } else {
+      yield EscalateTaskFailureState(failureMessage: StringConst.internetCheck);
     }
   }
 }

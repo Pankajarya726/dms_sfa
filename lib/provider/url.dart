@@ -51,4 +51,7 @@ class Url {
   static const String noOrderYet = "getNoOrderYet";
   static const String getRetailersTaskWise = "getRetailerTaskWise";
   static const String getPendingTask = "getPendingTask";
+  static const String searchTaskRetailers = "searchRetailerInTask";
+  static const String taskEscalate = "taskEscalateAndResolve";
+  static const String getTaskHistory = "getTaskHistory";
 }

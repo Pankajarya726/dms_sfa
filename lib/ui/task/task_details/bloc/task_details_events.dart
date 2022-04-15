@@ -15,3 +15,10 @@ class GetPendingTaskEvent extends TaskDetailEvents {
   @override
   List<Object> get props => [retailerId, beatId];
 }
+
+class EscalateTaskEvent extends TaskDetailEvents {
+  final Map<String, dynamic> input;
+  EscalateTaskEvent({required this.input});
+  @override
+  List<Object> get props => [input];
+}
