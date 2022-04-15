@@ -90,6 +90,7 @@ class _OutletInformationState extends State<OutletInformation> {
   GlobalKey globalKeyGST = GlobalKey();
   GlobalKey globalKeyAddress = GlobalKey();
   List<OrderBookingDayModal> orderBookingDayList = [];
+  String cityName = "";
 
   @override
   Widget build(BuildContext context) {
@@ -287,6 +288,7 @@ class _OutletInformationState extends State<OutletInformation> {
                               state.longitude.toString();
                           txtAddressController.text = state.currentAddress;
                           txtPincodeController.text = state.pincode;
+                          cityName = state.locality;
                         }
                       }
 
@@ -575,6 +577,7 @@ class _OutletInformationState extends State<OutletInformation> {
               debugPrint("edit store address ${txtAddressController.text}");
               debugPrint("edit store landmark ${txtLandmarkController.text}");
               debugPrint("edit store pincode ${txtPincodeController.text}");
+              debugPrint("cityName $cityName");
 
               if (existingRetailerRadio == 1) {
                 debugPrint("edit store existingRetailer 1");
@@ -604,6 +607,7 @@ class _OutletInformationState extends State<OutletInformation> {
               form.address = txtAddressController.text.trim();
               form.pinCode = txtPincodeController.text.trim();
               form.landmark = txtLandmarkController.text.trim();
+              form.cityName = cityName;
               form.isExistingRetailer = existingRetailerRadio == 1 ? "1" : "0";
               form.retailerTypeId = retailerTypeId ?? "";
               form.retailerCategoryId = retailerCategoryId ?? "";

@@ -1,4 +1,5 @@
 import 'package:dms/ui/order_booking/retailer_detail/model/retailer_details_response.dart';
+import 'package:dms/ui/task/task_details/model/retailer_details_response.dart';
 import 'package:equatable/equatable.dart';
 
 class TaskDetailStates extends Equatable {
@@ -17,9 +18,13 @@ class TaskDetailFailureState extends TaskDetailStates {
   List<Object> get props => [failureMessage];
 }
 
-class GetTaskDetailState extends TaskDetailStates {
-  final RetailerDetailsModal retailer;
-  GetTaskDetailState({required this.retailer});
+class GetPendingTaskState extends TaskDetailStates {
+  final List<PendingTaskModal> pendingTask;
+  final DateTime currentDate;
+  GetPendingTaskState({
+    required this.pendingTask,
+    required this.currentDate,
+  });
   @override
-  List<Object> get props => [retailer];
+  List<Object> get props => [pendingTask, currentDate];
 }

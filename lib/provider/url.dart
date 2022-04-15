@@ -50,4 +50,5 @@ class Url {
   static const String getOrder = "getOrderForEdit";
   static const String noOrderYet = "getNoOrderYet";
   static const String getRetailersTaskWise = "getRetailerTaskWise";
+  static const String getPendingTask = "getPendingTask";
 }

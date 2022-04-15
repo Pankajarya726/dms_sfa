@@ -14,14 +14,17 @@ class GetUserLocationState extends UserLocationStates {
   final double latitude;
   final double longitude;
   final String pincode;
+  final String locality;
   GetUserLocationState({
     required this.currentAddress,
     required this.latitude,
     required this.longitude,
     required this.pincode,
+    required this.locality,
   });
   @override
-  List<Object> get props => [currentAddress, latitude, longitude, pincode];
+  List<Object> get props =>
+      [currentAddress, latitude, longitude, pincode, locality];
 }
 
 class UserLocationFailureState extends UserLocationStates {

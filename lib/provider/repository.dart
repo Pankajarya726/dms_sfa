@@ -42,6 +42,7 @@ import 'package:dms/ui/start_my_day/model/end_my_day_response.dart';
 import 'package:dms/ui/start_my_day/model/quotes_and_images_response.dart';
 import 'package:dms/ui/start_my_day/model/start_my_day_response.dart.dart';
 import 'package:dms/ui/task/task/model/get_retailers_task_response.dart';
+import 'package:dms/ui/task/task_details/model/retailer_details_response.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
@@ -1246,6 +1247,29 @@ class ApiRepository {
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return GetRetailersTaskResponse(
+        success: false,
+        message: "",
+      );
+    }
+  }
+
+  Future<GetPendingTaskResponse> getPendingTask(
+      Map<String, dynamic> input) async {
+    try {
+      Response response = await dio.post(Url.getPendingTask, data: input);
+      GetPendingTaskResponse baseResponse =
+          GetPendingTaskResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = StringConst.somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return GetPendingTaskResponse(
         success: false,
         message: "",
       );

@@ -20,6 +20,7 @@ class RetailerForm {
   String address = "";
   String pinCode = "";
   String landmark = "";
+  String cityName = "";
   String isExistingRetailer = "0";
   String retailerType = "";
   String retailerTypeId = "";
@@ -81,6 +82,7 @@ class RetailerForm {
         "address": address,
         "landmark": landmark,
         "pincode": pinCode,
+        "city_name": cityName,
         "is_kro": isKro,
         "gst_no": gstNo,
         "is_existing_retailer": isExistingRetailer,

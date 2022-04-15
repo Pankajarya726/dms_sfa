@@ -69,3 +69,8 @@ class CommonBlocAnniversaryEvent extends CommonBlocEvents {
   @override
   List<Object> get props => [dateTime];
 }
+
+class CommonBlocCurrentDateEvent extends CommonBlocEvents {
+  @override
+  List<Object> get props => [];
+}
