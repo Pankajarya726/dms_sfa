@@ -1,21 +1,49 @@
+import 'dart:collection';
+import 'package:dms/ui/task/task_details/bloc/task_details_bloc.dart';
+import 'package:dms/ui/task/task_details/bloc/task_details_states.dart';
+import 'package:dms/ui/task/task_details/model/retailer_details_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 
 class TaskDetailsBottomSheet extends StatefulWidget {
-  const TaskDetailsBottomSheet({Key? key}) : super(key: key);
+  final PendingTaskModal pendingTaskModal;
+  final String elapseDays;
+  final String retailerId;
+  const TaskDetailsBottomSheet({
+    Key? key,
+    required this.pendingTaskModal,
+    required this.elapseDays,
+    required this.retailerId,
+  }) : super(key: key);
 
   @override
   _TaskDetailsBottomSheetState createState() => _TaskDetailsBottomSheetState();
 }
 
 class _TaskDetailsBottomSheetState extends State<TaskDetailsBottomSheet> {
-  List<String> beatNames = [
-    "Yellow diamond",
-    "Tiny tush",
-  ];
   TextEditingController txtRemarkController = TextEditingController();
+  PendingTaskModal pendingTaskModal = PendingTaskModal(
+      id: "",
+      taskCode: "",
+      taskDate: "",
+      taskType: "",
+      escalationTag: "",
+      escalationRemark: "",
+      taskRemark: "",
+      elapseDays: "",
+      escalationTo: [],
+      buId: []);
+  TaskDetailsBloc taskDetailsBloc = TaskDetailsBloc();
+
+  @override
+  void initState() {
+    pendingTaskModal = widget.pendingTaskModal;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,12 +74,12 @@ class _TaskDetailsBottomSheetState extends State<TaskDetailsBottomSheet> {
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
+                  children: [
                     Flexible(
                       flex: 4,
                       child: Text(
-                        "7a639147rt9835",
-                        style: TextStyle(
+                        pendingTaskModal.taskCode,
+                        style: const TextStyle(
                           color: Color(0xff555555),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -60,8 +88,8 @@ class _TaskDetailsBottomSheetState extends State<TaskDetailsBottomSheet> {
                     Flexible(
                       flex: 2,
                       child: Text(
-                        "10-03-2022",
-                        style: TextStyle(
+                        pendingTaskModal.taskDate,
+                        style: const TextStyle(
                           color: Color(0xff777777),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -72,9 +100,9 @@ class _TaskDetailsBottomSheetState extends State<TaskDetailsBottomSheet> {
                 const SizedBox(
                   height: 15,
                 ),
-                const Text(
-                  "Full delivery failure",
-                  style: TextStyle(
+                Text(
+                  pendingTaskModal.escalationTag,
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Color(0xff272727),
                     letterSpacing: 0.67,
@@ -86,7 +114,7 @@ class _TaskDetailsBottomSheetState extends State<TaskDetailsBottomSheet> {
                 ),
                 Tags(
                   direction: Axis.horizontal,
-                  itemCount: beatNames.length,
+                  itemCount: pendingTaskModal.buId.length,
                   horizontalScroll: false,
                   alignment: WrapAlignment.start,
                   spacing: 10,
@@ -110,7 +138,7 @@ class _TaskDetailsBottomSheetState extends State<TaskDetailsBottomSheet> {
                         color: const Color(0xffE7E7E7),
                       ),
                       color: const Color(0xffE7E7E7),
-                      title: beatNames[index],
+                      title: pendingTaskModal.buId[index].buName,
                     );
                   },
                 ),
@@ -129,9 +157,9 @@ class _TaskDetailsBottomSheetState extends State<TaskDetailsBottomSheet> {
                 const SizedBox(
                   height: 8,
                 ),
-                const Text(
-                  StringConst.loremIpsum,
-                  style: TextStyle(
+                Text(
+                  pendingTaskModal.taskRemark,
+                  style: const TextStyle(
                     color: Color(0xff555555),
                     fontSize: 16,
                   ),
@@ -151,9 +179,9 @@ class _TaskDetailsBottomSheetState extends State<TaskDetailsBottomSheet> {
                 const SizedBox(
                   height: 8,
                 ),
-                const Text(
-                  StringConst.loremIpsum,
-                  style: TextStyle(
+                Text(
+                  pendingTaskModal.escalationRemark,
+                  style: const TextStyle(
                     color: Color(0xff555555),
                     fontSize: 16,
                   ),
@@ -162,9 +190,9 @@ class _TaskDetailsBottomSheetState extends State<TaskDetailsBottomSheet> {
                   height: 15,
                 ),
                 RichText(
-                  text: const TextSpan(
+                  text: TextSpan(
                     text: StringConst.taskElapseDays,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Color(0xff272727),
                       letterSpacing: 0.67,
@@ -172,8 +200,8 @@ class _TaskDetailsBottomSheetState extends State<TaskDetailsBottomSheet> {
                     ),
                     children: <TextSpan>[
                       TextSpan(
-                        text: "25",
-                        style: TextStyle(
+                        text: widget.elapseDays,
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: MColor.colorPrimary,
                           letterSpacing: 0.67,
@@ -203,28 +231,51 @@ class _TaskDetailsBottomSheetState extends State<TaskDetailsBottomSheet> {
                 const SizedBox(
                   height: 25,
                 ),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
+                BlocProvider(
+                  create: (context) => taskDetailsBloc,
+                  child: BlocListener<TaskDetailsBloc, TaskDetailStates>(
+                    listener: (context, state) {
+                      if (state is EscalateTaskState) {
+                        Utility.showToast(state.responseMessage);
+                        Navigator.pop(context);
+                      }
+                      if (state is EscalateTaskFailureState) {
+                        Utility.showToast(state.failureMessage);
+                      }
                     },
-                    style: ButtonStyle(
-                      fixedSize: MaterialStateProperty.all(const Size(160, 50)),
-                      backgroundColor:
-                          MaterialStateProperty.all(MColor.colorPrimary),
-                      elevation: MaterialStateProperty.all(0),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                    child: Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Map<String, dynamic> input =
+                              HashMap<String, dynamic>();
+                          input["status"] = "2";
+                          input["task_id"] = pendingTaskModal.id;
+                          input["retailer_id"] = widget.retailerId;
+                          input["escalate_user_id"] = "";
+                          input["remark"] = txtRemarkController.text;
+                          input["elapse_days"] = widget.elapseDays;
+                          // taskDetailsBloc.add(EscalateTaskEvent(input: input));
+                        },
+                        style: ButtonStyle(
+                          fixedSize:
+                              MaterialStateProperty.all(const Size(160, 50)),
+                          backgroundColor:
+                              MaterialStateProperty.all(MColor.colorPrimary),
+                          elevation: MaterialStateProperty.all(0),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    child: const Text(
-                      StringConst.done,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                        child: const Text(
+                          StringConst.done,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ),

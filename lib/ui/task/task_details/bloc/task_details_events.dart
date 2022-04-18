@@ -5,9 +5,20 @@ class TaskDetailEvents extends Equatable {
   List<Object> get props => [];
 }
 
-class GetTaskDetailsEvent extends TaskDetailEvents {
-  final String storeId;
-  GetTaskDetailsEvent({required this.storeId});
+class GetPendingTaskEvent extends TaskDetailEvents {
+  final String retailerId;
+  final String beatId;
+  GetPendingTaskEvent({
+    required this.retailerId,
+    required this.beatId,
+  });
   @override
-  List<Object> get props => [storeId];
+  List<Object> get props => [retailerId, beatId];
+}
+
+class EscalateTaskEvent extends TaskDetailEvents {
+  final Map<String, dynamic> input;
+  EscalateTaskEvent({required this.input});
+  @override
+  List<Object> get props => [input];
 }

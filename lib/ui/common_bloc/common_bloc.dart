@@ -1,6 +1,7 @@
 import 'package:dms/ui/common_bloc/common_bloc_events.dart';
 import 'package:dms/ui/common_bloc/common_bloc_states.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ntp/ntp.dart';
 
 class CommonBloc extends Bloc<CommonBlocEvents, CommonBlocStates> {
   CommonBloc() : super(CommonBlocInitialState());
@@ -42,6 +43,10 @@ class CommonBloc extends Bloc<CommonBlocEvents, CommonBlocStates> {
     if (event is CommonBlocAnniversaryEvent) {
       yield CommonBlocLoadingState();
       yield* selectDateAnniversary(event);
+    }
+    if (event is CommonBlocCurrentDateEvent) {
+      yield CommonBlocLoadingState();
+      yield* getCurrentDate(event);
     }
   }
 
@@ -90,5 +95,14 @@ class CommonBloc extends Bloc<CommonBlocEvents, CommonBlocStates> {
   Stream<CommonBlocStates> selectDateAnniversary(
       CommonBlocAnniversaryEvent event) async* {
     yield CommonBlocAnniversaryState(dateTime: event.dateTime);
+  }
+
+  Stream<CommonBlocStates> getCurrentDate(
+      CommonBlocCurrentDateEvent event) async* {
+    DateTime currentDate =
+        await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
+      return DateTime.now();
+    });
+    yield CommonBlocCurrentDateState(currentDate: currentDate);
   }
 }

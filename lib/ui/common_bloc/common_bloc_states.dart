@@ -73,3 +73,10 @@ class CommonBlocAnniversaryState extends CommonBlocStates {
   @override
   List<Object> get props => [dateTime];
 }
+
+class CommonBlocCurrentDateState extends CommonBlocStates {
+  final DateTime currentDate;
+  CommonBlocCurrentDateState({required this.currentDate});
+  @override
+  List<Object> get props => [currentDate];
+}

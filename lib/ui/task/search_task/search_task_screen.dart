@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:dms/main.dart';
 import 'package:dms/model/retaileres_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/retailer_list_item.dart';
+import 'package:dms/ui/task/task/model/get_retailers_task_response.dart';
+import 'package:dms/ui/task/task/task_list_item.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +21,7 @@ class SearchTaskScreen extends StatefulWidget {
 class _SearchTaskScreenState extends State<SearchTaskScreen> {
   TextEditingController edtSearch = TextEditingController();
   List<RetailersModal> retailers = [];
-  StreamController<List<RetailersModal>> searchStream = StreamController();
+  StreamController<List<RetailersTaskModal>> searchStream = StreamController();
 
   @override
   Widget build(BuildContext context) {
@@ -86,16 +89,9 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
           )
         ],
       ),
-      body: StreamBuilder<List<RetailersModal>>(
+      body: StreamBuilder<List<RetailersTaskModal>>(
         stream: searchStream.stream,
-        // initialData: retailers,
         builder: (context, snapshot) {
-          // if (snapshot.connectionState == ConnectionState.waiting) {
-          //   return const Center(
-          //     child: CircularProgressIndicator(),
-          //   );
-          // }
-
           if (snapshot.hasData) {
             if (snapshot.data!.isEmpty) {
               return const Center(
@@ -112,7 +108,7 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
                   );
                 },
                 itemBuilder: (context, index) {
-                  return RetailerListItems(
+                  return TaskListItems(
                     index: 0,
                     retailer: snapshot.data![index],
                     orderStatus: 2,
@@ -140,9 +136,11 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
 
   void searchApi(String text) async {
     if (await Network.isConnected()) {
-      Map input = {"search": text};
+      Map<String, dynamic> input = HashMap<String, dynamic>();
+      input["search"] = text;
       searchStream.addError("loading");
-      RetailersResponse response = await repository.searchRetailer(input);
+      GetRetailersTaskResponse response =
+          await repository.searchTaskRetailers(input);
       if (response.success) {
         searchStream.add(response.data!);
       } else {
