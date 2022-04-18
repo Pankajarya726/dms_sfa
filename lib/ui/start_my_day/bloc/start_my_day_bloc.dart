@@ -11,7 +11,6 @@ import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
@@ -116,13 +115,13 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
         yield EndMyDaySuccessState(endMyDayResponse: response);
       } else {
         if (response.status == "0") {
-          Fluttertoast.showToast(msg: response.message);
+          Utility.showToast(response.message);
         } else {
           yield EndMyDayFailureState(message: response.message, data: response.data!);
         }
       }
     } else {
-      Fluttertoast.showToast(msg: Constants.internetAlert);
+      Utility.showToast(Constants.internetAlert);
     }
   }
 
@@ -136,7 +135,7 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        Fluttertoast.showToast(msg: "Please turn on the location for continue!");
+        Utility.showToast("Please turn on the location for continue!");
         return Future.error('Location permissions are denied');
       }
     }

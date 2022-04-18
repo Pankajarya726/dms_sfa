@@ -5,6 +5,7 @@ import 'package:dms/ui/start_my_day/start_day_screen.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -86,7 +87,7 @@ class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
           onTap: () {
             if (imageLabel == StringConst.startMyDayCaps) {
               // if (myPlan == null) {
-              //   Fluttertoast.showToast(msg: "You don't have any plan for today, Please connect to admin");
+              //   Utility.showToast( "You don't have any plan for today, Please connect to admin");
               // } else {
               Navigator.push(
                 context,
@@ -147,10 +148,10 @@ class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
           myPlan = response.data;
         }
       } else {
-        // Fluttertoast.showToast(msg: response.message);
+        // Utility.showToast( response.message);
       }
     } else {
-      Fluttertoast.showToast(msg: "Please check your internet connection!");
+      Utility.showToast( "Please check your internet connection!");
     }
   }
 }

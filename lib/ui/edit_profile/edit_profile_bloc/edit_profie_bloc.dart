@@ -4,9 +4,9 @@ import 'package:dms/ui/edit_profile/model/update_profile_response.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../main.dart';
 import 'edit_profile_event.dart';
@@ -39,7 +39,7 @@ class EditProfileBloc extends Bloc<EditProfileEvents, EditProfileState> {
         Constants.email = event.emailId;
         Constants.image = response.data!.profilePicture;
 
-        Fluttertoast.showToast(msg: response.message);
+        Utility.showToast(response.message);
         yield EditProfileSuccessState(user: response.data!);
       } else {
         EditProfileFailureState(message: response.message);

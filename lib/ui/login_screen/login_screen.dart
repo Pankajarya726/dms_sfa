@@ -10,7 +10,6 @@ import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
 import '../../main.dart';
@@ -94,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
             }
           }
           if (state is LoginFailureState) {
-            Fluttertoast.showToast(msg: state.message);
+            Utility.showToast(state.message);
           }
         },
         child: Scaffold(
@@ -251,13 +250,13 @@ class _LoginScreenState extends State<LoginScreen> {
     // RegExp regxPassword =
     //     RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
     if (mobileNumber.isEmpty && password.isEmpty) {
-      Fluttertoast.showToast(msg: "Field can't be Empty");
+      Utility.showToast("Field can't be Empty");
     } else if (mobileNumber.isEmpty) {
-      Fluttertoast.showToast(msg: "Please enter Mobile Number");
+      Utility.showToast("Please enter Mobile Number");
     } else if (!regxMobile.hasMatch(mobileNumber)) {
-      Fluttertoast.showToast(msg: "Mobile number must be 10 digits");
+      Utility.showToast("Mobile number must be 10 digits");
     } else if (password.isEmpty) {
-      Fluttertoast.showToast(msg: "Please enter Password");
+      Utility.showToast("Please enter Password");
     }
     // else if (!regxPassword.hasMatch(password)) {
     //   Fluttertoast.showToast(msg: "Please enter Valid Password");

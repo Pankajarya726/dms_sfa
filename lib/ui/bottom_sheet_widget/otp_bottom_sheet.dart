@@ -3,6 +3,7 @@ import 'package:dms/ui/common_bloc/common_bloc.dart';
 import 'package:dms/ui/common_bloc/common_bloc_events.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -105,19 +106,19 @@ class _SelectOtpNumberBottomSheetState extends State<SelectOtpNumberBottomSheet>
         onPressed: () {
           if (label == StringConst.done) {
             if (groupValue == -1) {
-              Fluttertoast.showToast(msg: "Please select an option");
+              Utility.showToast( "Please select an option");
               return;
             }
             if (groupValue == 1 && widget.form.primaryMobile.trim().isEmpty) {
-              Fluttertoast.showToast(msg: "Primary mobile number is not entered please select different option");
+              Utility.showToast( "Primary mobile number is not entered please select different option");
               return;
             }
             if (groupValue == 2 && widget.form.secondaryMobile.trim().isEmpty) {
-              Fluttertoast.showToast(msg: "Secondary mobile number is not entered please select different option");
+              Utility.showToast( "Secondary mobile number is not entered please select different option");
               return;
             }
             if (groupValue == 3 && widget.form.helperMobile.trim().isEmpty) {
-              Fluttertoast.showToast(msg: "Helper mobile number is not entered please select different option");
+              Utility.showToast( "Helper mobile number is not entered please select different option");
               return;
             }
 

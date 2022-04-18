@@ -83,7 +83,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   Navigator.pop(context, true);
                 }
                 if (state is EditProfileFailureState) {
-                  Fluttertoast.showToast(msg: state.message);
+                  Utility.showToast( state.message);
                 }
                 if (state is GetUserDetailsSuccessState) {
                   user = state.user;
@@ -241,10 +241,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       );
                                     }
                                   } else {
-                                    Fluttertoast.showToast(msg: "Enter valid email format");
+                                    Utility.showToast( "Enter valid email format");
                                   }
                                 } else {
-                                  Fluttertoast.showToast(msg: "Fields can't be empty");
+                                  Utility.showToast( "Fields can't be empty");
                                 }
                               },
                               style: ButtonStyle(

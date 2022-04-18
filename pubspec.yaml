@@ -73,6 +73,9 @@ dependencies:
   maps_launcher: ^2.0.1
   group_radio_button:
 
+# Marquee for auto slide text
+  marquee:
+
 
 
 dev_dependencies:

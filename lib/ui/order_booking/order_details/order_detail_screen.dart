@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dms/ui/drawer_menu/home_screen/home_screen.dart';
+import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/ui/order_booking/order_booking_list/order_booking_list_screen.dart';
 import 'package:dms/ui/order_booking/order_confirmation/order_summery_table.dart';
 import 'package:dms/ui/order_booking/order_details/bloc/order_detail_bloc.dart';
@@ -161,14 +161,12 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     ),
                     IconButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HomeScreen(
-                              onInit: (value) {},
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const DrawerScreen(),
                             ),
-                          ),
-                        );
+                            ModalRoute.withName("/"));
                       },
                       icon: const Icon(
                         Icons.home_outlined,

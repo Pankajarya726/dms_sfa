@@ -163,7 +163,7 @@
 //                     }
 
 //                     if (state is EditStoreFailureState) {
-//                       Fluttertoast.showToast(msg: state.failureMessage);
+//                       Utility.showToast( state.failureMessage);
 //                     }
 
 //                     if (enrolmentTypeModel == null) {
@@ -235,8 +235,8 @@
 //                       }
 
 //                       if (state is UserLocationFailureState) {
-//                         Fluttertoast.showToast(
-//                             msg: "Please turn on GPS to get current location");
+//                         Utility.showToast(
+//                              "Please turn on GPS to get current location");
 //                       }
 //                       return Column(
 //                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -432,34 +432,34 @@
 //           textColor: Colors.white,
 //           onPressed: () async {
 //             if (selectEnrollmentRadio == "") {
-//               Fluttertoast.showToast(msg: "Please select enrollment type");
+//               Utility.showToast( "Please select enrollment type");
 //             } else if (txtSelectBeatNameController.text.isEmpty) {
-//               Fluttertoast.showToast(msg: "Please select beat name");
+//               Utility.showToast( "Please select beat name");
 //             } else if (txtOutletNameController.text.isEmpty) {
-//               Fluttertoast.showToast(msg: "Please enter outlet name");
+//               Utility.showToast( "Please enter outlet name");
 //             } else if (txtOwnerNameController.text.isEmpty) {
-//               Fluttertoast.showToast(msg: "Please enter owner name");
+//               Utility.showToast( "Please enter owner name");
 //             } else if (txtLandmarkController.text.isEmpty) {
-//               Fluttertoast.showToast(msg: "Please enter landmark");
+//               Utility.showToast( "Please enter landmark");
 //             } else if (txtPrimaryMobController.text.isEmpty) {
-//               Fluttertoast.showToast(msg: "Please enter primary mobile");
+//               Utility.showToast( "Please enter primary mobile");
 //             } else if (existingRetailerRadio == "") {
-//               Fluttertoast.showToast(msg: "Please select existing retailer");
+//               Utility.showToast( "Please select existing retailer");
 //             } else if (txtSelectCallTimeSlotController.text.isEmpty) {
-//               Fluttertoast.showToast(msg: "Please select call time slot");
+//               Utility.showToast( "Please select call time slot");
 //             } else if (txtSelectLangFirstController.text.isEmpty) {
-//               Fluttertoast.showToast(msg: "Please select language 1st");
+//               Utility.showToast( "Please select language 1st");
 //             } else if (txtSelectRetailerTypeController.text.isEmpty) {
-//               Fluttertoast.showToast(msg: "Please select retailer type");
+//               Utility.showToast( "Please select retailer type");
 //             } else if (txtSelectRetailerCategoryController.text.isEmpty) {
-//               Fluttertoast.showToast(msg: "Please select retailer category");
+//               Utility.showToast( "Please select retailer category");
 //             } else if (whatsAppSmsRadio == "") {
-//               Fluttertoast.showToast(
-//                   msg: "Please select opt-in for whatsapp message / SMS");
+//               Utility.showToast(
+//                    "Please select opt-in for whatsapp message / SMS");
 //             } else if (outletPhotoFile == null) {
-//               Fluttertoast.showToast(msg: "Please capture outlet photo");
+//               Utility.showToast( "Please capture outlet photo");
 //             } else {
-//               Fluttertoast.showToast(msg: "Store added successful");
+//               Utility.showToast( "Store added successful");
 //             }
 
 //             String userId = await SharedPreference.getStringPreference(
@@ -836,8 +836,8 @@
 //         }
 //       }
 //     } catch (exception) {
-//       Fluttertoast.showToast(
-//           msg:
+//       Utility.showToast(
+//           
 //               "Permission denied, go to app settings and allow camera permission",
 //           toastLength: Toast.LENGTH_LONG);
 //     }

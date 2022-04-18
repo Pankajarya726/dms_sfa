@@ -8,7 +8,7 @@ import 'package:dms/ui/bottom_sheet_widget/no_order_reason_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/order_history_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/task_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/tele_caller_status_bottm_sheet.dart';
-import 'package:dms/ui/drawer_menu/home_screen/home_screen.dart';
+import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/ui/order_booking/order_booking_list/order_booking_list_screen.dart';
 import 'package:dms/ui/order_booking/retailer_detail/bloc/retailer_details_bloc.dart';
 import 'package:dms/ui/order_booking/retailer_detail/bloc/retailer_details_events.dart';
@@ -601,14 +601,12 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                     ),
                     IconButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HomeScreen(
-                              onInit: (value) {},
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const DrawerScreen(),
                             ),
-                          ),
-                        );
+                            ModalRoute.withName("/"));
                       },
                       icon: const Icon(
                         Icons.home_outlined,

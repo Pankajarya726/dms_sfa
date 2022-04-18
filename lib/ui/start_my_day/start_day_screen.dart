@@ -87,7 +87,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
               dateTime = DateTime.parse(state.currentDate);
             }
             if (state is StartMyDaySuccessState) {
-              Fluttertoast.showToast(msg: state.successMessage);
+              Utility.showToast( state.successMessage);
               SharedPreference.setStringPreference(
                   SharedPreference.startMyDay, "hide");
               SharedPreference.setBooleanPreference(
@@ -98,7 +98,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                   (route) => false);
             }
             if (state is StartMyDayFailureState) {
-              Fluttertoast.showToast(msg: state.failureMessage);
+              Utility.showToast( state.failureMessage);
             }
           }),
           BlocListener<AddPlanBloc, AddPlanStates>(listener: (context, state) {
@@ -1089,11 +1089,11 @@ class _StartDayScreenState extends State<StartDayScreen> {
     if (selectedPrimaryTag!.name.trim().toLowerCase() == "leave" ||
         selectedPrimaryTag!.name.trim().toLowerCase() == "holiday") {
       if (txtRemarkController.text.trim().isEmpty) {
-        Fluttertoast.showToast(msg: "Please enter remark");
+        Utility.showToast( "Please enter remark");
         return;
       }
       if (txtRemarkController.text.trim().length > 255) {
-        Fluttertoast.showToast(msg: "Word limit-250 characters");
+        Utility.showToast( "Word limit-250 characters");
         return;
       }
       debugPrint("remark fields ok ");
@@ -1119,33 +1119,33 @@ class _StartDayScreenState extends State<StartDayScreen> {
     //otherwise else will execute
     else {
       if (selectedPrimaryTag == null) {
-        Fluttertoast.showToast(msg: "Please select primary tag");
+        Utility.showToast( "Please select primary tag");
         return;
       }
       if (selectedPrimaryTag!.secondaryTag.isNotEmpty &&
           selectedSecondaryTags.isEmpty) {
-        Fluttertoast.showToast(msg: "Please select secondary tag");
+        Utility.showToast( "Please select secondary tag");
         return;
       }
 
       if (selectedSecondaryTags.isEmpty &&
           txtRemarkController.text.trim().isEmpty) {
-        Fluttertoast.showToast(msg: "Please enter remark");
+        Utility.showToast( "Please enter remark");
         return;
       }
       if (txtRemarkController.text.trim().length > 255) {
-        Fluttertoast.showToast(msg: "Word limit-250 characters");
+        Utility.showToast( "Word limit-250 characters");
         return;
       }
       if (latitude == 0.0 && longitude == 0.0) {
-        Fluttertoast.showToast(
-            msg: "Could not fetch your location, Please try again later");
+        Utility.showToast(
+             "Could not fetch your location, Please try again later");
         userLocationBloc.add(GetUserLocationEvent());
         return;
       }
       if (currentAddress.isEmpty) {
-        Fluttertoast.showToast(
-            msg:
+        Utility.showToast(
+            
                 "Could not proceed, because we are not able to fetch your area detail. Please allow location permission to continue");
         userLocationBloc.add(GetUserLocationEvent());
         return;

@@ -12,6 +12,7 @@ import 'package:dms/ui/userlocation_bloc/userlocation_states.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
@@ -92,8 +93,8 @@ class _RetailerTabState extends State<RetailerTab>
           }
 
           if (state is UserLocationFailureState) {
-            Fluttertoast.showToast(
-                msg: "Please turn on GPS to get current location");
+            Utility.showToast(
+                 "Please turn on GPS to get current location");
           }
           return Container();
         },

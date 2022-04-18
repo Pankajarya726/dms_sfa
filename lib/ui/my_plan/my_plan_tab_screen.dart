@@ -6,9 +6,9 @@ import 'package:dms/ui/my_plan/my_plan.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
 class MyPlanTabScreen extends StatefulWidget {
@@ -108,7 +108,7 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen>
         return [];
       }
     } else {
-      Fluttertoast.showToast(msg: "Please check your internet connection!");
+      Utility.showToast("Please check your internet connection!");
       return [];
     }
   }

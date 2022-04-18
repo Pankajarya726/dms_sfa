@@ -10,10 +10,10 @@ import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/in_app_review.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_share/flutter_share.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -232,7 +232,7 @@ class _SettingScreenState extends State<SettingsScreen> {
         //         const AboutUsScreen(),
         //   ),
         // );
-        Fluttertoast.showToast(msg: StringConst.comingSoon);
+        Utility.showToast( StringConst.comingSoon);
         break;
 
       case 3:
@@ -248,7 +248,7 @@ class _SettingScreenState extends State<SettingsScreen> {
         break;
 
       default:
-        Fluttertoast.showToast(msg: StringConst.comingSoon);
+        Utility.showToast( StringConst.comingSoon);
         break;
     }
   }

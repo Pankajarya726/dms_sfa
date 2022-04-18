@@ -660,10 +660,10 @@ class _OwnerInformationState extends State<OwnerInformation> {
         commonBloc.add(CommonBlocSelectImageEvent(imageFile: ownerPhotoFile!));
       }
     } catch (exception) {
-      Fluttertoast.showToast(
-          msg:
+      Utility.showToast(
+
               "Permission denied, go to app settings and allow camera permission",
-          toastLength: Toast.LENGTH_LONG);
+          );
     }
   }
 

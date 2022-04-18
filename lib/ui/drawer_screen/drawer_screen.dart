@@ -11,12 +11,14 @@ import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kf_drawer/kf_drawer.dart';
+import 'package:marquee/marquee.dart';
 
 class DrawerScreen extends StatefulWidget {
   const DrawerScreen({
@@ -128,18 +130,38 @@ class _DrawerScreenState extends State<DrawerScreen> {
                               Container(
                                 decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4)),
                                 // width: MediaQuery.of(context).size.width*0.45,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(2),
-                                  child: Text(
-                                    " ${Constants.designation} ",
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.red,
-                                      overflow: TextOverflow.ellipsis,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ),
+                                child: Constants.designation.length > 20
+                                    ? SizedBox(
+                                        width: MediaQuery.of(context).size.width * 0.45,
+                                        height: 30,
+                                        child: Marquee(
+                                          text: "Constants.designation",
+                                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+
+                                          // scrollAxis: Axis.horizontal,
+                                          // crossAxisAlignment: CrossAxisAlignment.start,
+                                          blankSpace: 35.0,
+                                          // // velocity: 100.0,
+                                          // pauseAfterRound: Duration(seconds: 1),
+                                          // startPadding: 10.0,
+                                          // accelerationDuration: Duration(seconds: 1),
+                                          // accelerationCurve: Curves.linear,
+                                          // decelerationDuration: Duration(milliseconds: 500),
+                                          // decelerationCurve: Curves.easeOut,
+                                        ),
+                                      )
+                                    : Padding(
+                                        padding: const EdgeInsets.all(2),
+                                        child: Text(
+                                          " ${Constants.designation} ",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.red,
+                                            overflow: TextOverflow.ellipsis,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                      ),
                               ),
                             ],
                           ),
@@ -177,7 +199,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
               ListTile(
                 onTap: () {
                   // controller.close!.call();
-                  Fluttertoast.showToast(msg: StringConst.comingSoon);
+                  Utility.showToast( StringConst.comingSoon);
                 },
                 title: const Text("Script", style: TextStyle(color: Colors.white, fontSize: 18)),
                 leading: SvgPicture.asset(
@@ -190,7 +212,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
               ListTile(
                 onTap: () {
                   // controller.close!.call();
-                  Fluttertoast.showToast(msg: StringConst.comingSoon);
+                  Utility.showToast( StringConst.comingSoon);
                 },
                 title: const Text("Message", style: TextStyle(color: Colors.white, fontSize: 18)),
                 leading: SvgPicture.asset(
@@ -205,7 +227,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 child: BlocListener<StartMyDayBloc, StartMyDayStates>(
                   listener: (context, state) {
                     if (state is EndMyDaySuccessState) {
-                      Fluttertoast.showToast(msg: state.endMyDayResponse.message);
+                      Utility.showToast( state.endMyDayResponse.message);
                       controller.close!.call();
                       // Navigator.pop(context);
                     }
@@ -261,7 +283,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
               ListTile(
                 onTap: () {
                   // controller.close!.call();
-                  Fluttertoast.showToast(msg: StringConst.comingSoon);
+                  Utility.showToast( StringConst.comingSoon);
                 },
                 title: const Text("Sync", style: TextStyle(color: Colors.white, fontSize: 18)),
                 leading: SvgPicture.asset(

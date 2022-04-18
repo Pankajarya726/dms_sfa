@@ -14,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -130,7 +129,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
           }
 
           if (state is AddPlanFailureState) {
-            Fluttertoast.showToast(msg: state.failureMessage);
+            Utility.showToast(state.failureMessage);
           }
           if (state is AddPlanSuccessState) {
             planAlreadyExists = true;
@@ -492,15 +491,15 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
               onPressed: () async {
                 Utility.hideKeyboard();
                 if (selectedPrimaryTag == null) {
-                  Fluttertoast.showToast(msg: "Please select primary tag");
+                  Utility.showToast("Please select primary tag");
                   return;
                 }
                 if ((selectedPrimaryTag!.secondaryTag.isNotEmpty) && selectedSecondaryTag.isEmpty) {
-                  Fluttertoast.showToast(msg: "Please select secondary tag");
+                  Utility.showToast("Please select secondary tag");
                   return;
                 }
                 if (txtRemarkController.text.trim().isEmpty) {
-                  Fluttertoast.showToast(msg: "Please enter remark");
+                  Utility.showToast("Please enter remark");
                   return;
                 }
 

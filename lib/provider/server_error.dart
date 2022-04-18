@@ -43,7 +43,7 @@ class ServerError implements Exception {
         _errorMessage = "Internal server error";
         if (error.response!.statusCode == 401) {
           _errorMessage = "";
-          debugPrint("come here-->");
+
           logout();
         }
 
@@ -60,8 +60,10 @@ class ServerError implements Exception {
     showDialog(
         context: navigationService.navigatorKey.currentContext!,
         barrierDismissible: false,
-        builder: (context) => AlertDialog(
-              content: const Text("Your session has been expired! Please login again"),
+        useRootNavigator: false,
+        builder: (context) => WillPopScope(
+            child: AlertDialog(
+              content: const Text("Your session has been expired! Please login again."),
               contentPadding: const EdgeInsets.all(15),
               actions: [
                 TextButton(
@@ -73,7 +75,10 @@ class ServerError implements Exception {
                     },
                     child: const Text("Ok"))
               ],
-            ));
+            ),
+            onWillPop: () async {
+              return false;
+            }));
 
     // EasyLoading.showError("Your session has been expired! Please login again",);
   }
