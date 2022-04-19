@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:developer';
+
 import 'package:dms/main.dart';
+import 'package:dms/ui/custom_widget/retailer_not_found.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_brand_category_resonse.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
 import 'package:dms/ui/order_booking/order_booking_list/product_list_item.dart';
@@ -14,6 +16,7 @@ class ProductTabs extends StatefulWidget {
   final String beatId;
   final String retailerId;
   final BrandAndCategoryModel brands;
+
   const ProductTabs({
     Key? key,
     required this.index,
@@ -30,7 +33,7 @@ class _ProductTabsState extends State<ProductTabs> {
   List<ProductsModal> productList = [];
   StreamController<List<ProductsModal>> productStream = StreamController();
   List<Category> categoryList = [];
-  late Category category;
+  Category? category;
 
   @override
   void initState() {
@@ -42,7 +45,7 @@ class _ProductTabsState extends State<ProductTabs> {
         }
         categoryList.addAll(widget.brands.category);
         category = categoryList.first;
-        getProduct(widget.brands.id, category.id);
+        getProduct(widget.brands.id, category!.id);
       } else {
         getProduct(widget.brands.id, '');
       }
@@ -68,7 +71,7 @@ class _ProductTabsState extends State<ProductTabs> {
                 onSelect: (Category tag) {
                   debugPrint("onBeatSelect-->${tag.categoryName}");
                   category = tag;
-                  getProduct(widget.brands.id, category.id);
+                  getProduct(widget.brands.id, category!.id);
                 },
               )
             : Container(),
@@ -91,9 +94,18 @@ class _ProductTabsState extends State<ProductTabs> {
                 }
 
                 if (snapshot.hasData && snapshot.data!.isEmpty) {
-                  return const Center(
-                      child: Text(
-                    "Product not found",
+                  return Center(child: ProductNotFound(
+                    onRefresh: () {
+                      if (widget.index == 0) {
+                        getSuggestedProduct();
+                      }
+                      if (widget.index == 1) {
+                        getSchemeProduct();
+                      }
+                      if (widget.index == 3) {
+                        getProduct(widget.brands.id, category == null ? "" : category!.id);
+                      }
+                    },
                   ));
                 }
 
@@ -134,16 +146,12 @@ class _ProductTabsState extends State<ProductTabs> {
     input["beat_id"] = widget.beatId;
     input["retailer_id"] = widget.retailerId;
 
-    // input["brand_id"] = "1";
-    // input["category_id"] = "";
-    // input["beat_id"] = "27";
-    // input["retailer_id"] = "27";
     GetProductsResponse response = await repository.getProducts(input);
     if (response.success) {
       productList = response.data!;
       productStream.add(productList);
     } else {
-      productStream.addError(response.message);
+      productStream.add([]);
     }
   }
 
@@ -158,7 +166,7 @@ class _ProductTabsState extends State<ProductTabs> {
       productList = response.data!;
       productStream.add(productList);
     } else {
-      productStream.addError(response.message);
+      productStream.add([]);
     }
   }
 
@@ -173,7 +181,7 @@ class _ProductTabsState extends State<ProductTabs> {
       productList = response.data!;
       productStream.add(productList);
     } else {
-      productStream.addError(response.message);
+      productStream.add([]);
     }
   }
 }
@@ -182,8 +190,7 @@ class BeatsWidget extends StatefulWidget {
   final List<Category> tags;
   final Function(Category tag) onSelect;
 
-  const BeatsWidget({Key? key, required this.tags, required this.onSelect})
-      : super(key: key);
+  const BeatsWidget({Key? key, required this.tags, required this.onSelect}) : super(key: key);
 
   @override
   _BeatsWidgetState createState() => _BeatsWidgetState();
@@ -232,17 +239,11 @@ class _BeatsWidgetState extends State<BeatsWidget> {
               ),
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
               border: Border.all(
-                color: widget.tags[index].categoryName == tag.categoryName
-                    ? MColor.colorPrimary
-                    : const Color(0xffC5C5C5),
+                color: widget.tags[index].categoryName == tag.categoryName ? MColor.colorPrimary : const Color(0xffC5C5C5),
               ),
               singleItem: true,
-              activeColor: widget.tags[index].categoryName == tag.categoryName
-                  ? const Color(0xffFFC9CC)
-                  : const Color(0xffFAFAFA),
-              color: widget.tags[index].categoryName == tag.categoryName
-                  ? const Color(0xffFFC9CC)
-                  : const Color(0xffFAFAFA),
+              activeColor: widget.tags[index].categoryName == tag.categoryName ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
+              color: widget.tags[index].categoryName == tag.categoryName ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
               title: widget.tags[index].categoryName,
             ),
           );

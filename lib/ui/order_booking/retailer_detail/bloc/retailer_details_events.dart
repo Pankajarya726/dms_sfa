@@ -18,3 +18,10 @@ class NoOrderYetEvent extends RetailerDetailEvents {
   @override
   List<Object> get props => [retailerId];
 }
+
+class GetTaskEvent extends RetailerDetailEvents {
+  final String uniqueCode;
+  GetTaskEvent({required this.uniqueCode});
+  @override
+  List<Object> get props => [uniqueCode];
+}
