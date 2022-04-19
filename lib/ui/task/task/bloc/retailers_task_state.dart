@@ -33,8 +33,11 @@ class GetBeatState extends RetailerTaskState {
 
 class GetRetailersTaskState extends RetailerTaskState {
   final List<RetailersTaskModal> retailers;
-
-  GetRetailersTaskState({required this.retailers});
+  final DateTime currentDate;
+  GetRetailersTaskState({
+    required this.retailers,
+    required this.currentDate,
+  });
 
   @override
   List<Object?> get props => [retailers];

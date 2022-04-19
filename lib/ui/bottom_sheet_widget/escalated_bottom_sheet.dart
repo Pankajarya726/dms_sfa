@@ -4,22 +4,26 @@ import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/escalate_to_bottom_sheet.dart';
 import 'package:dms/ui/task/task_details/bloc/task_details_bloc.dart';
 import 'package:dms/ui/task/task_details/bloc/task_details_events.dart';
+import 'package:dms/ui/task/task_details/bloc/task_details_states.dart';
 import 'package:dms/ui/task/task_details/model/retailer_details_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 
 class EscalatedBottomSheet extends StatefulWidget {
   final PendingTaskModal pendingTaskModal;
   final String elapseDays;
   final String retailerId;
+  final Function() onTaskResolve;
   const EscalatedBottomSheet({
     Key? key,
     required this.pendingTaskModal,
     required this.elapseDays,
     required this.retailerId,
+    required this.onTaskResolve,
   }) : super(key: key);
 
   @override
@@ -233,8 +237,10 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
                       Utility.hideKeyboard();
                       FocusScope.of(context).unfocus();
                       if (pendingTaskModal.escalationTo.length < 2) {
-                        escalateDialog(
-                            context, pendingTaskModal.escalationTo.first);
+                        submitDialog(
+                            context,
+                            pendingTaskModal.escalationTo.first,
+                            "Do you wish to escalate this task to ");
                       } else {
                         Navigator.pop(context);
                         showModalBottomSheet(
@@ -246,6 +252,10 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
                                   retailerId: widget.retailerId,
                                   elapseDays: widget.elapseDays,
                                   remark: txtRemarkController.text,
+                                  onTaskEscalated: () {
+                                    widget.onTaskResolve();
+                                    Navigator.pop(context);
+                                  },
                                 ));
                       }
                     },
@@ -271,7 +281,11 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
                     onPressed: () {
                       Utility.hideKeyboard();
                       FocusScope.of(context).unfocus();
-                      logoutDialog(context);
+                      submitDialog(context, EscalationTo(id: "", name: ""),
+                              "Are you sure to submit?")
+                          .then((value) {
+                        Navigator.pop(context);
+                      });
                     },
                     child: const Text(
                       StringConst.doneCaps,
@@ -295,136 +309,100 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
     );
   }
 
-  logoutDialog(context) {
+  submitDialog(context, EscalationTo escalationTo, titleText) {
     return showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return AlertDialog(
-          insetPadding: const EdgeInsets.symmetric(horizontal: 15),
-          titlePadding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
-          buttonPadding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          title: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: const Text(
-              "Are you sure to submit?",
-              style: TextStyle(
-                color: Color(0xff272727),
-                letterSpacing: 0.67,
-                fontSize: 16,
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: const Text(
-                StringConst.no,
-                style: TextStyle(
-                  color: Color(0xff555555),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              onPressed: () {
+        return BlocProvider(
+          create: (context) => taskDetailsBloc,
+          child: BlocListener<TaskDetailsBloc, TaskDetailStates>(
+            listener: (context, state) {
+              if (state is EscalateTaskState) {
+                Utility.showToast(state.responseMessage);
+                widget.onTaskResolve();
                 Navigator.pop(context);
-              },
-            ),
-            TextButton(
-              child: const Text(
-                StringConst.yes,
-                style: TextStyle(
-                  color: Color(0xfff4511e),
-                  fontWeight: FontWeight.w600,
-                ),
+              }
+              if (state is EscalateTaskFailureState) {
+                Utility.showToast(state.failureMessage);
+              }
+            },
+            child: AlertDialog(
+              insetPadding: const EdgeInsets.symmetric(horizontal: 15),
+              titlePadding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
+              buttonPadding: EdgeInsets.zero,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
-              onPressed: () async {
-                Map<String, dynamic> input = HashMap<String, dynamic>();
-                input["status"] = "2";
-                input["task_id"] = pendingTaskModal.id;
-                input["retailer_id"] = widget.retailerId;
-                input["escalate_user_id"] = "";
-                input["remark"] = txtRemarkController.text;
-                input["elapse_days"] = widget.elapseDays;
-                // taskDetailsBloc.add(EscalateTaskEvent(input: input));
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  escalateDialog(context, EscalationTo escalationTo) {
-    return showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          insetPadding: const EdgeInsets.symmetric(horizontal: 15),
-          titlePadding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
-          buttonPadding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          title: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: RichText(
-              text: TextSpan(
-                text: "Do you wish to escalate this task to ",
-                style: const TextStyle(
-                  color: Color(0xff272727),
-                  letterSpacing: 0.67,
-                  fontSize: 16,
-                ),
-                children: [
-                  TextSpan(
-                    text: escalationTo.name,
+              title: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: RichText(
+                  text: TextSpan(
+                    text: titleText,
                     style: const TextStyle(
-                      color: MColor.colorPrimary,
+                      color: Color(0xff272727),
                       letterSpacing: 0.67,
                       fontSize: 16,
                     ),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: escalationTo.name,
+                        style: const TextStyle(
+                          color: MColor.colorPrimary,
+                          letterSpacing: 0.67,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
+              actions: [
+                TextButton(
+                  child: const Text(
+                    StringConst.no,
+                    style: TextStyle(
+                      color: Color(0xff555555),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                TextButton(
+                  child: const Text(
+                    StringConst.yes,
+                    style: TextStyle(
+                      color: Color(0xfff4511e),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  onPressed: () async {
+                    if (escalationTo.id.isEmpty) {
+                      Map<String, dynamic> input = HashMap<String, dynamic>();
+                      input["status"] = "2";
+                      input["task_id"] = pendingTaskModal.id;
+                      input["retailer_id"] = widget.retailerId;
+                      input["escalate_user_id"] = "";
+                      input["remark"] = txtRemarkController.text;
+                      input["elapse_days"] = widget.elapseDays;
+                      taskDetailsBloc.add(EscalateTaskEvent(input: input));
+                    } else {
+                      Map<String, dynamic> input = HashMap<String, dynamic>();
+                      input["status"] = "1";
+                      input["task_id"] = pendingTaskModal.id;
+                      input["retailer_id"] = widget.retailerId;
+                      input["escalate_user_id"] = escalationTo.id;
+                      input["remark"] = txtRemarkController.text;
+                      input["elapse_days"] = widget.elapseDays;
+                      taskDetailsBloc.add(EscalateTaskEvent(input: input));
+                    }
+                  },
+                ),
+              ],
             ),
           ),
-          actions: [
-            TextButton(
-              child: const Text(
-                StringConst.no,
-                style: TextStyle(
-                  color: Color(0xff555555),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            TextButton(
-              child: const Text(
-                StringConst.yes,
-                style: TextStyle(
-                  color: Color(0xfff4511e),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              onPressed: () async {
-                Map<String, dynamic> input = HashMap<String, dynamic>();
-                input["status"] = "1";
-                input["task_id"] = pendingTaskModal.id;
-                input["retailer_id"] = widget.retailerId;
-                input["escalate_user_id"] = escalationTo.id;
-                input["remark"] = txtRemarkController.text;
-                input["elapse_days"] = widget.elapseDays;
-
-                // taskDetailsBloc.add(EscalateTaskEvent(input: input));
-              },
-            ),
-          ],
         );
       },
     );

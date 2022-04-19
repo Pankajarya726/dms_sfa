@@ -4,8 +4,6 @@ import 'package:dms/ui/bottom_sheet_widget/escalated_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/last_escalation_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/task_details_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/task_history_bottom_sheet.dart';
-import 'package:dms/ui/common_bloc/common_bloc.dart';
-import 'package:dms/ui/common_bloc/common_bloc_states.dart';
 import 'package:dms/ui/drawer_menu/home_screen/home_screen.dart';
 import 'package:dms/ui/task/task/model/get_retailers_task_response.dart';
 import 'package:dms/ui/task/task_details/bloc/task_details_bloc.dart';
@@ -32,15 +30,17 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   List<PendingTaskModal> pendingTaskList = [];
   DateTime? currentDate;
   TaskDetailsBloc taskDetailsBloc = TaskDetailsBloc();
+  int monthCounts = 0;
 
   @override
   void initState() {
-    // monthsCount();
+    print("months pending = ${widget.modal.totalMonths}");
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    calculateMonths();
     return Scaffold(
       appBar: _appBar(AppBar().preferredSize.height),
       backgroundColor: const Color(0xffF7F7F7),
@@ -58,6 +58,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     image: "assets/last_order.png",
                     name: StringConst.lastOrder,
                     type: 1,
+                    modal: widget.modal,
                   ),
                   DetailGritItem(
                     value: widget
@@ -67,9 +68,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     image: "assets/escalation.png",
                     name: StringConst.lastEscalation,
                     type: 2,
-                    lastEscalation: widget.modal.lastEscalation.isNotEmpty
-                        ? widget.modal.lastEscalation.first
-                        : null,
+                    modal: widget.modal,
                   ),
                   DetailGritItem(
                     value: widget.modal.pendingTask.isNotEmpty
@@ -78,6 +77,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     image: "assets/pending_task.png",
                     name: StringConst.pendingTask,
                     type: 3,
+                    modal: widget.modal,
                   ),
                   DetailGritItem(
                     value: widget.modal.taskHistory.isNotEmpty
@@ -86,6 +86,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     image: "assets/task_history.png",
                     name: StringConst.taskHistory,
                     type: 4,
+                    modal: widget.modal,
                   ),
                 ],
               ),
@@ -189,8 +190,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                             .difference(enrolledDate)
                                             .inDays
                                             .toString();
-                                        daysPending =
-                                            days.toString() + " days pending";
+                                        if (int.parse(days) < 2) {
+                                          daysPending =
+                                              days.toString() + " day pending";
+                                        } else {
+                                          daysPending =
+                                              days.toString() + " days pending";
+                                        }
                                       }
 
                                       return Material(
@@ -219,6 +225,15 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                                             retailerId: widget
                                                                 .modal
                                                                 .retailerId,
+                                                            onTaskResolve: () {
+                                                              taskDetailsBloc.add(GetPendingTaskEvent(
+                                                                  retailerId: widget
+                                                                      .modal
+                                                                      .retailerId,
+                                                                  beatId: widget
+                                                                      .modal
+                                                                      .beatId));
+                                                            },
                                                           )
                                                         : EscalatedBottomSheet(
                                                             pendingTaskModal:
@@ -228,6 +243,15 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                                                 .modal
                                                                 .retailerId,
                                                             elapseDays: days,
+                                                            onTaskResolve: () {
+                                                              taskDetailsBloc.add(GetPendingTaskEvent(
+                                                                  retailerId: widget
+                                                                      .modal
+                                                                      .retailerId,
+                                                                  beatId: widget
+                                                                      .modal
+                                                                      .beatId));
+                                                            },
                                                           ));
                                           },
                                           child: Container(
@@ -576,25 +600,25 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
         ),
       );
 
-  void monthsCount() async {
+  void calculateMonths() async {
     if (widget.modal.enrollmentDate.isNotEmpty) {
-      DateTime enrolledDate = DateTime.parse("2021-09-13");
+      DateTime enrolledDate = DateTime.parse("2019-08-06");
       DateTime currentDate =
           await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
         return DateTime.now();
       });
 
-      int months = currentDate.month - enrolledDate.month;
-      int days = currentDate.day - enrolledDate.day;
-      if (months < 0 || (months == 0 && days < 0)) {
-        months += (days < 0 ? 11 : 12);
+      if (enrolledDate.year == currentDate.year) {
+        monthCounts = currentDate.month - enrolledDate.month;
+      } else {
+        monthCounts = 12 - enrolledDate.month;
+        monthCounts = monthCounts + currentDate.month;
+        int count = 0;
+        for (int i = enrolledDate.year + 1; i <= currentDate.year - 1; i++) {
+          count++;
+        }
+        monthCounts = monthCounts + (count * 12);
       }
-
-      if ((currentDate.year - enrolledDate.year) >= 1) {
-        months = months + (currentDate.year - enrolledDate.year) * 12;
-      }
-
-      print("difference is = $months");
     }
   }
 }
@@ -604,7 +628,7 @@ class DetailGritItem extends StatefulWidget {
   final String name;
   final String value;
   final int type;
-  final LastEscalation? lastEscalation;
+  final RetailersTaskModal modal;
 
   const DetailGritItem({
     Key? key,
@@ -612,7 +636,7 @@ class DetailGritItem extends StatefulWidget {
     required this.name,
     required this.value,
     required this.type,
-    this.lastEscalation,
+    required this.modal,
   }) : super(key: key);
 
   @override
@@ -650,15 +674,19 @@ class _DetailGritItemState extends State<DetailGritItem> {
                         isScrollControlled: true,
                         shape: bottomSheetShape,
                         builder: (context) => LastEscalationBottomSheet(
-                              lastEscalation: widget.lastEscalation,
-                            ));
+                            lastEscalation:
+                                widget.modal.lastEscalation.isNotEmpty
+                                    ? widget.modal.lastEscalation.first
+                                    : null));
                   }
                   if (widget.type == 4) {
                     showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
                         shape: bottomSheetShape,
-                        builder: (context) => const TaskHistoryBottomSheet());
+                        builder: (context) => TaskHistoryBottomSheet(
+                              modal: widget.modal,
+                            ));
                   }
                 }
               : null,

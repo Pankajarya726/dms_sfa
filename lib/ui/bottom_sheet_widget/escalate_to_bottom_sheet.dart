@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'package:dms/ui/task/task_details/bloc/task_details_bloc.dart';
+import 'package:dms/ui/task/task_details/bloc/task_details_events.dart';
 import 'package:dms/ui/task/task_details/bloc/task_details_states.dart';
 import 'package:dms/ui/task/task_details/model/retailer_details_response.dart';
 import 'package:dms/utils/colors.dart';
@@ -14,12 +15,14 @@ class EscalateToBottomSheet extends StatefulWidget {
   final String remark;
   final String elapseDays;
   final String retailerId;
+  final Function() onTaskEscalated;
   const EscalateToBottomSheet({
     Key? key,
     required this.pendingTaskModal,
     required this.remark,
     required this.elapseDays,
     required this.retailerId,
+    required this.onTaskEscalated,
   }) : super(key: key);
 
   @override
@@ -119,6 +122,7 @@ class _EscalateToBottomSheetState extends State<EscalateToBottomSheet> {
                         listener: (context, state) {
                           if (state is EscalateTaskState) {
                             Utility.showToast(state.responseMessage);
+                            widget.onTaskEscalated();
                             Navigator.pop(context);
                           }
                           if (state is EscalateTaskFailureState) {
@@ -136,7 +140,8 @@ class _EscalateToBottomSheetState extends State<EscalateToBottomSheet> {
                               input["escalate_user_id"] = groupValue;
                               input["remark"] = widget.remark;
                               input["elapse_days"] = widget.elapseDays;
-                              // taskDetailsBloc.add(EscalateTaskEvent(input: input));
+                              taskDetailsBloc
+                                  .add(EscalateTaskEvent(input: input));
                             },
                             style: ButtonStyle(
                               fixedSize: MaterialStateProperty.all(

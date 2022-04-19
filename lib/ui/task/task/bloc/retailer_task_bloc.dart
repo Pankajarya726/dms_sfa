@@ -57,10 +57,15 @@ class RetailersTaskBloc extends Bloc<RetailerTaskEvent, RetailerTaskState> {
       input["task_status"] = event.status;
       input["beat_id"] = event.beatId;
       // input["day"] = event.day;
+      DateTime currentDate =
+          await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
+        return DateTime.now();
+      });
       GetRetailersTaskResponse response =
           await repository.getRetailersTaskWise(input);
       if (response.success) {
-        yield GetRetailersTaskState(retailers: response.data!);
+        yield GetRetailersTaskState(
+            retailers: response.data!, currentDate: currentDate);
       } else {
         yield RetailerTaskFailureState(msg: response.message);
       }

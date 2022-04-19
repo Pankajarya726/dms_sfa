@@ -43,6 +43,7 @@ class TaskHistoryModal {
     required this.escalationTag,
     required this.resolveDate,
     required this.isResolve,
+    this.daysPending = "",
   });
 
   String id;
@@ -52,6 +53,7 @@ class TaskHistoryModal {
   String escalationTag;
   String resolveDate;
   String isResolve;
+  String daysPending;
 
   factory TaskHistoryModal.fromJson(String str) =>
       TaskHistoryModal.fromMap(json.decode(str));

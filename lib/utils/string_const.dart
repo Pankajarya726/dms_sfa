@@ -163,4 +163,5 @@ class StringConst {
   static const orderHistory = "Order History";
   static const noOrdersTaken = "No orders taken yet!";
   static const buNotOrdered = "BU not ordered yet";
+  static const dataNotFound = "Data not found";
 }

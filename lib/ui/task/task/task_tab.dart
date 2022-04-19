@@ -10,6 +10,7 @@ import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:intl/intl.dart';
+import 'package:ntp/ntp.dart';
 import '../../../main.dart';
 
 class TaskTab extends StatefulWidget {
@@ -36,6 +37,7 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
   StreamController<List<RetailersTaskModal>> retailerStreamController =
       StreamController();
   String day = "";
+  DateTime? currentDate;
 
   @override
   void initState() {
@@ -82,6 +84,27 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
                   );
                 },
                 itemBuilder: (context, index) {
+                  // calculate months from enrolled date to current date
+                  if (snapshot.data![index].enrollmentDate.isNotEmpty) {
+                    int monthCounts = 0;
+                    DateTime enrolledDate =
+                        DateTime.parse(snapshot.data![index].enrollmentDate);
+                    if (enrolledDate.year == currentDate!.year) {
+                      monthCounts = currentDate!.month - enrolledDate.month;
+                      snapshot.data![index].totalMonths = monthCounts;
+                    } else {
+                      monthCounts = 12 - enrolledDate.month;
+                      monthCounts = monthCounts + currentDate!.month;
+                      int count = 0;
+                      for (int i = enrolledDate.year + 1;
+                          i <= currentDate!.year - 1;
+                          i++) {
+                        count++;
+                      }
+                      monthCounts = monthCounts + (count * 12);
+                    }
+                  }
+
                   return TaskListItems(
                     index: widget.index,
                     retailer: snapshot.data![index],
@@ -116,6 +139,10 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
           await repository.getRetailersTaskWise(input);
       if (response.success) {
         retailers = response.data!;
+        currentDate =
+            await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
+          return DateTime.now();
+        });
         debugPrint("response = ${response.message}");
         retailerStreamController.add(retailers);
       } else {

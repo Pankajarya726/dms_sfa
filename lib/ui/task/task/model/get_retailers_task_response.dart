@@ -53,6 +53,7 @@ class RetailersTaskModal {
     required this.outletPicture,
     required this.pendingTask,
     required this.taskHistory,
+    this.totalMonths = 0,
     required this.taskWiseData,
     required this.lastEscalation,
   });
@@ -74,6 +75,7 @@ class RetailersTaskModal {
   String outletPicture;
   String pendingTask;
   String taskHistory;
+  int totalMonths;
   List<TaskWiseRetailersTaskModal> taskWiseData;
   List<LastEscalation> lastEscalation;
 
@@ -231,10 +233,12 @@ class TaskWiseRetailersTaskModal {
   TaskWiseRetailersTaskModal({
     required this.taskNumber,
     required this.escalationTag,
+    required this.taskType,
   });
 
   String taskNumber;
   String escalationTag;
+  String taskType;
 
   factory TaskWiseRetailersTaskModal.fromJson(String str) =>
       TaskWiseRetailersTaskModal.fromMap(json.decode(str));
@@ -248,10 +252,12 @@ class TaskWiseRetailersTaskModal {
         escalationTag: json["escalation_tag"] == null
             ? ""
             : json["escalation_tag"].toString(),
+        taskType: json["task_type"] == null ? "" : json["task_type"].toString(),
       );
 
   Map<String, dynamic> toMap() => {
         "task_number": taskNumber,
         "escalation_tag": escalationTag,
+        "task_type": taskType,
       };
 }

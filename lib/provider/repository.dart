@@ -1166,7 +1166,7 @@ class ApiRepository {
 
   Future<BaseResponse> saveNoOrder(Map input) async {
     try {
-      Response response = await dio.post(Url.noOrderYet, data: input);
+      Response response = await dio.post(Url.saveNoOrder, data: input);
       BaseResponse baseResponse = BaseResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {

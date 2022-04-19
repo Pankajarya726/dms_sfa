@@ -10,6 +10,7 @@ import 'package:dms/ui/task/task/task_list_item.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
 import 'package:flutter/material.dart';
+import 'package:ntp/ntp.dart';
 
 class SearchTaskScreen extends StatefulWidget {
   const SearchTaskScreen({Key? key}) : super(key: key);
@@ -22,6 +23,7 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
   TextEditingController edtSearch = TextEditingController();
   List<RetailersModal> retailers = [];
   StreamController<List<RetailersTaskModal>> searchStream = StreamController();
+  DateTime? currentDate;
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +110,27 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
                   );
                 },
                 itemBuilder: (context, index) {
+                  // calculate months from enrolled date to current date
+                  if (snapshot.data![index].enrollmentDate.isNotEmpty) {
+                    int monthCounts = 0;
+                    DateTime enrolledDate =
+                        DateTime.parse(snapshot.data![index].enrollmentDate);
+                    if (enrolledDate.year == currentDate!.year) {
+                      monthCounts = currentDate!.month - enrolledDate.month;
+                      snapshot.data![index].totalMonths = monthCounts;
+                    } else {
+                      monthCounts = 12 - enrolledDate.month;
+                      monthCounts = monthCounts + currentDate!.month;
+                      int count = 0;
+                      for (int i = enrolledDate.year + 1;
+                          i <= currentDate!.year - 1;
+                          i++) {
+                        count++;
+                      }
+                      monthCounts = monthCounts + (count * 12);
+                    }
+                  }
+
                   return TaskListItems(
                     index: 0,
                     retailer: snapshot.data![index],
@@ -142,6 +165,10 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
       GetRetailersTaskResponse response =
           await repository.searchTaskRetailers(input);
       if (response.success) {
+        currentDate =
+            await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
+          return DateTime.now();
+        });
         searchStream.add(response.data!);
       } else {
         searchStream.addError(response.message);
