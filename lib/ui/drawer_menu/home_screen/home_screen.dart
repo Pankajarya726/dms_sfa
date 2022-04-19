@@ -1,6 +1,7 @@
 // ignore_for_file: use_key_in_widget_constructors
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dms/ui/add_store/outlet_information/outlet_information.dart';
 import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_bloc.dart';
 import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_events.dart';
 import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_states.dart';
@@ -13,7 +14,6 @@ import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kf_drawer/kf_drawer.dart';
 import 'package:marquee/marquee.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -332,25 +332,25 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
   void navigateToHomeItems(index) {
     switch (index) {
       case 0:
-        Utility.showToast( StringConst.comingSoon);
+        Utility.showToast(StringConst.comingSoon);
         break;
       case 1:
-        Utility.showToast( StringConst.comingSoon);
+        Utility.showToast(StringConst.comingSoon);
         break;
       case 2:
         // Fluttertoast.showToast(msg: StringConst.comingSoon);
         Navigator.push(context, MaterialPageRoute(builder: (context) => const TaskListScreen()));
         break;
       case 3:
-        Utility.showToast( StringConst.comingSoon);
-        // Navigator.push(context, MaterialPageRoute(builder: (context) => const OutletInformation()));
+        // Utility.showToast( StringConst.comingSoon);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const OutletInformation()));
         break;
       case 4:
         // Fluttertoast.showToast(msg: StringConst.comingSoon);
         Navigator.push(context, MaterialPageRoute(builder: (context) => const RetailerListScreen()));
         break;
       case 5:
-        Utility.showToast( StringConst.comingSoon);
+        Utility.showToast(StringConst.comingSoon);
         break;
     }
   }
@@ -358,13 +358,13 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
   void navigateToBottomBarItems() {
     switch (currentBottomTabIndex) {
       case 0:
-        Utility.showToast( StringConst.comingSoon);
+        Utility.showToast(StringConst.comingSoon);
         break;
       case 1:
-        Utility.showToast( StringConst.comingSoon);
+        Utility.showToast(StringConst.comingSoon);
         break;
       case 2:
-        Utility.showToast( StringConst.comingSoon);
+        Utility.showToast(StringConst.comingSoon);
         break;
       case 3:
         Navigator.push(context, MaterialPageRoute(builder: (context) => const MyPlan()));

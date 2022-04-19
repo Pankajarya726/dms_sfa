@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/main.dart';
 import 'package:dms/model/base_response.dart';
-import 'package:dms/ui/add_store/outlet_information/outlet_information.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/last_visit_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/no_order_reason_bottom_sheet.dart';
@@ -15,6 +14,7 @@ import 'package:dms/ui/order_booking/retailer_detail/bloc/retailer_details_event
 import 'package:dms/ui/order_booking/retailer_detail/bloc/retailer_details_states.dart';
 import 'package:dms/ui/order_booking/retailer_detail/model/no_order_yet_response.dart';
 import 'package:dms/ui/order_booking/retailer_detail/model/retailer_details_response.dart';
+import 'package:dms/ui/order_booking/retailer_detail/model/task_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/constants.dart';
@@ -27,9 +27,9 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class RetailerDetailScreen extends StatefulWidget {
   final RetailersModal retailer;
+  final int orderStatus;
 
-  const RetailerDetailScreen({Key? key, required this.retailer})
-      : super(key: key);
+  const RetailerDetailScreen({Key? key, required this.retailer, required this.orderStatus}) : super(key: key);
 
   @override
   _RetailerDetailScreenState createState() => _RetailerDetailScreenState();
@@ -39,603 +39,556 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
   TextEditingController txtRemark = TextEditingController();
   RetailerDetailsModal? retailer;
   List<NoOrderYetModal> noOrderYet = [];
+  List<Task> taskList = [];
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => RetailerDetailsBloc(),
-      child: Scaffold(
-        backgroundColor: const Color(0xffF7F7F7),
-        appBar: _appBar(AppBar().preferredSize.height),
-        body: BlocBuilder<RetailerDetailsBloc, RetailerDetailStates>(
-          builder: (context, state) {
-            if (state is RetailerDetailInitialState) {
-              BlocProvider.of<RetailerDetailsBloc>(context).add(
-                  GetRetailerDetailsEvent(storeId: widget.retailer.customerId));
-            }
-            if (state is RetailerDetailLodingState) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (state is GetRetailerDetailState) {
-              retailer = state.retailer;
-              if (txtRemark.text.isEmpty) {
-                if (txtRemark.text != retailer!.remark) {
-                  txtRemark.text = state.retailer.remark;
-                }
+      child: BlocListener<RetailerDetailsBloc, RetailerDetailStates>(
+        listener: (context, state) {
+          if (state is GetTaskState) {
+            taskList = state.taskList;
+          }
+        },
+        child: Scaffold(
+          backgroundColor: const Color(0xffF7F7F7),
+          appBar: _appBar(AppBar().preferredSize.height),
+          body: BlocBuilder<RetailerDetailsBloc, RetailerDetailStates>(
+            builder: (context, state) {
+              if (state is RetailerDetailInitialState) {
+                BlocProvider.of<RetailerDetailsBloc>(context).add(GetRetailerDetailsEvent(storeId: widget.retailer.customerId));
               }
-              BlocProvider.of<RetailerDetailsBloc>(context)
-                  .add(NoOrderYetEvent(retailerId: widget.retailer.customerId));
-            }
-            if (state is RetailerDetailFailureState) {
-              return Center(
-                child: Text(state.failureMessage),
-              );
-            }
-            if (retailer == null) {
-              return Container();
-            }
+              if (state is RetailerDetailLodingState) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (state is GetRetailerDetailState) {
+                retailer = state.retailer;
+                if (txtRemark.text.isEmpty) {
+                  if (txtRemark.text != retailer!.remark) {
+                    txtRemark.text = state.retailer.remark;
+                  }
+                }
+                BlocProvider.of<RetailerDetailsBloc>(context).add(NoOrderYetEvent(retailerId: widget.retailer.customerId));
+                BlocProvider.of<RetailerDetailsBloc>(context).add(GetTaskEvent(uniqueCode: widget.retailer.uniqueCode));
+              }
+              if (state is RetailerDetailFailureState) {
+                return Center(
+                  child: Text(state.failureMessage),
+                );
+              }
+              if (retailer == null) {
+                return Container();
+              }
 
-            return CustomScrollView(
-              slivers: [
-                SliverGrid(
-                  delegate: SliverChildListDelegate(
-                    [
-                      DetailGritItem(
-                        value: retailer!.lastVisit.isNotEmpty
-                            ? retailer!.lastVisit.first.orderDate
-                            : "No visit yet!",
-                        image: "assets/store.png",
-                        name: StringConst.lastVisit,
-                        type: 1,
-                        retailerDetails: retailer!,
-                      ),
-                      DetailGritItem(
-                        value: retailer!.pendingTask,
-                        image: "assets/task.png",
-                        name: StringConst.task,
-                        type: 2,
-                      ),
-                      DetailGritItem(
-                        value: retailer!.tcStatus,
-                        image: "assets/phone.png",
-                        name: StringConst.tcStatus,
-                        type: 3,
-                      ),
-                      DetailGritItem(
-                        value: currencyFormat
-                            .format(double.parse(retailer!.potential)),
-                        image: "assets/experience.png",
-                        name: StringConst.potential,
-                        type: 4,
-                      ),
-                    ],
+              return CustomScrollView(
+                slivers: [
+                  SliverGrid(
+                    delegate: SliverChildListDelegate(
+                      [
+                        DetailGritItem(
+                          value: retailer!.lastVisit.isNotEmpty ? retailer!.lastVisit.first.orderDate : "No visit yet!",
+                          image: "assets/store.png",
+                          name: StringConst.lastVisit,
+                          type: 1,
+                          retailerDetails: retailer!,
+                        ),
+                        DetailGritItem(
+                          value: retailer!.pendingTask,
+                          image: "assets/task.png",
+                          name: StringConst.task,
+                          type: 2,
+                          retailerDetails: retailer!,
+                          taskList: taskList,
+                        ),
+                        DetailGritItem(
+                          value: retailer!.tcStatus,
+                          image: "assets/phone.png",
+                          name: StringConst.tcStatus,
+                          type: 3,
+                          retailerDetails: retailer!,
+                        ),
+                        DetailGritItem(
+                          value: currencyFormat.format(double.parse(retailer!.potential)),
+                          image: "assets/experience.png",
+                          name: StringConst.potential,
+                          type: 4,
+                          retailerDetails: retailer!,
+                        ),
+                      ],
+                    ),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 2.6,
+                      mainAxisSpacing: 15,
+                      crossAxisSpacing: 0,
+                    ),
                   ),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 2.6,
-                    mainAxisSpacing: 15,
-                    crossAxisSpacing: 0,
-                  ),
-                ),
-                SliverList(
-                  delegate: SliverChildListDelegate(
-                    [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 15, right: 10, bottom: 0, top: 10),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              StringConst.storeInfo,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const OutletInformation()),
-                                );
-                              },
-                              padding: EdgeInsets.zero,
-                              splashRadius: 13,
-                              icon: Container(
-                                height: 25,
-                                width: 25,
-                                decoration: const BoxDecoration(
-                                  color: MColor.colorSecondary,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(15)),
+                  SliverList(
+                    delegate: SliverChildListDelegate(
+                      [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 10),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                StringConst.storeInfo,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
                                 ),
-                                child: const Center(
-                                  child: Icon(
-                                    Icons.edit,
-                                    color: Colors.white,
-                                    size: 18,
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(builder: (context) => const OutletInformation()),
+                                  // );
+                                },
+                                padding: EdgeInsets.zero,
+                                splashRadius: 13,
+                                icon: Container(
+                                  height: 25,
+                                  width: 25,
+                                  decoration: const BoxDecoration(
+                                    color: MColor.colorSecondary,
+                                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.edit,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 0),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 5, vertical: 10),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color.fromRGBO(237, 237, 237, 0.25),
-                                blurRadius: 10,
                               )
                             ],
                           ),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: RetailerDetailItem(
-                                      value: retailer!.customerName,
-                                      image: "assets/user.png",
-                                      name: StringConst.ownerName,
-                                      type: 1,
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 1,
-                                    height: 30,
-                                    color: const Color(0xffC5C5C5),
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Expanded(
-                                    child: RetailerDetailItem(
-                                      value: retailer!.orderBookingDay,
-                                      image: "assets/telephone.png",
-                                      name: StringConst.callingDay,
-                                      type: 1,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: RetailerDetailItem(
-                                      value: retailer!.primaryMobile,
-                                      image: "assets/phone_call.png",
-                                      name: StringConst.primaryNo,
-                                      type: 1,
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 1,
-                                    height: 30,
-                                    color: const Color(0xffC5C5C5),
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Expanded(
-                                    child: RetailerDetailItem(
-                                      value: retailer!.secondaryMobile.isEmpty
-                                          ? "Not Given"
-                                          : retailer!.secondaryMobile,
-                                      image: "assets/phone_call.png",
-                                      name: StringConst.secondaryNo,
-                                      type: 1,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 0, vertical: 5),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color.fromRGBO(237, 237, 237, 0.25),
+                                  blurRadius: 10,
+                                )
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    const Image(
-                                      image: AssetImage("assets/map.png"),
-                                      width: 30,
+                                    Expanded(
+                                      child: RetailerDetailItem(
+                                        value: retailer!.customerName,
+                                        image: "assets/user.png",
+                                        name: StringConst.ownerName,
+                                        type: 1,
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 1,
                                       height: 30,
+                                      color: const Color(0xffC5C5C5),
                                     ),
                                     const SizedBox(
                                       width: 5,
                                     ),
-                                    Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          StringConst.address,
-                                          style: TextStyle(
-                                            color: Color(0xff303030),
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 5,
-                                        ),
-                                        SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.75,
-                                          child: Text(
-                                            retailer!.primaryAddress,
-                                            overflow: TextOverflow.clip,
-                                            style: const TextStyle(
-                                              color: Color(0xff555555),
-                                              fontSize: 14,
+                                    Expanded(
+                                      child: RetailerDetailItem(
+                                        value: retailer!.orderBookingDay,
+                                        image: "assets/telephone.png",
+                                        name: StringConst.callingDay,
+                                        type: 1,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: RetailerDetailItem(
+                                        value: retailer!.primaryMobile,
+                                        image: "assets/phone_call.png",
+                                        name: StringConst.primaryNo,
+                                        type: 1,
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 1,
+                                      height: 30,
+                                      color: const Color(0xffC5C5C5),
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Expanded(
+                                      child: RetailerDetailItem(
+                                        value: retailer!.secondaryMobile.isEmpty ? "Not Given" : retailer!.secondaryMobile,
+                                        image: "assets/phone_call.png",
+                                        name: StringConst.secondaryNo,
+                                        type: 1,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      const Image(
+                                        image: AssetImage("assets/map.png"),
+                                        width: 30,
+                                        height: 30,
+                                      ),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
+                                      Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            StringConst.address,
+                                            style: TextStyle(
+                                              color: Color(0xff303030),
+                                              fontSize: 15,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(
-                            left: 15, right: 10, bottom: 0, top: 10),
-                        child: Text(
-                          StringConst.remark,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 15, right: 10, bottom: 0, top: 5),
-                        child: TextFormField(
-                          maxLines: 5,
-                          minLines: 3,
-                          readOnly: true,
-                          controller: txtRemark,
-                          enableInteractiveSelection: false,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Color(0xff555555),
-                          ),
-                          decoration: const InputDecoration(
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: UnderlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                              borderSide: BorderSide.none,
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          SizedBox(
+                                            width: MediaQuery.of(context).size.width * 0.75,
+                                            child: Text(
+                                              retailer!.primaryAddress,
+                                              overflow: TextOverflow.clip,
+                                              style: const TextStyle(
+                                                color: Color(0xff555555),
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                         ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(
-                            left: 15, right: 10, bottom: 0, top: 10),
-                        child: Text(
-                          StringConst.orderHistory,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
+                        const Padding(
+                          padding: EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 10),
+                          child: Text(
+                            StringConst.remark,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 15, right: 15, bottom: 10, top: 5),
-                        child: Container(
-                          padding: retailer!.orderHistory.isNotEmpty
-                              ? const EdgeInsets.fromLTRB(5, 0, 5, 0)
-                              : const EdgeInsets.fromLTRB(5, 5, 5, 5),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color.fromRGBO(237, 237, 237, 0.25),
-                                blurRadius: 10,
-                              )
-                            ],
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 5),
+                          child: TextFormField(
+                            maxLines: 5,
+                            minLines: 3,
+                            readOnly: true,
+                            controller: txtRemark,
+                            enableInteractiveSelection: false,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Color(0xff555555),
+                            ),
+                            decoration: const InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: UnderlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(10)),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
                           ),
-                          child: retailer!.orderHistory.isNotEmpty
-                              ? Column(
-                                  children: List.generate(
-                                    retailer!.orderHistory.length,
-                                    (index) => Material(
-                                      color: Colors.white,
-                                      child: InkWell(
-                                        customBorder: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        onTap: () {
-                                          Utility.hideKeyboard();
-                                          FocusScope.of(context).unfocus();
-                                          showModalBottomSheet(
-                                            context: context,
-                                            shape: bottomSheetShape,
-                                            isScrollControlled: true,
-                                            builder: (context) =>
-                                                OrderHistoryBottomSheet(
-                                              product: retailer!
-                                                  .orderHistory[index].products,
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 10),
+                          child: Text(
+                            StringConst.orderHistory,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10, top: 5),
+                          child: Container(
+                            padding: retailer!.orderHistory.isNotEmpty
+                                ? const EdgeInsets.fromLTRB(5, 0, 5, 0)
+                                : const EdgeInsets.fromLTRB(5, 5, 5, 5),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color.fromRGBO(237, 237, 237, 0.25),
+                                  blurRadius: 10,
+                                )
+                              ],
+                            ),
+                            child: retailer!.orderHistory.isNotEmpty
+                                ? Column(
+                                    children: List.generate(
+                                      retailer!.orderHistory.length,
+                                      (index) => Material(
+                                        color: Colors.white,
+                                        child: InkWell(
+                                          customBorder: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          onTap: () {
+                                            Utility.hideKeyboard();
+                                            FocusScope.of(context).unfocus();
+                                            showModalBottomSheet(
+                                              context: context,
+                                              shape: bottomSheetShape,
+                                              isScrollControlled: true,
+                                              builder: (context) => OrderHistoryBottomSheet(
+                                                product: retailer!.orderHistory[index].products,
+                                              ),
+                                            );
+                                          },
+                                          child: Container(
+                                            margin: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                                            height: 50,
+                                            decoration: retailer!.orderHistory[index] != retailer!.orderHistory.last
+                                                ? const BoxDecoration(
+                                                    border: Border(
+                                                      bottom: BorderSide(color: Color(0xffC5C5C5), width: 0.5),
+                                                    ),
+                                                  )
+                                                : null,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Flexible(
+                                                  child: RichText(
+                                                    overflow: TextOverflow.ellipsis,
+                                                    text: TextSpan(
+                                                      text: "Date: ",
+                                                      style: const TextStyle(
+                                                        fontWeight: FontWeight.normal,
+                                                        color: Color(0xff555555),
+                                                        letterSpacing: 0.67,
+                                                        fontSize: 15,
+                                                      ),
+                                                      children: <TextSpan>[
+                                                        TextSpan(
+                                                          text: retailer!.orderHistory[index].orderDate,
+                                                          style: const TextStyle(
+                                                            fontWeight: FontWeight.normal,
+                                                            color: Color(0xff303030),
+                                                            letterSpacing: 0.67,
+                                                            fontSize: 15,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                Flexible(
+                                                  child: RichText(
+                                                    overflow: TextOverflow.ellipsis,
+                                                    text: TextSpan(
+                                                      text: "Value: ₹",
+                                                      style: const TextStyle(
+                                                        fontWeight: FontWeight.normal,
+                                                        color: Color(0xff555555),
+                                                        letterSpacing: 0.67,
+                                                        fontSize: 15,
+                                                      ),
+                                                      children: <TextSpan>[
+                                                        TextSpan(
+                                                          text: retailer!.orderHistory[index].amount,
+                                                          style: const TextStyle(
+                                                            fontWeight: FontWeight.normal,
+                                                            color: Color(0xff303030),
+                                                            letterSpacing: 0.67,
+                                                            fontSize: 15,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          );
-                                        },
-                                        child: Container(
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 0, horizontal: 5),
-                                          height: 50,
-                                          decoration: retailer!
-                                                      .orderHistory[index] !=
-                                                  retailer!.orderHistory.last
-                                              ? const BoxDecoration(
-                                                  border: Border(
-                                                    bottom: BorderSide(
-                                                        color:
-                                                            Color(0xffC5C5C5),
-                                                        width: 0.5),
-                                                  ),
-                                                )
-                                              : null,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Flexible(
-                                                child: RichText(
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  text: TextSpan(
-                                                    text: "Date: ",
-                                                    style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                      color: Color(0xff555555),
-                                                      letterSpacing: 0.67,
-                                                      fontSize: 15,
-                                                    ),
-                                                    children: <TextSpan>[
-                                                      TextSpan(
-                                                        text: retailer!
-                                                            .orderHistory[index]
-                                                            .orderDate,
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                          color:
-                                                              Color(0xff303030),
-                                                          letterSpacing: 0.67,
-                                                          fontSize: 15,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              Flexible(
-                                                child: RichText(
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  text: TextSpan(
-                                                    text: "Value: ₹",
-                                                    style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                      color: Color(0xff555555),
-                                                      letterSpacing: 0.67,
-                                                      fontSize: 15,
-                                                    ),
-                                                    children: <TextSpan>[
-                                                      TextSpan(
-                                                        text: retailer!
-                                                            .orderHistory[index]
-                                                            .amount,
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                          color:
-                                                              Color(0xff303030),
-                                                          letterSpacing: 0.67,
-                                                          fontSize: 15,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                )
-                              : const Text(StringConst.noOrdersTaken),
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(
-                            left: 15, right: 10, bottom: 0, top: 10),
-                        child: Text(
-                          StringConst.buNotOrdered,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
+                                  )
+                                : const Text(StringConst.noOrdersTaken),
                           ),
                         ),
-                      ),
-                      BlocBuilder<RetailerDetailsBloc, RetailerDetailStates>(
-                        builder: (context, state) {
-                          if (state is NoOrderYetLodingState) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          if (state is NoOrderYetFailureState) {
-                            return Center(
-                              child: Text(state.failureMessage),
-                            );
-                          }
-                          if (state is NoOrderYetState) {
-                            noOrderYet = state.noOrderYet;
-                          }
-                          return Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15, right: 10, bottom: 10, top: 5),
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: List.generate(
-                                  noOrderYet.length,
-                                  (index) {
-                                    return Padding(
-                                      padding: index == 0 || index == 4
-                                          ? const EdgeInsets.symmetric(
-                                              horizontal: 0,
-                                            )
-                                          : const EdgeInsets.symmetric(
-                                              horizontal: 10,
+                        const Padding(
+                          padding: EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 10),
+                          child: Text(
+                            StringConst.buNotOrdered,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        BlocBuilder<RetailerDetailsBloc, RetailerDetailStates>(
+                          builder: (context, state) {
+                            if (state is NoOrderYetLodingState) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            if (state is NoOrderYetFailureState) {
+                              return Center(
+                                child: Text(state.failureMessage),
+                              );
+                            }
+                            if (state is NoOrderYetState) {
+                              noOrderYet = state.noOrderYet;
+                            }
+                            return Padding(
+                              padding: const EdgeInsets.only(left: 15, right: 10, bottom: 10, top: 5),
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: List.generate(
+                                    noOrderYet.length,
+                                    (index) {
+                                      return Padding(
+                                        padding: index == 0 || index == 4
+                                            ? const EdgeInsets.symmetric(
+                                                horizontal: 0,
+                                              )
+                                            : const EdgeInsets.symmetric(
+                                                horizontal: 10,
+                                              ),
+                                        child: Container(
+                                          height: 45,
+                                          width: 100,
+                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
+                                          decoration: const BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(10),
                                             ),
-                                      child: Container(
-                                        height: 45,
-                                        width: 100,
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 1),
-                                        decoration: const BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(10),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Color.fromRGBO(237, 237, 237, 0.25),
+                                                blurRadius: 10,
+                                              )
+                                            ],
                                           ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Color.fromRGBO(
-                                                  237, 237, 237, 0.25),
-                                              blurRadius: 10,
-                                            )
-                                          ],
+                                          child: CachedNetworkImage(
+                                            height: 20,
+                                            fit: BoxFit.cover,
+                                            imageUrl: noOrderYet[index].image,
+                                            imageBuilder: (context, imageProvider) {
+                                              return Image(
+                                                image: imageProvider,
+                                                fit: BoxFit.fill,
+                                              );
+                                            },
+                                            errorWidget: (context, url, error) => Image.asset("assets/placeholder.png"),
+                                            placeholder: (context, url) => Image.asset("assets/placeholder.png"),
+                                          ),
                                         ),
-                                        child: CachedNetworkImage(
-                                          height: 20,
-                                          fit: BoxFit.cover,
-                                          imageUrl: noOrderYet[index].image,
-                                          imageBuilder:
-                                              (context, imageProvider) {
-                                            return Image(
-                                              image: imageProvider,
-                                              fit: BoxFit.fill,
-                                            );
-                                          },
-                                          errorWidget: (context, url, error) =>
-                                              Image.asset(
-                                                  "assets/placeholder.png"),
-                                          placeholder: (context, url) =>
-                                              Image.asset(
-                                                  "assets/placeholder.png"),
-                                        ),
-                                      ),
-                                    );
-                                  },
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            );
-          },
-        ),
-        bottomNavigationBar: SizedBox(
-          height: 50,
-          width: MediaQuery.of(context).size.width,
-          child: Row(
-            children: [
-              MaterialButton(
-                onPressed: () {
-                  Utility.hideKeyboard();
-                  FocusScope.of(context).unfocus();
-                  noOrder(context);
-                },
-                shape: const RoundedRectangleBorder(),
-                child: const Text(
-                  StringConst.noOrderCaps,
-                  style: TextStyle(
-                      color: Color(0xffFFFFFF),
-                      fontSize: 20,
-                      letterSpacing: 0.72),
-                ),
-                color: const Color(0xff3D8FFF),
-                height: 50,
-                elevation: 0,
-                minWidth: MediaQuery.of(context).size.width / 2,
-              ),
-              MaterialButton(
-                onPressed: () async {
-                  Utility.hideKeyboard();
-                  FocusScope.of(context).unfocus();
-                  await databaseHelper.clearCart();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => OrderBookingListScreen(
-                        beatId: widget.retailer.beatId,
-                        retailerId: widget.retailer.customerId,
-                      ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                  );
-                },
-                shape: const RoundedRectangleBorder(),
-                child: const Text(
-                  StringConst.orderCaps,
-                  style: TextStyle(
-                      color: Color(0xffFFFFFF),
-                      fontSize: 20,
-                      letterSpacing: 0.72),
+                  )
+                ],
+              );
+            },
+          ),
+          bottomNavigationBar: SizedBox(
+            height: 50,
+            width: MediaQuery.of(context).size.width,
+            child: Row(
+              children: [
+                widget.orderStatus == 1
+                    ? MaterialButton(
+                        onPressed: () {
+                          Utility.hideKeyboard();
+                          FocusScope.of(context).unfocus();
+                          noOrder(context);
+                        },
+                        shape: const RoundedRectangleBorder(),
+                        child: const Text(
+                          StringConst.noOrderCaps,
+                          style: TextStyle(color: Color(0xffFFFFFF), fontSize: 20, letterSpacing: 0.72),
+                        ),
+                        color: const Color(0xff3D8FFF),
+                        height: 50,
+                        elevation: 0,
+                        minWidth: MediaQuery.of(context).size.width / 2,
+                      )
+                    : Container(),
+                MaterialButton(
+                  onPressed: () async {
+                    Utility.hideKeyboard();
+                    FocusScope.of(context).unfocus();
+                    await databaseHelper.clearCart();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => OrderBookingListScreen(
+                          beatId: widget.retailer.beatId,
+                          retailerId: widget.retailer.customerId,
+                        ),
+                      ),
+                    );
+                  },
+                  shape: const RoundedRectangleBorder(),
+                  child: const Text(
+                    StringConst.orderCaps,
+                    style: TextStyle(color: Color(0xffFFFFFF), fontSize: 20, letterSpacing: 0.72),
+                  ),
+                  color: MColor.colorSecondary,
+                  height: 50,
+                  elevation: 0,
+                  minWidth: widget.orderStatus == 1 ? MediaQuery.of(context).size.width / 2 : MediaQuery.of(context).size.width,
                 ),
-                color: MColor.colorSecondary,
-                height: 50,
-                elevation: 0,
-                minWidth: MediaQuery.of(context).size.width / 2,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -695,8 +648,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
               child: AppBar(
                 elevation: 5,
                 toolbarHeight: 60,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                 backgroundColor: Colors.white,
                 primary: false,
                 automaticallyImplyLeading: false,
@@ -718,10 +670,8 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                             fit: BoxFit.cover,
                           );
                         },
-                        errorWidget: (context, url, error) =>
-                            Image.asset("assets/placeholder.png"),
-                        placeholder: (context, url) =>
-                            Image.asset("assets/placeholder.png"),
+                        errorWidget: (context, url, error) => Image.asset("assets/placeholder.png"),
+                        placeholder: (context, url) => Image.asset("assets/placeholder.png"),
                       ),
                     ),
                     const SizedBox(
@@ -765,10 +715,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                         child: Image(
                           width: 25,
                           height: 25,
-                          image: AssetImage(
-                              widget.retailer.enrollmentTypeId == "1"
-                                  ? "assets/retailer.png"
-                                  : "assets/tele.png"),
+                          image: AssetImage(widget.retailer.enrollmentTypeId == "1" ? "assets/retailer.png" : "assets/tele.png"),
                         ),
                       ),
                     )
@@ -781,8 +728,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
       );
 
   void noOrder(BuildContext context) async {
-    if (retailer!.pendingTask.isNotEmpty &&
-        int.parse(retailer!.pendingTask) > 0) {
+    if (retailer!.pendingTask.isNotEmpty && int.parse(retailer!.pendingTask) > 0) {
       bool? save = await Utility.showConfirmAlert(
           title: 'There are ${retailer!.pendingTask} pending Task',
           subTitle: "Do you want to resolve?",
@@ -791,6 +737,19 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
           confirmText: "Yes");
 
       if (save != null && save) {
+        var res = await showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            enableDrag: true,
+            shape: bottomSheetShape,
+            builder: (context) => TaskBottomSheet(
+                  taskList: taskList,
+                  retailerCode: widget.retailer.uniqueCode,
+                ));
+
+        if (res != null && res as int > 0) {
+          saveNoOrder(context);
+        }
       } else {
         saveNoOrder(context);
       }
@@ -836,16 +795,18 @@ class DetailGritItem extends StatefulWidget {
   final String name;
   final String value;
   final int type;
-  final RetailerDetailsModal? retailerDetails;
+  final List<Task> taskList;
+  final RetailerDetailsModal retailerDetails;
 
-  const DetailGritItem({
-    Key? key,
-    required this.image,
-    required this.name,
-    required this.value,
-    required this.type,
-    this.retailerDetails,
-  }) : super(key: key);
+  const DetailGritItem(
+      {Key? key,
+      required this.image,
+      required this.name,
+      required this.value,
+      required this.type,
+      required this.retailerDetails,
+      this.taskList = const []})
+      : super(key: key);
 
   @override
   _DetailGritItemState createState() => _DetailGritItemState();
@@ -887,8 +848,12 @@ class _DetailGritItemState extends State<DetailGritItem> {
                     showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
+                        enableDrag: true,
                         shape: bottomSheetShape,
-                        builder: (context) => const TaskBottomSheet());
+                        builder: (context) => TaskBottomSheet(
+                              taskList: widget.taskList,
+                              retailerCode: widget.retailerDetails.uniqueCode,
+                            ));
                   }
                   if (widget.type == 3) {
                     showModalBottomSheet(
@@ -900,8 +865,7 @@ class _DetailGritItemState extends State<DetailGritItem> {
                 }
               : null,
           child: Padding(
-            padding:
-                const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
+            padding: const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -961,12 +925,7 @@ class RetailerDetailItem extends StatefulWidget {
   final String value;
   final int type;
 
-  const RetailerDetailItem(
-      {Key? key,
-      required this.image,
-      required this.name,
-      required this.value,
-      required this.type})
+  const RetailerDetailItem({Key? key, required this.image, required this.name, required this.value, required this.type})
       : super(key: key);
 
   @override
@@ -997,10 +956,7 @@ class _RetailerDetailItemState extends State<RetailerDetailItem> {
             children: [
               Text(
                 widget.name,
-                style: const TextStyle(
-                    color: Color(0xff303030),
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold),
+                style: const TextStyle(color: Color(0xff303030), fontSize: 15, fontWeight: FontWeight.bold),
               ),
               const SizedBox(
                 height: 5,
@@ -1010,10 +966,7 @@ class _RetailerDetailItemState extends State<RetailerDetailItem> {
                 child: Text(
                   widget.value,
                   overflow: TextOverflow.clip,
-                  style: const TextStyle(
-                      color: Color(0xff555555),
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold),
+                  style: const TextStyle(color: Color(0xff555555), fontSize: 14, fontWeight: FontWeight.bold),
                 ),
               ),
             ],

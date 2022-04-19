@@ -103,15 +103,14 @@ class StringConst {
   static const done = "Done";
   static const selectLangFirst = "Select Language ";
   static const selectLangSecond = "Select Language ";
-  static const whatsAppSms =
-      "Does retailer want to opt-in for Whatsapp message / SMS? *";
+  static const whatsAppSms = "Does retailer want to opt-in for Whatsapp message / SMS? *";
   static const filter = "Filter";
   static const productInformation = "Product Info";
   static const schemeInfo = "Scheme Info";
   static const summary = "Summary";
   static const orderSummary = "Order Summary";
   static const syncText = "Sync";
-  static const somethingWR = "Something went wrong!";
+  static const somethingWR = "Something went wrong!, Please try again later.";
   static const internetCheck = "Please check your internet connection!";
   static const otpNumber = "Select Number for OTP";
   static const primary = "Primary";

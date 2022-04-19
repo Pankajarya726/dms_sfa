@@ -48,10 +48,12 @@ class Url {
   static const String editUpdate = "OrderUpdate";
   static const String saveNoOrder = "saveNoOrder";
   static const String getOrder = "getOrderForEdit";
+  static const String getTaskByRetailer = "getTaskByRetailer";
   static const String noOrderYet = "getNoOrderYet";
   static const String getRetailersTaskWise = "getRetailerTaskWise";
   static const String getPendingTask = "getPendingTask";
   static const String searchTaskRetailers = "searchRetailerInTask";
   static const String taskEscalate = "taskEscalateAndResolve";
   static const String getTaskHistory = "getTaskHistory";
+  static const String taskResolve = "taskResolve";
 }

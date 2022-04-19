@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/main.dart';
 import 'package:dms/model/base_response.dart';
@@ -21,6 +21,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ProductInformation extends StatefulWidget {
   final RetailerForm form;
+
   const ProductInformation({
     Key? key,
     required this.form,
@@ -42,11 +43,7 @@ class _ProductInformationState extends State<ProductInformation> {
       padding: EdgeInsets.symmetric(horizontal: 15),
       child: Text(
         "Which category/brand does retailer keep?",
-        style: TextStyle(
-            fontSize: 20,
-            color: MColor.colorPrimary,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.5),
+        style: TextStyle(fontSize: 20, color: MColor.colorPrimary, fontWeight: FontWeight.bold, letterSpacing: 0.5),
       ),
     ));
     productStream.add(widgetList);
@@ -131,32 +128,25 @@ class _ProductInformationState extends State<ProductInformation> {
     if (response.success && response.data.isNotEmpty) {
       productList.clear();
       productList.addAll(response.data);
-      await Future.forEach(
-          productList,
-          (SurveyProduct product) =>
-              widgetList.add(ProductListItem(productsInfo: product)));
+      await Future.forEach(productList, (SurveyProduct product) => widgetList.add(ProductListItem(productsInfo: product)));
       debugPrint("products--->${productList.length}");
       productStream.add(widgetList);
     }
   }
 
   void register(BuildContext context) async {
-    List<SurveyProduct> selected =
-        productList.where((element) => element.check).toList();
+    List<SurveyProduct> selected = productList.where((element) => element.check).toList();
     debugPrint("selectedProduct--->$selected");
     if (selected.isEmpty) {
       Utility.showToast("Please select at least one Product");
       return;
     }
+    Map<String, dynamic> input = widget.form.toMap();
 
-    List<Map<String, dynamic>> categoryList = [];
-
-    selected.forEach((element) async {
+    await Future.forEach(selected, (SurveyProduct product) async {
       Map<String, dynamic> category = {};
-      category["product_id"] = element.id;
       String brand = "";
-      List<Brand> brands =
-          element.brand.where((element) => element.check).toList();
+      List<Brand> brands = product.brand.where((element) => element.check).toList();
       debugPrint("brands-->$brands");
       for (int i = 0; i < brands.length; i++) {
         if (i + 1 == brands.length) {
@@ -165,16 +155,13 @@ class _ProductInformationState extends State<ProductInformation> {
           brand = brand + "${brands[i].id},";
         }
       }
-      category["brands"] = brand;
-
-      categoryList.add(category);
+      input[getKey(product.id)] = brand;
     });
 
-    debugPrint("productMap-->$categoryList");
-    debugPrint("productMap-->${jsonEncode(categoryList)}");
-
-    Map<String, dynamic> input = widget.form.toMap();
-    input["products"] = jsonEncode(categoryList);
+    // debugPrint("productMap-->$categoryList");
+    // debugPrint("productMap-->${jsonEncode(categoryList)}");
+    //
+    // input["products"] = jsonEncode(categoryList);
     log("inputs--->" + input.toString());
 
     showModalBottomSheet(
@@ -186,10 +173,8 @@ class _ProductInformationState extends State<ProductInformation> {
           return SelectOtpNumberBottomSheet(
             form: widget.form,
             onDone: (String number) {
-              debugPrint("otp_number-->$number");
               input["otp_number"] = number;
               try {
-                log("inputs--->$input");
                 registerApi(input);
               } catch (exception) {
                 debugPrint("exception-->$exception");
@@ -197,7 +182,6 @@ class _ProductInformationState extends State<ProductInformation> {
             },
             onSubmit: () {
               try {
-                log("inputs--->$input");
                 registerApi(input);
               } catch (exception) {
                 debugPrint("exception-->$exception");
@@ -217,10 +201,7 @@ class _ProductInformationState extends State<ProductInformation> {
         if (input["otp_number"] == null) {
           Utility.showToast(response.message);
           debugPrint(Navigator.defaultRouteName);
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => const DrawerScreen()),
-              (route) => false);
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const DrawerScreen()), (route) => false);
         } else {
           showVerifyOtpAlert(input["otp_number"]);
         }
@@ -255,8 +236,7 @@ class _ProductInformationState extends State<ProductInformation> {
                   },
                   child: const Text(
                     "Cancel",
-                    style: TextStyle(
-                        color: Colors.black, fontSize: 16, letterSpacing: 0.5),
+                    style: TextStyle(color: Colors.black, fontSize: 16, letterSpacing: 0.5),
                   )),
               TextButton(
                   onPressed: () {
@@ -268,10 +248,7 @@ class _ProductInformationState extends State<ProductInformation> {
                   },
                   child: const Text(
                     "Confirm",
-                    style: TextStyle(
-                        color: MColor.colorPrimary,
-                        fontSize: 16,
-                        letterSpacing: 0.5),
+                    style: TextStyle(color: MColor.colorPrimary, fontSize: 16, letterSpacing: 0.5),
                   )),
             ],
           );
@@ -291,10 +268,7 @@ class _ProductInformationState extends State<ProductInformation> {
       if (response.success) {
         Utility.showToast(response.message);
         debugPrint(Navigator.defaultRouteName);
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (_) => const DrawerScreen()),
-            (route) => false);
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const DrawerScreen()), (route) => false);
       } else {
         Utility.showToast(response.message);
       }
@@ -302,13 +276,110 @@ class _ProductInformationState extends State<ProductInformation> {
       Utility.showToast(Constants.internetAlert);
     }
   }
+
+  String getKey(int id) {
+    switch (id) {
+      case 1:
+        return "teaBrands";
+      case 2:
+        return "toothBrushBrands";
+      case 3:
+        return "washingPowderBrands";
+      case 4:
+        return "spicesBrands";
+      case 5:
+        return "biscuitsBrands";
+      case 6:
+        return "drinkingMilkProductsBrands";
+      case 7:
+        return "snacksNamkeenBrands";
+      case 8:
+        return "dryfruitsBrands";
+      case 9:
+        return "yogurtSourMilkProductsBrands";
+      case 10:
+        return "beveragesJuiceBrands";
+      case 11:
+        return "butterSpreadsBrands";
+      case 12:
+        return "bathingSoapsBrands";
+      case 13:
+        return "beveragesCarbonatesBrands";
+      case 14:
+        return "beverageBottledwaterBrand";
+      case 15:
+        return "confectioneryChocolateBrands";
+      case 16:
+        return "confectioneryCandyBrands";
+      case 17:
+        return "diapersSanitaryNapkinsBrands";
+      case 18:
+        return "skincareProductsBrands";
+      case 19:
+        return "butterSpreadsBrands";
+      case 20:
+        return "noodlesMaggiePastaBrands";
+      case 21:
+        return "toothpastePowderBrands";
+      case 22:
+        return "shampooBrands";
+      case 23:
+        return "picklesKetchupsBrands";
+      case 24:
+        return "hairOilBrands";
+      case 25:
+        return "agarbattiBrands";
+      case 26:
+        return "penPencilErasersBrands";
+      case 27:
+        return "maleGroomingProductsBrands";
+      case 28:
+        return "cheeseBrands";
+      case 29:
+        return "sweetSnacksBrands";
+      case 30:
+        return "dishwashingsoapBrands";
+      case 31:
+        return "painReliefBrands";
+      case 32:
+        return "dryHairColorsBrands";
+      case 33:
+        return "deodrantBrands";
+      case 34:
+        return "otherDairyBrands";
+      case 35:
+        return "coilBrands";
+      case 36:
+        return "scrubberBrands";
+      case 37:
+        return "disposablecupBrands";
+      case 38:
+        return "electricDryCellBrands";
+      case 39:
+        return "beveragesConcentratesBrands";
+      case 40:
+        return "toiletCleanersBrands";
+      case 41:
+        return "shezwanSauceBrands";
+      case 42:
+        return "beveragesEnergyDrinksBrands";
+      case 43:
+        return "soyaChunksBrands";
+      case 44:
+        return "ruskBrands";
+      case 45:
+        return "mehendiConePowderBrands";
+
+      default:
+        return "";
+    }
+  }
 }
 
 class ProductListItem extends StatefulWidget {
   final SurveyProduct productsInfo;
 
-  const ProductListItem({Key? key, required this.productsInfo})
-      : super(key: key);
+  const ProductListItem({Key? key, required this.productsInfo}) : super(key: key);
 
   @override
   _ProductListItemState createState() => _ProductListItemState();
@@ -341,11 +412,7 @@ class _ProductListItemState extends State<ProductListItem> {
             ),
             title: Text(
               widget.productsInfo.categoryName,
-              style: const TextStyle(
-                  color: MColor.textColor,
-                  letterSpacing: 0.5,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18),
+              style: const TextStyle(color: MColor.textColor, letterSpacing: 0.5, fontWeight: FontWeight.bold, fontSize: 18),
             ),
             trailing: Checkbox(
               value: checked,
@@ -370,14 +437,12 @@ class _ProductListItemState extends State<ProductListItem> {
                       elevation: 0,
                       pressEnabled: true,
                       onPressed: (item) {
-                        widget.productsInfo.brand[index].check =
-                            !item.customData.check;
+                        widget.productsInfo.brand[index].check = !item.customData.check;
                         setState(() {});
                       },
                       customData: widget.productsInfo.brand[index],
                       textStyle: const TextStyle(fontSize: 17),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 5, horizontal: 10),
+                      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                       title: widget.productsInfo.brand[index].brandName,
                       active: widget.productsInfo.brand[index].check,
                       textActiveColor: MColor.activeTextColor,
@@ -385,9 +450,7 @@ class _ProductListItemState extends State<ProductListItem> {
                       color: MColor.disableBgColor,
                       activeColor: MColor.enableBgColor,
                       border: Border.all(
-                          color: widget.productsInfo.brand[index].check
-                              ? MColor.enableBorderColor
-                              : MColor.disableBorderColor),
+                          color: widget.productsInfo.brand[index].check ? MColor.enableBorderColor : MColor.disableBorderColor),
                     );
                   },
                 )

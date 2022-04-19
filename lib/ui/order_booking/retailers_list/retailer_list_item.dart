@@ -73,14 +73,14 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                 MaterialPageRoute(
                   builder: (_) => RetailerDetailScreen(
                     retailer: widget.retailer,
+                    orderStatus: widget.index,
                   ),
                 ),
               );
             }
           },
           child: Padding(
-            padding:
-                const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
+            padding: const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
             child: Column(
               children: [
                 Row(
@@ -123,13 +123,10 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                       padding: const EdgeInsets.all(0),
                       constraints: const BoxConstraints(),
                       onPressed: () async {
-                        if (widget.retailer.lat.isEmpty ||
-                            widget.retailer.lng.isEmpty) {
+                        if (widget.retailer.lat.isEmpty || widget.retailer.lng.isEmpty) {
                           Utility.showToast("Coordinates not found");
                         } else {
-                          await MapsLauncher.launchCoordinates(
-                              double.parse(widget.retailer.lat),
-                              double.parse(widget.retailer.lng));
+                          await MapsLauncher.launchCoordinates(double.parse(widget.retailer.lat), double.parse(widget.retailer.lng));
                         }
                       },
                       icon: const Image(
@@ -198,9 +195,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                                   ),
                                   Image(
                                     image: AssetImage(
-                                      widget.retailer.enrollmentTypeId == "1"
-                                          ? "assets/retailer.png"
-                                          : "assets/tele.png",
+                                      widget.retailer.enrollmentTypeId == "1" ? "assets/retailer.png" : "assets/tele.png",
                                     ),
                                   ),
                                 ],
