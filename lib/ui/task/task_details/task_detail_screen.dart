@@ -223,13 +223,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                                                 .modal
                                                                 .retailerId,
                                                             onTaskResolve: () {
-                                                              taskDetailsBloc.add(GetPendingTaskEvent(
-                                                                  retailerId: widget
-                                                                      .modal
-                                                                      .retailerId,
-                                                                  beatId: widget
-                                                                      .modal
-                                                                      .beatId));
+                                                              Navigator.pop(
+                                                                  context);
                                                             },
                                                           )
                                                         : EscalatedBottomSheet(
@@ -240,14 +235,21 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                                                 .modal
                                                                 .retailerId,
                                                             elapseDays: days,
-                                                            onTaskResolve: () {
-                                                              taskDetailsBloc.add(GetPendingTaskEvent(
-                                                                  retailerId: widget
-                                                                      .modal
-                                                                      .retailerId,
-                                                                  beatId: widget
-                                                                      .modal
-                                                                      .beatId));
+                                                            onTaskResolve:
+                                                                (done) {
+                                                              if (done
+                                                                  .isEmpty) {
+                                                                taskDetailsBloc.add(GetPendingTaskEvent(
+                                                                    retailerId: widget
+                                                                        .modal
+                                                                        .retailerId,
+                                                                    beatId: widget
+                                                                        .modal
+                                                                        .beatId));
+                                                              } else {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              }
                                                             },
                                                           ));
                                           },

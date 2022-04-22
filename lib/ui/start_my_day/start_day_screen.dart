@@ -46,6 +46,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
   String fileName = "test.jpg";
   TextEditingController txtRemarkController = TextEditingController();
   TextEditingController txtBeatController = TextEditingController();
+  TextEditingController txtTargetController = TextEditingController();
   StartMyDayBloc startMyDayBloc = StartMyDayBloc();
   AddPlanBloc addPlanBloc = AddPlanBloc();
   UserLocationBloc userLocationBloc = UserLocationBloc();
@@ -67,6 +68,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
   PrimaryTag? selectedPrimaryTag;
 
   GlobalKey globalKey = GlobalKey();
+  GlobalKey globalKey2 = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +89,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
               dateTime = DateTime.parse(state.currentDate);
             }
             if (state is StartMyDaySuccessState) {
-              Utility.showToast( state.successMessage);
+              Utility.showToast(state.successMessage);
               SharedPreference.setStringPreference(
                   SharedPreference.startMyDay, "hide");
               SharedPreference.setBooleanPreference(
@@ -98,7 +100,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                   (route) => false);
             }
             if (state is StartMyDayFailureState) {
-              Utility.showToast( state.failureMessage);
+              Utility.showToast(state.failureMessage);
             }
           }),
           BlocListener<AddPlanBloc, AddPlanStates>(listener: (context, state) {
@@ -370,9 +372,9 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                 );
                               },
                             ),
-                            const SizedBox(
-                              height: 15,
-                            ),
+                            // const SizedBox(
+                            //   height: 15,
+                            // ),
                             BlocBuilder<AddPlanBloc, AddPlanStates>(
                               builder: (context, state) {
                                 if (state is AddPlanInitialState) {
@@ -551,7 +553,79 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                 );
                               },
                             ),
-                            const SizedBox(
+
+                            BlocBuilder<AddPlanBloc, AddPlanStates>(
+                              builder: (context, state) {
+                                if (state is AddPlanInitialState) {
+                                  return Container();
+                                }
+                                if (selectedPrimaryTag == null) {
+                                  return Container();
+                                }
+
+                                if (state is SelectSecondaryState) {
+                                  selectedSecondaryTags = state.secondaryTag;
+                                }
+
+                                if (selectedPrimaryTag!.secondaryTag.isEmpty) {
+                                  return Container();
+                                }
+                                return selectedPrimaryTag!.secondaryTagType ==
+                                        "drop_down"
+                                    ? Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(
+                                            height: 15,
+                                          ),
+                                          const Text(
+                                            "Target",
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 0.67,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 15,
+                                          ),
+                                          TextFormField(
+                                            controller: txtTargetController,
+                                            keyboardType: TextInputType.number,
+                                            decoration: InputDecoration(
+                                              contentPadding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      15, 10, 15, 10),
+                                              hintText: "Target",
+                                              hintStyle: const TextStyle(
+                                                color: MColor.backButton,
+                                              ),
+                                              filled: true,
+                                              fillColor:
+                                                  const Color(0xffF2F2F2),
+                                              border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(30),
+                                                  borderSide: BorderSide.none),
+                                            ),
+                                            onTap: () async {
+                                              await Future.delayed(
+                                                  const Duration(
+                                                      milliseconds: 500));
+                                              RenderObject? object = globalKey2
+                                                  .currentContext!
+                                                  .findRenderObject();
+                                              object!.showOnScreen();
+                                            },
+                                          ),
+                                        ],
+                                      )
+                                    : Container();
+                              },
+                            ),
+                            SizedBox(
+                              key: globalKey2,
                               height: 15,
                             ),
                             const Text(
@@ -1089,11 +1163,11 @@ class _StartDayScreenState extends State<StartDayScreen> {
     if (selectedPrimaryTag!.name.trim().toLowerCase() == "leave" ||
         selectedPrimaryTag!.name.trim().toLowerCase() == "holiday") {
       if (txtRemarkController.text.trim().isEmpty) {
-        Utility.showToast( "Please enter remark");
+        Utility.showToast("Please enter remark");
         return;
       }
       if (txtRemarkController.text.trim().length > 255) {
-        Utility.showToast( "Word limit-250 characters");
+        Utility.showToast("Word limit-250 characters");
         return;
       }
       debugPrint("remark fields ok ");
@@ -1119,34 +1193,33 @@ class _StartDayScreenState extends State<StartDayScreen> {
     //otherwise else will execute
     else {
       if (selectedPrimaryTag == null) {
-        Utility.showToast( "Please select primary tag");
+        Utility.showToast("Please select primary tag");
         return;
       }
       if (selectedPrimaryTag!.secondaryTag.isNotEmpty &&
           selectedSecondaryTags.isEmpty) {
-        Utility.showToast( "Please select secondary tag");
+        Utility.showToast("Please select secondary tag");
         return;
       }
 
       if (selectedSecondaryTags.isEmpty &&
           txtRemarkController.text.trim().isEmpty) {
-        Utility.showToast( "Please enter remark");
+        Utility.showToast("Please enter remark");
         return;
       }
       if (txtRemarkController.text.trim().length > 255) {
-        Utility.showToast( "Word limit-250 characters");
+        Utility.showToast("Word limit-250 characters");
         return;
       }
       if (latitude == 0.0 && longitude == 0.0) {
         Utility.showToast(
-             "Could not fetch your location, Please try again later");
+            "Could not fetch your location, Please try again later");
         userLocationBloc.add(GetUserLocationEvent());
         return;
       }
       if (currentAddress.isEmpty) {
         Utility.showToast(
-            
-                "Could not proceed, because we are not able to fetch your area detail. Please allow location permission to continue");
+            "Could not proceed, because we are not able to fetch your area detail. Please allow location permission to continue");
         userLocationBloc.add(GetUserLocationEvent());
         return;
       }

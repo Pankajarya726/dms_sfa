@@ -37,7 +37,7 @@ class _RetailerListScreenState extends State<RetailerListScreen>
   RetailersBloc retailersBloc = RetailersBloc();
   List<BeatsModal> beatList = [];
   SelectBeatListener? selectBeatListener;
-  String selectedDay = DateFormat("EEEE").format(DateTime.now());
+  String selectedDay = "";
   String selectedEnrollmentType = "";
   String sortSelected = "";
   BeatsModal? selectedBeat;
@@ -231,8 +231,9 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (_) =>
-                                      const SearchRetailerScreen()));
+                                  builder: (_) => SearchRetailerScreen(
+                                        day: selectedDay,
+                                      )));
                         },
                         decoration: InputDecoration(
                             hintText: StringConst.search,
@@ -425,6 +426,9 @@ class _RetailerListScreenState extends State<RetailerListScreen>
           await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
         return DateTime.now();
       });
+      if (selectedDay.isEmpty) {
+        selectedDay = DateFormat("EEEE").format(dateTime);
+      }
       Map<String, dynamic> input = {"day": DateFormat("EEEE").format(dateTime)};
       GetAllBeatsResponse response =
           await repository.getBeatByOrderBookingDay(input);

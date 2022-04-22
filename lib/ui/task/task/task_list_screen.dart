@@ -115,7 +115,8 @@ class _TaskListScreenState extends State<TaskListScreen>
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => const SearchTaskScreen()));
+                                builder: (_) =>
+                                    SearchTaskScreen(day: selectedDay)));
                       },
                       decoration: InputDecoration(
                         fillColor: Colors.white,
@@ -387,6 +388,9 @@ class _TaskListScreenState extends State<TaskListScreen>
           await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
         return DateTime.now();
       });
+      if (selectedDay.isEmpty) {
+        selectedDay = DateFormat("EEEE").format(dateTime);
+      }
       Map<String, dynamic> input = {"day": DateFormat("EEEE").format(dateTime)};
       GetAllBeatsResponse response =
           await repository.getBeatByOrderBookingDay(input);

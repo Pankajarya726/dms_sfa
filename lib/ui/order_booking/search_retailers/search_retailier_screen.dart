@@ -9,7 +9,11 @@ import 'package:dms/utils/network.dart';
 import 'package:flutter/material.dart';
 
 class SearchRetailerScreen extends StatefulWidget {
-  const SearchRetailerScreen({Key? key}) : super(key: key);
+  final String day;
+  const SearchRetailerScreen({
+    required this.day,
+    Key? key,
+  }) : super(key: key);
 
   @override
   _SearchRetailerScreenState createState() => _SearchRetailerScreenState();
@@ -140,7 +144,7 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
 
   void searchApi(String text) async {
     if (await Network.isConnected()) {
-      Map input = {"search": text};
+      Map input = {"search": text, "day": widget.day};
       searchStream.addError("loading");
       RetailersResponse response = await repository.searchRetailer(input);
       if (response.success) {

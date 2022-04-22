@@ -1,18 +1,21 @@
 import 'dart:async';
 import 'dart:collection';
 import 'package:dms/main.dart';
-import 'package:dms/model/retaileres_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
-import 'package:dms/ui/order_booking/retailers_list/retailer_list_item.dart';
 import 'package:dms/ui/task/task/model/get_retailers_task_response.dart';
 import 'package:dms/ui/task/task/task_list_item.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
 
 class SearchTaskScreen extends StatefulWidget {
-  const SearchTaskScreen({Key? key}) : super(key: key);
+  final String day;
+  const SearchTaskScreen({
+    Key? key,
+    required this.day,
+  }) : super(key: key);
 
   @override
   _SearchTaskScreenState createState() => _SearchTaskScreenState();
@@ -23,6 +26,13 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
   List<RetailersModal> retailers = [];
   StreamController<List<RetailersTaskModal>> searchStream = StreamController();
   DateTime? currentDate;
+  String day = "";
+
+  @override
+  void initState() {
+    day = widget.day;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -171,8 +181,17 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
 
   void searchApi(String text) async {
     if (await Network.isConnected()) {
+      if (day.isEmpty) {
+        DateTime dateTime =
+            await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
+          return DateTime.now();
+        });
+        day = DateFormat("EEEE").format(dateTime);
+      }
+
       Map<String, dynamic> input = HashMap<String, dynamic>();
       input["search"] = text;
+      input["day"] = day;
       searchStream.addError("loading");
       GetRetailersTaskResponse response =
           await repository.searchTaskRetailers(input);
