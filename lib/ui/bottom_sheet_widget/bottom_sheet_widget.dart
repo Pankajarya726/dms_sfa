@@ -13,7 +13,7 @@ class BottomSheetHeading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(15.0),
+      padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
       child: Text(
         heading,
         style: const TextStyle(

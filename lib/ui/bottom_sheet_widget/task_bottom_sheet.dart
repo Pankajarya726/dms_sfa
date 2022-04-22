@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:dms/main.dart';
 import 'package:dms/model/base_response.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
@@ -9,17 +8,14 @@ import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
-import 'package:intl/intl.dart';
 
 class TaskBottomSheet extends StatefulWidget {
   // final RetailerDetailsModal retailerDetails;
   final String retailerCode;
   final List<Task> taskList;
-
   const TaskBottomSheet({
     Key? key,
     required this.taskList,
@@ -47,87 +43,106 @@ class _TaskBottomSheetState extends State<TaskBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-        initialChildSize: 0.5,
-        maxChildSize: 0.9,
-        minChildSize: 0.5,
-        expand: false,
-        builder: (BuildContext context, ScrollController scrollControl) {
-          return Padding(
-            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-            child: SingleChildScrollView(
-              controller: scrollControl,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const BottomSheetHeading("Task"),
-                  ListView.builder(
-                      itemCount: widget.taskList.length,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return TaskItem(task: widget.taskList[index]);
-                      }),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15.0, right: 15, bottom: 5, top: 5),
-                    child: TextFormField(
-                      controller: tecRemark,
-                      minLines: 3,
-                      maxLines: 5,
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.80,
+        minHeight: MediaQuery.of(context).size.height * 0.20,
+      ),
+      child: taskList.isNotEmpty
+          ? Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const BottomSheetHeading("Task"),
+                    ListView.builder(
+                        itemCount: taskList.length,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return TaskItem(task: taskList[index]);
+                        }),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 15.0, right: 15, bottom: 5, top: 5),
+                      child: TextFormField(
+                        controller: tecRemark,
+                        minLines: 3,
+                        maxLines: 5,
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 15),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none,
+                          ),
+                          hintText: StringConst.remark,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      MaterialButton(
-                        onPressed: () {
-                          resolveTask(context);
-                        },
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        MaterialButton(
+                          onPressed: () {
+                            resolveTask(context);
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          height: 40,
+                          color: MColor.colorPrimary,
+                          child: const Text(
+                            StringConst.done,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5),
+                          ),
                         ),
-                        height: 40,
-                        color: MColor.colorPrimary,
-                        child: const Text(
-                          StringConst.done,
-                          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+                        MaterialButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          height: 40,
+                          color: MColor.colorSecondary,
+                          child: const Text(
+                            StringConst.cancel,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5),
+                          ),
                         ),
-                      ),
-                      MaterialButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        height: 40,
-                        color: MColor.colorSecondary,
-                        child: const Text(
-                          StringConst.cancel,
-                          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 0.5),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  )
-                ],
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    )
+                  ],
+                ),
+              ),
+            )
+          : const IntrinsicHeight(
+              child: Center(
+                child: Text("Data not found"),
               ),
             ),
-          );
-        });
+    );
   }
 
   void resolveTask(BuildContext context) async {
@@ -144,7 +159,11 @@ class _TaskBottomSheetState extends State<TaskBottomSheet> {
         }
       }
 
-      Map<String, dynamic> input = {"task_id": taskId, "outlet_code": widget.retailerCode, "remark": tecRemark.text.trim()};
+      Map<String, dynamic> input = {
+        "task_id": taskId,
+        "outlet_code": widget.retailerCode,
+        "remark": tecRemark.text.trim()
+      };
 
       BaseResponse response = await repository.resolveTask(input);
       EasyLoading.dismiss();
@@ -212,15 +231,17 @@ class _TaskItemState extends State<TaskItem> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-      decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 0.5, color: Color(0xffC5C5C5)))),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      decoration: const BoxDecoration(
+          border:
+              Border(bottom: BorderSide(width: 0.5, color: Color(0xffC5C5C5)))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(widget.task.taskId.toString()),
+              Text(widget.task.taskId),
               Checkbox(
                   value: widget.task.check,
                   onChanged: (value) {
@@ -248,8 +269,8 @@ class _TaskItemState extends State<TaskItem> {
                 pressEnabled: false,
                 active: true,
                 elevation: 0,
-                activeColor: Color(0xffE7E7E7),
-                color: Color(0xffE7E7E7),
+                activeColor: const Color(0xffE7E7E7),
+                color: const Color(0xffE7E7E7),
                 textColor: Colors.black,
                 textActiveColor: Colors.black,
               );
@@ -264,8 +285,13 @@ class _TaskItemState extends State<TaskItem> {
           ),
           Align(
             alignment: Alignment.bottomRight,
-            child: Text(DateFormat("dd-MM-yyyy").format(DateTime.now())),
-          )
+            child: Text(
+              widget.task.taskDate,
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
         ],
       ),
     );

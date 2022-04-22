@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:dms/listeners/pop_up_menu_listener.dart';
 import 'package:dms/main.dart';
 import 'package:dms/ui/custom_widget/drop_down_field.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailer_bloc.dart';
@@ -52,9 +53,11 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
     StringConst.teleRetailer,
   ];
   String selectedDay = "";
+  String seleBeat = "";
   String selectedEnrollmentType = "";
   BeatsModal? selectedBeat;
   List<BeatsModal> beats = [];
+  PopUpMenuListener? popUpMenuListener;
 
   @override
   void initState() {
@@ -100,11 +103,16 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                   height: 20,
                 ),
                 DropDownField(
+                  onMenuItemSelected: (listener) {},
                   prevSelected: selectedDay,
                   onSelect: (value) {
                     debugPrint("select-->$value");
                     selectedDay = value;
                     beats.clear();
+                    if (popUpMenuListener != null) {
+                      seleBeat = "Select Beat";
+                      popUpMenuListener!.onMenuItemSelect(seleBeat);
+                    }
                     getBeats();
                   },
                   hint: "Select Order Booking Day",
@@ -114,6 +122,9 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                   height: 20,
                 ),
                 DropDownField(
+                  onMenuItemSelected: (listener) {
+                    popUpMenuListener = listener;
+                  },
                   prevSelected: selectedBeat != null ? selectedBeat!.name : "",
                   onSelect: (value) {
                     debugPrint("select-->$value");
@@ -132,12 +143,13 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                   height: 20,
                 ),
                 DropDownField(
+                  onMenuItemSelected: (listener) {},
                   prevSelected: selectedEnrollmentType,
                   onSelect: (value) {
                     debugPrint("select-->");
                     selectedEnrollmentType = value;
                   },
-                  hint: "Select Outlt Type",
+                  hint: "Select Outlet Type",
                   menuList: priorityType,
                 ),
                 const SizedBox(

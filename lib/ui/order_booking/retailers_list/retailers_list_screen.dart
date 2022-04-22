@@ -272,10 +272,6 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                               const EdgeInsets.symmetric(horizontal: 0),
                           onTap: (index) {
                             tabStream.add(index + 1);
-                            // if (selectBeatListener != null) {
-                            //   selectBeatListener!.onBeatSelect(selectedBeat!, selectedDay, selectedEnrollmentType);
-                            // }
-                            // debugPrint("select-tag-->${selectedBeat!.name}");
                           },
                           tabs: [
                             Tab(
@@ -363,56 +359,26 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                       }
                       return Container();
                     }),
-
-                /*   BlocBuilder<RetailersBloc, RetailerState>(builder: (context, state) {
-                  if (state is RetailerInitState) {
-                    retailersBloc.add(GetBeatEvent());
-                  }
-                  if (beats.isEmpty) {
-                    if (state is GetBeatState) {
-                      beats = state.beats;
-                      if (selectedBeat == null) {
-                        selectedBeat = beats.first;
-                      }
-                    }
-                  }
-
-                  return SizedBox(
-                    height: 70,
-                    width: MediaQuery.of(context).size.width,
-                    child: BeatWidget(
-                      tags: beats,
-                      selectedBeat: selectedBeat != null ? selectedBeat!.name : "All",
-                      onSelect: (BeatsModal tag) {
-                        debugPrint("onBeatSelect-->${tag.name}");
-                        selectedBeat = tag;
-                        if (selectBeatListener != null) {
-                          selectBeatListener!.onBeatSelect(selectedBeat!, selectedDay, selectedEnrollmentType);
-                        }
-                      },
-                    ),
-                  );
-                }),*/
-
                 Expanded(
-                    child: StreamBuilder<int>(
-                  stream: tabStream.stream,
-                  builder: (context, snap) {
-                    if (snap.hasData) {
-                      return RetailerTab(
-                        selectedBeat: selectedBeat == null
-                            ? BeatsModal(id: "", name: "All")
-                            : selectedBeat!,
-                        index: snap.data!,
-                        day: selectedDay,
-                        onInit: (SelectBeatListener listener) {
-                          selectBeatListener = listener;
-                        },
-                      );
-                    }
-                    return Container();
-                  },
-                )),
+                  child: StreamBuilder<int>(
+                    stream: tabStream.stream,
+                    builder: (context, snap) {
+                      if (snap.hasData) {
+                        return RetailerTab(
+                          selectedBeat: selectedBeat == null
+                              ? BeatsModal(id: "", name: "All")
+                              : selectedBeat!,
+                          index: snap.data!,
+                          day: selectedDay,
+                          onInit: (SelectBeatListener listener) {
+                            selectBeatListener = listener;
+                          },
+                        );
+                      }
+                      return Container();
+                    },
+                  ),
+                ),
                 /* Expanded(
                   child: TabBarView(
                     controller: tabController,

@@ -1,3 +1,4 @@
+import 'package:dms/listeners/pop_up_menu_listener.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
 import 'package:flutter/material.dart';
 
@@ -8,6 +9,7 @@ class DropDownField extends StatefulWidget {
   final String prevSelected;
   List<BeatsModal>? beats;
   Function(BeatsModal? value)? onBeatSelected;
+  Function(PopUpMenuListener listener) onMenuItemSelected;
 
   DropDownField({
     Key? key,
@@ -17,17 +19,20 @@ class DropDownField extends StatefulWidget {
     required this.prevSelected,
     this.beats,
     this.onBeatSelected,
+    required this.onMenuItemSelected,
   }) : super(key: key);
 
   @override
   _DropDownFieldState createState() => _DropDownFieldState();
 }
 
-class _DropDownFieldState extends State<DropDownField> {
+class _DropDownFieldState extends State<DropDownField>
+    implements PopUpMenuListener {
   String selected = "";
 
   @override
   void initState() {
+    widget.onMenuItemSelected(this);
     selected = widget.prevSelected.isEmpty ? widget.hint! : widget.prevSelected;
     super.initState();
   }
@@ -87,5 +92,11 @@ class _DropDownFieldState extends State<DropDownField> {
         ),
       ),
     );
+  }
+
+  @override
+  void onMenuItemSelect(String prevSelected) {
+    selected = prevSelected;
+    setState(() {});
   }
 }

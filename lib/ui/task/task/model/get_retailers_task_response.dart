@@ -53,7 +53,7 @@ class RetailersTaskModal {
     required this.outletPicture,
     required this.pendingTask,
     required this.taskHistory,
-    this.totalMonths = 0,
+    this.totalMonths = "",
     required this.taskWiseData,
     required this.lastEscalation,
   });
@@ -75,7 +75,7 @@ class RetailersTaskModal {
   String outletPicture;
   String pendingTask;
   String taskHistory;
-  int totalMonths;
+  String totalMonths;
   List<TaskWiseRetailersTaskModal> taskWiseData;
   List<LastEscalation> lastEscalation;
 

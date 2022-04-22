@@ -15,7 +15,6 @@ import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ntp/ntp.dart';
 
 class TaskDetailScreen extends StatefulWidget {
   final RetailersTaskModal modal;
@@ -30,17 +29,15 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   List<PendingTaskModal> pendingTaskList = [];
   DateTime? currentDate;
   TaskDetailsBloc taskDetailsBloc = TaskDetailsBloc();
-  int monthCounts = 0;
 
   @override
   void initState() {
-    print("months pending = ${widget.modal.totalMonths}");
+    debugPrint("months pending = ${widget.modal.totalMonths}");
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    calculateMonths();
     return Scaffold(
       appBar: _appBar(AppBar().preferredSize.height),
       backgroundColor: const Color(0xffF7F7F7),
@@ -552,17 +549,17 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                             height: 5,
                           ),
                           RichText(
-                            text: const TextSpan(
+                            text: TextSpan(
                               text: "Enrolled ",
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Color(0xff555555),
                                 fontSize: 11,
                                 letterSpacing: 0.67,
                               ),
                               children: <TextSpan>[
                                 TextSpan(
-                                  text: "4 months ago",
-                                  style: TextStyle(
+                                  text: widget.modal.totalMonths,
+                                  style: const TextStyle(
                                     color: MColor.colorPrimary,
                                     fontSize: 11,
                                     letterSpacing: 0.67,
@@ -599,28 +596,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
           ],
         ),
       );
-
-  void calculateMonths() async {
-    if (widget.modal.enrollmentDate.isNotEmpty) {
-      DateTime enrolledDate = DateTime.parse("2019-08-06");
-      DateTime currentDate =
-          await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
-        return DateTime.now();
-      });
-
-      if (enrolledDate.year == currentDate.year) {
-        monthCounts = currentDate.month - enrolledDate.month;
-      } else {
-        monthCounts = 12 - enrolledDate.month;
-        monthCounts = monthCounts + currentDate.month;
-        int count = 0;
-        for (int i = enrolledDate.year + 1; i <= currentDate.year - 1; i++) {
-          count++;
-        }
-        monthCounts = monthCounts + (count * 12);
-      }
-    }
-  }
 }
 
 class DetailGritItem extends StatefulWidget {

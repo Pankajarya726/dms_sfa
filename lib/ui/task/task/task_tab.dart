@@ -44,9 +44,15 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
     debugPrint("initState--->${widget.selectedBeat.id}");
     widget.onInit(this);
     selectedBeat ??= widget.selectedBeat;
-    day = DateFormat.EEEE().format(DateTime.now());
     getTaskRetailers();
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant TaskTab oldWidget) {
+    selectedBeat = widget.selectedBeat;
+    getTaskRetailers();
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -91,7 +97,13 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
                         DateTime.parse(snapshot.data![index].enrollmentDate);
                     if (enrolledDate.year == currentDate!.year) {
                       monthCounts = currentDate!.month - enrolledDate.month;
-                      snapshot.data![index].totalMonths = monthCounts;
+                      if (monthCounts < 2) {
+                        snapshot.data![index].totalMonths =
+                            monthCounts.toString() + " month ago";
+                      } else {
+                        snapshot.data![index].totalMonths =
+                            monthCounts.toString() + " months ago";
+                      }
                     } else {
                       monthCounts = 12 - enrolledDate.month;
                       monthCounts = monthCounts + currentDate!.month;
@@ -102,6 +114,13 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
                         count++;
                       }
                       monthCounts = monthCounts + (count * 12);
+                      if (monthCounts < 2) {
+                        snapshot.data![index].totalMonths =
+                            monthCounts.toString() + " month ago";
+                      } else {
+                        snapshot.data![index].totalMonths =
+                            monthCounts.toString() + " months ago";
+                      }
                     }
                   }
 
@@ -127,25 +146,27 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
   void getTaskRetailers() async {
     retailerStreamController.addError("loading");
     if (await Network.isConnected()) {
-      Map<String, dynamic> input = HashMap<String, dynamic>();
-      // input["task_status"] = widget.index;
-      // input["beat_id"] = selectedBeat!.id;
-      // input["day"] = day;
-
-      input["task_status"] = widget.index;
-      input["beat_id"] = "";
-      input["day"] = "Saturday";
-      GetRetailersTaskResponse response =
-          await repository.getRetailersTaskWise(input);
-      if (response.success) {
-        retailers = response.data!;
+      if (day.isEmpty) {
         currentDate =
             await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
           return DateTime.now();
         });
+        day = DateFormat("EEEE").format(currentDate!);
+      }
+
+      Map<String, dynamic> input = HashMap<String, dynamic>();
+      input["task_status"] = widget.index;
+      input["beat_id"] = selectedBeat!.id;
+      input["day"] = day;
+
+      GetRetailersTaskResponse response =
+          await repository.getRetailersTaskWise(input);
+      if (response.success) {
+        retailers = response.data!;
         debugPrint("response = ${response.message}");
         retailerStreamController.add(retailers);
       } else {
+        debugPrint("response = ${response.message}");
         retailerStreamController.addError(response.message);
       }
     } else {
@@ -154,14 +175,18 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
   }
 
   @override
-  void onBeatSelect(BeatsModal beatsModal, String day, String type) {
+  void onBeatSelect(BeatsModal beatsModal, String day, String type) async {
     if (selectedBeat!.id != beatsModal.id) {
       retailerStreamController.add(retailers);
     }
 
     selectedBeat = beatsModal;
     if (day.isEmpty) {
-      this.day = DateFormat.EEEE().format(DateTime.now());
+      DateTime dateTime =
+          await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
+        return DateTime.now();
+      });
+      this.day = DateFormat.EEEE().format(dateTime);
     } else {
       this.day = day;
     }
@@ -174,12 +199,14 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
 
 class TaskBeatWidget extends StatefulWidget {
   final List<BeatsModal> tags;
+  final BeatsModal? beatsModal;
   final Function(BeatsModal tag) onSelect;
 
   const TaskBeatWidget({
     Key? key,
     required this.tags,
     required this.onSelect,
+    required this.beatsModal,
   }) : super(key: key);
 
   @override
@@ -187,20 +214,21 @@ class TaskBeatWidget extends StatefulWidget {
 }
 
 class _TaskBeatWidgetState extends State<TaskBeatWidget> {
-  BeatsModal tag = BeatsModal(name: StringConst.all, id: "");
+  BeatsModal? tag = BeatsModal(id: "", name: StringConst.all);
 
   @override
   void initState() {
-    widget.onSelect(tag);
+    widget.onSelect(tag!);
     super.initState();
   }
 
   @override
   void didUpdateWidget(TaskBeatWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // if (widget.selectedBeat.isNotEmpty) {
-    //   tag.name = widget.selectedBeat;
-    // }
+    if (widget.beatsModal != null) {
+      tag = widget.beatsModal;
+      print("beatName = ${tag!.name}");
+    }
   }
 
   @override
@@ -223,7 +251,7 @@ class _TaskBeatWidgetState extends State<TaskBeatWidget> {
               widget.onSelect(item.customData);
               setState(() {});
             },
-            active: widget.tags[index].name == tag.name,
+            active: widget.tags[index].name == tag!.name,
             customData: widget.tags[index],
             textActiveColor: Colors.black,
             textColor: const Color(0xff555555),
@@ -232,15 +260,15 @@ class _TaskBeatWidgetState extends State<TaskBeatWidget> {
                 fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
             padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
             border: Border.all(
-                color: widget.tags[index].name == tag.name
+                color: widget.tags[index].name == tag!.name
                     ? MColor.colorPrimary
                     : const Color(0xffC5C5C5),
                 width: 1.5),
             singleItem: true,
-            activeColor: widget.tags[index].name == tag.name
+            activeColor: widget.tags[index].name == tag!.name
                 ? const Color(0xffFFC9CC)
                 : const Color(0xffFAFAFA),
-            color: widget.tags[index].name == tag.name
+            color: widget.tags[index].name == tag!.name
                 ? const Color(0xffFFC9CC)
                 : const Color(0xffFAFAFA),
             title: widget.tags[index].name,

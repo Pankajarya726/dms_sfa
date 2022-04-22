@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:collection';
-
 import 'package:dms/main.dart';
 import 'package:dms/model/retaileres_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
@@ -117,7 +116,13 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
                         DateTime.parse(snapshot.data![index].enrollmentDate);
                     if (enrolledDate.year == currentDate!.year) {
                       monthCounts = currentDate!.month - enrolledDate.month;
-                      snapshot.data![index].totalMonths = monthCounts;
+                      if (monthCounts < 2) {
+                        snapshot.data![index].totalMonths =
+                            monthCounts.toString() + " month ago";
+                      } else {
+                        snapshot.data![index].totalMonths =
+                            monthCounts.toString() + " months ago";
+                      }
                     } else {
                       monthCounts = 12 - enrolledDate.month;
                       monthCounts = monthCounts + currentDate!.month;
@@ -128,6 +133,13 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
                         count++;
                       }
                       monthCounts = monthCounts + (count * 12);
+                      if (monthCounts < 2) {
+                        snapshot.data![index].totalMonths =
+                            monthCounts.toString() + " month ago";
+                      } else {
+                        snapshot.data![index].totalMonths =
+                            monthCounts.toString() + " months ago";
+                      }
                     }
                   }
 
@@ -135,7 +147,7 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
                     index: 0,
                     retailer: snapshot.data![index],
                     orderStatus: 2,
-                    beatId: "15",
+                    beatId: snapshot.data![index].beatId,
                   );
                 });
           }

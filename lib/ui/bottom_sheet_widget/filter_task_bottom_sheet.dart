@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'package:dms/listeners/drop_down_field_listener.dart';
+import 'package:dms/listeners/pop_up_menu_listener.dart';
 import 'package:dms/main.dart';
 import 'package:dms/ui/custom_widget/drop_down_field.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailer_bloc.dart';
@@ -14,12 +15,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FilterTaskBottomSheet extends StatefulWidget {
   final String day;
-
-  final String beat;
+  final BeatsModal beat;
   final List<BeatsModal> beatList;
   final Function(
     String day,
-    String selectedBeat,
+    BeatsModal beatsModal,
+    List<BeatsModal> beats,
   ) onFilter;
 
   const FilterTaskBottomSheet({
@@ -47,22 +48,20 @@ class _FilterTaskBottomSheetState extends State<FilterTaskBottomSheet> {
     StringConst.saturday,
     StringConst.sunday,
   ];
-  List<String> priorityType = [
-    StringConst.retailer,
-    StringConst.teleRetailer,
-  ];
+
   String selectedDay = "";
   String selectedBeat = "";
-  List<BeatsModal> beats = [];
-  BeatsModal? beatsModal;
+  List<BeatsModal> beatsList = [];
+  BeatsModal beatsModal = BeatsModal(id: "", name: "All");
   DropDownFieldListener? dropDownFieldListener;
+  PopUpMenuListener? popUpMenuListener;
 
   @override
   void initState() {
     selectedDay = widget.day;
-    selectedBeat = widget.beat;
+    selectedBeat = widget.beat.name;
     debugPrint("FilterTaskBottomSheet");
-    beats = widget.beatList;
+    beatsList = widget.beatList;
     super.initState();
   }
 
@@ -97,12 +96,16 @@ class _FilterTaskBottomSheetState extends State<FilterTaskBottomSheet> {
                   height: 20,
                 ),
                 DropDownField(
+                  onMenuItemSelected: (listener) {},
                   prevSelected: selectedDay,
                   onSelect: (value) {
                     debugPrint("select-->$value");
                     selectedDay = value;
-                    beats.clear();
-
+                    beatsList.clear();
+                    if (popUpMenuListener != null) {
+                      selectedBeat = "Select Beat";
+                      popUpMenuListener!.onMenuItemSelect(selectedBeat);
+                    }
                     getBeats();
                   },
                   hint: "Select Order Booking Day",
@@ -112,6 +115,9 @@ class _FilterTaskBottomSheetState extends State<FilterTaskBottomSheet> {
                   height: 20,
                 ),
                 DropDownField(
+                  onMenuItemSelected: (listener) {
+                    popUpMenuListener = listener;
+                  },
                   prevSelected: selectedBeat,
                   onSelect: (value) {
                     debugPrint("select-->$value");
@@ -119,7 +125,7 @@ class _FilterTaskBottomSheetState extends State<FilterTaskBottomSheet> {
                   },
                   hint: "Select Beat",
                   menuList: days,
-                  beats: beats,
+                  beats: beatsList,
                   onBeatSelected: (beatsM) {
                     if (beatsM != null) {
                       beatsModal = beatsM;
@@ -137,7 +143,7 @@ class _FilterTaskBottomSheetState extends State<FilterTaskBottomSheet> {
                     children: [
                       MaterialButton(
                         onPressed: () {
-                          widget.onFilter(selectedDay, selectedBeat);
+                          widget.onFilter(selectedDay, beatsModal, beatsList);
                           Navigator.pop(context);
                         },
                         height: 50,
@@ -175,8 +181,8 @@ class _FilterTaskBottomSheetState extends State<FilterTaskBottomSheet> {
       GetAllBeatsResponse response =
           await repository.getBeatByOrderBookingDay(input);
       if (response.success) {
-        beats.add(BeatsModal(id: "", name: "All"));
-        beats.addAll(response.data!);
+        beatsList.add(BeatsModal(id: "", name: "All"));
+        beatsList.addAll(response.data!);
       } else {
         Utility.showToast(response.message);
       }
