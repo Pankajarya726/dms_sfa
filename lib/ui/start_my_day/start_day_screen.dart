@@ -25,6 +25,7 @@ import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -310,6 +311,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                   selectedSecondaryTags.clear();
                                   txtBeatController.clear();
                                   txtRemarkController.clear();
+                                  txtTargetController.clear();
 
                                   if (selectedPrimaryTag!
                                       .secondaryTag.isNotEmpty) {
@@ -372,9 +374,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                 );
                               },
                             ),
-                            // const SizedBox(
-                            //   height: 15,
-                            // ),
+
                             BlocBuilder<AddPlanBloc, AddPlanStates>(
                               builder: (context, state) {
                                 if (state is AddPlanInitialState) {
@@ -554,17 +554,11 @@ class _StartDayScreenState extends State<StartDayScreen> {
                               },
                             ),
 
+                            //target field
                             BlocBuilder<AddPlanBloc, AddPlanStates>(
                               builder: (context, state) {
-                                if (state is AddPlanInitialState) {
-                                  return Container();
-                                }
                                 if (selectedPrimaryTag == null) {
                                   return Container();
-                                }
-
-                                if (state is SelectSecondaryState) {
-                                  selectedSecondaryTags = state.secondaryTag;
                                 }
 
                                 if (selectedPrimaryTag!.secondaryTag.isEmpty) {
@@ -609,6 +603,10 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                                       BorderRadius.circular(30),
                                                   borderSide: BorderSide.none),
                                             ),
+                                            // inputFormatters: [
+                                            //   FilteringTextInputFormatter.allow(
+                                            //       RegExp(r"[0-9] .")),
+                                            // ],
                                             onTap: () async {
                                               await Future.delayed(
                                                   const Duration(
@@ -624,6 +622,8 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                     : Container();
                               },
                             ),
+                            // end of target field
+
                             SizedBox(
                               key: globalKey2,
                               height: 15,
@@ -1223,6 +1223,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
         userLocationBloc.add(GetUserLocationEvent());
         return;
       }
+
       debugPrint("all fields ok ");
       Map<String, dynamic> input = HashMap<String, dynamic>();
 
@@ -1252,6 +1253,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
         input["secondary_tag_id"] = selectedBeatsId;
       }
 
+      input["user_target"] = txtTargetController.text.trim();
       input["remark"] = txtRemarkController.text.trim();
       input["start_day_latitude"] = latitude.toString();
       input["start_day_longitude"] = longitude.toString();
