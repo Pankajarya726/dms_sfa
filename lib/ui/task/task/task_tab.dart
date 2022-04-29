@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:collection';
 import 'package:dms/listeners/select_beat_listener.dart';
+import 'package:dms/ui/custom_widget/no_internet.dart';
+import 'package:dms/ui/custom_widget/no_task_found.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
 import 'package:dms/ui/task/task/model/get_retailers_task_response.dart';
 import 'package:dms/ui/task/task/task_list_item.dart';
@@ -11,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../../main.dart';
 
 class TaskTab extends StatefulWidget {
@@ -38,6 +41,8 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
       StreamController();
   String day = "";
   DateTime? currentDate;
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -76,65 +81,85 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
                   );
                 } else {
                   return Center(
-                    child: Text("${snapshot.error}"),
+                    child: NoInternetConnection(
+                      onRefresh: () {
+                        getTaskRetailers();
+                      },
+                    ),
                   );
                 }
               }
 
-              return ListView.separated(
-                padding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
-                itemCount: snapshot.data!.length,
-                separatorBuilder: (context, index) {
-                  return const SizedBox(
-                    height: 15,
-                  );
-                },
-                itemBuilder: (context, index) {
-                  // calculate months from enrolled date to current date
-                  if (snapshot.data![index].enrollmentDate.isNotEmpty) {
-                    int monthCounts = 0;
-                    DateTime enrolledDate =
-                        DateTime.parse(snapshot.data![index].enrollmentDate);
-                    if (enrolledDate.year == currentDate!.year) {
-                      monthCounts = currentDate!.month - enrolledDate.month;
-                      if (monthCounts < 2) {
-                        snapshot.data![index].totalMonths =
-                            monthCounts.toString() + " month ago";
+              if (snapshot.hasData && snapshot.data!.isEmpty) {
+                return Center(
+                  child: TaskNotFound(
+                    onRefresh: () {
+                      getTaskRetailers();
+                    },
+                  ),
+                );
+              }
+
+              return SmartRefresher(
+                primary: false,
+                controller: refreshController,
+                onRefresh: onRefresh,
+                enablePullDown: true,
+                child: ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
+                  itemCount: snapshot.data!.length,
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(
+                      height: 15,
+                    );
+                  },
+                  itemBuilder: (context, index) {
+                    // calculate months from enrolled date to current date
+                    if (snapshot.data![index].enrollmentDate.isNotEmpty) {
+                      int monthCounts = 0;
+                      DateTime enrolledDate =
+                          DateTime.parse(snapshot.data![index].enrollmentDate);
+                      if (enrolledDate.year == currentDate!.year) {
+                        monthCounts = currentDate!.month - enrolledDate.month;
+                        if (monthCounts < 2) {
+                          snapshot.data![index].totalMonths =
+                              monthCounts.toString() + " month ago";
+                        } else {
+                          snapshot.data![index].totalMonths =
+                              monthCounts.toString() + " months ago";
+                        }
                       } else {
-                        snapshot.data![index].totalMonths =
-                            monthCounts.toString() + " months ago";
-                      }
-                    } else {
-                      monthCounts = 12 - enrolledDate.month;
-                      monthCounts = monthCounts + currentDate!.month;
-                      int count = 0;
-                      for (int i = enrolledDate.year + 1;
-                          i <= currentDate!.year - 1;
-                          i++) {
-                        count++;
-                      }
-                      monthCounts = monthCounts + (count * 12);
-                      if (monthCounts < 2) {
-                        snapshot.data![index].totalMonths =
-                            monthCounts.toString() + " month ago";
-                      } else {
-                        snapshot.data![index].totalMonths =
-                            monthCounts.toString() + " months ago";
+                        monthCounts = 12 - enrolledDate.month;
+                        monthCounts = monthCounts + currentDate!.month;
+                        int count = 0;
+                        for (int i = enrolledDate.year + 1;
+                            i <= currentDate!.year - 1;
+                            i++) {
+                          count++;
+                        }
+                        monthCounts = monthCounts + (count * 12);
+                        if (monthCounts < 2) {
+                          snapshot.data![index].totalMonths =
+                              monthCounts.toString() + " month ago";
+                        } else {
+                          snapshot.data![index].totalMonths =
+                              monthCounts.toString() + " months ago";
+                        }
                       }
                     }
-                  }
 
-                  return TaskListItems(
-                    index: widget.index,
-                    retailer: snapshot.data![index],
-                    beatId: selectedBeat!.id,
-                    orderStatus: widget.index == 0
-                        ? 1
-                        : widget.index == 1
-                            ? 2
-                            : 3,
-                  );
-                },
+                    return TaskListItems(
+                      index: widget.index,
+                      retailer: snapshot.data![index],
+                      beatId: selectedBeat!.id,
+                      orderStatus: widget.index == 0
+                          ? 1
+                          : widget.index == 1
+                              ? 2
+                              : 3,
+                    );
+                  },
+                ),
               );
             },
           ),
@@ -167,7 +192,7 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
         retailerStreamController.add(retailers);
       } else {
         debugPrint("response = ${response.message}");
-        retailerStreamController.addError(response.message);
+        retailerStreamController.add(retailers);
       }
     } else {
       retailerStreamController.addError(StringConst.internetCheck);
@@ -195,6 +220,12 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
 
   @override
   void onSorting(String type) {}
+
+  void onRefresh() async {
+    retailers.clear();
+    getTaskRetailers();
+    refreshController.refreshCompleted();
+  }
 }
 
 class TaskBeatWidget extends StatefulWidget {
@@ -214,11 +245,16 @@ class TaskBeatWidget extends StatefulWidget {
 }
 
 class _TaskBeatWidgetState extends State<TaskBeatWidget> {
-  BeatsModal? tag = BeatsModal(id: "", name: StringConst.all);
+  BeatsModal? tag = BeatsModal(id: "", name: "All");
 
   @override
   void initState() {
-    widget.onSelect(tag!);
+    if (widget.tags.length > 1) {
+      widget.onSelect(tag!);
+    } else {
+      tag = BeatsModal(name: "", id: "");
+      widget.onSelect(tag!);
+    }
     super.initState();
   }
 
@@ -227,7 +263,6 @@ class _TaskBeatWidgetState extends State<TaskBeatWidget> {
     super.didUpdateWidget(oldWidget);
     if (widget.beatsModal != null) {
       tag = widget.beatsModal;
-      print("beatName = ${tag!.name}");
     }
   }
 

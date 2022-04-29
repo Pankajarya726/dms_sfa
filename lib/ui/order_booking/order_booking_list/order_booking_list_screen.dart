@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:collection';
-
+import 'package:dms/listeners/mrp_filter_listener.dart';
 import 'package:dms/listeners/select_category_listener.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/filter_order_booking_bottom_sheet.dart';
+import 'package:dms/ui/custom_widget/no_internet.dart';
 import 'package:dms/ui/order_booking/order_booking_list/bloc/order_book_list_bloc.dart';
 import 'package:dms/ui/order_booking/order_booking_list/bloc/order_book_list_events.dart';
 import 'package:dms/ui/order_booking/order_booking_list/bloc/order_book_list_states.dart';
@@ -37,7 +38,8 @@ class OrderBookingListScreen extends StatefulWidget {
   _OrderBookingListScreenState createState() => _OrderBookingListScreenState();
 }
 
-class _OrderBookingListScreenState extends State<OrderBookingListScreen> with TickerProviderStateMixin {
+class _OrderBookingListScreenState extends State<OrderBookingListScreen>
+    with TickerProviderStateMixin {
   TabController? tabController;
   FilterMrpModal? filterMrpModal;
   List<Category> tags = [];
@@ -49,6 +51,8 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
   int tabIndex = 0;
   String moqQty = "";
   String packQty = "";
+  MrpFilterListener? mrpFilterListener;
+  StreamController<int> tabStream = StreamController();
 
   @override
   void dispose() {
@@ -67,19 +71,28 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
         listener: (context, state) {
           if (state is GetBrandAndCatgState) {
             if (widget.showOrder) {
-              tabList.add(BrandAndCategoryModel(id: "", name: "Order", category: []));
+              tabList.add(
+                  BrandAndCategoryModel(id: "", name: "Order", category: []));
             }
-            tabList.add(BrandAndCategoryModel(id: "", name: "Suggested", category: []));
-            tabList.add(BrandAndCategoryModel(id: "", name: "Scheme", category: []));
+            tabList.add(
+                BrandAndCategoryModel(id: "", name: "Suggested", category: []));
+            tabList.add(
+                BrandAndCategoryModel(id: "", name: "Scheme", category: []));
             tabList.addAll(state.brandAndCategoryModal);
-            tabController = TabController(length: tabList.length, vsync: this, initialIndex: 0);
+            tabController = TabController(
+                length: tabList.length, vsync: this, initialIndex: 0);
             // BlocProvider.of<OrderBookListBloc>(context).add(ChangeTabEvent(index: 0));
+            tabStream.add(tabController!.index);
           }
           if (state is GetBrandsFailureState) {
-            tabList.add(BrandAndCategoryModel(id: "", name: "Suggested", category: []));
-            tabList.add(BrandAndCategoryModel(id: "", name: "Scheme", category: []));
-            tabController = TabController(length: tabList.length, vsync: this, initialIndex: 0);
+            tabList.add(
+                BrandAndCategoryModel(id: "", name: "Suggested", category: []));
+            tabList.add(
+                BrandAndCategoryModel(id: "", name: "Scheme", category: []));
+            tabController = TabController(
+                length: tabList.length, vsync: this, initialIndex: 0);
             // BlocProvider.of<OrderBookListBloc>(context).add(ChangeTabEvent(index: 0));
+            tabStream.add(tabController!.index);
           }
         },
         child: Scaffold(
@@ -116,7 +129,12 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
                       builder: (context) => FilterOrderBookingBottomSheet(
                         beatId: widget.beatId,
                         onMrpSelected: (mrp) {
-                          filterMrpModal = mrp;
+                          if (mrp != null) {
+                            filterMrpModal = mrp;
+                            if (mrpFilterListener != null) {
+                              mrpFilterListener!.onMrpSelected(filterMrpModal!);
+                            }
+                          }
                         },
                         filterMrpModal: filterMrpModal,
                       ),
@@ -180,7 +198,8 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
               child: Column(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 15),
                     child: TextFormField(
                       style: const TextStyle(fontSize: 16),
                       readOnly: true,
@@ -188,24 +207,29 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => SearchProductScreen(beatId: widget.beatId, retailerId: widget.retailerId)));
+                                builder: (_) => SearchProductScreen(
+                                    beatId: widget.beatId,
+                                    retailerId: widget.retailerId)));
                       },
                       decoration: InputDecoration(
-                          hintText: "Search",
+                          hintText: StringConst.search,
                           hintStyle: const TextStyle(fontSize: 16),
                           contentPadding: const EdgeInsets.all(10),
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5),
                               gapPadding: 2,
-                              borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                              borderSide: const BorderSide(
+                                  width: 1, color: Color(0xffC5C5C5))),
                           disabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5),
                               gapPadding: 2,
-                              borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                              borderSide: const BorderSide(
+                                  width: 1, color: Color(0xffC5C5C5))),
                           focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5),
                               gapPadding: 2,
-                              borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                              borderSide: const BorderSide(
+                                  width: 1, color: Color(0xffC5C5C5))),
                           prefixIcon: const Icon(
                             Icons.search,
                             color: Color(0xff555555),
@@ -218,9 +242,11 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
                     child: BlocBuilder<OrderBookListBloc, OrderBookListStates>(
                       builder: (context, state) {
                         if (state is OrderBookListInitialState) {
-                          Map<String, dynamic> input = HashMap<String, dynamic>();
-                          input["beat_id"] = "27";
-                          BlocProvider.of<OrderBookListBloc>(context).add(GetBrandAndCatgEvent(input: input));
+                          Map<String, dynamic> input =
+                              HashMap<String, dynamic>();
+                          input["beat_id"] = widget.beatId;
+                          BlocProvider.of<OrderBookListBloc>(context)
+                              .add(GetBrandAndCatgEvent(input: input));
                           return Container();
                         }
                         if (tabController == null) {
@@ -234,24 +260,31 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
                             onTap: (value) {
                               // BlocProvider.of<OrderBookListBloc>(context)
                               //     .add(ChangeTabEvent(index: value));
+                              tabStream.add(value);
                             },
                             isScrollable: true,
                             controller: tabController,
                             indicatorSize: TabBarIndicatorSize.tab,
                             indicatorWeight: 4,
                             indicatorColor: MColor.colorPrimary,
-                            labelPadding: const EdgeInsets.symmetric(horizontal: 20),
-                            indicatorPadding: const EdgeInsets.symmetric(horizontal: 5),
+                            labelPadding:
+                                const EdgeInsets.symmetric(horizontal: 20),
+                            indicatorPadding:
+                                const EdgeInsets.symmetric(horizontal: 5),
                             tabs: List.generate(tabList.length, (index) {
                               return Tab(
                                 child: Text(
                                   tabList[index].name,
-                                  style: Theme.of(context).textTheme.bodyText1!.merge(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .merge(
                                         TextStyle(
-                                          color: const Color(0xff303030).withOpacity(0.85),
+                                          color: const Color(0xff303030)
+                                              .withOpacity(0.85),
                                           letterSpacing: 0.67,
                                           fontWeight: FontWeight.w600,
-                                          fontSize: 18,
+                                          fontSize: 17,
                                         ),
                                       ),
                                 ),
@@ -275,155 +308,80 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen> with Ti
                 );
               }
 
+              if (state is OrderBookListFailureState) {
+                return Center(
+                  child: NoInternetConnection(
+                    onRefresh: () {
+                      Map<String, dynamic> input = HashMap<String, dynamic>();
+                      input["beat_id"] = widget.beatId;
+                      BlocProvider.of<OrderBookListBloc>(context)
+                          .add(GetBrandAndCatgEvent(input: input));
+                    },
+                  ),
+                );
+              }
+
               if (tabController == null) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
               }
 
-              return TabBarView(
-                controller: tabController,
-                children: List.generate(tabList.length, (index) {
-                  if (widget.showOrder && index == 0) {
-                    return const OrderedProductList();
-                  } else {
-                    return ProductTabs(
-                      index: index,
-                      brands: tabList[index],
-                      retailerId: widget.retailerId,
-                      beatId: widget.beatId,
-                    );
-                  }
-                }),
+              return Column(
+                children: [
+                  Expanded(
+                    child: StreamBuilder<int>(
+                      stream: tabStream.stream,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          if (widget.showOrder && snapshot.data == 0) {
+                            return const OrderedProductList();
+                          } else {
+                            return ProductTabs(
+                              index: snapshot.data!,
+                              brands: tabList[snapshot.data!],
+                              retailerId: widget.retailerId,
+                              beatId: widget.beatId,
+                              onInit: (listener) {
+                                mrpFilterListener = listener;
+                              },
+                              mrpFilter: filterMrpModal != null
+                                  ? filterMrpModal!.mrp
+                                  : "",
+                            );
+                          }
+                        }
+                        return Container();
+                      },
+                    ),
+                  )
+                ],
               );
-              // debugPrint("tabIndex-->$tabIndex");
-              // if (tabIndex > 1) {
-              //   List<Category> categoryList = [];
-              //   categoryList.add(Category(id: "", categoryName: "All"));
-              //   categoryList.addAll(tabList[tabIndex].category);
-              //   return Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       BeatsWidget(
-              //         tags: categoryList,
-              //         // tags: tags,
-              //         onSelect: (Category tag) {
-              //           debugPrint("onBeatSelect-->${tag.categoryName}");
-              //           category = tag;
-              //           if (selectCategoryListener != null) {
-              //             selectCategoryListener!.onCategorySelect(brandAndCategoryModel!, category!);
-              //           }
+
+              // return TabBarView(
+              //   controller: tabController,
+              //   children: List.generate(tabList.length, (index) {
+              //     if (widget.showOrder && index == 0) {
+              //       return const OrderedProductList();
+              //     } else {
+              //       return ProductTabs(
+              //         index: index,
+              //         brands: tabList[index],
+              //         retailerId: widget.retailerId,
+              //         beatId: widget.beatId,
+              //         onInit: (listener) {
+              //           mrpFilterListener = listener;
               //         },
-              //       ),
-              //       Expanded(
-              //         child: OrderBookingTab(
-              //           index: tabIndex,
-              //           retailerId: widget.retailerId,
-              //           beatId: widget.beatId,
-              //           category: category == null ? Category(id: "", categoryName: "") : category!,
-              //           brandAndCategoryModel: brandAndCategoryModel == null
-              //               ? BrandAndCategoryModel(id: "", name: "", category: [])
-              //               : tabList[tabIndex],
-              //           onInit: (SelectCategoryListener listener) {
-              //             selectCategoryListener = listener;
-              //           },
-              //           onBrandSelect: (brand) {
-              //             if (brand != null) {
-              //               brandAndCategoryModel = brand;
-              //             }
-              //           },
-              //         ),
-              //       ),
-              //     ],
-              //   );
-              // } else {
-              //   return OrderBookingTab(
-              //     index: tabIndex,
-              //     retailerId: widget.retailerId,
-              //     beatId: widget.beatId,
-              //     category: category == null ? Category(id: "", categoryName: "") : category!,
-              //     brandAndCategoryModel:
-              //         brandAndCategoryModel == null ? BrandAndCategoryModel(id: "", name: "", category: []) : tabList[tabIndex],
-              //     onInit: (SelectCategoryListener listener) {
-              //       selectCategoryListener = listener;
-              //     },
-              //     onBrandSelect: (brand) {
-              //       if (brand != null) {
-              //         brandAndCategoryModel = brand;
-              //       }
-              //     },
-              //   );
-              // }
+              //         mrpFilter:
+              //             filterMrpModal != null ? filterMrpModal!.mrp : "",
+              //       );
+              //     }
+              //   }),
+              // );
             },
           ),
         ),
       ),
     );
   }
-}
-
-class OrderBookingModal {
-  OrderBookingModal({
-    required this.brandName,
-    required this.categories,
-  });
-
-  String brandName;
-  List<Categories> categories;
-}
-
-class Categories {
-  Categories({
-    required this.categoryName,
-    required this.products,
-  });
-
-  String categoryName;
-  List<Products> products;
-}
-
-class Products {
-  Products({
-    required this.id,
-    required this.productName,
-    required this.mrp,
-    required this.ptr,
-    required this.image,
-    required this.skuRatePerPkg,
-    required this.skuRatePerMoq,
-    required this.skuRatePerPiece,
-    required this.moqName,
-    required this.packagingName,
-    required this.skuCode,
-    required this.weight,
-    required this.variantName,
-    required this.longDescription,
-    required this.pcsPerMoq,
-    required this.pcsPerPackaging,
-    required this.priceAfterDiscount,
-    required this.pkgQty,
-    required this.moqQty,
-    required this.schemes,
-  });
-
-  String id;
-  String productName;
-  String mrp;
-  String ptr;
-  String image;
-  String skuRatePerPkg;
-  String skuRatePerMoq;
-  String skuRatePerPiece;
-  String moqName;
-  String packagingName;
-  String skuCode;
-  String weight;
-  String variantName;
-  String longDescription;
-  String pcsPerMoq;
-  String pcsPerPackaging;
-  String priceAfterDiscount;
-  String pkgQty;
-  String moqQty;
-  List<Scheme>? schemes;
 }

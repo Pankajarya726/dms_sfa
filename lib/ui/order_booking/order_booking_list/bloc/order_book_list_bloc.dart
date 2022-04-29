@@ -5,14 +5,14 @@ import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../../main.dart';
 
 class OrderBookListBloc extends Bloc<OrderBookListEvents, OrderBookListStates> {
   OrderBookListBloc() : super(OrderBookListInitialState());
 
   @override
-  Stream<OrderBookListStates> mapEventToState(OrderBookListEvents event) async* {
+  Stream<OrderBookListStates> mapEventToState(
+      OrderBookListEvents event) async* {
     if (event is GetBrandAndCatgEvent) {
       yield OrderBookListLoadingState();
       yield* getBrandAndCategory(event);
@@ -26,9 +26,11 @@ class OrderBookListBloc extends Bloc<OrderBookListEvents, OrderBookListStates> {
     }
   }
 
-  Stream<OrderBookListStates> getBrandAndCategory(GetBrandAndCatgEvent event) async* {
+  Stream<OrderBookListStates> getBrandAndCategory(
+      GetBrandAndCatgEvent event) async* {
     if (await Network.isConnected()) {
-      GetBrandCategoryResponse response = await repository.getBrandAndCategory(event.input);
+      GetBrandCategoryResponse response =
+          await repository.getBrandAndCategory(event.input);
       if (response.success) {
         yield GetBrandAndCatgState(brandAndCategoryModal: response.data!);
       } else {
@@ -36,7 +38,6 @@ class OrderBookListBloc extends Bloc<OrderBookListEvents, OrderBookListStates> {
         yield GetBrandsFailureState(msg: response.message);
       }
     } else {
-      Utility.showToast(Constants.internetAlert);
       yield OrderBookListFailureState(failureMessage: Constants.internetAlert);
     }
   }

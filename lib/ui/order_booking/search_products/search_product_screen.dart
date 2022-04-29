@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:dms/ui/custom_widget/no_internet.dart';
+import 'package:dms/ui/custom_widget/search_not_found.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
 import 'package:dms/ui/order_booking/order_booking_list/product_list_item.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
+import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 
 import '../../../main.dart';
@@ -24,7 +27,7 @@ class SearchProductScreen extends StatefulWidget {
 
 class _SearchProductScreenState extends State<SearchProductScreen> {
   TextEditingController edtSearch = TextEditingController();
-  List<ProductsModal> products = [];
+  List<ProductsModal> productsList = [];
   StreamController<List<ProductsModal>> searchStream = StreamController();
 
   @override
@@ -41,28 +44,33 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
               controller: edtSearch,
               onChanged: (text) {
                 if (text.trim().isEmpty) {
-                  products.clear();
-                  searchStream.addError("Enter product name to search products");
+                  productsList.clear();
+                  searchStream
+                      .addError("Enter product name to search products");
                 } else {
+                  productsList.clear();
                   searchApi(text);
                 }
               },
               decoration: InputDecoration(
-                  hintText: "Search",
+                  hintText: StringConst.search,
                   hintStyle: const TextStyle(fontSize: 16),
                   contentPadding: const EdgeInsets.all(10),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide:
+                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide:
+                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide:
+                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   suffixIcon: IconButton(
                     splashRadius: 20,
                     icon: const Icon(
@@ -72,8 +80,9 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
                     onPressed: () {
                       if (edtSearch.text.trim().isNotEmpty) {
                         edtSearch.clear();
-                        products.clear();
-                        searchStream.addError("Enter product name to search products");
+                        productsList.clear();
+                        searchStream
+                            .addError("Enter product name to search products");
                       } else {
                         Navigator.pop(context);
                       }
@@ -91,13 +100,19 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
       body: StreamBuilder<List<ProductsModal>>(
         stream: searchStream.stream,
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.hasData && snapshot.data!.isEmpty) {
             if (snapshot.data!.isEmpty) {
-              return const Center(
-                child: Text("Products not found"),
+              return Center(
+                child: SearchNotFound(
+                  onRefresh: () {
+                    searchApi(edtSearch.text);
+                  },
+                ),
               );
             }
+          }
 
+          if (snapshot.hasData) {
             return ListView.separated(
                 itemCount: snapshot.data!.length,
                 padding: const EdgeInsets.all(15),
@@ -112,6 +127,7 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
                   );
                 });
           }
+
           if (snapshot.hasError) {
             if (snapshot.error.toString() == "loading") {
               return const Center(
@@ -119,9 +135,15 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
               );
             }
 
-            return Center(
-              child: Text("${snapshot.error}"),
-            );
+            if (snapshot.error.toString() == Constants.internetAlert) {
+              return Center(
+                child: NoInternetConnection(
+                  onRefresh: () {
+                    searchApi(edtSearch.text);
+                  },
+                ),
+              );
+            }
           }
 
           return Container();
@@ -133,17 +155,18 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
   void searchApi(String text) async {
     if (await Network.isConnected()) {
       Map<String, dynamic> input = HashMap<String, dynamic>();
-      // input["beat_id"] = widget.beatId;
-      input["beat_id"] = "27";
-      // input["retailer_id"] = widget.retailerId;
-      input["retailer_id"] = "27";
+      // input["beat_id"] = "27";
+      // input["retailer_id"] = "27";
+      input["beat_id"] = widget.beatId;
+      input["retailer_id"] = widget.retailerId;
       input["search"] = text;
       searchStream.addError("loading");
       GetProductsResponse response = await repository.searchProduct(input);
       if (response.success) {
+        productsList = response.data!;
         searchStream.add(response.data!);
       } else {
-        searchStream.addError(response.message);
+        searchStream.add(productsList);
       }
     } else {
       searchStream.addError(Constants.internetAlert);

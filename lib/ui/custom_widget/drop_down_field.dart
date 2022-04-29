@@ -38,6 +38,12 @@ class _DropDownFieldState extends State<DropDownField>
   }
 
   @override
+  void didUpdateWidget(covariant DropDownField oldWidget) {
+    selected = widget.hint!;
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return PopupMenuButton(
       itemBuilder: (context) {

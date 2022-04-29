@@ -7,6 +7,7 @@ import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/filter_retailer_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/route_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/sort_retailer_bottom_sheet.dart';
+import 'package:dms/ui/custom_widget/no_internet.dart';
 import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailer_bloc.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
@@ -40,13 +41,14 @@ class _RetailerListScreenState extends State<RetailerListScreen>
   String selectedDay = "";
   String selectedEnrollmentType = "";
   String sortSelected = "";
-  BeatsModal? selectedBeat;
+  BeatsModal? beatsModal;
   StreamController<List<BeatsModal>> beatStream = StreamController();
   StreamController<int> tabStream = StreamController();
 
   @override
   void initState() {
     tabController = TabController(length: 3, vsync: this);
+
     getBeats();
     super.initState();
   }
@@ -166,24 +168,25 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                               beatList: beatList,
                               day: selectedDay,
                               type: selectedEnrollmentType,
-                              beat: selectedBeat != null
-                                  ? selectedBeat!
+                              beat: beatsModal != null
+                                  ? beatsModal!
                                   : BeatsModal(id: "", name: ""),
                               onFilter: (String day,
                                   String enrollmentType,
                                   BeatsModal selectedBeat,
-                                  List<BeatsModal> beats) {
+                                  List<BeatsModal> beats) async {
                                 log("filter--->${beats.toList()}");
-                                selectedDay = day.isEmpty
-                                    ? DateFormat("EEEE").format(DateTime.now())
-                                    : day;
+
+                                selectedDay = day;
                                 selectedEnrollmentType = enrollmentType;
-                                this.selectedBeat = selectedBeat;
-                                if (beats.isNotEmpty) {
-                                  beatList = beats;
-                                  beatStream.add(beatList);
+                                if (beats.isEmpty) {
+                                  beatsModal = null;
+                                } else {
+                                  beatsModal = selectedBeat;
                                 }
 
+                                beatList = beats;
+                                beatStream.add(beatList);
                                 if (selectBeatListener != null) {
                                   selectBeatListener!.onBeatSelect(selectedBeat,
                                       selectedDay, selectedEnrollmentType);
@@ -284,11 +287,15 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText1!
-                                      .merge(TextStyle(
+                                      .merge(
+                                        TextStyle(
                                           color: const Color(0xff303030)
                                               .withOpacity(0.85),
                                           letterSpacing: 0.5,
-                                          fontWeight: FontWeight.w600)),
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 17,
+                                        ),
+                                      ),
                                 ),
                               ),
                             ),
@@ -301,11 +308,15 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText2!
-                                      .merge(TextStyle(
+                                      .merge(
+                                        TextStyle(
                                           color: const Color(0xff303030)
                                               .withOpacity(0.85),
                                           letterSpacing: 0.5,
-                                          fontWeight: FontWeight.w600)),
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 17,
+                                        ),
+                                      ),
                                 ),
                               ),
                             ),
@@ -318,11 +329,15 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText2!
-                                      .merge(TextStyle(
+                                      .merge(
+                                        TextStyle(
                                           color: const Color(0xff303030)
                                               .withOpacity(0.85),
                                           letterSpacing: 0.5,
-                                          fontWeight: FontWeight.w600)),
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 17,
+                                        ),
+                                      ),
                                 ),
                               ),
                             ),
@@ -333,10 +348,20 @@ class _RetailerListScreenState extends State<RetailerListScreen>
               ),
             ),
             body: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 StreamBuilder<List<BeatsModal>>(
                     stream: beatStream.stream,
                     builder: (context, snapshot) {
+                      if (snapshot.error.toString() == "loading") {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+
                       if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                         List<BeatsModal> beats = snapshot.data!;
 
@@ -346,18 +371,20 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                           width: MediaQuery.of(context).size.width,
                           child: BeatWidget(
                             tags: beats,
-                            selectedBeat: selectedBeat,
+                            selectedBeat: beatsModal,
                             onSelect: (BeatsModal tag) {
                               debugPrint("onBeatSelect-->${tag.name}");
-                              selectedBeat = tag;
+                              beatsModal = tag;
+
                               if (selectBeatListener != null) {
-                                selectBeatListener!.onBeatSelect(selectedBeat!,
+                                selectBeatListener!.onBeatSelect(beatsModal!,
                                     selectedDay, selectedEnrollmentType);
                               }
                             },
                           ),
                         );
                       }
+
                       return Container();
                     }),
                 Expanded(
@@ -366,9 +393,9 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                     builder: (context, snap) {
                       if (snap.hasData) {
                         return RetailerTab(
-                          selectedBeat: selectedBeat == null
+                          selectedBeat: beatsModal == null
                               ? BeatsModal(id: "", name: "All")
-                              : selectedBeat!,
+                              : beatsModal!,
                           index: snap.data!,
                           day: selectedDay,
                           onInit: (SelectBeatListener listener) {
@@ -426,10 +453,12 @@ class _RetailerListScreenState extends State<RetailerListScreen>
           await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
         return DateTime.now();
       });
+
       if (selectedDay.isEmpty) {
         selectedDay = DateFormat("EEEE").format(dateTime);
       }
-      Map<String, dynamic> input = {"day": DateFormat("EEEE").format(dateTime)};
+      beatStream.addError("loading");
+      Map<String, dynamic> input = {"day": selectedDay};
       GetAllBeatsResponse response =
           await repository.getBeatByOrderBookingDay(input);
       if (response.success) {
@@ -437,13 +466,16 @@ class _RetailerListScreenState extends State<RetailerListScreen>
           beatList.add(BeatsModal(id: "", name: "All"));
         }
         beatList.addAll(response.data!);
+
         beatStream.add(beatList);
         tabStream.add(tabController.index + 1);
       } else {
+        beatStream.add(beatList);
+        tabStream.add(tabController.index + 1);
         Utility.showToast(response.message);
       }
     } else {
-      Utility.showToast(Constants.internetAlert);
+      tabStream.add(tabController.index + 1);
     }
   }
 }

@@ -2,42 +2,64 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:developer';
 
+import 'package:dms/listeners/mrp_filter_listener.dart';
 import 'package:dms/main.dart';
+import 'package:dms/ui/custom_widget/no_internet.dart';
 import 'package:dms/ui/custom_widget/retailer_not_found.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_brand_category_resonse.dart';
+import 'package:dms/ui/order_booking/order_booking_list/model/get_filter_mrp_response.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
 import 'package:dms/ui/order_booking/order_booking_list/product_list_item.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/constants.dart';
+import 'package:dms/utils/network.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ProductTabs extends StatefulWidget {
   final int index;
   final String beatId;
   final String retailerId;
   final BrandAndCategoryModel brands;
-
+  final Function(MrpFilterListener listener) onInit;
+  final String mrpFilter;
   const ProductTabs({
     Key? key,
     required this.index,
     required this.brands,
     required this.beatId,
     required this.retailerId,
+    required this.onInit,
+    required this.mrpFilter,
   }) : super(key: key);
 
   @override
   _ProductTabsState createState() => _ProductTabsState();
 }
 
-class _ProductTabsState extends State<ProductTabs> {
+class _ProductTabsState extends State<ProductTabs>
+    implements MrpFilterListener {
   List<ProductsModal> productList = [];
   StreamController<List<ProductsModal>> productStream = StreamController();
   List<Category> categoryList = [];
   Category? category;
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
+  String filterMrp = "";
 
   @override
   void initState() {
     debugPrint("ProductTabs---initState-->${widget.brands.toString()}");
+    widget.onInit(this);
+    print("tabindex = ${widget.index}");
+
+    if (widget.mrpFilter.isNotEmpty) {
+      filterMrp = widget.mrpFilter;
+      print("filterMrp value = $filterMrp");
+      print("filterMrp widget = $filterMrp");
+    }
+
     if (widget.index > 1) {
       if (widget.brands.category.isNotEmpty) {
         if (widget.brands.category.length > 1) {
@@ -57,6 +79,33 @@ class _ProductTabsState extends State<ProductTabs> {
       }
     }
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant ProductTabs oldWidget) {
+    if (widget.mrpFilter.isNotEmpty) {
+      filterMrp = widget.mrpFilter;
+    }
+
+    if (widget.index > 1) {
+      if (widget.brands.category.isNotEmpty) {
+        if (widget.brands.category.length > 1) {
+          categoryList.add(Category(id: "", categoryName: "All"));
+        }
+        categoryList.addAll(widget.brands.category);
+        category = categoryList.first;
+        getProduct(widget.brands.id, category!.id);
+      } else {
+        getProduct(widget.brands.id, '');
+      }
+    } else {
+      if (widget.index == 0) {
+        getSuggestedProduct();
+      } else {
+        getSchemeProduct();
+      }
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -81,51 +130,72 @@ class _ProductTabsState extends State<ProductTabs> {
               builder: (context, snapshot) {
                 log("snapshot-->$snapshot");
 
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
+                if (snapshot.hasData && snapshot.data!.isEmpty) {
+                  return Center(
+                    child: ProductNotFound(
+                      onRefresh: () {
+                        productList.clear();
+                        if (widget.index == 0) {
+                          getSuggestedProduct();
+                        } else if (widget.index == 1) {
+                          getSchemeProduct();
+                        } else {
+                          getProduct(widget.brands.id,
+                              category == null ? "" : category!.id);
+                        }
+                      },
+                    ),
+                  );
+                }
+
+                if (snapshot.hasData) {
+                  // List<ProductsModal> products = snapshot.data!;
+
+                  return SmartRefresher(
+                    primary: false,
+                    controller: refreshController,
+                    onRefresh: onRefresh,
+                    enablePullDown: true,
+                    child: ListView.separated(
+                      padding: const EdgeInsets.all(10),
+                      itemCount: productList.length,
+                      separatorBuilder: (context, index) {
+                        return const SizedBox(
+                          height: 10,
+                        );
+                      },
+                      itemBuilder: (context, index) {
+                        return ProductListItem(
+                          products: productList[index],
+                        );
+                      },
+                    ),
                   );
                 }
 
                 if (snapshot.hasError) {
-                  return Center(
-                    child: Text(snapshot.error.toString()),
-                  );
-                }
-
-                if (snapshot.hasData && snapshot.data!.isEmpty) {
-                  return Center(child: ProductNotFound(
-                    onRefresh: () {
-                      if (widget.index == 0) {
-                        getSuggestedProduct();
-                      }
-                      if (widget.index == 1) {
-                        getSchemeProduct();
-                      }
-                      if (widget.index == 3) {
-                        getProduct(widget.brands.id, category == null ? "" : category!.id);
-                      }
-                    },
-                  ));
-                }
-
-                if (snapshot.hasData) {
-                  List<ProductsModal> products = snapshot.data!;
-
-                  return ListView.separated(
-                    padding: const EdgeInsets.all(10),
-                    itemCount: products.length,
-                    separatorBuilder: (context, index) {
-                      return const SizedBox(
-                        height: 10,
-                      );
-                    },
-                    itemBuilder: (context, index) {
-                      return ProductListItem(
-                        products: products[index],
-                      );
-                    },
-                  );
+                  if (snapshot.error.toString() == "loading") {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  if (snapshot.error.toString() == Constants.internetAlert) {
+                    return Center(
+                      child: NoInternetConnection(
+                        onRefresh: () {
+                          productList.clear();
+                          if (widget.index == 0) {
+                            getSuggestedProduct();
+                          } else if (widget.index == 1) {
+                            getSchemeProduct();
+                          } else {
+                            getProduct(widget.brands.id,
+                                category == null ? "" : category!.id);
+                          }
+                        },
+                      ),
+                    );
+                  }
                 }
 
                 return Container();
@@ -135,53 +205,111 @@ class _ProductTabsState extends State<ProductTabs> {
     );
   }
 
-  void getProduct(
-    String brandId,
-    String categoryId,
-  ) async {
-    Map<String, dynamic> input = HashMap<String, dynamic>();
+  void getProduct(String brandId, String categoryId) async {
+    if (await Network.isConnected()) {
+      productStream.addError("loading");
+      Map<String, dynamic> input = HashMap<String, dynamic>();
 
-    input["brand_id"] = brandId;
-    input["category_id"] = categoryId;
-    input["beat_id"] = widget.beatId;
-    input["retailer_id"] = widget.retailerId;
+      input["brand_id"] = brandId;
+      input["category_id"] = categoryId;
+      input["beat_id"] = widget.beatId;
+      input["retailer_id"] = widget.retailerId;
+      input["mrp"] = filterMrp;
 
-    GetProductsResponse response = await repository.getProducts(input);
-    if (response.success) {
-      productList = response.data!;
-      productStream.add(productList);
+      GetProductsResponse response = await repository.getProducts(input);
+      if (response.success) {
+        productList = response.data!;
+        productStream.add(productList);
+      } else {
+        productStream.add([]);
+      }
     } else {
-      productStream.add([]);
+      productStream.addError(Constants.internetAlert);
     }
   }
 
   void getSuggestedProduct() async {
-    Map<String, dynamic> input = HashMap<String, dynamic>();
+    if (await Network.isConnected()) {
+      productStream.addError("loading");
+      Map<String, dynamic> input = HashMap<String, dynamic>();
 
-    input["beat_id"] = widget.beatId;
-    input["retailer_id"] = widget.retailerId;
-    input["mrp"] = "1";
-    GetProductsResponse response = await repository.getSuggestedProduct(input);
-    if (response.success) {
-      productList = response.data!;
-      productStream.add(productList);
+      input["beat_id"] = widget.beatId;
+      input["retailer_id"] = widget.retailerId;
+
+      GetProductsResponse response =
+          await repository.getSuggestedProduct(input);
+      if (response.success) {
+        if (filterMrp.isNotEmpty) {
+          productList.clear();
+          for (int i = 0; i < response.data!.length; i++) {
+            if (int.parse(response.data![i].mrp) == int.parse(filterMrp)) {
+              productList.add(response.data![i]);
+            }
+          }
+        } else {
+          productList = response.data!;
+        }
+        productStream.add(productList);
+      } else {
+        productStream.add([]);
+      }
     } else {
-      productStream.add([]);
+      productStream.addError(Constants.internetAlert);
     }
   }
 
   void getSchemeProduct() async {
-    Map<String, dynamic> input = HashMap<String, dynamic>();
+    if (await Network.isConnected()) {
+      productStream.addError("loading");
+      Map<String, dynamic> input = HashMap<String, dynamic>();
 
-    input["beat_id"] = widget.beatId;
-    input["retailer_id"] = widget.retailerId;
+      input["beat_id"] = widget.beatId;
+      input["retailer_id"] = widget.retailerId;
 
-    GetProductsResponse response = await repository.getSchemeProducts(input);
-    if (response.success) {
-      productList = response.data!;
-      productStream.add(productList);
+      GetProductsResponse response = await repository.getSchemeProducts(input);
+      if (response.success) {
+        if (filterMrp.isNotEmpty) {
+          productList.clear();
+          for (int i = 0; i < response.data!.length; i++) {
+            if (int.parse(response.data![i].mrp) == int.parse(filterMrp)) {
+              productList.add(response.data![i]);
+            }
+          }
+        } else {
+          productList = response.data!;
+        }
+        productStream.add(productList);
+      } else {
+        productStream.add([]);
+      }
     } else {
-      productStream.add([]);
+      productStream.addError(Constants.internetAlert);
+    }
+  }
+
+  void onRefresh() async {
+    productList.clear();
+    if (widget.index == 0) {
+      getSuggestedProduct();
+    } else if (widget.index == 1) {
+      getSchemeProduct();
+    } else {
+      getProduct(widget.brands.id, category == null ? "" : category!.id);
+    }
+    refreshController.refreshCompleted();
+  }
+
+  @override
+  void onMrpSelected(FilterMrpModal mrp) {
+    filterMrp = mrp.mrp;
+    if (filterMrp.isNotEmpty) {
+      if (widget.index == 0) {
+        getSuggestedProduct();
+      } else if (widget.index == 1) {
+        getSchemeProduct();
+      } else {
+        getProduct(widget.brands.id, category == null ? "" : category!.id);
+      }
     }
   }
 }
@@ -190,7 +318,8 @@ class BeatsWidget extends StatefulWidget {
   final List<Category> tags;
   final Function(Category tag) onSelect;
 
-  const BeatsWidget({Key? key, required this.tags, required this.onSelect}) : super(key: key);
+  const BeatsWidget({Key? key, required this.tags, required this.onSelect})
+      : super(key: key);
 
   @override
   _BeatsWidgetState createState() => _BeatsWidgetState();
@@ -239,11 +368,17 @@ class _BeatsWidgetState extends State<BeatsWidget> {
               ),
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
               border: Border.all(
-                color: widget.tags[index].categoryName == tag.categoryName ? MColor.colorPrimary : const Color(0xffC5C5C5),
+                color: widget.tags[index].categoryName == tag.categoryName
+                    ? MColor.colorPrimary
+                    : const Color(0xffC5C5C5),
               ),
               singleItem: true,
-              activeColor: widget.tags[index].categoryName == tag.categoryName ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
-              color: widget.tags[index].categoryName == tag.categoryName ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
+              activeColor: widget.tags[index].categoryName == tag.categoryName
+                  ? const Color(0xffFFC9CC)
+                  : const Color(0xffFAFAFA),
+              color: widget.tags[index].categoryName == tag.categoryName
+                  ? const Color(0xffFFC9CC)
+                  : const Color(0xffFAFAFA),
               title: widget.tags[index].categoryName,
             ),
           );
