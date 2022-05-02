@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+
 import 'package:dms/listeners/select_beat_listener.dart';
 import 'package:dms/main.dart';
 import 'package:dms/ui/add_store/outlet_information/outlet_information.dart';
@@ -31,8 +32,7 @@ class RetailerListScreen extends StatefulWidget {
   _RetailerListScreenState createState() => _RetailerListScreenState();
 }
 
-class _RetailerListScreenState extends State<RetailerListScreen>
-    with TickerProviderStateMixin {
+class _RetailerListScreenState extends State<RetailerListScreen> with TickerProviderStateMixin {
   late TabController tabController;
   RetailersBloc retailersBloc = RetailersBloc();
   List<BeatsModal> beatList = [];
@@ -58,10 +58,7 @@ class _RetailerListScreenState extends State<RetailerListScreen>
         if (Navigator.canPop(context)) {
           Navigator.pop(context);
         } else {
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => const DrawerScreen()),
-              ModalRoute.withName("/"));
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const DrawerScreen()), ModalRoute.withName("/"));
         }
         return true;
       },
@@ -166,27 +163,23 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                               beatList: beatList,
                               day: selectedDay,
                               type: selectedEnrollmentType,
-                              beat: selectedBeat != null
-                                  ? selectedBeat!
-                                  : BeatsModal(id: "", name: ""),
-                              onFilter: (String day,
-                                  String enrollmentType,
-                                  BeatsModal selectedBeat,
-                                  List<BeatsModal> beats) {
+                              beat: selectedBeat != null ? selectedBeat! : BeatsModal(id: "", name: ""),
+                              onFilter: (String day, String enrollmentType, BeatsModal selectedBeat, List<BeatsModal> beats) {
                                 log("filter--->${beats.toList()}");
-                                selectedDay = day.isEmpty
-                                    ? DateFormat("EEEE").format(DateTime.now())
-                                    : day;
+                                selectedDay = day.isEmpty ? DateFormat("EEEE").format(DateTime.now()) : day;
                                 selectedEnrollmentType = enrollmentType;
                                 this.selectedBeat = selectedBeat;
-                                if (beats.isNotEmpty) {
-                                  beatList = beats;
-                                  beatStream.add(beatList);
-                                }
+                                beatList = beats;
+                                beatStream.add(beatList);
+                                // if (beats.isNotEmpty) {
+                                //   beatList = beats;
+                                //   beatStream.add(beatList);
+                                // }else{
+                                //   beatList.clear();
+                                // }
 
                                 if (selectBeatListener != null) {
-                                  selectBeatListener!.onBeatSelect(selectedBeat,
-                                      selectedDay, selectedEnrollmentType);
+                                  selectBeatListener!.onBeatSelect(selectedBeat, selectedDay, selectedEnrollmentType);
                                 }
                               },
                             );
@@ -207,9 +200,7 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                     Navigator.pop(context);
                   } else {
                     Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (_) => const DrawerScreen()),
-                        ModalRoute.withName("/"));
+                        context, MaterialPageRoute(builder: (_) => const DrawerScreen()), ModalRoute.withName("/"));
                   }
                 },
                 icon: const Image(
@@ -228,11 +219,7 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                         style: const TextStyle(fontSize: 16),
                         readOnly: true,
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) =>
-                                      const SearchRetailerScreen()));
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchRetailerScreen()));
                         },
                         decoration: InputDecoration(
                             hintText: StringConst.search,
@@ -268,60 +255,44 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                           indicatorSize: TabBarIndicatorSize.label,
                           indicatorWeight: 3,
                           indicatorColor: MColor.colorPrimary,
-                          labelPadding:
-                              const EdgeInsets.symmetric(horizontal: 0),
+                          labelPadding: const EdgeInsets.symmetric(horizontal: 0),
                           onTap: (index) {
                             tabStream.add(index + 1);
                           },
                           tabs: [
                             Tab(
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
                                 child: Text(
                                   StringConst.notConnected,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1!
-                                      .merge(TextStyle(
-                                          color: const Color(0xff303030)
-                                              .withOpacity(0.85),
-                                          letterSpacing: 0.5,
-                                          fontWeight: FontWeight.w600)),
+                                  style: Theme.of(context).textTheme.bodyText1!.merge(TextStyle(
+                                      color: const Color(0xff303030).withOpacity(0.85),
+                                      letterSpacing: 0.5,
+                                      fontWeight: FontWeight.w600)),
                                 ),
                               ),
                             ),
                             Tab(
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
                                 child: Text(
                                   StringConst.noOrder,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText2!
-                                      .merge(TextStyle(
-                                          color: const Color(0xff303030)
-                                              .withOpacity(0.85),
-                                          letterSpacing: 0.5,
-                                          fontWeight: FontWeight.w600)),
+                                  style: Theme.of(context).textTheme.bodyText2!.merge(TextStyle(
+                                      color: const Color(0xff303030).withOpacity(0.85),
+                                      letterSpacing: 0.5,
+                                      fontWeight: FontWeight.w600)),
                                 ),
                               ),
                             ),
                             Tab(
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
                                 child: Text(
                                   StringConst.order,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText2!
-                                      .merge(TextStyle(
-                                          color: const Color(0xff303030)
-                                              .withOpacity(0.85),
-                                          letterSpacing: 0.5,
-                                          fontWeight: FontWeight.w600)),
+                                  style: Theme.of(context).textTheme.bodyText2!.merge(TextStyle(
+                                      color: const Color(0xff303030).withOpacity(0.85),
+                                      letterSpacing: 0.5,
+                                      fontWeight: FontWeight.w600)),
                                 ),
                               ),
                             ),
@@ -350,8 +321,7 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                               debugPrint("onBeatSelect-->${tag.name}");
                               selectedBeat = tag;
                               if (selectBeatListener != null) {
-                                selectBeatListener!.onBeatSelect(selectedBeat!,
-                                    selectedDay, selectedEnrollmentType);
+                                selectBeatListener!.onBeatSelect(selectedBeat!, selectedDay, selectedEnrollmentType);
                               }
                             },
                           ),
@@ -365,9 +335,7 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                     builder: (context, snap) {
                       if (snap.hasData) {
                         return RetailerTab(
-                          selectedBeat: selectedBeat == null
-                              ? BeatsModal(id: "", name: "All")
-                              : selectedBeat!,
+                          selectedBeat: selectedBeat == null ? BeatsModal(id: "", name: "All") : selectedBeat!,
                           index: snap.data!,
                           day: selectedDay,
                           onInit: (SelectBeatListener listener) {
@@ -421,13 +389,11 @@ class _RetailerListScreenState extends State<RetailerListScreen>
 
   getBeats() async {
     if (await Network.isConnected()) {
-      DateTime dateTime =
-          await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
+      DateTime dateTime = await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
         return DateTime.now();
       });
       Map<String, dynamic> input = {"day": DateFormat("EEEE").format(dateTime)};
-      GetAllBeatsResponse response =
-          await repository.getBeatByOrderBookingDay(input);
+      GetAllBeatsResponse response = await repository.getBeatByOrderBookingDay(input);
       if (response.success) {
         if (response.data!.length > 1) {
           beatList.add(BeatsModal(id: "", name: "All"));
