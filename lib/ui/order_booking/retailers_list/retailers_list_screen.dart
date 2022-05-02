@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-
 import 'package:dms/listeners/select_beat_listener.dart';
 import 'package:dms/main.dart';
 import 'package:dms/ui/add_store/outlet_information/outlet_information.dart';
@@ -8,6 +7,7 @@ import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/filter_retailer_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/route_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/sort_retailer_bottom_sheet.dart';
+import 'package:dms/ui/custom_widget/no_internet.dart';
 import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailer_bloc.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
@@ -32,21 +32,23 @@ class RetailerListScreen extends StatefulWidget {
   _RetailerListScreenState createState() => _RetailerListScreenState();
 }
 
-class _RetailerListScreenState extends State<RetailerListScreen> with TickerProviderStateMixin {
+class _RetailerListScreenState extends State<RetailerListScreen>
+    with TickerProviderStateMixin {
   late TabController tabController;
   RetailersBloc retailersBloc = RetailersBloc();
   List<BeatsModal> beatList = [];
   SelectBeatListener? selectBeatListener;
-  String selectedDay = DateFormat("EEEE").format(DateTime.now());
+  String selectedDay = "";
   String selectedEnrollmentType = "";
   String sortSelected = "";
-  BeatsModal? selectedBeat;
+  BeatsModal? beatsModal;
   StreamController<List<BeatsModal>> beatStream = StreamController();
   StreamController<int> tabStream = StreamController();
 
   @override
   void initState() {
     tabController = TabController(length: 3, vsync: this);
+
     getBeats();
     super.initState();
   }
@@ -58,7 +60,10 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
         if (Navigator.canPop(context)) {
           Navigator.pop(context);
         } else {
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const DrawerScreen()), ModalRoute.withName("/"));
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => const DrawerScreen()),
+              ModalRoute.withName("/"));
         }
         return true;
       },
@@ -163,23 +168,23 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                               beatList: beatList,
                               day: selectedDay,
                               type: selectedEnrollmentType,
-                              beat: selectedBeat != null ? selectedBeat! : BeatsModal(id: "", name: ""),
-                              onFilter: (String day, String enrollmentType, BeatsModal selectedBeat, List<BeatsModal> beats) {
+                              beat: beatsModal != null
+                                  ? beatsModal!
+                                  : BeatsModal(id: "", name: ""),
+                              onFilter: (String day,
+                                  String enrollmentType,
+                                  BeatsModal selectedBeat,
+                                  List<BeatsModal> beats) async {
                                 log("filter--->${beats.toList()}");
-                                selectedDay = day.isEmpty ? DateFormat("EEEE").format(DateTime.now()) : day;
+
+                                selectedDay = day;
                                 selectedEnrollmentType = enrollmentType;
-                                this.selectedBeat = selectedBeat;
+                                beatsModal = selectedBeat;
                                 beatList = beats;
                                 beatStream.add(beatList);
-                                // if (beats.isNotEmpty) {
-                                //   beatList = beats;
-                                //   beatStream.add(beatList);
-                                // }else{
-                                //   beatList.clear();
-                                // }
-
                                 if (selectBeatListener != null) {
-                                  selectBeatListener!.onBeatSelect(selectedBeat, selectedDay, selectedEnrollmentType);
+                                  selectBeatListener!.onBeatSelect(beatsModal!,
+                                      selectedDay, selectedEnrollmentType);
                                 }
                               },
                             );
@@ -200,7 +205,9 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                     Navigator.pop(context);
                   } else {
                     Navigator.pushAndRemoveUntil(
-                        context, MaterialPageRoute(builder: (_) => const DrawerScreen()), ModalRoute.withName("/"));
+                        context,
+                        MaterialPageRoute(builder: (_) => const DrawerScreen()),
+                        ModalRoute.withName("/"));
                   }
                 },
                 icon: const Image(
@@ -219,7 +226,12 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                         style: const TextStyle(fontSize: 16),
                         readOnly: true,
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchRetailerScreen()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => SearchRetailerScreen(
+                                        day: selectedDay,
+                                      )));
                         },
                         decoration: InputDecoration(
                             hintText: StringConst.search,
@@ -255,44 +267,72 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                           indicatorSize: TabBarIndicatorSize.label,
                           indicatorWeight: 3,
                           indicatorColor: MColor.colorPrimary,
-                          labelPadding: const EdgeInsets.symmetric(horizontal: 0),
+                          labelPadding:
+                              const EdgeInsets.symmetric(horizontal: 0),
                           onTap: (index) {
                             tabStream.add(index + 1);
                           },
                           tabs: [
                             Tab(
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
                                 child: Text(
                                   StringConst.notConnected,
-                                  style: Theme.of(context).textTheme.bodyText1!.merge(TextStyle(
-                                      color: const Color(0xff303030).withOpacity(0.85),
-                                      letterSpacing: 0.5,
-                                      fontWeight: FontWeight.w600)),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .merge(
+                                        TextStyle(
+                                          color: const Color(0xff303030)
+                                              .withOpacity(0.85),
+                                          letterSpacing: 0.5,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 17,
+                                        ),
+                                      ),
                                 ),
                               ),
                             ),
                             Tab(
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
                                 child: Text(
                                   StringConst.noOrder,
-                                  style: Theme.of(context).textTheme.bodyText2!.merge(TextStyle(
-                                      color: const Color(0xff303030).withOpacity(0.85),
-                                      letterSpacing: 0.5,
-                                      fontWeight: FontWeight.w600)),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .merge(
+                                        TextStyle(
+                                          color: const Color(0xff303030)
+                                              .withOpacity(0.85),
+                                          letterSpacing: 0.5,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 17,
+                                        ),
+                                      ),
                                 ),
                               ),
                             ),
                             Tab(
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
                                 child: Text(
                                   StringConst.order,
-                                  style: Theme.of(context).textTheme.bodyText2!.merge(TextStyle(
-                                      color: const Color(0xff303030).withOpacity(0.85),
-                                      letterSpacing: 0.5,
-                                      fontWeight: FontWeight.w600)),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .merge(
+                                        TextStyle(
+                                          color: const Color(0xff303030)
+                                              .withOpacity(0.85),
+                                          letterSpacing: 0.5,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 17,
+                                        ),
+                                      ),
                                 ),
                               ),
                             ),
@@ -303,10 +343,20 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
               ),
             ),
             body: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 StreamBuilder<List<BeatsModal>>(
                     stream: beatStream.stream,
                     builder: (context, snapshot) {
+                      if (snapshot.error.toString() == "loading") {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+
                       if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                         List<BeatsModal> beats = snapshot.data!;
 
@@ -316,17 +366,20 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                           width: MediaQuery.of(context).size.width,
                           child: BeatWidget(
                             tags: beats,
-                            selectedBeat: selectedBeat,
+                            selectedBeat: beatsModal,
                             onSelect: (BeatsModal tag) {
                               debugPrint("onBeatSelect-->${tag.name}");
-                              selectedBeat = tag;
+                              beatsModal = tag;
+
                               if (selectBeatListener != null) {
-                                selectBeatListener!.onBeatSelect(selectedBeat!, selectedDay, selectedEnrollmentType);
+                                selectBeatListener!.onBeatSelect(beatsModal!,
+                                    selectedDay, selectedEnrollmentType);
                               }
                             },
                           ),
                         );
                       }
+
                       return Container();
                     }),
                 Expanded(
@@ -335,7 +388,9 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                     builder: (context, snap) {
                       if (snap.hasData) {
                         return RetailerTab(
-                          selectedBeat: selectedBeat == null ? BeatsModal(id: "", name: "All") : selectedBeat!,
+                          selectedBeat: beatsModal == null
+                              ? BeatsModal(id: "", name: "All")
+                              : beatsModal!,
                           index: snap.data!,
                           day: selectedDay,
                           onInit: (SelectBeatListener listener) {
@@ -389,23 +444,34 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
 
   getBeats() async {
     if (await Network.isConnected()) {
-      DateTime dateTime = await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
+      DateTime dateTime =
+          await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
         return DateTime.now();
       });
-      Map<String, dynamic> input = {"day": DateFormat("EEEE").format(dateTime)};
-      GetAllBeatsResponse response = await repository.getBeatByOrderBookingDay(input);
+
+      if (selectedDay.isEmpty) {
+        selectedDay = DateFormat("EEEE").format(dateTime);
+      }
+      beatStream.addError("loading");
+      Map<String, dynamic> input = {"day": selectedDay};
+      GetAllBeatsResponse response =
+          await repository.getBeatByOrderBookingDay(input);
       if (response.success) {
         if (response.data!.length > 1) {
           beatList.add(BeatsModal(id: "", name: "All"));
+        } else {
+          beatsModal = response.data!.first;
         }
         beatList.addAll(response.data!);
         beatStream.add(beatList);
         tabStream.add(tabController.index + 1);
       } else {
+        beatStream.add(beatList);
+        tabStream.add(tabController.index + 1);
         Utility.showToast(response.message);
       }
     } else {
-      Utility.showToast(Constants.internetAlert);
+      tabStream.add(tabController.index + 1);
     }
   }
 }

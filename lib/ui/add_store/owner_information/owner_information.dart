@@ -42,6 +42,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
   TextEditingController txtPrimaryMobile = TextEditingController();
   TextEditingController txtSecondaryMobile = TextEditingController();
   TextEditingController txtHelperMobile = TextEditingController();
+  TextEditingController txtEmail = TextEditingController();
   TextEditingController txtCallTime = TextEditingController();
   TextEditingController txtPrimaryLang = TextEditingController();
   TextEditingController txtSecondaryLang = TextEditingController();
@@ -55,6 +56,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
   GlobalKey globalKeyPrimMob = GlobalKey();
   GlobalKey globalKeySecMob = GlobalKey();
   GlobalKey globalKeyHelpMob = GlobalKey();
+  GlobalKey globalKeyEmail = GlobalKey();
   GlobalKey globalKeyPAN = GlobalKey();
   GlobalKey globalKeyAadhar = GlobalKey();
   CallTimeSlotModel? callTimeSlotModel;
@@ -75,6 +77,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
     txtPrimaryMobile.text = widget.form.primaryMobile;
     txtSecondaryMobile.text = widget.form.secondaryMobile;
     txtHelperMobile.text = widget.form.helperMobile;
+    txtEmail.text = widget.form.email;
 
     callTimeSlotModel = widget.form.callTimeSlot;
     if (callTimeSlotModel != null) {
@@ -224,6 +227,29 @@ class _OwnerInformationState extends State<OwnerInformation> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Image.asset("assets/gmail.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(StringConst.email),
+                    ],
+                  ),
+                  SizedBox(
+                    key: globalKeyHelpMob,
+                    height: 12.0,
+                  ),
+                  EmailEditText(
+                    hint: StringConst.enterHere,
+                    controller: txtEmail,
+                    globalKey: globalKeyEmail,
+                    onChange: (text) {
+                      widget.form.email = text;
+                    },
+                  ),
+                  sizedBoxWidget(20.0),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Image.asset("assets/headphones.png"),
                       const SizedBox(
                         width: 10,
@@ -232,7 +258,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
                     ],
                   ),
                   SizedBox(
-                    key: globalKeyHelpMob,
+                    key: globalKeyEmail,
                     height: 12.0,
                   ),
                   textFields(txtCallTime, StringConst.selectHint),
@@ -471,6 +497,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
               widget.form.primaryMobile = txtPrimaryMobile.text.trim();
               widget.form.secondaryMobile = txtSecondaryMobile.text.trim();
               widget.form.helperMobile = txtHelperMobile.text.trim();
+              widget.form.email = txtEmail.text.trim();
               widget.form.callTimeSlot = callTimeSlotModel;
               widget.form.primaryLang = primaryLanguage;
               widget.form.secondaryLang = secondaryLanguage;
@@ -661,9 +688,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
       }
     } catch (exception) {
       Utility.showToast(
-
-              "Permission denied, go to app settings and allow camera permission",
-          );
+        "Permission denied, go to app settings and allow camera permission",
+      );
     }
   }
 

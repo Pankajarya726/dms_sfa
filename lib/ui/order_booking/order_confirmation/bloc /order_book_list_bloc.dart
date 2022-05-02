@@ -1,6 +1,3 @@
-import 'package:dms/ui/order_booking/order_booking_list/bloc/order_book_list_events.dart';
-import 'package:dms/ui/order_booking/order_booking_list/bloc/order_book_list_states.dart';
-import 'package:dms/ui/order_booking/order_booking_list/model/get_brand_category_resonse.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
 import 'package:dms/ui/order_booking/order_confirmation/bloc%20/order_book_list_events.dart';
 import 'package:dms/ui/order_booking/order_confirmation/bloc%20/order_book_list_states.dart';
@@ -33,7 +30,6 @@ class OrderConfirmationBloc
         yield OrderConfirmationFailureState(msg: response.message);
       }
     } else {
-      Utility.showToast(Constants.internetAlert);
       yield OrderConfirmationFailureState(msg: Constants.internetAlert);
     }
   }

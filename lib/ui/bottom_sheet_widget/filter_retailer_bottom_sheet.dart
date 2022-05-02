@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'dart:collection';
-
 import 'package:dms/listeners/pop_up_menu_listener.dart';
 import 'package:dms/main.dart';
 import 'package:dms/ui/custom_widget/drop_down_field.dart';
@@ -16,7 +16,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class FilterRetailerBottomSheet extends StatefulWidget {
   final String day;
   final String type;
-  final BeatsModal? beat;
+  final BeatsModal beat;
   final List<BeatsModal> beatList;
   final Function(String day, String type, BeatsModal selectedBeat,
       List<BeatsModal> beatList) onFilter;
@@ -55,16 +55,24 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
   String selectedDay = "";
   String seleBeat = "";
   String selectedEnrollmentType = "";
-  BeatsModal? selectedBeat;
+  BeatsModal? beatsModal;
   List<BeatsModal> beats = [];
   PopUpMenuListener? popUpMenuListener;
+  StreamController<String> beatsStreamController = StreamController();
 
   @override
   void initState() {
     selectedDay = widget.day;
     selectedEnrollmentType = widget.type;
-    if (widget.beat != null) {
-      selectedBeat = widget.beat;
+    if (widget.beatList.isNotEmpty) {
+      beatsModal = widget.beat;
+      if (widget.beat.name == "") {
+        seleBeat = "Select Beat";
+      } else {
+        seleBeat = widget.beat.name;
+      }
+    } else {
+      seleBeat = "Beats not found";
     }
     debugPrint("FilterRetailerBottomSheet");
     beats = widget.beatList;
@@ -121,24 +129,52 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                 const SizedBox(
                   height: 20,
                 ),
-                DropDownField(
-                  onMenuItemSelected: (listener) {
-                    popUpMenuListener = listener;
-                  },
-                  prevSelected: selectedBeat != null ? selectedBeat!.name : "",
-                  onSelect: (value) {
-                    debugPrint("select-->$value");
-                    // selectedBeat!.name = value;
-                  },
-                  hint: "Select Beat",
-                  menuList: days,
-                  beats: beats,
-                  onBeatSelected: (beatsM) {
-                    if (beatsM != null) {
-                      selectedBeat = beatsM;
-                    }
-                  },
-                ),
+                StreamBuilder<String>(
+                    stream: beatsStreamController.stream,
+                    initialData: seleBeat,
+                    builder: (context, snapshot) {
+                      if (snapshot.error == "loading") {
+                        seleBeat = "Loading beats...";
+                        return DropDownField(
+                          onMenuItemSelected: (listener) {
+                            popUpMenuListener = listener;
+                          },
+                          prevSelected: seleBeat,
+                          onSelect: (value) {
+                            debugPrint("select-->$value");
+                          },
+                          hint: seleBeat,
+                          menuList: days,
+                          beats: beats,
+                          onBeatSelected: (beatsM) {
+                            if (beatsM != null) {
+                              beatsModal = beatsM;
+                            }
+                          },
+                        );
+                      }
+
+                      if (snapshot.hasData) {
+                        return DropDownField(
+                          onMenuItemSelected: (listener) {
+                            popUpMenuListener = listener;
+                          },
+                          prevSelected: seleBeat,
+                          onSelect: (value) {
+                            debugPrint("select-->$value");
+                          },
+                          hint: seleBeat,
+                          menuList: days,
+                          beats: beats,
+                          onBeatSelected: (beatsM) {
+                            if (beatsM != null) {
+                              beatsModal = beatsM;
+                            }
+                          },
+                        );
+                      }
+                      return Container();
+                    }),
                 const SizedBox(
                   height: 20,
                 ),
@@ -163,9 +199,15 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                     children: [
                       MaterialButton(
                         onPressed: () {
-                          widget.onFilter(selectedDay, selectedEnrollmentType,
-                              selectedBeat!, beats);
-
+                          widget.onFilter(
+                              selectedDay,
+                              selectedEnrollmentType,
+                              beatsModal != null
+                                  ? beatsModal!
+                                  : (beats.length > 1
+                                      ? BeatsModal(id: "", name: "All")
+                                      : BeatsModal(id: "", name: "")),
+                              beats);
                           Navigator.pop(context);
                         },
                         height: 50,
@@ -198,17 +240,27 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
 
   getBeats() async {
     if (await Network.isConnected()) {
+      beatsStreamController.addError("loading");
       Map<String, dynamic> input = HashMap<String, dynamic>();
       input["day"] = selectedDay;
       GetAllBeatsResponse response =
           await repository.getBeatByOrderBookingDay(input);
+      beats.clear();
+      beatsModal = null;
       if (response.success) {
-        beats.clear();
-        beats.add(BeatsModal(id: "", name: "All"));
+        if (response.data!.length > 1) {
+          beats.add(BeatsModal(id: "", name: "All"));
+          seleBeat = "Select Beat";
+        } else {
+          beatsModal = response.data!.first;
+          seleBeat = beatsModal!.name;
+        }
         beats.addAll(response.data!);
-        selectedBeat = beats.first;
+        beatsStreamController.add(seleBeat);
       } else {
         Utility.showToast(response.message);
+        seleBeat = response.message;
+        beatsStreamController.add(response.message);
       }
     } else {
       Utility.showToast(Constants.internetAlert);

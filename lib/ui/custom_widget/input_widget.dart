@@ -32,7 +32,8 @@ class _NameEditTextState extends State<NameEditText> {
       onChanged: widget.onChange,
       onTap: () async {
         await Future.delayed(const Duration(milliseconds: 500));
-        RenderObject? object = widget.globalKey.currentContext!.findRenderObject();
+        RenderObject? object =
+            widget.globalKey.currentContext!.findRenderObject();
         object!.showOnScreen();
       },
       autofocus: false,
@@ -90,7 +91,8 @@ class _MobileEditTextState extends State<MobileEditText> {
     return TextFormField(
       onTap: () async {
         await Future.delayed(const Duration(milliseconds: 500));
-        RenderObject? object = widget.globalKey.currentContext!.findRenderObject();
+        RenderObject? object =
+            widget.globalKey.currentContext!.findRenderObject();
         object!.showOnScreen();
       },
       autofocus: false,
@@ -150,7 +152,8 @@ class _GSTEditTextState extends State<GSTEditText> {
     return TextFormField(
       onTap: () async {
         await Future.delayed(const Duration(milliseconds: 500));
-        RenderObject? object = widget.globalKey.currentContext!.findRenderObject();
+        RenderObject? object =
+            widget.globalKey.currentContext!.findRenderObject();
         object!.showOnScreen();
       },
       autofocus: false,
@@ -191,7 +194,12 @@ class PANEditText extends StatefulWidget {
   final String hint;
   final GlobalKey globalKey;
   final Function(String text) onChange;
-  const PANEditText({Key? key, required this.controller, required this.hint, required this.globalKey, required this.onChange})
+  const PANEditText(
+      {Key? key,
+      required this.controller,
+      required this.hint,
+      required this.globalKey,
+      required this.onChange})
       : super(key: key);
 
   @override
@@ -206,7 +214,8 @@ class _PANEditTextState extends State<PANEditText> {
       autofocus: false,
       onTap: () async {
         await Future.delayed(const Duration(milliseconds: 500));
-        RenderObject? object = widget.globalKey.currentContext!.findRenderObject();
+        RenderObject? object =
+            widget.globalKey.currentContext!.findRenderObject();
         object!.showOnScreen();
       },
       style: const TextStyle(
@@ -246,7 +255,12 @@ class AadharEditText extends StatefulWidget {
   final String hint;
   final GlobalKey globalKey;
   final Function(String text) onChange;
-  const AadharEditText({Key? key, required this.controller, required this.hint, required this.globalKey, required this.onChange})
+  const AadharEditText(
+      {Key? key,
+      required this.controller,
+      required this.hint,
+      required this.globalKey,
+      required this.onChange})
       : super(key: key);
 
   @override
@@ -261,7 +275,8 @@ class _AadharEditTextState extends State<AadharEditText> {
       autofocus: false,
       onTap: () async {
         await Future.delayed(const Duration(milliseconds: 500));
-        RenderObject? object = widget.globalKey.currentContext!.findRenderObject();
+        RenderObject? object =
+            widget.globalKey.currentContext!.findRenderObject();
         object!.showOnScreen();
       },
       style: const TextStyle(
@@ -326,35 +341,42 @@ class _DateEditTextState extends State<DateEditText> {
       onTap: () async {
         FocusScope.of(context).unfocus();
         if (widget.name == StringConst.birthday) {
-          dateTimeBirth ??= await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
+          dateTimeBirth ??= await NTP.now().timeout(const Duration(seconds: 15),
+              onTimeout: () {
             return DateTime.now();
           });
           dateTimeBirth = await showDatePicker(
               context: context,
               initialDate: dateTimeBirth!,
               firstDate: DateTime(1950),
-              lastDate: await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
+              lastDate: await NTP.now().timeout(const Duration(seconds: 15),
+                  onTimeout: () {
                 return DateTime.now();
               }));
           if (dateTimeBirth != null) {
-            BlocProvider.of<CommonBloc>(context).add(CommonBlocBirthdayEvent(dateTime: dateTimeBirth!));
+            BlocProvider.of<CommonBloc>(context)
+                .add(CommonBlocBirthdayEvent(dateTime: dateTimeBirth!));
           }
         }
 
         if (widget.name == StringConst.anniversary) {
-          dateTimeAnniversary ??= await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
+          dateTimeAnniversary ??= await NTP
+              .now()
+              .timeout(const Duration(seconds: 15), onTimeout: () {
             return DateTime.now();
           });
           dateTimeAnniversary = await showDatePicker(
             context: context,
             initialDate: dateTimeAnniversary!,
             firstDate: DateTime(1950),
-            lastDate: await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
+            lastDate: await NTP.now().timeout(const Duration(seconds: 15),
+                onTimeout: () {
               return DateTime.now();
             }),
           );
           if (dateTimeAnniversary != null) {
-            BlocProvider.of<CommonBloc>(context).add(CommonBlocAnniversaryEvent(dateTime: dateTimeAnniversary!));
+            BlocProvider.of<CommonBloc>(context).add(
+                CommonBlocAnniversaryEvent(dateTime: dateTimeAnniversary!));
           }
         }
       },
@@ -471,11 +493,13 @@ class _NormalEditTextState extends State<NormalEditText> {
       onTap: () async {
         if (widget.name == StringConst.address) {
           await Future.delayed(const Duration(milliseconds: 500));
-          RenderObject? object = widget.globalKey.currentContext!.findRenderObject();
+          RenderObject? object =
+              widget.globalKey.currentContext!.findRenderObject();
           object!.showOnScreen();
         } else {
           await Future.delayed(const Duration(milliseconds: 500));
-          RenderObject? object = widget.globalKey.currentContext!.findRenderObject();
+          RenderObject? object =
+              widget.globalKey.currentContext!.findRenderObject();
           object!.showOnScreen();
         }
       },
@@ -499,6 +523,66 @@ class _NormalEditTextState extends State<NormalEditText> {
         filled: true,
         fillColor: const Color(0xffF2F2F2),
         counter: Container(),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
+  }
+}
+
+class EmailEditText extends StatefulWidget {
+  final TextEditingController controller;
+  final String hint;
+  final GlobalKey globalKey;
+  final Function(String text) onChange;
+
+  const EmailEditText({
+    Key? key,
+    required this.controller,
+    required this.hint,
+    required this.onChange,
+    required this.globalKey,
+  }) : super(key: key);
+
+  @override
+  _EmailEditTextState createState() => _EmailEditTextState();
+}
+
+class _EmailEditTextState extends State<EmailEditText> {
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      onChanged: widget.onChange,
+      onTap: () async {
+        await Future.delayed(const Duration(milliseconds: 500));
+        RenderObject? object =
+            widget.globalKey.currentContext!.findRenderObject();
+        object!.showOnScreen();
+      },
+      autofocus: false,
+      style: const TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 0.67,
+        color: MColor.backButton,
+      ),
+      inputFormatters: [
+        FilteringTextInputFormatter.deny(RegExp(r"\s")),
+      ],
+      controller: widget.controller,
+      decoration: InputDecoration(
+        hintText: widget.hint,
+        hintStyle: const TextStyle(
+          color: MColor.backButton,
+          letterSpacing: 0.67,
+          fontWeight: FontWeight.bold,
+          fontSize: 15,
+        ),
+        contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+        filled: true,
+        fillColor: const Color(0xffF2F2F2),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
           borderSide: BorderSide.none,

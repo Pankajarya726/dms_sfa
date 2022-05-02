@@ -15,6 +15,7 @@ import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class TaskDetailScreen extends StatefulWidget {
   final RetailersTaskModal modal;
@@ -29,6 +30,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   List<PendingTaskModal> pendingTaskList = [];
   DateTime? currentDate;
   TaskDetailsBloc taskDetailsBloc = TaskDetailsBloc();
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -43,97 +46,129 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       backgroundColor: const Color(0xffF7F7F7),
       body: BlocProvider(
         create: (context) => taskDetailsBloc,
-        child: CustomScrollView(
-          slivers: [
-            SliverGrid(
-              delegate: SliverChildListDelegate(
-                [
-                  DetailGritItem(
-                    value: widget.modal.lastOrder.isNotEmpty
-                        ? widget.modal.lastOrder
-                        : "",
-                    image: "assets/last_order.png",
-                    name: StringConst.lastOrder,
-                    type: 1,
-                    modal: widget.modal,
-                  ),
-                  DetailGritItem(
-                    value: widget
-                            .modal.lastEscalation.first.reassignDate.isNotEmpty
-                        ? widget.modal.lastEscalation.first.reassignDate
-                        : "",
-                    image: "assets/escalation.png",
-                    name: StringConst.lastEscalation,
-                    type: 2,
-                    modal: widget.modal,
-                  ),
-                  DetailGritItem(
-                    value: widget.modal.pendingTask.isNotEmpty
-                        ? widget.modal.pendingTask
-                        : "",
-                    image: "assets/pending_task.png",
-                    name: StringConst.pendingTask,
-                    type: 3,
-                    modal: widget.modal,
-                  ),
-                  DetailGritItem(
-                    value: widget.modal.taskHistory.isNotEmpty
-                        ? widget.modal.taskHistory
-                        : "",
-                    image: "assets/task_history.png",
-                    name: StringConst.taskHistory,
-                    type: 4,
-                    modal: widget.modal,
-                  ),
-                ],
+        child: SmartRefresher(
+          primary: false,
+          controller: refreshController,
+          onRefresh: onRefresh,
+          enablePullDown: true,
+          child: CustomScrollView(
+            slivers: [
+              SliverGrid(
+                delegate: SliverChildListDelegate(
+                  [
+                    DetailGritItem(
+                      value: widget.modal.lastOrder.isNotEmpty
+                          ? widget.modal.lastOrder
+                          : "",
+                      image: "assets/last_order.png",
+                      name: StringConst.lastOrder,
+                      type: 1,
+                      modal: widget.modal,
+                    ),
+                    DetailGritItem(
+                      value: widget.modal.lastEscalation.first.reassignDate
+                              .isNotEmpty
+                          ? widget.modal.lastEscalation.first.reassignDate
+                          : "",
+                      image: "assets/escalation.png",
+                      name: StringConst.lastEscalation,
+                      type: 2,
+                      modal: widget.modal,
+                    ),
+                    DetailGritItem(
+                      value: widget.modal.pendingTask.isNotEmpty
+                          ? widget.modal.pendingTask
+                          : "",
+                      image: "assets/pending_task.png",
+                      name: StringConst.pendingTask,
+                      type: 3,
+                      modal: widget.modal,
+                    ),
+                    DetailGritItem(
+                      value: widget.modal.taskHistory.isNotEmpty
+                          ? widget.modal.taskHistory
+                          : "",
+                      image: "assets/task_history.png",
+                      name: StringConst.taskHistory,
+                      type: 4,
+                      modal: widget.modal,
+                    ),
+                  ],
+                ),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 2.6,
+                  mainAxisSpacing: 15,
+                  crossAxisSpacing: 0,
+                ),
               ),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 2.6,
-                mainAxisSpacing: 15,
-                crossAxisSpacing: 0,
-              ),
-            ),
-            SliverList(
-              delegate: SliverChildListDelegate(
-                [
-                  const Padding(
-                    padding: EdgeInsets.only(
-                        left: 15, right: 10, bottom: 5, top: 15),
-                    child: Text(
-                      StringConst.pendingTask,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
-                        color: Color(0xff000000),
-                        letterSpacing: 0.67,
+              SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    const Padding(
+                      padding: EdgeInsets.only(
+                          left: 15, right: 10, bottom: 5, top: 15),
+                      child: Text(
+                        StringConst.pendingTask,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                          color: Color(0xff000000),
+                          letterSpacing: 0.67,
+                        ),
                       ),
                     ),
-                  ),
-                  BlocBuilder<TaskDetailsBloc, TaskDetailStates>(
-                    builder: (context, state) {
-                      if (state is TaskDetailInitialState) {
-                        taskDetailsBloc.add(GetPendingTaskEvent(
-                            retailerId: widget.modal.retailerId,
-                            beatId: widget.modal.beatId));
-                      }
+                    BlocBuilder<TaskDetailsBloc, TaskDetailStates>(
+                      builder: (context, state) {
+                        if (state is TaskDetailInitialState) {
+                          taskDetailsBloc.add(GetPendingTaskEvent(
+                              retailerId: widget.modal.retailerId,
+                              beatId: widget.modal.beatId));
+                        }
 
-                      if (state is TaskDetailLodingState) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      if (state is GetPendingTaskState) {
-                        currentDate = state.currentDate;
-                        pendingTaskList = state.pendingTask;
-                      }
+                        if (state is TaskDetailLodingState) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (state is GetPendingTaskState) {
+                          currentDate = state.currentDate;
+                          pendingTaskList = state.pendingTask;
+                        }
 
-                      if (state is TaskDetailFailureState) {
+                        if (state is TaskDetailFailureState) {
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                                left: 15, right: 15, bottom: 10, top: 5),
+                            child: Container(
+                              padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color.fromRGBO(237, 237, 237, 0.25),
+                                    blurRadius: 10,
+                                  )
+                                ],
+                              ),
+                              child: const Text(StringConst.taskNotFound),
+                            ),
+                          );
+                        }
+
+                        if (pendingTaskList.isEmpty) {
+                          return Container();
+                        }
+
                         return Padding(
                           padding: const EdgeInsets.only(
                               left: 15, right: 15, bottom: 10, top: 5),
                           child: Container(
-                            padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
+                            padding: pendingTaskList.isNotEmpty
+                                ? const EdgeInsets.fromLTRB(5, 10, 5, 0)
+                                : const EdgeInsets.fromLTRB(5, 5, 5, 5),
                             decoration: const BoxDecoration(
                               color: Colors.white,
                               borderRadius:
@@ -145,255 +180,248 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                 )
                               ],
                             ),
-                            child: const Text(StringConst.taskNotFound),
-                          ),
-                        );
-                      }
-
-                      if (pendingTaskList.isEmpty) {
-                        return Container();
-                      }
-
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                            left: 15, right: 15, bottom: 10, top: 5),
-                        child: Container(
-                          padding: pendingTaskList.isNotEmpty
-                              ? const EdgeInsets.fromLTRB(5, 10, 5, 0)
-                              : const EdgeInsets.fromLTRB(5, 5, 5, 5),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color.fromRGBO(237, 237, 237, 0.25),
-                                blurRadius: 10,
-                              )
-                            ],
-                          ),
-                          child: pendingTaskList.isNotEmpty
-                              ? Column(
-                                  children: List.generate(
-                                    pendingTaskList.length,
-                                    (index) {
-                                      String days = "";
-                                      String daysPending = "";
-                                      if (pendingTaskList[index]
-                                          .taskDate
-                                          .isNotEmpty) {
-                                        DateTime enrolledDate = DateTime.parse(
-                                            pendingTaskList[index].taskDate);
-                                        days = currentDate!
-                                            .difference(enrolledDate)
-                                            .inDays
-                                            .toString();
-                                        if (int.parse(days) < 2) {
-                                          daysPending =
-                                              days.toString() + " day pending";
-                                        } else {
-                                          daysPending =
-                                              days.toString() + " days pending";
+                            child: pendingTaskList.isNotEmpty
+                                ? Column(
+                                    children: List.generate(
+                                      pendingTaskList.length,
+                                      (index) {
+                                        String days = "";
+                                        String daysPending = "";
+                                        if (pendingTaskList[index]
+                                            .taskDate
+                                            .isNotEmpty) {
+                                          DateTime enrolledDate =
+                                              DateTime.parse(
+                                                  pendingTaskList[index]
+                                                      .taskDate);
+                                          days = currentDate!
+                                              .difference(enrolledDate)
+                                              .inDays
+                                              .toString();
+                                          if (int.parse(days) < 2) {
+                                            daysPending = days.toString() +
+                                                " day pending";
+                                          } else {
+                                            daysPending = days.toString() +
+                                                " days pending";
+                                          }
                                         }
-                                      }
 
-                                      return Material(
-                                        color: Colors.white,
-                                        child: InkWell(
-                                          customBorder: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          onTap: () {
-                                            Utility.hideKeyboard();
-                                            FocusScope.of(context).unfocus();
-                                            showModalBottomSheet(
-                                                context: context,
-                                                shape: bottomSheetShape,
-                                                isScrollControlled: true,
-                                                builder: (context) =>
-                                                    pendingTaskList[index]
-                                                            .escalationTo
-                                                            .isEmpty
-                                                        ? TaskDetailsBottomSheet(
-                                                            pendingTaskModal:
-                                                                pendingTaskList[
-                                                                    index],
-                                                            elapseDays: days,
-                                                            retailerId: widget
-                                                                .modal
-                                                                .retailerId,
-                                                            onTaskResolve: () {
-                                                              taskDetailsBloc.add(GetPendingTaskEvent(
-                                                                  retailerId: widget
-                                                                      .modal
-                                                                      .retailerId,
-                                                                  beatId: widget
-                                                                      .modal
-                                                                      .beatId));
-                                                            },
-                                                          )
-                                                        : EscalatedBottomSheet(
-                                                            pendingTaskModal:
-                                                                pendingTaskList[
-                                                                    index],
-                                                            retailerId: widget
-                                                                .modal
-                                                                .retailerId,
-                                                            elapseDays: days,
-                                                            onTaskResolve: () {
-                                                              taskDetailsBloc.add(GetPendingTaskEvent(
-                                                                  retailerId: widget
-                                                                      .modal
-                                                                      .retailerId,
-                                                                  beatId: widget
-                                                                      .modal
-                                                                      .beatId));
-                                                            },
-                                                          ));
-                                          },
-                                          child: Container(
-                                            margin: const EdgeInsets.symmetric(
-                                                vertical: 5, horizontal: 5),
-                                            decoration:
-                                                pendingTaskList[index] !=
-                                                        pendingTaskList.last
-                                                    ? const BoxDecoration(
-                                                        border: Border(
-                                                          bottom: BorderSide(
-                                                              color: Color(
-                                                                  0xffC5C5C5),
-                                                              width: 0.5),
-                                                        ),
-                                                      )
-                                                    : null,
-                                            child: Column(
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Flexible(
-                                                      flex: 4,
-                                                      child: Text(
-                                                        pendingTaskList[index]
-                                                            .taskCode,
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                          color:
-                                                              Color(0xff555555),
-                                                          letterSpacing: 0.67,
-                                                          fontSize: 15,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Flexible(
-                                                      flex: 3,
-                                                      child: Text(
-                                                        pendingTaskList[index]
-                                                            .taskDate,
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                          color:
-                                                              Color(0xff777777),
-                                                          letterSpacing: 0.67,
-                                                          fontSize: 15,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
+                                        return Material(
+                                          color: Colors.white,
+                                          child: InkWell(
+                                            customBorder:
+                                                RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            onTap: () {
+                                              Utility.hideKeyboard();
+                                              FocusScope.of(context).unfocus();
+                                              showModalBottomSheet(
+                                                  context: context,
+                                                  shape: bottomSheetShape,
+                                                  isScrollControlled: true,
+                                                  builder: (context) =>
+                                                      pendingTaskList[index]
+                                                              .escalationTo
+                                                              .isEmpty
+                                                          ? TaskDetailsBottomSheet(
+                                                              pendingTaskModal:
+                                                                  pendingTaskList[
+                                                                      index],
+                                                              elapseDays: days,
+                                                              retailerId: widget
+                                                                  .modal
+                                                                  .retailerId,
+                                                              onTaskResolve:
+                                                                  () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                            )
+                                                          : EscalatedBottomSheet(
+                                                              pendingTaskModal:
+                                                                  pendingTaskList[
+                                                                      index],
+                                                              retailerId: widget
+                                                                  .modal
+                                                                  .retailerId,
+                                                              elapseDays: days,
+                                                              onTaskResolve:
+                                                                  (done) {
+                                                                if (done
+                                                                    .isEmpty) {
+                                                                  taskDetailsBloc.add(GetPendingTaskEvent(
+                                                                      retailerId: widget
+                                                                          .modal
+                                                                          .retailerId,
+                                                                      beatId: widget
+                                                                          .modal
+                                                                          .beatId));
+                                                                } else {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                }
+                                                              },
+                                                            ));
+                                            },
+                                            child: Container(
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 5,
+                                                      horizontal: 5),
+                                              decoration:
+                                                  pendingTaskList[index] !=
+                                                          pendingTaskList.last
+                                                      ? const BoxDecoration(
+                                                          border: Border(
+                                                            bottom: BorderSide(
+                                                                color: Color(
+                                                                    0xffC5C5C5),
+                                                                width: 0.5),
+                                                          ),
+                                                        )
+                                                      : null,
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Flexible(
+                                                        flex: 4,
+                                                        child: Text(
+                                                          pendingTaskList[index]
+                                                              .taskCode,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal,
+                                                            color: Color(
+                                                                0xff555555),
+                                                            letterSpacing: 0.67,
+                                                            fontSize: 15,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 10),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Flexible(
-                                                      child: Text(
-                                                        pendingTaskList[index]
-                                                            .escalationTag,
-                                                        maxLines: 3,
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color:
-                                                              Color(0xff272727),
-                                                          letterSpacing: 0.67,
-                                                          fontSize: 15,
+                                                      Flexible(
+                                                        flex: 3,
+                                                        child: Text(
+                                                          pendingTaskList[index]
+                                                              .taskDate,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal,
+                                                            color: Color(
+                                                                0xff777777),
+                                                            letterSpacing: 0.67,
+                                                            fontSize: 15,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                    Image(
-                                                      image: AssetImage(
-                                                        widget.modal.taskType ==
-                                                                "HIT"
-                                                            ? "assets/hit.png"
-                                                            : widget.modal
-                                                                        .taskType ==
-                                                                    "ST"
-                                                                ? "assets/special.png"
-                                                                : "assets/key.png",
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 10),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  children: [
-                                                    const Image(
-                                                      image: AssetImage(
-                                                        "assets/time.png",
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 5,
-                                                    ),
-                                                    Flexible(
-                                                      child: Text(
-                                                        daysPending,
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                          color:
-                                                              Color(0xff555555),
-                                                          letterSpacing: 0.67,
-                                                          fontSize: 13,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Flexible(
+                                                        child: Text(
+                                                          pendingTaskList[index]
+                                                              .escalationTag,
+                                                          maxLines: 3,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Color(
+                                                                0xff272727),
+                                                            letterSpacing: 0.67,
+                                                            fontSize: 15,
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(
-                                                  height: 10,
-                                                ),
-                                              ],
+                                                      Image(
+                                                        image: AssetImage(
+                                                          widget.modal.taskType ==
+                                                                  "HIT"
+                                                              ? "assets/hit.png"
+                                                              : widget.modal
+                                                                          .taskType ==
+                                                                      "ST"
+                                                                  ? "assets/special.png"
+                                                                  : "assets/key.png",
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      const Image(
+                                                        image: AssetImage(
+                                                          "assets/time.png",
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      Flexible(
+                                                        child: Text(
+                                                          daysPending,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal,
+                                                            color: Color(
+                                                                0xff555555),
+                                                            letterSpacing: 0.67,
+                                                            fontSize: 13,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                )
-                              : const Text(StringConst.taskNotFound),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            )
-          ],
+                                        );
+                                      },
+                                    ),
+                                  )
+                                : const Text(StringConst.taskNotFound),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: Row(
@@ -596,6 +624,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
           ],
         ),
       );
+
+  void onRefresh() async {
+    pendingTaskList.clear();
+    taskDetailsBloc.add(GetPendingTaskEvent(
+        retailerId: widget.modal.retailerId, beatId: widget.modal.beatId));
+    refreshController.refreshCompleted();
+  }
 }
 
 class DetailGritItem extends StatefulWidget {

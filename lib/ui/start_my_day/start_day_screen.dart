@@ -25,6 +25,7 @@ import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -46,6 +47,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
   String fileName = "test.jpg";
   TextEditingController txtRemarkController = TextEditingController();
   TextEditingController txtBeatController = TextEditingController();
+  TextEditingController txtTargetController = TextEditingController();
   StartMyDayBloc startMyDayBloc = StartMyDayBloc();
   AddPlanBloc addPlanBloc = AddPlanBloc();
   UserLocationBloc userLocationBloc = UserLocationBloc();
@@ -67,6 +69,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
   PrimaryTag? selectedPrimaryTag;
 
   GlobalKey globalKey = GlobalKey();
+  GlobalKey globalKey2 = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +90,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
               dateTime = DateTime.parse(state.currentDate);
             }
             if (state is StartMyDaySuccessState) {
-              Utility.showToast( state.successMessage);
+              Utility.showToast(state.successMessage);
               SharedPreference.setStringPreference(
                   SharedPreference.startMyDay, "hide");
               SharedPreference.setBooleanPreference(
@@ -98,7 +101,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                   (route) => false);
             }
             if (state is StartMyDayFailureState) {
-              Utility.showToast( state.failureMessage);
+              Utility.showToast(state.failureMessage);
             }
           }),
           BlocListener<AddPlanBloc, AddPlanStates>(listener: (context, state) {
@@ -308,6 +311,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                   selectedSecondaryTags.clear();
                                   txtBeatController.clear();
                                   txtRemarkController.clear();
+                                  txtTargetController.clear();
 
                                   if (selectedPrimaryTag!
                                       .secondaryTag.isNotEmpty) {
@@ -370,9 +374,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                 );
                               },
                             ),
-                            const SizedBox(
-                              height: 15,
-                            ),
+
                             BlocBuilder<AddPlanBloc, AddPlanStates>(
                               builder: (context, state) {
                                 if (state is AddPlanInitialState) {
@@ -551,7 +553,79 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                 );
                               },
                             ),
-                            const SizedBox(
+
+                            //target field
+                            BlocBuilder<AddPlanBloc, AddPlanStates>(
+                              builder: (context, state) {
+                                if (selectedPrimaryTag == null) {
+                                  return Container();
+                                }
+
+                                if (selectedPrimaryTag!.secondaryTag.isEmpty) {
+                                  return Container();
+                                }
+                                return selectedPrimaryTag!.secondaryTagType ==
+                                        "drop_down"
+                                    ? Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(
+                                            height: 15,
+                                          ),
+                                          const Text(
+                                            "Target",
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 0.67,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 15,
+                                          ),
+                                          TextFormField(
+                                            controller: txtTargetController,
+                                            keyboardType: TextInputType.number,
+                                            decoration: InputDecoration(
+                                              contentPadding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      15, 10, 15, 10),
+                                              hintText: "Target",
+                                              hintStyle: const TextStyle(
+                                                color: MColor.backButton,
+                                              ),
+                                              filled: true,
+                                              fillColor:
+                                                  const Color(0xffF2F2F2),
+                                              border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(30),
+                                                  borderSide: BorderSide.none),
+                                            ),
+                                            // inputFormatters: [
+                                            //   FilteringTextInputFormatter.allow(
+                                            //       RegExp(r"[0-9] .")),
+                                            // ],
+                                            onTap: () async {
+                                              await Future.delayed(
+                                                  const Duration(
+                                                      milliseconds: 500));
+                                              RenderObject? object = globalKey2
+                                                  .currentContext!
+                                                  .findRenderObject();
+                                              object!.showOnScreen();
+                                            },
+                                          ),
+                                        ],
+                                      )
+                                    : Container();
+                              },
+                            ),
+                            // end of target field
+
+                            SizedBox(
+                              key: globalKey2,
                               height: 15,
                             ),
                             const Text(
@@ -1089,11 +1163,11 @@ class _StartDayScreenState extends State<StartDayScreen> {
     if (selectedPrimaryTag!.name.trim().toLowerCase() == "leave" ||
         selectedPrimaryTag!.name.trim().toLowerCase() == "holiday") {
       if (txtRemarkController.text.trim().isEmpty) {
-        Utility.showToast( "Please enter remark");
+        Utility.showToast("Please enter remark");
         return;
       }
       if (txtRemarkController.text.trim().length > 255) {
-        Utility.showToast( "Word limit-250 characters");
+        Utility.showToast("Word limit-250 characters");
         return;
       }
       debugPrint("remark fields ok ");
@@ -1119,37 +1193,37 @@ class _StartDayScreenState extends State<StartDayScreen> {
     //otherwise else will execute
     else {
       if (selectedPrimaryTag == null) {
-        Utility.showToast( "Please select primary tag");
+        Utility.showToast("Please select primary tag");
         return;
       }
       if (selectedPrimaryTag!.secondaryTag.isNotEmpty &&
           selectedSecondaryTags.isEmpty) {
-        Utility.showToast( "Please select secondary tag");
+        Utility.showToast("Please select secondary tag");
         return;
       }
 
       if (selectedSecondaryTags.isEmpty &&
           txtRemarkController.text.trim().isEmpty) {
-        Utility.showToast( "Please enter remark");
+        Utility.showToast("Please enter remark");
         return;
       }
       if (txtRemarkController.text.trim().length > 255) {
-        Utility.showToast( "Word limit-250 characters");
+        Utility.showToast("Word limit-250 characters");
         return;
       }
       if (latitude == 0.0 && longitude == 0.0) {
         Utility.showToast(
-             "Could not fetch your location, Please try again later");
+            "Could not fetch your location, Please try again later");
         userLocationBloc.add(GetUserLocationEvent());
         return;
       }
       if (currentAddress.isEmpty) {
         Utility.showToast(
-            
-                "Could not proceed, because we are not able to fetch your area detail. Please allow location permission to continue");
+            "Could not proceed, because we are not able to fetch your area detail. Please allow location permission to continue");
         userLocationBloc.add(GetUserLocationEvent());
         return;
       }
+
       debugPrint("all fields ok ");
       Map<String, dynamic> input = HashMap<String, dynamic>();
 
@@ -1179,6 +1253,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
         input["secondary_tag_id"] = selectedBeatsId;
       }
 
+      input["user_target"] = txtTargetController.text.trim();
       input["remark"] = txtRemarkController.text.trim();
       input["start_day_latitude"] = latitude.toString();
       input["start_day_longitude"] = longitude.toString();

@@ -1,5 +1,4 @@
 import 'dart:collection';
-
 import 'package:dms/main.dart';
 import 'package:dms/ui/order_booking/retailer_detail/bloc/retailer_details_events.dart';
 import 'package:dms/ui/order_booking/retailer_detail/bloc/retailer_details_states.dart';
@@ -9,7 +8,6 @@ import 'package:dms/ui/order_booking/retailer_detail/model/task_response.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
-import 'package:dms/utils/utility.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RetailerDetailsBloc
@@ -78,7 +76,7 @@ class RetailerDetailsBloc
         yield NoOrderYetFailureState(failureMessage: response.message);
       }
     } else {
-      Utility.showToast(Constants.internetAlert);
+      yield NoOrderYetFailureState(failureMessage: Constants.internetAlert);
     }
   }
 }

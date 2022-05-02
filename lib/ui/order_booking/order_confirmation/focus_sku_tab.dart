@@ -1,16 +1,26 @@
+import 'package:dms/ui/custom_widget/no_internet.dart';
+import 'package:dms/ui/custom_widget/retailer_not_found.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
 import 'package:dms/ui/order_booking/order_booking_list/product_list_item.dart';
 import 'package:dms/ui/order_booking/order_confirmation/bloc%20/order_book_list_bloc.dart';
 import 'package:dms/ui/order_booking/order_confirmation/bloc%20/order_book_list_events.dart';
 import 'package:dms/ui/order_booking/order_confirmation/bloc%20/order_book_list_states.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class FocusSkyTab extends StatefulWidget {
   final Function() onConfirm;
-
-  const FocusSkyTab({Key? key, required this.onConfirm}) : super(key: key);
+  final String beatId;
+  final String retailerId;
+  const FocusSkyTab({
+    Key? key,
+    required this.onConfirm,
+    required this.beatId,
+    required this.retailerId,
+  }) : super(key: key);
 
   @override
   _FocusSkyTabState createState() => _FocusSkyTabState();
@@ -18,6 +28,9 @@ class FocusSkyTab extends StatefulWidget {
 
 class _FocusSkyTabState extends State<FocusSkyTab> {
   List<ProductsModal> focusSkuList = [];
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
+  OrderConfirmationBloc orderConfirmationBloc = OrderConfirmationBloc();
 
   @override
   void initState() {
@@ -29,15 +42,15 @@ class _FocusSkyTabState extends State<FocusSkyTab> {
     return Scaffold(
       backgroundColor: const Color(0xffF7F7F7),
       body: BlocProvider(
-        create: (context) => OrderConfirmationBloc(),
+        create: (context) => orderConfirmationBloc,
         child: BlocBuilder<OrderConfirmationBloc, OrderConfirmationStates>(
           builder: (context, state) {
             if (state is OrderConfirmationInitialState) {
               Map<String, dynamic> input = {
-                "beat_id": "27",
-                "retailer_id": "17",
+                "beat_id": widget.beatId,
+                "retailer_id": widget.retailerId,
               };
-              BlocProvider.of<OrderConfirmationBloc>(context).add(GetFocusSkuEvent(input: input));
+              orderConfirmationBloc.add(GetFocusSkuEvent(input: input));
             }
             if (state is OrderConfirmationLoadingState) {
               return const Center(
@@ -48,23 +61,54 @@ class _FocusSkyTabState extends State<FocusSkyTab> {
               focusSkuList = state.prouductsModal;
             }
             if (state is OrderConfirmationFailureState) {
+              if (state.msg == Constants.internetAlert) {
+                return Center(
+                  child: NoInternetConnection(
+                    onRefresh: () {
+                      Map<String, dynamic> input = {
+                        "beat_id": widget.beatId,
+                        "retailer_id": widget.retailerId,
+                      };
+                      orderConfirmationBloc.add(GetFocusSkuEvent(input: input));
+                    },
+                  ),
+                );
+              }
+            }
+
+            if (focusSkuList.isEmpty) {
               return Center(
-                child: Text(state.msg),
+                child: ProductNotFound(
+                  onRefresh: () {
+                    Map<String, dynamic> input = {
+                      "beat_id": widget.beatId,
+                      "retailer_id": widget.retailerId,
+                    };
+                    orderConfirmationBloc.add(GetFocusSkuEvent(input: input));
+                  },
+                ),
               );
             }
-            return ListView.separated(
-              padding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
-              itemCount: focusSkuList.length,
-              separatorBuilder: (context, index) {
-                return const SizedBox(
-                  height: 15,
-                );
-              },
-              itemBuilder: (context, index) {
-                return ProductListItem(
-                  products: focusSkuList[index],
-                );
-              },
+
+            return SmartRefresher(
+              primary: false,
+              controller: refreshController,
+              onRefresh: onRefresh,
+              enablePullDown: true,
+              child: ListView.separated(
+                padding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
+                itemCount: focusSkuList.length,
+                separatorBuilder: (context, index) {
+                  return const SizedBox(
+                    height: 15,
+                  );
+                },
+                itemBuilder: (context, index) {
+                  return ProductListItem(
+                    products: focusSkuList[index],
+                  );
+                },
+              ),
             );
           },
         ),
@@ -100,5 +144,15 @@ class _FocusSkyTabState extends State<FocusSkyTab> {
         ),
       ),
     );
+  }
+
+  void onRefresh() async {
+    focusSkuList.clear();
+    Map<String, dynamic> input = {
+      "beat_id": widget.beatId,
+      "retailer_id": widget.retailerId,
+    };
+    orderConfirmationBloc.add(GetFocusSkuEvent(input: input));
+    refreshController.refreshCompleted();
   }
 }

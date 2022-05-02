@@ -5,11 +5,8 @@ import 'package:dms/ui/bottom_sheet_widget/filter_task_bottom_sheet.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
 import 'package:dms/ui/task/search_task/search_task_screen.dart';
 import 'package:dms/ui/task/task/bloc/retailer_task_bloc.dart';
-import 'package:dms/ui/task/task/bloc/retailers_task_event.dart';
-import 'package:dms/ui/task/task/bloc/retailers_task_state.dart';
 import 'package:dms/ui/task/task/task_tab.dart';
 import 'package:dms/utils/colors.dart';
-import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
@@ -33,10 +30,9 @@ class _TaskListScreenState extends State<TaskListScreen>
   late TabController tabController;
   RetailersTaskBloc retailersTaskBloc = RetailersTaskBloc();
   List<BeatsModal> beats = [];
-  BeatsModal beatModal = BeatsModal(id: "", name: "All");
+  BeatsModal? beatModal;
   SelectBeatListener? selectBeatListener;
   String selectedDay = "";
-  String selectedBeat = "";
   StreamController<List<BeatsModal>> beatsStreamController = StreamController();
   StreamController<int> tabStream = StreamController();
 
@@ -72,15 +68,17 @@ class _TaskListScreenState extends State<TaskListScreen>
                         return FilterTaskBottomSheet(
                           beatList: beats,
                           day: selectedDay,
-                          beat: beatModal,
+                          beat: beatModal != null
+                              ? beatModal!
+                              : BeatsModal(id: "", name: ""),
                           onFilter: (day, beatModal, beatList) {
                             selectedDay = day;
-                            this.beatModal = beatModal;
                             beats = beatList;
+                            this.beatModal = beatModal;
                             beatsStreamController.add(beats);
                             if (selectBeatListener != null) {
                               selectBeatListener!.onBeatSelect(
-                                  this.beatModal, selectedDay, "");
+                                  this.beatModal!, selectedDay, "");
                             }
                           },
                         );
@@ -115,7 +113,8 @@ class _TaskListScreenState extends State<TaskListScreen>
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => const SearchTaskScreen()));
+                                builder: (_) =>
+                                    SearchTaskScreen(day: selectedDay)));
                       },
                       decoration: InputDecoration(
                         fillColor: Colors.white,
@@ -155,7 +154,7 @@ class _TaskListScreenState extends State<TaskListScreen>
                       indicatorColor: MColor.colorPrimary,
                       labelPadding: const EdgeInsets.symmetric(horizontal: 0),
                       onTap: (index) {
-                        debugPrint("select-tag-->${beatModal.name}");
+                        debugPrint("select-tag-->${beatModal!.name}");
                         tabStream.add(index + 1);
                       },
                       tabs: [
@@ -300,6 +299,15 @@ class _TaskListScreenState extends State<TaskListScreen>
               StreamBuilder<List<BeatsModal>>(
                 stream: beatsStreamController.stream,
                 builder: (context, snapshot) {
+                  if (snapshot.error.toString() == "loading") {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+
                   if (beats.isEmpty) {
                     return Container();
                   }
@@ -314,7 +322,7 @@ class _TaskListScreenState extends State<TaskListScreen>
                         beatModal = tag;
                         if (selectBeatListener != null) {
                           selectBeatListener!
-                              .onBeatSelect(beatModal, selectedDay, "");
+                              .onBeatSelect(beatModal!, selectedDay, "");
                         }
                       },
                     ),
@@ -328,7 +336,9 @@ class _TaskListScreenState extends State<TaskListScreen>
                     if (snapshot.hasData) {
                       return TaskTab(
                         index: snapshot.data!,
-                        selectedBeat: beatModal,
+                        selectedBeat: beatModal == null
+                            ? BeatsModal(id: "", name: "All")
+                            : beatModal!,
                         onInit: (SelectBeatListener listener) {
                           selectBeatListener = listener;
                         },
@@ -338,42 +348,6 @@ class _TaskListScreenState extends State<TaskListScreen>
                   },
                 ),
               ),
-
-              // Expanded(
-              //   child: TabBarView(
-              //     controller: tabController,
-              //     children: [
-              //       TaskTab(
-              //         selectedBeat: beatModal,
-              //         index: 1,
-              //         onInit: (SelectBeatListener listener) {
-              //           selectBeatListener = listener;
-              //         },
-              //       ),
-              //       TaskTab(
-              //         selectedBeat: beatModal,
-              //         index: 2,
-              //         onInit: (SelectBeatListener listener) {
-              //           selectBeatListener = listener;
-              //         },
-              //       ),
-              //       TaskTab(
-              //         selectedBeat: beatModal,
-              //         index: 3,
-              //         onInit: (SelectBeatListener listener) {
-              //           selectBeatListener = listener;
-              //         },
-              //       ),
-              //       TaskTab(
-              //         selectedBeat: beatModal,
-              //         index: 4,
-              //         onInit: (SelectBeatListener listener) {
-              //           selectBeatListener = listener;
-              //         },
-              //       ),
-              //     ],
-              //   ),
-              // ),
             ],
           ),
         ),
@@ -387,21 +361,29 @@ class _TaskListScreenState extends State<TaskListScreen>
           await NTP.now().timeout(const Duration(seconds: 15), onTimeout: () {
         return DateTime.now();
       });
-      Map<String, dynamic> input = {"day": DateFormat("EEEE").format(dateTime)};
+      if (selectedDay.isEmpty) {
+        selectedDay = DateFormat("EEEE").format(dateTime);
+      }
+      beatsStreamController.addError("loading");
+      Map<String, dynamic> input = {"day": "Friday"};
       GetAllBeatsResponse response =
           await repository.getBeatByOrderBookingDay(input);
       if (response.success) {
-        beats.add(BeatsModal(id: "", name: "All"));
+        if (response.data!.length > 1) {
+          beats.add(BeatsModal(id: "", name: "All"));
+        } else {
+          beatModal = response.data!.first;
+        }
         beats.addAll(response.data!);
         beatsStreamController.add(beats);
         tabStream.add(tabController.index + 1);
       } else {
         beatsStreamController.addError(response.message);
+        tabStream.add(tabController.index + 1);
         Utility.showToast(response.message);
       }
     } else {
-      beatsStreamController.addError(Constants.internetAlert);
-      Utility.showToast(Constants.internetAlert);
+      tabStream.add(tabController.index + 1);
     }
   }
 }

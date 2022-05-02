@@ -1,18 +1,23 @@
 import 'dart:async';
 import 'dart:collection';
 import 'package:dms/main.dart';
-import 'package:dms/model/retaileres_response.dart';
+import 'package:dms/ui/custom_widget/no_internet.dart';
+import 'package:dms/ui/custom_widget/search_not_found.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
-import 'package:dms/ui/order_booking/retailers_list/retailer_list_item.dart';
 import 'package:dms/ui/task/task/model/get_retailers_task_response.dart';
 import 'package:dms/ui/task/task/task_list_item.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
 
 class SearchTaskScreen extends StatefulWidget {
-  const SearchTaskScreen({Key? key}) : super(key: key);
+  final String day;
+  const SearchTaskScreen({
+    Key? key,
+    required this.day,
+  }) : super(key: key);
 
   @override
   _SearchTaskScreenState createState() => _SearchTaskScreenState();
@@ -20,9 +25,16 @@ class SearchTaskScreen extends StatefulWidget {
 
 class _SearchTaskScreenState extends State<SearchTaskScreen> {
   TextEditingController edtSearch = TextEditingController();
-  List<RetailersModal> retailers = [];
+  List<RetailersTaskModal> retailersList = [];
   StreamController<List<RetailersTaskModal>> searchStream = StreamController();
   DateTime? currentDate;
+  String day = "";
+
+  @override
+  void initState() {
+    day = widget.day;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +50,11 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
               controller: edtSearch,
               onChanged: (text) {
                 if (text.trim().isEmpty) {
-                  retailers.clear();
+                  retailersList.clear();
                   searchStream.addError(
                       "Enter Name or mobile number to search retailer");
                 } else {
+                  retailersList.clear();
                   searchApi(text);
                 }
               },
@@ -73,7 +86,7 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
                     onPressed: () {
                       if (edtSearch.text.trim().isNotEmpty) {
                         edtSearch.clear();
-                        retailers.clear();
+                        retailersList.clear();
                         searchStream.addError(
                             "Enter Name or mobile number to search retailer");
                       } else {
@@ -93,15 +106,19 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
       body: StreamBuilder<List<RetailersTaskModal>>(
         stream: searchStream.stream,
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            if (snapshot.data!.isEmpty) {
-              return const Center(
-                child: Text("Retailers not found"),
-              );
-            }
+          if (snapshot.hasData && snapshot.data!.isEmpty) {
+            return Center(
+              child: SearchNotFound(
+                onRefresh: () {
+                  searchApi(edtSearch.text);
+                },
+              ),
+            );
+          }
 
+          if (snapshot.hasData) {
             return ListView.separated(
-                itemCount: snapshot.data!.length,
+                itemCount: retailersList.length,
                 padding: const EdgeInsets.all(15),
                 separatorBuilder: (context, index) {
                   return const SizedBox(
@@ -145,9 +162,9 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
 
                   return TaskListItems(
                     index: 0,
-                    retailer: snapshot.data![index],
+                    retailer: retailersList[index],
                     orderStatus: 2,
-                    beatId: snapshot.data![index].beatId,
+                    beatId: retailersList[index].beatId,
                   );
                 });
           }
@@ -158,9 +175,15 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
               );
             }
 
-            return Center(
-              child: Text("${snapshot.error}"),
-            );
+            if (snapshot.error.toString() == Constants.internetAlert) {
+              return Center(
+                child: NoInternetConnection(
+                  onRefresh: () {
+                    searchApi(edtSearch.text);
+                  },
+                ),
+              );
+            }
           }
 
           return Container();
@@ -171,8 +194,17 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
 
   void searchApi(String text) async {
     if (await Network.isConnected()) {
+      if (day.isEmpty) {
+        DateTime dateTime =
+            await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
+          return DateTime.now();
+        });
+        day = DateFormat("EEEE").format(dateTime);
+      }
+
       Map<String, dynamic> input = HashMap<String, dynamic>();
       input["search"] = text;
+      input["day"] = day;
       searchStream.addError("loading");
       GetRetailersTaskResponse response =
           await repository.searchTaskRetailers(input);
@@ -181,9 +213,10 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
             await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
           return DateTime.now();
         });
+        retailersList = response.data!;
         searchStream.add(response.data!);
       } else {
-        searchStream.addError(response.message);
+        searchStream.add(retailersList);
       }
     } else {
       searchStream.addError(Constants.internetAlert);

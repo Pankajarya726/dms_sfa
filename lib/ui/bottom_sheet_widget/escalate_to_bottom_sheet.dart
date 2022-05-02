@@ -127,6 +127,7 @@ class _EscalateToBottomSheetState extends State<EscalateToBottomSheet> {
                           }
                           if (state is EscalateTaskFailureState) {
                             Utility.showToast(state.failureMessage);
+                            Navigator.pop(context);
                           }
                         },
                         child: Center(

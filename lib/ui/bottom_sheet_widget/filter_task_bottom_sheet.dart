@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 import 'package:dms/listeners/drop_down_field_listener.dart';
 import 'package:dms/listeners/pop_up_menu_listener.dart';
@@ -12,6 +13,8 @@ import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:ntp/ntp.dart';
 
 class FilterTaskBottomSheet extends StatefulWidget {
   final String day;
@@ -52,14 +55,26 @@ class _FilterTaskBottomSheetState extends State<FilterTaskBottomSheet> {
   String selectedDay = "";
   String selectedBeat = "";
   List<BeatsModal> beatsList = [];
-  BeatsModal beatsModal = BeatsModal(id: "", name: "All");
+  BeatsModal? beatsModal;
   DropDownFieldListener? dropDownFieldListener;
   PopUpMenuListener? popUpMenuListener;
+  StreamController<String> beatsStreamController = StreamController();
 
   @override
   void initState() {
     selectedDay = widget.day;
-    selectedBeat = widget.beat.name;
+
+    if (widget.beatList.isNotEmpty) {
+      beatsModal = widget.beat;
+      if (widget.beat.name == "") {
+        selectedBeat = "Select Beat";
+      } else {
+        selectedBeat = widget.beat.name;
+      }
+    } else {
+      selectedBeat = "Beats not found";
+    }
+
     debugPrint("FilterTaskBottomSheet");
     beatsList = widget.beatList;
     super.initState();
@@ -114,24 +129,50 @@ class _FilterTaskBottomSheetState extends State<FilterTaskBottomSheet> {
                 const SizedBox(
                   height: 20,
                 ),
-                DropDownField(
-                  onMenuItemSelected: (listener) {
-                    popUpMenuListener = listener;
-                  },
-                  prevSelected: selectedBeat,
-                  onSelect: (value) {
-                    debugPrint("select-->$value");
-                    selectedBeat = value;
-                  },
-                  hint: "Select Beat",
-                  menuList: days,
-                  beats: beatsList,
-                  onBeatSelected: (beatsM) {
-                    if (beatsM != null) {
-                      beatsModal = beatsM;
-                    }
-                  },
-                ),
+                StreamBuilder<String>(
+                    stream: beatsStreamController.stream,
+                    builder: (context, snapshot) {
+                      if (snapshot.error.toString() == "loading") {
+                        selectedBeat = "Loading beats...";
+                        return DropDownField(
+                          onMenuItemSelected: (listener) {
+                            popUpMenuListener = listener;
+                          },
+                          prevSelected: selectedBeat,
+                          onSelect: (value) {
+                            debugPrint("select-->$value");
+                            selectedBeat = value;
+                          },
+                          hint: selectedBeat,
+                          menuList: days,
+                          beats: beatsList,
+                          onBeatSelected: (beatsM) {
+                            if (beatsM != null) {
+                              beatsModal = beatsM;
+                            }
+                          },
+                        );
+                      }
+
+                      return DropDownField(
+                        onMenuItemSelected: (listener) {
+                          popUpMenuListener = listener;
+                        },
+                        prevSelected: selectedBeat,
+                        onSelect: (value) {
+                          debugPrint("select-->$value");
+                          selectedBeat = value;
+                        },
+                        hint: selectedBeat,
+                        menuList: days,
+                        beats: beatsList,
+                        onBeatSelected: (beatsM) {
+                          if (beatsM != null) {
+                            beatsModal = beatsM;
+                          }
+                        },
+                      );
+                    }),
                 const SizedBox(
                   height: 35,
                 ),
@@ -143,7 +184,14 @@ class _FilterTaskBottomSheetState extends State<FilterTaskBottomSheet> {
                     children: [
                       MaterialButton(
                         onPressed: () {
-                          widget.onFilter(selectedDay, beatsModal, beatsList);
+                          widget.onFilter(
+                              selectedDay,
+                              beatsModal != null
+                                  ? beatsModal!
+                                  : (beatsList.length > 1
+                                      ? BeatsModal(id: "", name: "All")
+                                      : BeatsModal(id: "", name: "")),
+                              beatsList);
                           Navigator.pop(context);
                         },
                         height: 50,
@@ -176,15 +224,27 @@ class _FilterTaskBottomSheetState extends State<FilterTaskBottomSheet> {
 
   getBeats() async {
     if (await Network.isConnected()) {
+      beatsStreamController.addError("loading");
       Map<String, dynamic> input = HashMap<String, dynamic>();
       input["day"] = selectedDay;
       GetAllBeatsResponse response =
           await repository.getBeatByOrderBookingDay(input);
+      beatsModal = null;
+      beatsList.clear();
       if (response.success) {
-        beatsList.add(BeatsModal(id: "", name: "All"));
+        if (response.data!.length > 1) {
+          beatsList.add(BeatsModal(id: "", name: "All"));
+          selectedBeat = "Select Beat";
+        } else {
+          beatsModal = response.data!.first;
+          selectedBeat = beatsModal!.name;
+        }
         beatsList.addAll(response.data!);
+        beatsStreamController.add(selectedBeat);
       } else {
         Utility.showToast(response.message);
+        selectedBeat = response.message;
+        beatsStreamController.add(selectedBeat);
       }
     } else {
       Utility.showToast(Constants.internetAlert);

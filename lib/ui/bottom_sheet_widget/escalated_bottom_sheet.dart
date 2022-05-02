@@ -17,7 +17,7 @@ class EscalatedBottomSheet extends StatefulWidget {
   final PendingTaskModal pendingTaskModal;
   final String elapseDays;
   final String retailerId;
-  final Function() onTaskResolve;
+  final Function(String done) onTaskResolve;
   const EscalatedBottomSheet({
     Key? key,
     required this.pendingTaskModal,
@@ -237,12 +237,30 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
                       Utility.hideKeyboard();
                       FocusScope.of(context).unfocus();
                       if (pendingTaskModal.escalationTo.length < 2) {
-                        submitDialog(
-                            context,
-                            pendingTaskModal.escalationTo.first,
-                            "Do you wish to escalate this task to ");
-                      } else {
-                        Navigator.pop(context);
+                        if (txtRemarkController.text.isNotEmpty) {
+                          submitDialog(
+                                  context,
+                                  pendingTaskModal.escalationTo.first,
+                                  "Do you wish to escalate this task to ")
+                              .then(
+                            (value) => {
+                              if (value.toString().isNotEmpty)
+                                {
+                                  widget.onTaskResolve(""),
+                                  Navigator.pop(context),
+                                }
+                              else
+                                {
+                                  Navigator.pop(context),
+                                }
+                            },
+                          );
+                        } else {
+                          Utility.showToast("Please enter remark");
+                        }
+                      }
+                      // if escalationTo data is more than one then bottom sheet will open
+                      else {
                         showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
@@ -253,8 +271,8 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
                                   elapseDays: widget.elapseDays,
                                   remark: txtRemarkController.text,
                                   onTaskEscalated: () {
-                                    widget.onTaskResolve();
-                                    Navigator.pop(context);
+                                    widget.onTaskResolve("");
+                                    Navigator.pop(context, "");
                                   },
                                 ));
                       }
@@ -281,11 +299,25 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
                     onPressed: () {
                       Utility.hideKeyboard();
                       FocusScope.of(context).unfocus();
-                      submitDialog(context, EscalationTo(id: "", name: ""),
-                              "Are you sure to submit?")
-                          .then((value) {
-                        Navigator.pop(context);
-                      });
+                      if (txtRemarkController.text.isNotEmpty) {
+                        submitDialog(context, EscalationTo(id: "", name: ""),
+                                "Are you sure to submit?")
+                            .then(
+                          (value) => {
+                            if (value.toString().isNotEmpty)
+                              {
+                                widget.onTaskResolve("done"),
+                                Navigator.pop(context),
+                              }
+                            else
+                              {
+                                Navigator.pop(context),
+                              }
+                          },
+                        );
+                      } else {
+                        Utility.showToast("Please enter remark");
+                      }
                     },
                     child: const Text(
                       StringConst.doneCaps,
@@ -320,11 +352,11 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
             listener: (context, state) {
               if (state is EscalateTaskState) {
                 Utility.showToast(state.responseMessage);
-                widget.onTaskResolve();
-                Navigator.pop(context);
+                Navigator.pop(context, "done");
               }
               if (state is EscalateTaskFailureState) {
                 Utility.showToast(state.failureMessage);
+                Navigator.pop(context, "");
               }
             },
             child: AlertDialog(
@@ -367,7 +399,7 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pop(context, "");
                   },
                 ),
                 TextButton(
@@ -388,7 +420,8 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
                       input["remark"] = txtRemarkController.text;
                       input["elapse_days"] = widget.elapseDays;
                       taskDetailsBloc.add(EscalateTaskEvent(input: input));
-                    } else {
+                    }
+                    if (escalationTo.id.isNotEmpty) {
                       Map<String, dynamic> input = HashMap<String, dynamic>();
                       input["status"] = "1";
                       input["task_id"] = pendingTaskModal.id;

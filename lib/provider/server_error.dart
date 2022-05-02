@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:dms/ui/login_screen/login_screen.dart';
 import 'package:dms/utils/shared_preference.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
@@ -46,6 +47,9 @@ class ServerError implements Exception {
 
           logout();
         }
+        if (error.response!.statusCode == 500) {
+          Utility.showToast("Internal server error");
+        }
 
         break;
 
@@ -63,7 +67,8 @@ class ServerError implements Exception {
         useRootNavigator: false,
         builder: (context) => WillPopScope(
             child: AlertDialog(
-              content: const Text("Your session has been expired! Please login again."),
+              content: const Text(
+                  "Your session has been expired! Please login again."),
               contentPadding: const EdgeInsets.all(15),
               actions: [
                 TextButton(
@@ -71,7 +76,10 @@ class ServerError implements Exception {
                       await SharedPreference.clearSharedPreference(context);
 
                       Navigator.pushAndRemoveUntil(
-                          context, MaterialPageRoute(builder: (_) => const LoginScreen()), ModalRoute.withName("/"));
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const LoginScreen()),
+                          ModalRoute.withName("/"));
                     },
                     child: const Text("Ok"))
               ],

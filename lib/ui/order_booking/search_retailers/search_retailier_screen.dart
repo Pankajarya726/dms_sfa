@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:dms/main.dart';
 import 'package:dms/model/retaileres_response.dart';
+import 'package:dms/ui/custom_widget/no_internet.dart';
+import 'package:dms/ui/custom_widget/search_not_found.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/retailer_list_item.dart';
 import 'package:dms/utils/constants.dart';
@@ -9,7 +11,11 @@ import 'package:dms/utils/network.dart';
 import 'package:flutter/material.dart';
 
 class SearchRetailerScreen extends StatefulWidget {
-  const SearchRetailerScreen({Key? key}) : super(key: key);
+  final String day;
+  const SearchRetailerScreen({
+    required this.day,
+    Key? key,
+  }) : super(key: key);
 
   @override
   _SearchRetailerScreenState createState() => _SearchRetailerScreenState();
@@ -17,7 +23,7 @@ class SearchRetailerScreen extends StatefulWidget {
 
 class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
   TextEditingController edtSearch = TextEditingController();
-  List<RetailersModal> retailers = [];
+  List<RetailersModal> retailersList = [];
   StreamController<List<RetailersModal>> searchStream = StreamController();
 
   @override
@@ -34,10 +40,11 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
               controller: edtSearch,
               onChanged: (text) {
                 if (text.trim().isEmpty) {
-                  retailers.clear();
+                  retailersList.clear();
                   searchStream.addError(
                       "Enter Name or mobile number to search retailer");
                 } else {
+                  retailersList.clear();
                   searchApi(text);
                 }
               },
@@ -69,7 +76,7 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
                     onPressed: () {
                       if (edtSearch.text.trim().isNotEmpty) {
                         edtSearch.clear();
-                        retailers.clear();
+                        retailersList.clear();
                         searchStream.addError(
                             "Enter Name or mobile number to search retailer");
                       } else {
@@ -88,23 +95,18 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
       ),
       body: StreamBuilder<List<RetailersModal>>(
         stream: searchStream.stream,
-        // initialData: retailers,
         builder: (context, snapshot) {
-          // if (snapshot.connectionState == ConnectionState.waiting) {
-          //   return const Center(
-          //     child: CircularProgressIndicator(),
-          //   );
-          // }
+          if (snapshot.hasData && snapshot.data!.isEmpty) {
+            return Center(
+              child: SearchNotFound(onRefresh: () {
+                searchApi(edtSearch.text);
+              }),
+            );
+          }
 
           if (snapshot.hasData) {
-            if (snapshot.data!.isEmpty) {
-              return const Center(
-                child: Text("Retailers not found"),
-              );
-            }
-
             return ListView.separated(
-                itemCount: snapshot.data!.length,
+                itemCount: retailersList.length,
                 padding: const EdgeInsets.all(15),
                 separatorBuilder: (context, index) {
                   return const SizedBox(
@@ -114,9 +116,9 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
                 itemBuilder: (context, index) {
                   return RetailerListItems(
                     index: 0,
-                    retailer: snapshot.data![index],
+                    retailer: retailersList[index],
                     orderStatus: 2,
-                    beatId: "15",
+                    beatId: snapshot.data![index].beatId,
                   );
                 });
           }
@@ -126,10 +128,15 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
                 child: CircularProgressIndicator(),
               );
             }
-
-            return Center(
-              child: Text("${snapshot.error}"),
-            );
+            if (snapshot.error.toString() == Constants.internetAlert) {
+              return Center(
+                child: NoInternetConnection(
+                  onRefresh: () {
+                    searchApi(edtSearch.text);
+                  },
+                ),
+              );
+            }
           }
 
           return Container();
@@ -140,13 +147,14 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
 
   void searchApi(String text) async {
     if (await Network.isConnected()) {
-      Map input = {"search": text};
+      Map input = {"search": text, "day": widget.day};
       searchStream.addError("loading");
       RetailersResponse response = await repository.searchRetailer(input);
       if (response.success) {
+        retailersList = response.data!;
         searchStream.add(response.data!);
       } else {
-        searchStream.addError(response.message);
+        searchStream.add(retailersList);
       }
     } else {
       searchStream.addError(Constants.internetAlert);
