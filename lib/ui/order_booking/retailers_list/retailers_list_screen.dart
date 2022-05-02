@@ -179,16 +179,11 @@ class _RetailerListScreenState extends State<RetailerListScreen>
 
                                 selectedDay = day;
                                 selectedEnrollmentType = enrollmentType;
-                                if (beats.isEmpty) {
-                                  beatsModal = null;
-                                } else {
-                                  beatsModal = selectedBeat;
-                                }
-
+                                beatsModal = selectedBeat;
                                 beatList = beats;
                                 beatStream.add(beatList);
                                 if (selectBeatListener != null) {
-                                  selectBeatListener!.onBeatSelect(selectedBeat,
+                                  selectBeatListener!.onBeatSelect(beatsModal!,
                                       selectedDay, selectedEnrollmentType);
                                 }
                               },
@@ -464,9 +459,10 @@ class _RetailerListScreenState extends State<RetailerListScreen>
       if (response.success) {
         if (response.data!.length > 1) {
           beatList.add(BeatsModal(id: "", name: "All"));
+        } else {
+          beatsModal = response.data!.first;
         }
         beatList.addAll(response.data!);
-
         beatStream.add(beatList);
         tabStream.add(tabController.index + 1);
       } else {

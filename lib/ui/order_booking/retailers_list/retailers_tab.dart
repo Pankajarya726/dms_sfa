@@ -295,14 +295,25 @@ class BeatWidget extends StatefulWidget {
 
 class _BeatWidgetState extends State<BeatWidget> {
   BeatsModal tag = BeatsModal(name: "All", id: "");
+  bool textActive = false;
 
   @override
   void initState() {
     if (widget.tags.length > 1) {
-      widget.onSelect(tag);
+      if (widget.selectedBeat == null) {
+        widget.onSelect(tag);
+      } else {
+        tag = widget.selectedBeat!;
+        widget.onSelect(tag);
+      }
     } else {
-      tag = BeatsModal(name: "", id: "");
-      widget.onSelect(tag);
+      if (widget.tags.isEmpty) {
+        tag = BeatsModal(name: "", id: "");
+        widget.onSelect(tag);
+      } else {
+        tag = widget.selectedBeat!;
+        widget.onSelect(tag);
+      }
     }
     super.initState();
   }
@@ -335,7 +346,7 @@ class _BeatWidgetState extends State<BeatWidget> {
               widget.onSelect(item.customData);
               setState(() {});
             },
-            active: widget.tags[index].name == tag.name,
+            active: textActive = widget.tags[index].name == tag.name,
             customData: widget.tags[index],
             textActiveColor: Colors.black,
             textColor: const Color(0xff555555),

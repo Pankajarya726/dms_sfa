@@ -250,9 +250,12 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
       if (response.success) {
         if (response.data!.length > 1) {
           beats.add(BeatsModal(id: "", name: "All"));
+          seleBeat = "Select Beat";
+        } else {
+          beatsModal = response.data!.first;
+          seleBeat = beatsModal!.name;
         }
         beats.addAll(response.data!);
-        seleBeat = "Select Beat";
         beatsStreamController.add(seleBeat);
       } else {
         Utility.showToast(response.message);

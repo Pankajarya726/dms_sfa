@@ -192,7 +192,7 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
         retailerStreamController.add(retailers);
       } else {
         debugPrint("response = ${response.message}");
-        retailerStreamController.add(retailers);
+        retailerStreamController.add([]);
       }
     } else {
       retailerStreamController.addError(StringConst.internetCheck);
@@ -202,7 +202,7 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
   @override
   void onBeatSelect(BeatsModal beatsModal, String day, String type) async {
     if (selectedBeat!.id != beatsModal.id) {
-      retailerStreamController.add(retailers);
+      retailerStreamController.add([]);
     }
 
     selectedBeat = beatsModal;
@@ -251,9 +251,20 @@ class _TaskBeatWidgetState extends State<TaskBeatWidget> {
   void initState() {
     if (widget.tags.length > 1) {
       widget.onSelect(tag!);
+      if (widget.beatsModal == null) {
+        widget.onSelect(tag!);
+      } else {
+        tag = widget.beatsModal;
+        widget.onSelect(tag!);
+      }
     } else {
-      tag = BeatsModal(name: "", id: "");
-      widget.onSelect(tag!);
+      if (widget.tags.isEmpty) {
+        tag = BeatsModal(name: "", id: "");
+        widget.onSelect(tag!);
+      } else {
+        tag = widget.beatsModal;
+        widget.onSelect(tag!);
+      }
     }
     super.initState();
   }

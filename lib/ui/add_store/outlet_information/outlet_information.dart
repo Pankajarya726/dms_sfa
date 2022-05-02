@@ -1,7 +1,6 @@
 import 'dart:collection';
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:dms/model/retailer_form.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_bloc.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_events.dart';
@@ -35,7 +34,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
 import '../../../main.dart';
 
 class OutletInformation extends StatefulWidget {
@@ -83,9 +81,12 @@ class _OutletInformationState extends State<OutletInformation> {
   RetailerCategoryModel? retailerCategoryModal;
   String? districtId;
   String? distributorId;
-  String? orderBookingDayId;
+  // String? orderBookingDayId;
+  String? orderBookingDay1;
+  String? orderBookingDay2;
   String? retailerTypeId;
-  String? retailerCategoryId;
+  // String? retailerCategoryId;
+  String? retailerCategoryName;
   GlobalKey globalKeyLandmark = GlobalKey();
   GlobalKey globalKeyName = GlobalKey();
   GlobalKey globalKeyGST = GlobalKey();
@@ -569,7 +570,8 @@ class _OutletInformationState extends State<OutletInformation> {
               debugPrint("edit store cityId $districtId");
               debugPrint("edit store distributorId $distributorId");
               debugPrint("edit store beatId ${beatModal!.id}");
-              debugPrint("edit store orderBookingDayId $orderBookingDayId");
+              debugPrint("edit store orderBookingDay1 $orderBookingDay1");
+              debugPrint("edit store orderBookingDay2 $orderBookingDay2");
               debugPrint(
                   "edit store outletName ${txtOutletNameController.text}");
               debugPrint("edit store latitude ${txtLatitudeController.text}");
@@ -587,7 +589,7 @@ class _OutletInformationState extends State<OutletInformation> {
               }
 
               debugPrint("edit store retailerTypeId $retailerTypeId");
-              debugPrint("edit store retailerCategoryId $retailerCategoryId");
+              debugPrint("edit store retailerCategoryId $retailerCategoryName");
 
               if (isKRORadio == 3) {
                 debugPrint("edit store isKRO 1");
@@ -601,7 +603,8 @@ class _OutletInformationState extends State<OutletInformation> {
               form.districtId = districtId ?? "";
               form.distributorId = distributorId ?? "";
               form.beatId = beatModal != null ? beatModal!.id.toString() : "";
-              form.orderBookingDay1 = orderBookingDayId ?? "";
+              form.orderBookingDay1 = orderBookingDay1 ?? "";
+              form.orderBookingDay2 = orderBookingDay2 ?? "";
               form.outletName = txtOutletNameController.text.trim();
               form.latitude = txtLatitudeController.text.trim();
               form.longitude = txtLongtitudeController.text.trim();
@@ -611,12 +614,11 @@ class _OutletInformationState extends State<OutletInformation> {
               form.cityName = cityName;
               form.isExistingRetailer = existingRetailerRadio == 1 ? "1" : "0";
               form.retailerTypeId = retailerTypeId ?? "";
-              form.retailerCategoryId = retailerCategoryId ?? "";
+              form.retailerCategoryId = retailerCategoryName ?? "";
               form.isKro = isKRORadio == 3 ? "1" : "0";
               form.gstNo = txtGSTController.text.trim();
               form.outletImage =
                   outletPhotoFile == null ? "" : outletPhotoFile!.path;
-
               log("retailer-from---->${form.toMap().toString()}");
 
               Navigator.push(
@@ -893,7 +895,7 @@ class _OutletInformationState extends State<OutletInformation> {
                           distributorModel = distributor;
                           txtSelectDistributorController.text =
                               distributor.name;
-                          distributorId = distributor.customerCodes;
+                          distributorId = distributor.id.toString();
                         }
                         txtSelectBeatNameController.text = "";
                         txtOrderBookingController.text = "";
@@ -910,7 +912,6 @@ class _OutletInformationState extends State<OutletInformation> {
                             if (beat != null) {
                               beatModal = beat;
                               txtSelectBeatNameController.text = beat.name;
-
                               getOrderBookingDay();
                             }
                           },
@@ -935,8 +936,10 @@ class _OutletInformationState extends State<OutletInformation> {
                               onRetailerCategorySelect: (retailerCategory) {
                                 if (retailerCategory != null) {
                                   retailerCategoryModal = retailerCategory;
-                                  retailerCategoryId =
-                                      retailerCategory.id.toString();
+                                  // retailerCategoryId =
+                                  //     retailerCategory.id.toString();
+                                  retailerCategoryName =
+                                      retailerCategory.category;
                                   txtSelectRetailerCategoryController.text =
                                       retailerCategory.category;
                                 }
@@ -960,20 +963,22 @@ class _OutletInformationState extends State<OutletInformation> {
       for (OrderBookingDayModal orderBookingDay in orderBookingDayList) {
         if (orderBookingDay.orderBookingDay1.isEmpty) {
           txtOrderBookingController.text = orderBookingDay.orderBookingDay2;
-          orderBookingDayId = orderBookingDay.id.toString();
+          orderBookingDay2 = orderBookingDay.orderBookingDay2;
         } else if (orderBookingDay.orderBookingDay2.isEmpty) {
           txtOrderBookingController.text = orderBookingDay.orderBookingDay1;
-          orderBookingDayId = orderBookingDay.id.toString();
+          orderBookingDay1 = orderBookingDay.orderBookingDay1;
         } else {
           txtOrderBookingController.text = orderBookingDay.orderBookingDay1 +
               ", " +
               orderBookingDay.orderBookingDay2;
-          orderBookingDayId = orderBookingDay.id.toString();
+          orderBookingDay1 = orderBookingDay.orderBookingDay1;
+          orderBookingDay2 = orderBookingDay.orderBookingDay2;
         }
       }
     } else {
       txtOrderBookingController.text = "";
-      orderBookingDayId = "";
+      orderBookingDay1 = "";
+      orderBookingDay2 = "";
     }
   }
 }

@@ -73,13 +73,8 @@ class _TaskListScreenState extends State<TaskListScreen>
                               : BeatsModal(id: "", name: ""),
                           onFilter: (day, beatModal, beatList) {
                             selectedDay = day;
-                            if (beatList.isEmpty) {
-                              this.beatModal = null;
-                            } else {
-                              this.beatModal = beatModal;
-                            }
-                            this.beatModal = beatModal;
                             beats = beatList;
+                            this.beatModal = beatModal;
                             beatsStreamController.add(beats);
                             if (selectBeatListener != null) {
                               selectBeatListener!.onBeatSelect(
@@ -370,12 +365,14 @@ class _TaskListScreenState extends State<TaskListScreen>
         selectedDay = DateFormat("EEEE").format(dateTime);
       }
       beatsStreamController.addError("loading");
-      Map<String, dynamic> input = {"day": selectedDay};
+      Map<String, dynamic> input = {"day": "Friday"};
       GetAllBeatsResponse response =
           await repository.getBeatByOrderBookingDay(input);
       if (response.success) {
         if (response.data!.length > 1) {
           beats.add(BeatsModal(id: "", name: "All"));
+        } else {
+          beatModal = response.data!.first;
         }
         beats.addAll(response.data!);
         beatsStreamController.add(beats);

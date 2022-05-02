@@ -234,9 +234,12 @@ class _FilterTaskBottomSheetState extends State<FilterTaskBottomSheet> {
       if (response.success) {
         if (response.data!.length > 1) {
           beatsList.add(BeatsModal(id: "", name: "All"));
+          selectedBeat = "Select Beat";
+        } else {
+          beatsModal = response.data!.first;
+          selectedBeat = beatsModal!.name;
         }
         beatsList.addAll(response.data!);
-        selectedBeat = "Select Beat";
         beatsStreamController.add(selectedBeat);
       } else {
         Utility.showToast(response.message);

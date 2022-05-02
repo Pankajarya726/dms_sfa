@@ -14,6 +14,7 @@ class RetailerForm {
   String beatName = "";
   String beatId = "";
   String orderBookingDay1 = "";
+  String orderBookingDay2 = "";
   String outletName = "";
   String latitude = "";
   String longitude = "";
@@ -93,6 +94,7 @@ class RetailerForm {
         "retailer_type": retailerTypeId,
         "retailer_category": retailerCategoryId,
         "is_whatsapp_sms": isWhatsappSms,
-        "order_booking_day_1": orderBookingDay1
+        "order_booking_day_1": orderBookingDay1,
+        "order_booking_day_2": orderBookingDay2
       };
 }
