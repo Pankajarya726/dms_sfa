@@ -1,41 +1,49 @@
 import 'dart:async';
 import 'package:dms/main.dart';
-import 'package:dms/ui/add_store/model/select_district_response.dart';
+import 'package:dms/ui/add_store/model/call_time_slot_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 
-class SelectDistrictBottomSheet extends StatefulWidget {
-  final Function(DistrictModel? district) onDistrictSelect;
-  final DistrictModel? districtModel;
-
-  const SelectDistrictBottomSheet(
-      {Key? key, required this.onDistrictSelect, required this.districtModel})
+class SelectCallTimeSlotBottomSheet extends StatefulWidget {
+  final Function(CallTimeSlotModel? callTimeSlotModel) onCallTimeSlotSelect;
+  final CallTimeSlotModel? callTimeSlotModel;
+  const SelectCallTimeSlotBottomSheet(
+      {Key? key,
+      required this.onCallTimeSlotSelect,
+      required this.callTimeSlotModel})
       : super(key: key);
 
   @override
-  _SelectDistrictBottomSheetState createState() =>
-      _SelectDistrictBottomSheetState();
+  _SelectCallTimeSlotBottomSheetState createState() =>
+      _SelectCallTimeSlotBottomSheetState();
 }
 
-class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
+class _SelectCallTimeSlotBottomSheetState
+    extends State<SelectCallTimeSlotBottomSheet> {
+  String time = "";
   int groupValue = -1;
-  DistrictModel? selectedDistrict;
-  List<DistrictModel> districtList = [];
-  StreamController<List<DistrictModel>> districtStream = StreamController();
-  StreamController<List<DistrictModel>> searchStream = StreamController();
+  List<CallTimeSlotModel> callTimeSlotList = [];
+  CallTimeSlotModel? callTimeSlotModel;
+  StreamController<List<CallTimeSlotModel>> callTimeSlotStream =
+      StreamController();
+  StreamController<List<CallTimeSlotModel>> searchStream = StreamController();
   TextEditingController txtSearchController = TextEditingController();
 
   @override
   void initState() {
-    if (widget.districtModel != null) {
-      debugPrint("widget.selectedDistrict!.id---->${widget.districtModel!.id}");
-      groupValue = widget.districtModel!.id;
-      selectedDistrict = widget.districtModel;
-    }
-    getDistricts();
     super.initState();
+    if (widget.callTimeSlotModel != null) {
+      debugPrint(
+          "widget.selectedDistrict!.id---->${widget.callTimeSlotModel!.id}");
+      groupValue = widget.callTimeSlotModel!.id;
+      callTimeSlotModel = widget.callTimeSlotModel;
+      time = widget.callTimeSlotModel!.from +
+          " to " +
+          widget.callTimeSlotModel!.to;
+    }
+    getCallTimeSlot();
   }
 
   @override
@@ -54,10 +62,10 @@ class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
             topLeft: Radius.circular(25),
           ),
         ),
-        child: StreamBuilder<List<DistrictModel>>(
-            stream: districtStream.stream,
-            builder: (context, snap) {
-              if (snap.connectionState == ConnectionState.waiting) {
+        child: StreamBuilder<List<CallTimeSlotModel>>(
+            stream: callTimeSlotStream.stream,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 return const IntrinsicHeight(
                   child: Center(
                     child: CircularProgressIndicator(),
@@ -65,18 +73,18 @@ class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
                 );
               }
 
-              if (snap.hasError) {
+              if (snapshot.hasError) {
                 return IntrinsicHeight(
                   child: Center(
-                    child: Text(snap.error.toString()),
+                    child: Text(snapshot.error.toString()),
                   ),
                 );
               }
 
-              if (snap.hasData) {
-                return StreamBuilder<List<DistrictModel>>(
+              if (snapshot.hasData) {
+                return StreamBuilder<List<CallTimeSlotModel>>(
                     stream: searchStream.stream,
-                    initialData: districtList,
+                    initialData: callTimeSlotList,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         return Padding(
@@ -87,7 +95,7 @@ class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                StringConst.selectDistrict,
+                                StringConst.callTimeSlot,
                                 style: TextStyle(
                                   fontSize: 19,
                                   color: MColor.colorPrimary,
@@ -102,16 +110,16 @@ class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
                                 style: const TextStyle(fontSize: 16),
                                 onChanged: (text) {
                                   if (text.isNotEmpty) {
-                                    List<DistrictModel> searchList = [];
-                                    for (var element in districtList) {
-                                      if (element.name.toLowerCase().contains(
+                                    List<CallTimeSlotModel> searchList = [];
+                                    for (var element in callTimeSlotList) {
+                                      if (element.time.toLowerCase().contains(
                                           text.trim().toLowerCase())) {
                                         searchList.add(element);
                                       }
                                     }
                                     searchStream.add(searchList);
                                   } else {
-                                    searchStream.add(districtList);
+                                    searchStream.add(callTimeSlotList);
                                   }
                                 },
                                 decoration: InputDecoration(
@@ -152,14 +160,18 @@ class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.end,
                                           children: List.generate(
-                                            snapshot.data!.length,
-                                            (index) => RadioListTile<int>(
+                                              snapshot.data!.length, (index) {
+                                            time = snapshot.data![index].from +
+                                                " to " +
+                                                snapshot.data![index].to;
+                                            callTimeSlotList[index].time = time;
+                                            return RadioListTile<int>(
                                               contentPadding:
                                                   const EdgeInsets.all(0),
                                               value: snapshot.data![index].id,
                                               groupValue: groupValue,
                                               title: Text(
-                                                snapshot.data![index].name,
+                                                time,
                                                 style: const TextStyle(
                                                   fontSize: 17.0,
                                                   color: MColor.backButton,
@@ -168,11 +180,11 @@ class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
                                               ),
                                               onChanged: (value) {
                                                 groupValue = value!;
-                                                districtStream
+                                                callTimeSlotStream
                                                     .add(snapshot.data!);
                                               },
-                                            ),
-                                          ),
+                                            );
+                                          }),
                                         ),
                                       ),
                                     )
@@ -186,13 +198,12 @@ class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     if (groupValue != -1) {
-                                      selectedDistrict =
-                                          districtList.singleWhere((element) =>
+                                      callTimeSlotModel = callTimeSlotList
+                                          .singleWhere((element) =>
                                               element.id == groupValue);
-                                      widget
-                                          .onDistrictSelect(selectedDistrict!);
+                                      widget.onCallTimeSlotSelect(
+                                          callTimeSlotModel);
                                     }
-
                                     Navigator.pop(context);
                                   },
                                   style: ButtonStyle(
@@ -233,18 +244,17 @@ class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
     );
   }
 
-  getDistricts() async {
-    SelectDistrictResponse response = await repository.selectDistrict();
+  void getCallTimeSlot() async {
+    CallTimeSlotResponse response = await repository.selectCallTimeslot();
     if (await Network.isConnected()) {
       if (response.success) {
-        districtList.addAll(response.data!);
-        debugPrint("groupValue--->$groupValue");
-        districtStream.add(districtList);
+        callTimeSlotList = response.data!;
+        callTimeSlotStream.add(callTimeSlotList);
       } else {
-        districtStream.addError(response.message);
+        callTimeSlotStream.addError(response.message);
       }
     } else {
-      districtStream.addError(StringConst.internetCheck);
+      callTimeSlotStream.addError(StringConst.internetCheck);
     }
   }
 }

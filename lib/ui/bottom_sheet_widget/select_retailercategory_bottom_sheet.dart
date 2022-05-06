@@ -49,7 +49,7 @@ class _SelectRetailerCategoryBottomSheetState
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.80,
+        maxHeight: MediaQuery.of(context).size.height * 0.90,
         minHeight: MediaQuery.of(context).size.height * 0.20,
       ),
       child: Container(
