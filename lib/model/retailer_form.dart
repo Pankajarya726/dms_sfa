@@ -48,6 +48,8 @@ class RetailerForm {
   String email = "";
   String cityId = "";
 
+  Map<String, dynamic> category = {};
+
   List<SurveyProduct> productList = [];
 
   RetailerForm();
@@ -65,14 +67,8 @@ class RetailerForm {
         "pan": pan,
         "adhar_number": aadhaarNumber,
         "birthday": birthday,
-        "owner_image": ownerImage.isEmpty
-            ? null
-            : MultipartFile.fromFileSync(ownerImage,
-                filename: path.basename(ownerImage)),
-        "outlet_image": outletImage.isEmpty
-            ? null
-            : MultipartFile.fromFileSync(outletImage,
-                filename: path.basename(outletImage)),
+        "owner_image": ownerImage.isEmpty ? null : MultipartFile.fromFileSync(ownerImage, filename: path.basename(ownerImage)),
+        "outlet_image": outletImage.isEmpty ? null : MultipartFile.fromFileSync(outletImage, filename: path.basename(outletImage)),
         "anniversary": anniversary,
         "outlet_name": outletName,
         "beat_name": beatId,

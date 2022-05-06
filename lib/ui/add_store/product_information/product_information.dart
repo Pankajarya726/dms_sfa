@@ -6,7 +6,6 @@ import 'package:dms/main.dart';
 import 'package:dms/model/base_response.dart';
 import 'package:dms/model/get_survey_product.dart';
 import 'package:dms/model/retailer_form.dart';
-import 'package:dms/ui/bottom_sheet_widget/otp_bottom_sheet.dart';
 import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/constants.dart';
@@ -43,14 +42,13 @@ class _ProductInformationState extends State<ProductInformation> {
       padding: EdgeInsets.symmetric(horizontal: 15),
       child: Text(
         "Which category/brand does retailer keep?",
-        style: TextStyle(
-            fontSize: 20,
-            color: MColor.colorPrimary,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.5),
+        style: TextStyle(fontSize: 20, color: MColor.colorPrimary, fontWeight: FontWeight.bold, letterSpacing: 0.5),
       ),
     ));
     productStream.add(widgetList);
+
+    debugPrint(widget.form.productList.toString());
+
     getProduct();
 
     super.initState();
@@ -132,30 +130,42 @@ class _ProductInformationState extends State<ProductInformation> {
     if (response.success && response.data.isNotEmpty) {
       productList.clear();
       productList.addAll(response.data);
-      await Future.forEach(
-          productList,
-          (SurveyProduct product) =>
-              widgetList.add(ProductListItem(productsInfo: product)));
+      await Future.forEach(productList, (SurveyProduct product) {
+        if (widget.form.productList.isNotEmpty) {
+          int index = widget.form.productList.indexWhere((element) => element.id == product.id);
+          if (index != -1) {
+            product.check = true;
+            product.brand = widget.form.productList[index].brand;
+            widgetList.add(ProductListItem(productsInfo: product));
+          } else {
+            widgetList.add(ProductListItem(productsInfo: product));
+          }
+        } else {
+          widgetList.add(ProductListItem(productsInfo: product));
+        }
+      });
       debugPrint("products--->${productList.length}");
       productStream.add(widgetList);
     }
   }
 
   void register(BuildContext context) async {
-    List<SurveyProduct> selected =
-        productList.where((element) => element.check).toList();
+    List<SurveyProduct> selected = productList.where((element) => element.check).toList();
+
+    widget.form.productList = selected;
+
     debugPrint("selectedProduct--->$selected");
     if (selected.isEmpty) {
       Utility.showToast("Please select at least one Product");
       return;
     }
     Map<String, dynamic> input = widget.form.toMap();
+    Map<String, dynamic> category = {};
+    bool error = false;
 
     await Future.forEach(selected, (SurveyProduct product) async {
-      Map<String, dynamic> category = {};
       String brand = "";
-      List<Brand> brands =
-          product.brand.where((element) => element.check).toList();
+      List<Brand> brands = product.brand.where((element) => element.check).toList();
       debugPrint("brands-->$brands");
       for (int i = 0; i < brands.length; i++) {
         if (i + 1 == brands.length) {
@@ -164,8 +174,19 @@ class _ProductInformationState extends State<ProductInformation> {
           brand = brand + "${brands[i].id},";
         }
       }
-      input[getKey(product.id)] = brand;
+      if (brand.isEmpty) {
+        error = true;
+        return;
+      }
+
+      category[getKey(product.id)] = brand;
     });
+
+    if (error) {
+      Utility.showToast("Please select at least one brand of selected Category");
+      return;
+    }
+    input.addAll(category);
 
     // debugPrint("productMap-->$categoryList");
     // debugPrint("productMap-->${jsonEncode(categoryList)}");
@@ -173,31 +194,31 @@ class _ProductInformationState extends State<ProductInformation> {
     // input["products"] = jsonEncode(categoryList);
     log("inputs--->" + input.toString());
 
-    showModalBottomSheet(
-        context: context,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
-        ),
-        builder: (context) {
-          return SelectOtpNumberBottomSheet(
-            form: widget.form,
-            onDone: (String number) {
-              input["otp_number"] = number;
-              try {
-                registerApi(input);
-              } catch (exception) {
-                debugPrint("exception-->$exception");
-              }
-            },
-            onSubmit: () {
-              try {
-                registerApi(input);
-              } catch (exception) {
-                debugPrint("exception-->$exception");
-              }
-            },
-          );
-        });
+    // showModalBottomSheet(
+    //     context: context,
+    //     shape: const RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+    //     ),
+    //     builder: (context) {
+    //       return SelectOtpNumberBottomSheet(
+    //         form: widget.form,
+    //         onDone: (String number) {
+    //           input["otp_number"] = number;
+    //           try {
+    //             registerApi(input);
+    //           } catch (exception) {
+    //             debugPrint("exception-->$exception");
+    //           }
+    //         },
+    //         onSubmit: () {
+    //           try {
+    //             registerApi(input);
+    //           } catch (exception) {
+    //             debugPrint("exception-->$exception");
+    //           }
+    //         },
+    //       );
+    //     });
   }
 
   void registerApi(Map<String, dynamic> input) async {
@@ -210,10 +231,7 @@ class _ProductInformationState extends State<ProductInformation> {
         if (input["otp_number"] == null) {
           Utility.showToast(response.message);
           debugPrint(Navigator.defaultRouteName);
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => const DrawerScreen()),
-              (route) => false);
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const DrawerScreen()), (route) => false);
         } else {
           showVerifyOtpAlert(input["otp_number"]);
         }
@@ -248,8 +266,7 @@ class _ProductInformationState extends State<ProductInformation> {
                   },
                   child: const Text(
                     "Cancel",
-                    style: TextStyle(
-                        color: Colors.black, fontSize: 16, letterSpacing: 0.5),
+                    style: TextStyle(color: Colors.black, fontSize: 16, letterSpacing: 0.5),
                   )),
               TextButton(
                   onPressed: () {
@@ -261,10 +278,7 @@ class _ProductInformationState extends State<ProductInformation> {
                   },
                   child: const Text(
                     "Confirm",
-                    style: TextStyle(
-                        color: MColor.colorPrimary,
-                        fontSize: 16,
-                        letterSpacing: 0.5),
+                    style: TextStyle(color: MColor.colorPrimary, fontSize: 16, letterSpacing: 0.5),
                   )),
             ],
           );
@@ -284,10 +298,7 @@ class _ProductInformationState extends State<ProductInformation> {
       if (response.success) {
         Utility.showToast(response.message);
         debugPrint(Navigator.defaultRouteName);
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (_) => const DrawerScreen()),
-            (route) => false);
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const DrawerScreen()), (route) => false);
       } else {
         Utility.showToast(response.message);
       }
@@ -398,8 +409,7 @@ class _ProductInformationState extends State<ProductInformation> {
 class ProductListItem extends StatefulWidget {
   final SurveyProduct productsInfo;
 
-  const ProductListItem({Key? key, required this.productsInfo})
-      : super(key: key);
+  const ProductListItem({Key? key, required this.productsInfo}) : super(key: key);
 
   @override
   _ProductListItemState createState() => _ProductListItemState();
@@ -432,11 +442,7 @@ class _ProductListItemState extends State<ProductListItem> {
             ),
             title: Text(
               widget.productsInfo.categoryName,
-              style: const TextStyle(
-                  color: MColor.textColor,
-                  letterSpacing: 0.5,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18),
+              style: const TextStyle(color: MColor.textColor, letterSpacing: 0.5, fontWeight: FontWeight.bold, fontSize: 18),
             ),
             trailing: Checkbox(
               value: checked,
@@ -461,14 +467,12 @@ class _ProductListItemState extends State<ProductListItem> {
                       elevation: 0,
                       pressEnabled: true,
                       onPressed: (item) {
-                        widget.productsInfo.brand[index].check =
-                            !item.customData.check;
+                        widget.productsInfo.brand[index].check = !item.customData.check;
                         setState(() {});
                       },
                       customData: widget.productsInfo.brand[index],
                       textStyle: const TextStyle(fontSize: 17),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 5, horizontal: 10),
+                      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                       title: widget.productsInfo.brand[index].brandName,
                       active: widget.productsInfo.brand[index].check,
                       textActiveColor: MColor.activeTextColor,
@@ -476,9 +480,7 @@ class _ProductListItemState extends State<ProductListItem> {
                       color: MColor.disableBgColor,
                       activeColor: MColor.enableBgColor,
                       border: Border.all(
-                          color: widget.productsInfo.brand[index].check
-                              ? MColor.enableBorderColor
-                              : MColor.disableBorderColor),
+                          color: widget.productsInfo.brand[index].check ? MColor.enableBorderColor : MColor.disableBorderColor),
                     );
                   },
                 )
