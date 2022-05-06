@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:collection';
-
 import 'package:dms/main.dart';
 import 'package:dms/ui/add_store/model/select_beat_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
@@ -30,7 +29,8 @@ class _SelectBeatNameBottomSheetState extends State<SelectBeatNameBottomSheet> {
   BeatsModal? beatsModal;
   StreamController<List<BeatsModal>> beatStream = StreamController();
   List<BeatsModal> beatList = [];
-  String failureMessage = "";
+  StreamController<List<BeatsModal>> searchStream = StreamController();
+  TextEditingController txtSearchController = TextEditingController();
 
   @override
   void initState() {
@@ -47,7 +47,7 @@ class _SelectBeatNameBottomSheetState extends State<SelectBeatNameBottomSheet> {
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.80,
+        maxHeight: MediaQuery.of(context).size.height * 0.90,
         minHeight: MediaQuery.of(context).size.height * 0.20,
       ),
       child: Container(
@@ -61,111 +61,173 @@ class _SelectBeatNameBottomSheetState extends State<SelectBeatNameBottomSheet> {
         ),
         child: StreamBuilder<List<BeatsModal>>(
             stream: beatStream.stream,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
+            builder: (context, snap) {
+              if (snap.connectionState == ConnectionState.waiting) {
                 return const IntrinsicHeight(
                   child: Center(
                     child: CircularProgressIndicator(),
                   ),
                 );
               }
-              if (failureMessage == StringConst.internetCheck) {
+
+              if (snap.hasError) {
                 return IntrinsicHeight(
                   child: Center(
-                    child: Text(failureMessage),
+                    child: Text(snap.error.toString()),
                   ),
                 );
               }
-              if (snapshot.data!.isEmpty) {
-                return IntrinsicHeight(
-                  child: Center(
-                    child: Text(failureMessage),
-                  ),
-                );
-              }
-              if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      StringConst.beatName,
-                      style: TextStyle(
-                        fontSize: 19,
-                        color: MColor.colorPrimary,
-                        letterSpacing: 0.67,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Flexible(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: List.generate(
-                            snapshot.data!.length,
-                            (index) => RadioListTile<int>(
-                              contentPadding: const EdgeInsets.all(0),
-                              value: int.parse(snapshot.data![index].id),
-                              groupValue: groupValue,
-                              title: Text(
-                                snapshot.data![index].name,
-                                style: const TextStyle(
-                                  fontSize: 17.0,
-                                  color: MColor.backButton,
+
+              if (snap.hasData) {
+                return StreamBuilder<List<BeatsModal>>(
+                    stream: searchStream.stream,
+                    initialData: beatList,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Padding(
+                          padding: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).viewInsets.bottom),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text(
+                                StringConst.beatName,
+                                style: TextStyle(
+                                  fontSize: 19,
+                                  color: MColor.colorPrimary,
+                                  letterSpacing: 0.67,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              onChanged: (value) {
-                                groupValue = value!;
-                                beatStream.add(snapshot.data!);
-                              },
-                            ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              TextFormField(
+                                style: const TextStyle(fontSize: 16),
+                                onChanged: (text) {
+                                  if (text.isNotEmpty) {
+                                    List<BeatsModal> searchList = [];
+                                    for (var element in beatList) {
+                                      if (element.name.toLowerCase().contains(
+                                          text.trim().toLowerCase())) {
+                                        searchList.add(element);
+                                      }
+                                    }
+                                    searchStream.add(searchList);
+                                  } else {
+                                    searchStream.add(beatList);
+                                  }
+                                },
+                                decoration: InputDecoration(
+                                  hintText: StringConst.search,
+                                  hintStyle: const TextStyle(fontSize: 16),
+                                  contentPadding: const EdgeInsets.all(10),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                    gapPadding: 2,
+                                    borderSide: const BorderSide(
+                                      width: 1,
+                                      color: Color(0xFF6E6E6E),
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                    gapPadding: 2,
+                                    borderSide: const BorderSide(
+                                      width: 1,
+                                      color: Color(0xFF6E6E6E),
+                                    ),
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.search,
+                                    color: Color(0xff555555),
+                                  ),
+                                ),
+                              ),
+                              snapshot.data!.isEmpty
+                                  ? const SizedBox(
+                                      height: 20,
+                                    )
+                                  : Container(),
+                              snapshot.data!.isNotEmpty
+                                  ? Flexible(
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          children: List.generate(
+                                            snapshot.data!.length,
+                                            (index) => RadioListTile<int>(
+                                              contentPadding:
+                                                  const EdgeInsets.all(0),
+                                              value: int.parse(
+                                                  snapshot.data![index].id),
+                                              groupValue: groupValue,
+                                              title: Text(
+                                                snapshot.data![index].name,
+                                                style: const TextStyle(
+                                                  fontSize: 17.0,
+                                                  color: MColor.backButton,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              onChanged: (value) {
+                                                groupValue = value!;
+                                                beatStream.add(snapshot.data!);
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : const Center(
+                                      child: Text("Data not found"),
+                                    ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Center(
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    if (groupValue != -1) {
+                                      beatsModal = beatList.singleWhere(
+                                          (element) =>
+                                              element.id ==
+                                              groupValue.toString());
+                                      widget.onBeatNameSelect(beatsModal!);
+                                    }
+                                    Navigator.pop(context);
+                                  },
+                                  style: ButtonStyle(
+                                    fixedSize: MaterialStateProperty.all(
+                                        const Size(180, 55)),
+                                    backgroundColor: MaterialStateProperty.all(
+                                        MColor.colorPrimary),
+                                    elevation: MaterialStateProperty.all(0),
+                                    shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    StringConst.done,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                            ],
                           ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (groupValue != -1) {
-                            beatsModal = beatList.singleWhere((element) =>
-                                element.id == groupValue.toString());
-                            widget.onBeatNameSelect(beatsModal!);
-                          }
-                          Navigator.pop(context);
-                        },
-                        style: ButtonStyle(
-                          fixedSize:
-                              MaterialStateProperty.all(const Size(180, 55)),
-                          backgroundColor:
-                              MaterialStateProperty.all(MColor.colorPrimary),
-                          elevation: MaterialStateProperty.all(0),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                        ),
-                        child: const Text(
-                          StringConst.done,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                  ],
-                );
+                        );
+                      }
+                      return Container();
+                    });
               }
               return Container();
             }),
@@ -182,12 +244,10 @@ class _SelectBeatNameBottomSheetState extends State<SelectBeatNameBottomSheet> {
         beatList = response.data!;
         beatStream.add(beatList);
       } else {
-        failureMessage = response.message;
-        beatStream.add(beatList);
+        beatStream.addError(response.message);
       }
     } else {
-      failureMessage = StringConst.internetCheck;
-      beatStream.add(beatList);
+      beatStream.addError(StringConst.internetCheck);
     }
   }
 }

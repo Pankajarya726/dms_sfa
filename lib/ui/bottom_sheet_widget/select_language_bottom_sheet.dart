@@ -29,7 +29,8 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
   List<LanguageModel> languageModelList = [];
   LanguageModel? languageModel;
   StreamController<List<LanguageModel>> languageStream = StreamController();
-  String failureMessage = "";
+  StreamController<List<LanguageModel>> searchStream = StreamController();
+  TextEditingController txtSearchController = TextEditingController();
 
   @override
   void initState() {
@@ -46,7 +47,7 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.80,
+        maxHeight: MediaQuery.of(context).size.height * 0.90,
         minHeight: MediaQuery.of(context).size.height * 0.20,
       ),
       child: Container(
@@ -68,109 +69,171 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
                   ),
                 );
               }
-              if (failureMessage == StringConst.internetCheck) {
+
+              if (snapshot.hasError) {
                 return IntrinsicHeight(
                   child: Center(
-                    child: Text(failureMessage),
-                  ),
-                );
-              }
-              if (snapshot.data!.isEmpty) {
-                return IntrinsicHeight(
-                  child: Center(
-                    child: Text(failureMessage),
+                    child: Text(snapshot.error.toString()),
                   ),
                 );
               }
 
-              if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      StringConst.selectLangFirst + widget.bottomSheetHeading,
-                      style: const TextStyle(
-                        fontSize: 19,
-                        color: MColor.colorPrimary,
-                        letterSpacing: 0.67,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Flexible(
-                      child: SingleChildScrollView(
+              if (snapshot.hasData) {
+                return StreamBuilder<List<LanguageModel>>(
+                    stream: searchStream.stream,
+                    initialData: languageModelList,
+                    builder: (context, snapshot) {
+                      return Padding(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children:
-                              List.generate(snapshot.data!.length, (index) {
-                            if (snapshot.data![index].languageName ==
-                                widget.previousSelectedLang) {
-                              return Container();
-                            }
-                            return RadioListTile<int>(
-                              contentPadding: const EdgeInsets.all(0),
-                              value: snapshot.data![index].id,
-                              groupValue: groupValue,
-                              title: Text(
-                                snapshot.data![index].languageName,
-                                style: const TextStyle(
-                                  fontSize: 17.0,
-                                  color: MColor.backButton,
-                                  fontWeight: FontWeight.bold,
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              StringConst.selectLangFirst +
+                                  widget.bottomSheetHeading,
+                              style: const TextStyle(
+                                fontSize: 19,
+                                color: MColor.colorPrimary,
+                                letterSpacing: 0.67,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            TextFormField(
+                              style: const TextStyle(fontSize: 16),
+                              onChanged: (text) {
+                                if (text.isNotEmpty) {
+                                  List<LanguageModel> searchList = [];
+                                  for (var element in languageModelList) {
+                                    if (element.languageName
+                                        .toLowerCase()
+                                        .contains(text.trim().toLowerCase())) {
+                                      searchList.add(element);
+                                    }
+                                  }
+                                  searchStream.add(searchList);
+                                } else {
+                                  searchStream.add(languageModelList);
+                                }
+                              },
+                              decoration: InputDecoration(
+                                hintText: StringConst.search,
+                                hintStyle: const TextStyle(fontSize: 16),
+                                contentPadding: const EdgeInsets.all(10),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                  gapPadding: 2,
+                                  borderSide: const BorderSide(
+                                    width: 1,
+                                    color: Color(0xFF6E6E6E),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                  gapPadding: 2,
+                                  borderSide: const BorderSide(
+                                    width: 1,
+                                    color: Color(0xFF6E6E6E),
+                                  ),
+                                ),
+                                prefixIcon: const Icon(
+                                  Icons.search,
+                                  color: Color(0xff555555),
                                 ),
                               ),
-                              onChanged: (value) {
-                                groupValue = value!;
-                                languageStream.add(snapshot.data!);
-                              },
-                            );
-                          }),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (groupValue != -1) {
-                            languageModel = languageModelList.singleWhere(
-                                (element) => element.id == groupValue);
-                            widget.onLanguageSelect(languageModel);
-                          }
-                          Navigator.pop(context);
-                        },
-                        style: ButtonStyle(
-                          fixedSize:
-                              MaterialStateProperty.all(const Size(180, 55)),
-                          backgroundColor:
-                              MaterialStateProperty.all(MColor.colorPrimary),
-                          elevation: MaterialStateProperty.all(0),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
                             ),
-                          ),
+                            snapshot.data!.isEmpty
+                                ? const SizedBox(
+                                    height: 20,
+                                  )
+                                : Container(),
+                            snapshot.data!.isNotEmpty
+                                ? Flexible(
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: List.generate(
+                                            snapshot.data!.length, (index) {
+                                          if (snapshot
+                                                  .data![index].languageName ==
+                                              widget.previousSelectedLang) {
+                                            return Container();
+                                          }
+                                          return RadioListTile<int>(
+                                            contentPadding:
+                                                const EdgeInsets.all(0),
+                                            value: snapshot.data![index].id,
+                                            groupValue: groupValue,
+                                            title: Text(
+                                              snapshot
+                                                  .data![index].languageName,
+                                              style: const TextStyle(
+                                                fontSize: 17.0,
+                                                color: MColor.backButton,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            onChanged: (value) {
+                                              groupValue = value!;
+                                              languageStream
+                                                  .add(snapshot.data!);
+                                            },
+                                          );
+                                        }),
+                                      ),
+                                    ),
+                                  )
+                                : const Center(
+                                    child: Text("Data not found"),
+                                  ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Center(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  if (groupValue != -1) {
+                                    languageModel = languageModelList
+                                        .singleWhere((element) =>
+                                            element.id == groupValue);
+                                    widget.onLanguageSelect(languageModel);
+                                  }
+                                  Navigator.pop(context);
+                                },
+                                style: ButtonStyle(
+                                  fixedSize: MaterialStateProperty.all(
+                                      const Size(180, 55)),
+                                  backgroundColor: MaterialStateProperty.all(
+                                      MColor.colorPrimary),
+                                  elevation: MaterialStateProperty.all(0),
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                ),
+                                child: const Text(
+                                  StringConst.done,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                          ],
                         ),
-                        child: const Text(
-                          StringConst.done,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                  ],
-                );
+                      );
+                    });
               }
               return Container();
             }),
@@ -186,12 +249,10 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
         languageModelList = response.data!;
         languageStream.add(languageModelList);
       } else {
-        failureMessage = response.message;
-        languageStream.add(languageModelList);
+        languageStream.addError(response.message);
       }
     } else {
-      failureMessage = StringConst.internetCheck;
-      languageStream.add(languageModelList);
+      languageStream.addError(StringConst.internetCheck);
     }
   }
 }

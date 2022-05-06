@@ -3,7 +3,7 @@ import 'package:dms/model/retailer_form.dart';
 import 'package:dms/ui/add_store/model/call_time_slot_response.dart';
 import 'package:dms/ui/add_store/model/select_language_response.dart';
 import 'package:dms/ui/add_store/product_information/product_information.dart';
-import 'package:dms/ui/bottom_sheet_widget/select_callTimeSlot_bottom_sheet.dart';
+import 'package:dms/ui/bottom_sheet_widget/select_call_time_slot_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_language_bottom_sheet.dart';
 import 'package:dms/ui/common_bloc/common_bloc.dart';
 import 'package:dms/ui/common_bloc/common_bloc_events.dart';
@@ -14,7 +14,6 @@ import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -149,7 +148,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
                     ],
                   ),
                   sizedBoxWidget(12.0),
-                  NameEditText(
+                  OwnerNameEditText(
                     controller: txtOwnerName,
                     hint: StringConst.enterHere,
                     globalKey: globalKeyName,
@@ -197,6 +196,10 @@ class _OwnerInformationState extends State<OwnerInformation> {
                     controller: txtSecondaryMobile,
                     globalKey: globalKeySecMob,
                     onChange: (text) {
+                      if (text == txtPrimaryMobile.text) {
+                        Utility.showToast(
+                            "Primary and secondary mobile number should not be same");
+                      }
                       widget.form.secondaryMobile = text;
                     },
                   ),
@@ -472,6 +475,9 @@ class _OwnerInformationState extends State<OwnerInformation> {
               Utility.showToast("Please enter owner name");
             } else if (txtPrimaryMobile.text.isEmpty) {
               Utility.showToast("Please enter primary mobile");
+            } else if (txtPrimaryMobile.text == txtSecondaryMobile.text) {
+              Utility.showToast(
+                  "Primary and secondary mobile number should not be same");
             } else if (txtCallTime.text.isEmpty) {
               Utility.showToast("Please select call time slot");
             } else if (txtPrimaryLang.text.isEmpty) {
@@ -479,6 +485,9 @@ class _OwnerInformationState extends State<OwnerInformation> {
             } else if (whatsAppSmsRadio == "") {
               Utility.showToast(
                   "Please select opt-in for whatsapp message / SMS");
+            } else if (txtOwnerName.text.length < 3) {
+              Utility.showToast(
+                  "Owner name should be minimum 3 characters long");
             } else if (txtPrimaryMobile.text.length < 10) {
               Utility.showToast("Please enter valid primary mobile number");
             } else if (txtSecondaryMobile.text.length < 10 &&
@@ -487,9 +496,15 @@ class _OwnerInformationState extends State<OwnerInformation> {
             } else if (txtHelperMobile.text.length < 10 &&
                 txtHelperMobile.text.isNotEmpty) {
               Utility.showToast("Please enter valid helper mobile number");
-            } else if (txtPAN.text.length < 10 && txtPAN.text.isNotEmpty) {
-              Utility.showToast("Please enter valid pan number");
-            } else if (txtAdhaar.text.length < 12 &&
+            } else if (txtEmail.text.isNotEmpty &&
+                !txtEmail.text.contains(RegExp(
+                    r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'))) {
+              Utility.showToast("Please enter valid email address");
+            } else if (!txtPAN.text
+                    .contains(RegExp("[A-Z]{5}[0-9]{4}[A-Z]{1}")) &&
+                txtPAN.text.isNotEmpty) {
+              Utility.showToast("Please enter valid PAN number");
+            } else if (!txtAdhaar.text.contains(RegExp('^[2-9]{1}[0-9]{11}')) &&
                 txtAdhaar.text.isNotEmpty) {
               Utility.showToast("Please enter valid aadhar number");
             } else {

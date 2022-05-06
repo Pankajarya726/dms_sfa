@@ -365,7 +365,7 @@ class _TaskListScreenState extends State<TaskListScreen>
         selectedDay = DateFormat("EEEE").format(dateTime);
       }
       beatsStreamController.addError("loading");
-      Map<String, dynamic> input = {"day": "Friday"};
+      Map<String, dynamic> input = {"day": selectedDay};
       GetAllBeatsResponse response =
           await repository.getBeatByOrderBookingDay(input);
       if (response.success) {

@@ -7,13 +7,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntp/ntp.dart';
 
-class NameEditText extends StatefulWidget {
+class OutletNameEditText extends StatefulWidget {
   final TextEditingController controller;
   final String hint;
   final GlobalKey globalKey;
   final Function(String text) onChange;
 
-  const NameEditText({
+  const OutletNameEditText({
     Key? key,
     required this.controller,
     required this.hint,
@@ -22,10 +22,10 @@ class NameEditText extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _NameEditTextState createState() => _NameEditTextState();
+  _OutletNameEditTextState createState() => _OutletNameEditTextState();
 }
 
-class _NameEditTextState extends State<NameEditText> {
+class _OutletNameEditTextState extends State<OutletNameEditText> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -37,6 +37,70 @@ class _NameEditTextState extends State<NameEditText> {
         object!.showOnScreen();
       },
       autofocus: false,
+      maxLength: 200,
+      style: const TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 0.67,
+        color: MColor.backButton,
+      ),
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp(r"[a-z A-Z 0-9,.\-]")),
+        // FilteringTextInputFormatter.allow(RegExp("^[\u0000-\u007F]+\$"))
+      ],
+      controller: widget.controller,
+      decoration: InputDecoration(
+        hintText: widget.hint,
+        counterText: "",
+        hintStyle: const TextStyle(
+          color: MColor.backButton,
+          letterSpacing: 0.67,
+          fontWeight: FontWeight.bold,
+          fontSize: 15,
+        ),
+        contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+        filled: true,
+        fillColor: const Color(0xffF2F2F2),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
+  }
+}
+
+class OwnerNameEditText extends StatefulWidget {
+  final TextEditingController controller;
+  final String hint;
+  final GlobalKey globalKey;
+  final Function(String text) onChange;
+
+  const OwnerNameEditText({
+    Key? key,
+    required this.controller,
+    required this.hint,
+    required this.onChange,
+    required this.globalKey,
+  }) : super(key: key);
+
+  @override
+  _OwnerNameEditTextState createState() => _OwnerNameEditTextState();
+}
+
+class _OwnerNameEditTextState extends State<OwnerNameEditText> {
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      onChanged: widget.onChange,
+      onTap: () async {
+        await Future.delayed(const Duration(milliseconds: 500));
+        RenderObject? object =
+            widget.globalKey.currentContext!.findRenderObject();
+        object!.showOnScreen();
+      },
+      autofocus: false,
+      maxLength: 200,
       style: const TextStyle(
         fontSize: 15,
         fontWeight: FontWeight.bold,
@@ -49,6 +113,7 @@ class _NameEditTextState extends State<NameEditText> {
       controller: widget.controller,
       decoration: InputDecoration(
         hintText: widget.hint,
+        counterText: "",
         hintStyle: const TextStyle(
           color: MColor.backButton,
           letterSpacing: 0.67,
@@ -150,6 +215,7 @@ class _GSTEditTextState extends State<GSTEditText> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      textCapitalization: TextCapitalization.characters,
       onTap: () async {
         await Future.delayed(const Duration(milliseconds: 500));
         RenderObject? object =
@@ -166,6 +232,7 @@ class _GSTEditTextState extends State<GSTEditText> {
       maxLength: 15,
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(r"[A-Z 0-9]")),
+        FilteringTextInputFormatter.deny(RegExp(r"\s"))
       ],
       controller: widget.controller,
       decoration: InputDecoration(
@@ -210,6 +277,7 @@ class _PANEditTextState extends State<PANEditText> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      textCapitalization: TextCapitalization.characters,
       onChanged: widget.onChange,
       autofocus: false,
       onTap: () async {
@@ -227,6 +295,7 @@ class _PANEditTextState extends State<PANEditText> {
       maxLength: 10,
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(r"[A-Z 0-9]")),
+        FilteringTextInputFormatter.deny(RegExp(r"\s")),
       ],
       controller: widget.controller,
       decoration: InputDecoration(
@@ -288,7 +357,7 @@ class _AadharEditTextState extends State<AadharEditText> {
       maxLength: 12,
       keyboardType: TextInputType.number,
       inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp(r"[0-9]")),
+        FilteringTextInputFormatter.digitsOnly,
       ],
       controller: widget.controller,
       decoration: InputDecoration(
@@ -490,6 +559,7 @@ class _NormalEditTextState extends State<NormalEditText> {
   Widget build(BuildContext context) {
     return TextFormField(
       autofocus: false,
+      maxLength: 200,
       onTap: () async {
         if (widget.name == StringConst.address) {
           await Future.delayed(const Duration(milliseconds: 500));
@@ -513,6 +583,7 @@ class _NormalEditTextState extends State<NormalEditText> {
       ),
       decoration: InputDecoration(
         hintText: StringConst.enterHere,
+        counterText: "",
         hintStyle: const TextStyle(
           color: MColor.backButton,
           letterSpacing: 0.67,
@@ -562,6 +633,7 @@ class _EmailEditTextState extends State<EmailEditText> {
         object!.showOnScreen();
       },
       autofocus: false,
+      maxLength: 200,
       style: const TextStyle(
         fontSize: 15,
         fontWeight: FontWeight.bold,
@@ -574,6 +646,7 @@ class _EmailEditTextState extends State<EmailEditText> {
       controller: widget.controller,
       decoration: InputDecoration(
         hintText: widget.hint,
+        counterText: "",
         hintStyle: const TextStyle(
           color: MColor.backButton,
           letterSpacing: 0.67,

@@ -93,6 +93,7 @@ class _OutletInformationState extends State<OutletInformation> {
   GlobalKey globalKeyAddress = GlobalKey();
   List<OrderBookingDayModal> orderBookingDayList = [];
   String cityName = "";
+  bool outletFieldEdited = false;
 
   @override
   Widget build(BuildContext context) {
@@ -261,11 +262,30 @@ class _OutletInformationState extends State<OutletInformation> {
                     ],
                   ),
                   sizedBoxWidget(12.0),
-                  NameEditText(
+                  OutletNameEditText(
                     controller: txtOutletNameController,
                     hint: StringConst.enterHere,
                     globalKey: globalKeyName,
                     onChange: (text) {
+                      if (!text.contains(RegExp("^[\u0000-\u007F]+\$"))) {
+                        Utility.showToast("Please use only english language");
+                      }
+
+                      // if (!text.contains(RegExp("^[\u0000-\u007F]+\$"))) {
+                      //   if (!outletFieldEdited) {
+                      //     Utility.showToast("Please use only english language");
+                      //   }
+                      //   outletFieldEdited = true;
+                      // } else {
+                      //   if (!text.contains(RegExp("^[\u0000-\u007F]+\$"))) {
+                      //     if (!outletFieldEdited) {
+                      //       Utility.showToast(
+                      //           "Please use only english language");
+                      //     }
+                      //     outletFieldEdited = true;
+                      //   }
+                      // }
+
                       form.outletName = text;
                     },
                   ),
@@ -559,9 +579,20 @@ class _OutletInformationState extends State<OutletInformation> {
               Utility.showToast("Please select retailer category");
             } else if (outletPhotoFile == null) {
               Utility.showToast("Please capture outlet photo");
-            } else if (txtGSTController.text.length < 15 &&
-                txtGSTController.text.isNotEmpty) {
+            } else if (txtOutletNameController.text.length < 3) {
+              Utility.showToast(
+                  "Outlet name should be minimum 3 characters long");
+            } else if (txtAddressController.text.length < 3 &&
+                txtAddressController.text.isNotEmpty) {
+              Utility.showToast("Address should be minimum 3 characters long");
+            } else if ((txtGSTController.text.length < 15 &&
+                    txtGSTController.text.isNotEmpty) ||
+                (!txtGSTController.text.contains(RegExp(
+                        '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}')) &&
+                    txtGSTController.text.isNotEmpty)) {
               Utility.showToast("Please enter valid GST number");
+            } else if (txtLandmarkController.text.length < 3) {
+              Utility.showToast("Landmark should be minimum 3 characters long");
             } else {
               String userId = await SharedPreference.getStringPreference(
                   SharedPreference.userId);

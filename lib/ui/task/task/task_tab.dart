@@ -300,7 +300,9 @@ class _TaskBeatWidgetState extends State<TaskBeatWidget> {
             active: widget.tags[index].name == tag!.name,
             customData: widget.tags[index],
             textActiveColor: Colors.black,
-            textColor: const Color(0xff555555),
+            textColor: widget.tags[index].name == tag!.name
+                ? Colors.black
+                : const Color(0xff555555),
             elevation: 0,
             textStyle: const TextStyle(
                 fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),

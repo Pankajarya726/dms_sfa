@@ -27,7 +27,8 @@ class _SelectRetailerTypeBottomSheetState
   List<RetailerTypeModel> retailerTypeList = [];
   StreamController<List<RetailerTypeModel>> retailerTypeStream =
       StreamController();
-  String failureMessage = "";
+  StreamController<List<RetailerTypeModel>> searchStream = StreamController();
+  TextEditingController txtSearchController = TextEditingController();
 
   @override
   void initState() {
@@ -45,7 +46,7 @@ class _SelectRetailerTypeBottomSheetState
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.80,
+        maxHeight: MediaQuery.of(context).size.height * 0.90,
         minHeight: MediaQuery.of(context).size.height * 0.20,
       ),
       child: Container(
@@ -59,112 +60,174 @@ class _SelectRetailerTypeBottomSheetState
         ),
         child: StreamBuilder<List<RetailerTypeModel>>(
             stream: retailerTypeStream.stream,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
+            builder: (context, snap) {
+              if (snap.connectionState == ConnectionState.waiting) {
                 return const IntrinsicHeight(
                   child: Center(
                     child: CircularProgressIndicator(),
                   ),
                 );
               }
-              if (failureMessage == StringConst.internetCheck) {
+
+              if (snap.hasError) {
                 return IntrinsicHeight(
                   child: Center(
-                    child: Text(failureMessage),
+                    child: Text(snap.error.toString()),
                   ),
                 );
               }
-              if (snapshot.data!.isEmpty) {
-                return IntrinsicHeight(
-                  child: Center(
-                    child: Text(failureMessage),
-                  ),
-                );
-              }
-              if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      StringConst.retailerType,
-                      style: TextStyle(
-                        fontSize: 19,
-                        color: MColor.colorPrimary,
-                        letterSpacing: 0.67,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Flexible(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: List.generate(
-                            snapshot.data!.length,
-                            (index) => RadioListTile<int>(
-                              contentPadding: EdgeInsets.zero,
-                              value: snapshot.data![index].id,
-                              groupValue: groupValue,
-                              title: Text(
-                                snapshot.data![index].name,
-                                style: const TextStyle(
-                                  fontSize: 17.0,
-                                  color: MColor.backButton,
+
+              if (snap.hasData) {
+                return StreamBuilder<List<RetailerTypeModel>>(
+                    stream: searchStream.stream,
+                    initialData: retailerTypeList,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Padding(
+                          padding: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).viewInsets.bottom),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                StringConst.retailerType,
+                                style: TextStyle(
+                                  fontSize: 19,
+                                  color: MColor.colorPrimary,
+                                  letterSpacing: 0.67,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              onChanged: (value) {
-                                groupValue = value!;
-                                retailerTypeStream.add(snapshot.data!);
-                              },
-                            ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              TextFormField(
+                                style: const TextStyle(fontSize: 16),
+                                onChanged: (text) {
+                                  if (text.isNotEmpty) {
+                                    List<RetailerTypeModel> searchList = [];
+                                    for (var element in retailerTypeList) {
+                                      if (element.name.toLowerCase().contains(
+                                          text.trim().toLowerCase())) {
+                                        searchList.add(element);
+                                      }
+                                    }
+                                    searchStream.add(searchList);
+                                  } else {
+                                    searchStream.add(retailerTypeList);
+                                  }
+                                },
+                                decoration: InputDecoration(
+                                  hintText: StringConst.search,
+                                  hintStyle: const TextStyle(fontSize: 16),
+                                  contentPadding: const EdgeInsets.all(10),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                    gapPadding: 2,
+                                    borderSide: const BorderSide(
+                                      width: 1,
+                                      color: Color(0xFF6E6E6E),
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                    gapPadding: 2,
+                                    borderSide: const BorderSide(
+                                      width: 1,
+                                      color: Color(0xFF6E6E6E),
+                                    ),
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.search,
+                                    color: Color(0xff555555),
+                                  ),
+                                ),
+                              ),
+                              snapshot.data!.isEmpty
+                                  ? const SizedBox(
+                                      height: 20,
+                                    )
+                                  : Container(),
+                              snapshot.data!.isNotEmpty
+                                  ? Flexible(
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: List.generate(
+                                            snapshot.data!.length,
+                                            (index) => RadioListTile<int>(
+                                              contentPadding: EdgeInsets.zero,
+                                              value: snapshot.data![index].id,
+                                              groupValue: groupValue,
+                                              title: Text(
+                                                snapshot.data![index].name,
+                                                style: const TextStyle(
+                                                  fontSize: 17.0,
+                                                  color: MColor.backButton,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              onChanged: (value) {
+                                                groupValue = value!;
+                                                retailerTypeStream
+                                                    .add(snapshot.data!);
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : const Center(
+                                      child: Text("Data not found"),
+                                    ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Center(
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    if (groupValue != -1) {
+                                      retailerTypeModel = retailerTypeList
+                                          .singleWhere((element) =>
+                                              element.id == groupValue);
+                                      widget.onRetailerTypeSelect(
+                                          retailerTypeModel);
+                                    }
+                                    Navigator.pop(context);
+                                  },
+                                  style: ButtonStyle(
+                                    fixedSize: MaterialStateProperty.all(
+                                        const Size(180, 55)),
+                                    backgroundColor: MaterialStateProperty.all(
+                                        MColor.colorPrimary),
+                                    elevation: MaterialStateProperty.all(0),
+                                    shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    StringConst.done,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                            ],
                           ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (groupValue != -1) {
-                            retailerTypeModel = retailerTypeList.singleWhere(
-                                (element) => element.id == groupValue);
-                            widget.onRetailerTypeSelect(retailerTypeModel);
-                          }
-                          Navigator.pop(context);
-                        },
-                        style: ButtonStyle(
-                          fixedSize:
-                              MaterialStateProperty.all(const Size(180, 55)),
-                          backgroundColor:
-                              MaterialStateProperty.all(MColor.colorPrimary),
-                          elevation: MaterialStateProperty.all(0),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                        ),
-                        child: const Text(
-                          StringConst.done,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                  ],
-                );
+                        );
+                      }
+                      return Container();
+                    });
               }
               return Container();
             }),
@@ -179,12 +242,10 @@ class _SelectRetailerTypeBottomSheetState
         retailerTypeList = response.data!;
         retailerTypeStream.add(retailerTypeList);
       } else {
-        failureMessage = response.message;
-        retailerTypeStream.add(retailerTypeList);
+        retailerTypeStream.addError(response.message);
       }
     } else {
-      failureMessage = StringConst.internetCheck;
-      retailerTypeStream.add(retailerTypeList);
+      retailerTypeStream.addError(StringConst.internetCheck);
     }
   }
 
