@@ -267,24 +267,24 @@ class _OutletInformationState extends State<OutletInformation> {
                     hint: StringConst.enterHere,
                     globalKey: globalKeyName,
                     onChange: (text) {
-                      if (!text.contains(RegExp("^[\u0000-\u007F]+\$"))) {
-                        Utility.showToast("Please use only english language");
-                      }
-
                       // if (!text.contains(RegExp("^[\u0000-\u007F]+\$"))) {
-                      //   if (!outletFieldEdited) {
-                      //     Utility.showToast("Please use only english language");
-                      //   }
-                      //   outletFieldEdited = true;
-                      // } else {
-                      //   if (!text.contains(RegExp("^[\u0000-\u007F]+\$"))) {
-                      //     if (!outletFieldEdited) {
-                      //       Utility.showToast(
-                      //           "Please use only english language");
-                      //     }
-                      //     outletFieldEdited = true;
-                      //   }
+                      //   Utility.showToast("Please use only english language");
                       // }
+
+                      if (!text.contains(RegExp("^[\u0000-\u007F]+\$"))) {
+                        if (!outletFieldEdited && text.isEmpty) {
+                          Utility.showToast("Please use only english language");
+                        }
+                        outletFieldEdited = false;
+                      } else {
+                        if (!text.contains(RegExp("^[\u0000-\u007F]+\$"))) {
+                          if (!outletFieldEdited) {
+                            Utility.showToast(
+                                "Please use only english language");
+                          }
+                          outletFieldEdited = true;
+                        }
+                      }
 
                       form.outletName = text;
                     },
@@ -567,9 +567,9 @@ class _OutletInformationState extends State<OutletInformation> {
               Utility.showToast("Please select enrollment type");
             } else if (txtSelectBeatNameController.text.isEmpty) {
               Utility.showToast("Please select beat name");
-            } else if (txtOutletNameController.text.isEmpty) {
+            } else if (txtOutletNameController.text.trim().isEmpty) {
               Utility.showToast("Please enter outlet name");
-            } else if (txtLandmarkController.text.isEmpty) {
+            } else if (txtLandmarkController.text.trim().isEmpty) {
               Utility.showToast("Please enter landmark");
             } else if (existingRetailerRadio == "") {
               Utility.showToast("Please select existing retailer");

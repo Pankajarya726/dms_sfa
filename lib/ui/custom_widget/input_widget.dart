@@ -46,7 +46,6 @@ class _OutletNameEditTextState extends State<OutletNameEditText> {
       ),
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(r"[a-z A-Z 0-9,.\-]")),
-        // FilteringTextInputFormatter.allow(RegExp("^[\u0000-\u007F]+\$"))
       ],
       controller: widget.controller,
       decoration: InputDecoration(
@@ -107,9 +106,6 @@ class _OwnerNameEditTextState extends State<OwnerNameEditText> {
         letterSpacing: 0.67,
         color: MColor.backButton,
       ),
-      inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp(r"[a-z A-Z,.\-]")),
-      ],
       controller: widget.controller,
       decoration: InputDecoration(
         hintText: widget.hint,
