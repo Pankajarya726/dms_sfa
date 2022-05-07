@@ -56,4 +56,5 @@ class Url {
   static const String taskEscalate = "taskEscalateAndResolve";
   static const String getTaskHistory = "getTaskHistory";
   static const String taskResolve = "taskResolve";
+  static const String checkMobileNumber = "checkMobile";
 }

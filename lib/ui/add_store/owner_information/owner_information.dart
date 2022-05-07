@@ -1,7 +1,9 @@
+import 'dart:collection';
 import 'dart:io';
 import 'package:dms/model/retailer_form.dart';
 import 'package:dms/ui/add_store/model/call_time_slot_response.dart';
 import 'package:dms/ui/add_store/model/select_language_response.dart';
+import 'package:dms/ui/add_store/owner_information/model/check_mobile_response.dart';
 import 'package:dms/ui/add_store/product_information/product_information.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_call_time_slot_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_language_bottom_sheet.dart';
@@ -10,6 +12,7 @@ import 'package:dms/ui/common_bloc/common_bloc_events.dart';
 import 'package:dms/ui/common_bloc/common_bloc_states.dart';
 import 'package:dms/ui/custom_widget/input_widget.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
@@ -61,6 +64,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
   CallTimeSlotModel? callTimeSlotModel;
   LanguageModel? primaryLanguage;
   LanguageModel? secondaryLanguage;
+  bool mobileAlreadyExist = false;
 
   @override
   void initState() {
@@ -173,6 +177,9 @@ class _OwnerInformationState extends State<OwnerInformation> {
                     controller: txtPrimaryMobile,
                     globalKey: globalKeyPrimMob,
                     onChange: (text) {
+                      if (text.length == 10) {
+                        checkMobileNumber();
+                      }
                       widget.form.primaryMobile = text;
                     },
                   ),
@@ -471,7 +478,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
           onPressed: () async {
             Utility.hideKeyboard();
             FocusScope.of(context).unfocus();
-            if (txtOwnerName.text.isEmpty) {
+            if (txtOwnerName.text.trim().isEmpty) {
               Utility.showToast("Please enter owner name");
             } else if (txtPrimaryMobile.text.isEmpty) {
               Utility.showToast("Please enter primary mobile");
@@ -490,6 +497,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
                   "Owner name should be minimum 3 characters long");
             } else if (txtPrimaryMobile.text.length < 10) {
               Utility.showToast("Please enter valid primary mobile number");
+            } else if (mobileAlreadyExist == false) {
+              Utility.showToast("Mobile number already exist");
             } else if (txtSecondaryMobile.text.length < 10 &&
                 txtSecondaryMobile.text.isNotEmpty) {
               Utility.showToast("Please enter valid secondary mobile number");
@@ -554,6 +563,22 @@ class _OwnerInformationState extends State<OwnerInformation> {
         ),
       ),
     );
+  }
+
+  void checkMobileNumber() async {
+    Map<String, dynamic> input = HashMap<String, dynamic>();
+    input["mobile_number"] = txtPrimaryMobile.text;
+    CheckMobileResponse response = await repository.checkMobileNumber(input);
+    if (await Network.isConnected()) {
+      if (response.success) {
+        mobileAlreadyExist = true;
+      } else {
+        mobileAlreadyExist = false;
+        Utility.showToast(response.message);
+      }
+    } else {
+      Utility.showToast(StringConst.internetCheck);
+    }
   }
 
   Widget sizedBoxWidget(boxHeight) {

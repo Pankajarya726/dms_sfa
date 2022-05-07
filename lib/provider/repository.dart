@@ -22,6 +22,7 @@ import 'package:dms/ui/add_store/model/select_district_response.dart';
 import 'package:dms/ui/add_store/model/select_language_response.dart';
 import 'package:dms/ui/add_store/model/select_retailer_category_response.dart';
 import 'package:dms/ui/add_store/model/select_retailer_type_response.dart';
+import 'package:dms/ui/add_store/owner_information/model/check_mobile_response.dart';
 import 'package:dms/ui/change_password/model/model.dart';
 import 'package:dms/ui/drawer_menu/home_screen/model/get_menus_response.dart';
 import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart';
@@ -1379,6 +1380,29 @@ class ApiRepository {
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return BaseResponse(
+        success: false,
+        message: "",
+      );
+    }
+  }
+
+  Future<CheckMobileResponse> checkMobileNumber(
+      Map<String, dynamic> input) async {
+    try {
+      Response response = await dio.post(Url.checkMobileNumber, data: input);
+      CheckMobileResponse baseResponse =
+          CheckMobileResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = StringConst.somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return CheckMobileResponse(
         success: false,
         message: "",
       );
