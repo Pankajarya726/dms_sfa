@@ -497,7 +497,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
                   "Owner name should be minimum 3 characters long");
             } else if (txtPrimaryMobile.text.length < 10) {
               Utility.showToast("Please enter valid primary mobile number");
-            } else if (mobileAlreadyExist == false) {
+            } else if (widget.form.checkMobileNumber == false) {
               Utility.showToast("Mobile number already exist");
             } else if (txtSecondaryMobile.text.length < 10 &&
                 txtSecondaryMobile.text.isNotEmpty) {
@@ -571,8 +571,10 @@ class _OwnerInformationState extends State<OwnerInformation> {
     CheckMobileResponse response = await repository.checkMobileNumber(input);
     if (await Network.isConnected()) {
       if (response.success) {
+        widget.form.checkMobileNumber = true;
         mobileAlreadyExist = true;
       } else {
+        widget.form.checkMobileNumber = false;
         mobileAlreadyExist = false;
         Utility.showToast(response.message);
       }
@@ -719,7 +721,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
           source: ImageSource.camera,
           maxHeight: 512,
           maxWidth: 512,
-          preferredCameraDevice: CameraDevice.front);
+          preferredCameraDevice: CameraDevice.front
+          imageQuality: 50,);
       if (image != null) {
         ownerPhotoFile = File(image.path);
         ownerFileName = image.name;

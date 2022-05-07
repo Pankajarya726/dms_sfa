@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final OrderBookingDayResponse = OrderBookingDayResponseFromMap(jsonString);
-
 import 'dart:convert';
 
 class OrderBookingDayResponse {
@@ -22,8 +18,8 @@ class OrderBookingDayResponse {
 
   factory OrderBookingDayResponse.fromMap(Map<String, dynamic> json) =>
       OrderBookingDayResponse(
-        success: json["success"] == null ? null : json["success"],
-        message: json["message"] == null ? null : json["message"],
+        success: json["success"] ?? false,
+        message: json["message"] ?? "",
         data: json["data"] == null
             ? []
             : List<OrderBookingDayModal>.from(
@@ -31,8 +27,8 @@ class OrderBookingDayResponse {
       );
 
   Map<String, dynamic> toMap() => {
-        "success": success == null ? null : success,
-        "message": message == null ? null : message,
+        "success": success,
+        "message": message,
         "data":
             data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
       };
@@ -45,7 +41,7 @@ class OrderBookingDayModal {
     required this.orderBookingDay2,
   });
 
-  int id;
+  String id;
   String orderBookingDay1;
   String orderBookingDay2;
 
@@ -56,20 +52,18 @@ class OrderBookingDayModal {
 
   factory OrderBookingDayModal.fromMap(Map<String, dynamic> json) =>
       OrderBookingDayModal(
-        id: json["id"] == null ? null : json["id"],
+        id: json["id"] == null ? "" : json["id"].toString(),
         orderBookingDay1: json["order_booking_day1"] == null
-            ? null
-            : json["order_booking_day1"],
+            ? ""
+            : json["order_booking_day1"].toString(),
         orderBookingDay2: json["order_booking_day2"] == null
-            ? null
-            : json["order_booking_day2"],
+            ? ""
+            : json["order_booking_day2"].toString(),
       );
 
   Map<String, dynamic> toMap() => {
-        "id": id == null ? null : id,
-        "order_booking_day1":
-            orderBookingDay1 == null ? null : orderBookingDay1,
-        "order_booking_day2":
-            orderBookingDay2 == null ? null : orderBookingDay2,
+        "id": id,
+        "order_booking_day1": orderBookingDay1,
+        "order_booking_day2": orderBookingDay2,
       };
 }
