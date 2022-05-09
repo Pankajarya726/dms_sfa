@@ -57,7 +57,8 @@ class _OutletInformationState extends State<OutletInformation> {
   TextEditingController txtSelectDistrictController = TextEditingController();
   TextEditingController txtSelectDistributorController =
       TextEditingController();
-  TextEditingController txtSelectBeatNameController = TextEditingController();
+  TextEditingController txtSelectBeatNameController =
+      TextEditingController();
   TextEditingController txtOrderBookingController = TextEditingController();
   TextEditingController txtOutletNameController = TextEditingController();
   TextEditingController txtLatitudeController = TextEditingController();
@@ -863,8 +864,9 @@ class _OutletInformationState extends State<OutletInformation> {
     try {
       XFile? image = await imagePicker.pickImage(
           source: ImageSource.camera,
-          preferredCameraDevice: CameraDevice.front);
-      debugPrint("after capturing image try block");
+          preferredCameraDevice: CameraDevice.front
+          imageQuality: 50,
+          );
 
       if (image != null) {
         outletPhotoFile = File(image.path);
