@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+
 import 'package:dms/listeners/pop_up_menu_listener.dart';
 import 'package:dms/main.dart';
 import 'package:dms/ui/custom_widget/drop_down_field.dart';
@@ -18,8 +19,7 @@ class FilterRetailerBottomSheet extends StatefulWidget {
   final String type;
   final BeatsModal beat;
   final List<BeatsModal> beatList;
-  final Function(String day, String type, BeatsModal selectedBeat,
-      List<BeatsModal> beatList) onFilter;
+  final Function(String day, String type, BeatsModal selectedBeat, List<BeatsModal> beatList) onFilter;
 
   const FilterRetailerBottomSheet({
     Key? key,
@@ -31,8 +31,7 @@ class FilterRetailerBottomSheet extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _FilterRetailerBottomSheetState createState() =>
-      _FilterRetailerBottomSheetState();
+  _FilterRetailerBottomSheetState createState() => _FilterRetailerBottomSheetState();
 }
 
 class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
@@ -192,8 +191,7 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                   height: 35,
                 ),
                 Padding(
-                  padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -204,9 +202,7 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                               selectedEnrollmentType,
                               beatsModal != null
                                   ? beatsModal!
-                                  : (beats.length > 1
-                                      ? BeatsModal(id: "", name: "All")
-                                      : BeatsModal(id: "", name: "")),
+                                  : (beats.length > 1 ? BeatsModal(id: "", name: "All") : BeatsModal(id: "", name: "")),
                               beats);
                           Navigator.pop(context);
                         },
@@ -243,8 +239,7 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
       beatsStreamController.addError("loading");
       Map<String, dynamic> input = HashMap<String, dynamic>();
       input["day"] = selectedDay;
-      GetAllBeatsResponse response =
-          await repository.getBeatByOrderBookingDay(input);
+      GetAllBeatsResponse response = await repository.getBeatByOrderBookingDay(input);
       beats.clear();
       beatsModal = null;
       if (response.success) {
@@ -258,7 +253,7 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
         beats.addAll(response.data!);
         beatsStreamController.add(seleBeat);
       } else {
-        Utility.showToast(response.message);
+        // Utility.showToast(response.message);
         seleBeat = response.message;
         beatsStreamController.add(response.message);
       }
