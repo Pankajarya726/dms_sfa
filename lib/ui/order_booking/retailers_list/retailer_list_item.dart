@@ -28,7 +28,8 @@ class RetailerListItems extends StatefulWidget {
 class _RetailerListItemsState extends State<RetailerListItems> {
   @override
   void initState() {
-    debugPrint("widget.index-->${widget.index}");
+    debugPrint("widget.index-->${widget.orderStatus}");
+
     super.initState();
   }
 

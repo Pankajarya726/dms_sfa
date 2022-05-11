@@ -139,7 +139,9 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                             retailerDetails: retailer!,
                           ),
                           DetailGritItem(
-                            value: retailer!.pendingTask,
+                            value: retailer!.pendingTask.isNotEmpty
+                                ? retailer!.pendingTask
+                                : "0",
                             image: "assets/task.png",
                             name: StringConst.task,
                             type: 2,
@@ -982,24 +984,30 @@ class _DetailGritItemState extends State<DetailGritItem> {
                   Utility.hideKeyboard();
                   FocusScope.of(context).unfocus();
                   if (widget.type == 1) {
-                    showModalBottomSheet(
-                        context: context,
-                        shape: bottomSheetShape,
-                        builder: (context) => LastVisitBottomSheet(
-                              retailerDetails: widget.retailerDetails,
-                            ));
+                    widget.retailerDetails.lastVisit.isNotEmpty
+                        ? showModalBottomSheet(
+                            context: context,
+                            shape: bottomSheetShape,
+                            builder: (context) => LastVisitBottomSheet(
+                                  retailerDetails: widget.retailerDetails,
+                                ))
+                        : null;
                   }
                   if (widget.type == 2) {
-                    showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        enableDrag: true,
-                        shape: bottomSheetShape,
-                        builder: (context) => TaskBottomSheet(
-                              taskList: widget.taskList,
-                              retailerCode: widget.retailerDetails.uniqueCode,
-                            ));
+                    widget.retailerDetails.pendingTask.isNotEmpty
+                        ? showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            enableDrag: true,
+                            shape: bottomSheetShape,
+                            builder: (context) => TaskBottomSheet(
+                                  taskList: widget.taskList,
+                                  retailerCode:
+                                      widget.retailerDetails.uniqueCode,
+                                ))
+                        : Utility.showToast("No task available");
                   }
+                  // tc status bottom sheet
                   // if (widget.type == 3) {
                   //   showModalBottomSheet(
                   //       context: context,

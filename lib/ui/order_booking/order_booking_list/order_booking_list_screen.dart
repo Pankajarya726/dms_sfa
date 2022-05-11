@@ -10,7 +10,6 @@ import 'package:dms/ui/order_booking/order_booking_list/bloc/order_book_list_eve
 import 'package:dms/ui/order_booking/order_booking_list/bloc/order_book_list_states.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_brand_category_resonse.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_filter_mrp_response.dart';
-import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
 import 'package:dms/ui/order_booking/order_booking_list/ordered_product_list.dart';
 import 'package:dms/ui/order_booking/order_booking_list/products_tab.dart';
 import 'package:dms/ui/order_booking/order_confirmation/order_confirmation_screen.dart';
