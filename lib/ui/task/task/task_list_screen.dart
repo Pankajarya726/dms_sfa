@@ -154,7 +154,6 @@ class _TaskListScreenState extends State<TaskListScreen>
                       indicatorColor: MColor.colorPrimary,
                       labelPadding: const EdgeInsets.symmetric(horizontal: 0),
                       onTap: (index) {
-                        debugPrint("select-tag-->${beatModal!.name}");
                         tabStream.add(index + 1);
                       },
                       tabs: [

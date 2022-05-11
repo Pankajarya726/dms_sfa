@@ -88,6 +88,7 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                         minLines: 3,
                         maxLines: 5,
                         decoration: InputDecoration(
+                            hintText: "Enter your Reason",
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 15),
                             border: OutlineInputBorder(
@@ -193,30 +194,32 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                DoneButton(onPressed: () async {
-                  List<BUModal> bus =
-                      buList.where((element) => element.selected).toList();
+                DoneButton(
+                  onPressed: () async {
+                    List<BUModal> bus =
+                        buList.where((element) => element.selected).toList();
 
-                  String selectedBu = "";
+                    String selectedBu = "";
 
-                  for (int i = 0; i < bus.length; i++) {
-                    if (i == bus.length - 1) {
-                      selectedBu += bus[i].id;
-                    } else {
-                      selectedBu += bus[i].id + ",";
+                    for (int i = 0; i < bus.length; i++) {
+                      if (i == bus.length - 1) {
+                        selectedBu += bus[i].id;
+                      } else {
+                        selectedBu += bus[i].id + ",";
+                      }
                     }
-                  }
 
-                  Map<String, dynamic> input = {
-                    "bu": selectedBu,
-                    "reason": groupValue.tagName,
-                    "task_type": groupValue.taskType,
-                    "remark": edtRemark.text.trim(),
-                    "is_resolve": issueResolve ? 1 : 0
-                  };
+                    Map<String, dynamic> input = {
+                      "bu": selectedBu,
+                      "reason": groupValue.tagName,
+                      "task_type": groupValue.taskType,
+                      "remark": edtRemark.text.trim(),
+                      "is_resolve": issueResolve ? 1 : 0
+                    };
 
-                  Navigator.pop(context, input);
-                }),
+                    Navigator.pop(context, input);
+                  },
+                ),
                 DoneButton(
                     title: "Cancel",
                     onPressed: () {

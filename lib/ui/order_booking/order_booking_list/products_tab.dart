@@ -52,12 +52,9 @@ class _ProductTabsState extends State<ProductTabs>
   void initState() {
     debugPrint("ProductTabs---initState-->${widget.brands.toString()}");
     widget.onInit(this);
-    print("tabindex = ${widget.index}");
 
     if (widget.mrpFilter.isNotEmpty) {
       filterMrp = widget.mrpFilter;
-      print("filterMrp value = $filterMrp");
-      print("filterMrp widget = $filterMrp");
     }
 
     if (widget.index > 1) {
@@ -83,6 +80,7 @@ class _ProductTabsState extends State<ProductTabs>
 
   @override
   void didUpdateWidget(covariant ProductTabs oldWidget) {
+    categoryList.clear();
     if (widget.mrpFilter.isNotEmpty) {
       filterMrp = widget.mrpFilter;
     }
@@ -115,8 +113,10 @@ class _ProductTabsState extends State<ProductTabs>
       children: [
         widget.index > 1 && widget.brands.category.isNotEmpty
             ? BeatsWidget(
+                category: category != null
+                    ? category!
+                    : Category(id: "", categoryName: ""),
                 tags: categoryList,
-                // tags: tags,
                 onSelect: (Category tag) {
                   debugPrint("onBeatSelect-->${tag.categoryName}");
                   category = tag;
@@ -317,9 +317,14 @@ class _ProductTabsState extends State<ProductTabs>
 class BeatsWidget extends StatefulWidget {
   final List<Category> tags;
   final Function(Category tag) onSelect;
+  final Category? category;
 
-  const BeatsWidget({Key? key, required this.tags, required this.onSelect})
-      : super(key: key);
+  const BeatsWidget({
+    Key? key,
+    required this.tags,
+    required this.onSelect,
+    required this.category,
+  }) : super(key: key);
 
   @override
   _BeatsWidgetState createState() => _BeatsWidgetState();
@@ -330,8 +335,31 @@ class _BeatsWidgetState extends State<BeatsWidget> {
 
   @override
   void initState() {
-    widget.onSelect(tag);
+    if (widget.tags.length > 1) {
+      if (widget.category == null) {
+        widget.onSelect(tag);
+      } else {
+        tag = widget.category!;
+        widget.onSelect(tag);
+      }
+    } else {
+      if (widget.tags.isEmpty) {
+        tag = Category(categoryName: "", id: "");
+        widget.onSelect(tag);
+      } else {
+        tag = widget.category!;
+        widget.onSelect(tag);
+      }
+    }
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant BeatsWidget oldWidget) {
+    if (widget.category != null) {
+      tag = widget.category!;
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -359,7 +387,9 @@ class _BeatsWidgetState extends State<BeatsWidget> {
               active: widget.tags[index].categoryName == tag.categoryName,
               customData: widget.tags[index],
               textActiveColor: Colors.black,
-              textColor: const Color(0xff555555),
+              textColor: widget.tags[index].categoryName == tag.categoryName
+                  ? Colors.black
+                  : const Color(0xff555555),
               elevation: 0,
               textStyle: const TextStyle(
                 fontSize: 15,

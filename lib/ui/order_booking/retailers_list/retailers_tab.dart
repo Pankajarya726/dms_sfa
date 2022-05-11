@@ -43,7 +43,6 @@ class _RetailerTabState extends State<RetailerTab>
     implements SelectBeatListener {
   List<RetailersModal> retailers = [];
   BeatsModal? selectedBeat;
-  String tag = "All";
   StreamController<List<RetailersModal>> retailerStreamController =
       StreamController();
   String day = "";
@@ -175,6 +174,7 @@ class _RetailerTabState extends State<RetailerTab>
   }
 
   void getRetailers() async {
+    retailers.clear();
     retailerStreamController.addError("loading");
     if (await Network.isConnected()) {
       Map<String, dynamic> input = HashMap<String, dynamic>();
@@ -295,7 +295,6 @@ class BeatWidget extends StatefulWidget {
 
 class _BeatWidgetState extends State<BeatWidget> {
   BeatsModal tag = BeatsModal(name: "All", id: "");
-  bool textActive = true;
 
   @override
   void initState() {

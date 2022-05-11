@@ -64,7 +64,6 @@ class _OwnerInformationState extends State<OwnerInformation> {
   CallTimeSlotModel? callTimeSlotModel;
   LanguageModel? primaryLanguage;
   LanguageModel? secondaryLanguage;
-  bool mobileAlreadyExist = false;
 
   @override
   void initState() {
@@ -572,10 +571,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
     if (await Network.isConnected()) {
       if (response.success) {
         widget.form.checkMobileNumber = true;
-        mobileAlreadyExist = true;
       } else {
         widget.form.checkMobileNumber = false;
-        mobileAlreadyExist = false;
         Utility.showToast(response.message);
       }
     } else {

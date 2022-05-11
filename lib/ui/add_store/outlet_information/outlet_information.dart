@@ -1,7 +1,6 @@
 import 'dart:collection';
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:dms/model/retailer_form.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_bloc.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_events.dart';
@@ -871,7 +870,6 @@ class _OutletInformationState extends State<OutletInformation> {
       if (image != null) {
         outletPhotoFile = File(image.path);
         outletFileName = image.name;
-
         commonBloc.add(CommonBlocSelectImageEvent(imageFile: outletPhotoFile!));
       }
     } catch (exception) {

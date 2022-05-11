@@ -230,7 +230,11 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                               context,
                               MaterialPageRoute(
                                   builder: (_) => SearchRetailerScreen(
+                                        beatsModal: beatsModal != null
+                                            ? beatsModal!
+                                            : BeatsModal(id: "", name: ""),
                                         day: selectedDay,
+                                        index: tabController.index + 1,
                                       )));
                         },
                         decoration: InputDecoration(

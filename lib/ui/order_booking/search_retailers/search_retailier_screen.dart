@@ -4,6 +4,7 @@ import 'package:dms/main.dart';
 import 'package:dms/model/retaileres_response.dart';
 import 'package:dms/ui/custom_widget/no_internet.dart';
 import 'package:dms/ui/custom_widget/search_not_found.dart';
+import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/retailer_list_item.dart';
 import 'package:dms/utils/constants.dart';
@@ -12,8 +13,12 @@ import 'package:flutter/material.dart';
 
 class SearchRetailerScreen extends StatefulWidget {
   final String day;
+  final int index;
+  final BeatsModal? beatsModal;
   const SearchRetailerScreen({
     required this.day,
+    required this.index,
+    required this.beatsModal,
     Key? key,
   }) : super(key: key);
 
@@ -115,9 +120,9 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
                 },
                 itemBuilder: (context, index) {
                   return RetailerListItems(
-                    index: 0,
+                    index: widget.index,
                     retailer: retailersList[index],
-                    orderStatus: 2,
+                    orderStatus: 0,
                     beatId: snapshot.data![index].beatId,
                   );
                 });
@@ -147,7 +152,12 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
 
   void searchApi(String text) async {
     if (await Network.isConnected()) {
-      Map input = {"search": text, "day": widget.day};
+      Map input = {
+        "search": text,
+        "day": widget.day,
+        "beat_id": widget.beatsModal != null ? widget.beatsModal!.id : "",
+        "order_status": widget.index
+      };
       searchStream.addError("loading");
       RetailersResponse response = await repository.searchRetailer(input);
       if (response.success) {

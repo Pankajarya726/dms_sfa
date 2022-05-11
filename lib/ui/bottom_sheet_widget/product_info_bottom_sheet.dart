@@ -118,40 +118,50 @@ class _ProductInfoBottomSheetState extends State<ProductInfoBottomSheet> {
               const SizedBox(
                 height: 10,
               ),
-              Text(
-                widget.products.schemes.first.schemeName,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  letterSpacing: 0.67,
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  getText(
-                    textLabel2[0],
-                    widget.products.schemes.isNotEmpty
-                        ? widget.products.schemes.first.discountPercentage
-                        : "",
-                  ),
-                  getText(
-                    textLabel2[1],
-                    widget.products.schemes.isNotEmpty
-                        ? widget.products.schemes.first.fromDate
-                        : "",
-                  ),
-                  getText(
-                    textLabel2[2],
-                    widget.products.schemes.isNotEmpty
-                        ? widget.products.schemes.first.toDate
-                        : "",
-                  ),
-                ],
-              ),
+              widget.products.schemes.isNotEmpty
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.products.schemes.first.schemeName,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            letterSpacing: 0.67,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        getText(
+                          textLabel2[0],
+                          widget.products.schemes.first.discountPercentage
+                                  .isNotEmpty
+                              ? widget.products.schemes.first.discountPercentage
+                              : "",
+                        ),
+                        getText(
+                          textLabel2[1],
+                          widget.products.schemes.first.fromDate.isNotEmpty
+                              ? widget.products.schemes.first.fromDate
+                              : "",
+                        ),
+                        getText(
+                          textLabel2[2],
+                          widget.products.schemes.first.toDate.isNotEmpty
+                              ? widget.products.schemes.first.toDate
+                              : "",
+                        ),
+                      ],
+                    )
+                  : const Text(
+                      "Schemes not found",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        letterSpacing: 0.67,
+                      ),
+                    ),
             ],
           ),
         ),

@@ -48,16 +48,19 @@ class _TaskBottomSheetState extends State<TaskBottomSheet> {
         maxHeight: MediaQuery.of(context).size.height * 0.80,
         minHeight: MediaQuery.of(context).size.height * 0.20,
       ),
-      child: taskList.isNotEmpty
-          ? Padding(
-              padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: Padding(
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const BottomSheetHeading("Task"),
+            Flexible(
               child: SingleChildScrollView(
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const BottomSheetHeading("Task"),
                     ListView.builder(
                         itemCount: taskList.length,
                         shrinkWrap: true,
@@ -86,62 +89,60 @@ class _TaskBottomSheetState extends State<TaskBottomSheet> {
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        MaterialButton(
-                          onPressed: () {
-                            resolveTask(context);
-                          },
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          height: 40,
-                          color: MColor.colorPrimary,
-                          child: const Text(
-                            StringConst.done,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.5),
-                          ),
-                        ),
-                        MaterialButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          height: 40,
-                          color: MColor.colorSecondary,
-                          child: const Text(
-                            StringConst.cancel,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.5),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    )
                   ],
                 ),
               ),
-            )
-          : const IntrinsicHeight(
-              child: Center(
-                child: Text("Data not found"),
-              ),
             ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                MaterialButton(
+                  onPressed: () {
+                    resolveTask(context);
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  height: 40,
+                  color: MColor.colorPrimary,
+                  child: const Text(
+                    StringConst.done,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5),
+                  ),
+                ),
+                MaterialButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  height: 40,
+                  color: MColor.colorSecondary,
+                  child: const Text(
+                    StringConst.cancel,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            )
+          ],
+        ),
+      ),
     );
   }
 
