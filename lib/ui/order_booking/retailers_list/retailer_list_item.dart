@@ -3,9 +3,11 @@ import 'package:dms/ui/order_booking/order_details/order_detail_screen.dart';
 import 'package:dms/ui/order_booking/retailer_detail/retailer_detail_screen.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/my_location.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
-import 'package:maps_launcher/maps_launcher.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RetailerListItems extends StatefulWidget {
   final int index;
@@ -81,8 +83,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
             }
           },
           child: Padding(
-            padding:
-                const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
+            padding: const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
             child: Column(
               children: [
                 Row(
@@ -125,13 +126,14 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                       padding: const EdgeInsets.all(0),
                       constraints: const BoxConstraints(),
                       onPressed: () async {
-                        if (widget.retailer.lat.isEmpty ||
-                            widget.retailer.lng.isEmpty) {
+                        if (widget.retailer.lat.isEmpty || widget.retailer.lng.isEmpty) {
                           Utility.showToast("Coordinates not found");
                         } else {
-                          await MapsLauncher.launchCoordinates(
-                              double.parse(widget.retailer.lat),
-                              double.parse(widget.retailer.lng));
+                          drawRoute(widget.retailer.lat, widget.retailer.lng);
+
+                          // await MapsLauncher.launchCoordinates(
+                          //     double.parse(widget.retailer.lat),
+                          //     double.parse(widget.retailer.lng));
                         }
                       },
                       icon: const Image(
@@ -200,9 +202,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                                   ),
                                   Image(
                                     image: AssetImage(
-                                      widget.retailer.enrollmentTypeId == "1"
-                                          ? "assets/retailer.png"
-                                          : "assets/tele.png",
+                                      widget.retailer.enrollmentTypeId == "1" ? "assets/retailer.png" : "assets/tele.png",
                                     ),
                                   ),
                                 ],
@@ -220,5 +220,23 @@ class _RetailerListItemsState extends State<RetailerListItems> {
         ),
       ),
     );
+  }
+
+  void drawRoute(String lat, String lng) async {
+    try {
+      Position position = await MyLocation.getCurrentLocation();
+      String source = position.latitude.toString() + "," + position.longitude.toString();
+      String destination = lat.toString() + "," + lng.toString();
+      String url =
+          'https://www.google.com/maps/dir/?api=1&origin=$source&destination=$destination&travelmode=driving&dir_action=navigate';
+      debugPrint("url---->$url");
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        Utility.showToast("Unable to get route...");
+      }
+    } catch (exception) {
+      debugPrint("exception--->$exception");
+    }
   }
 }

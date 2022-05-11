@@ -253,9 +253,31 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
 
   void getRetailers() async {
     if (await Network.isConnected()) {
+
+
+      List<BeatsModal> selected = beats.where((element) => element.selected).toList();
+
+      String beatId = "";
+
+      if(selected.isNotEmpty){
+
+
+        for(int i=0;i<selected.length;i++){
+
+          if(i==selected.length-1){
+            beatId = selected[i].id;
+          }else{
+            beatId = selected[i].id+",";
+          }
+
+        }
+      }
+
+
+
       Map<String, dynamic> input = HashMap<String, dynamic>();
       input["order_status"] = "1";
-      input["beat_id"] = beatModal.id;
+      input["beat_id"] = beatId;
       input["day"] = widget.day;
       input["retailer_type"] = retailerCheck && teleRetailerCheck
           ? ""
