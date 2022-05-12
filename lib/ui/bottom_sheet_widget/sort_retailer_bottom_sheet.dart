@@ -107,7 +107,7 @@ class _SortingRetailersBottomSheetState
                   Navigator.pop(context);
                 },
                 style: ButtonStyle(
-                  fixedSize: MaterialStateProperty.all(const Size(180, 55)),
+                  fixedSize: MaterialStateProperty.all(const Size(170, 50)),
                   backgroundColor:
                       MaterialStateProperty.all(MColor.colorPrimary),
                   elevation: MaterialStateProperty.all(0),
@@ -137,30 +137,78 @@ class _SortingRetailersBottomSheetState
   }
 
   Widget radioButtonWidget(groupValue, value, label) {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
         commonBloc
             .add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
         selectedType = sortingList[value];
       },
-      child: RadioListTile<dynamic>(
-        contentPadding: const EdgeInsets.all(0),
-        value: value,
-        groupValue: groupValue,
-        title: Text(
-          label,
-          style: const TextStyle(
-            fontSize: 17.0,
-            color: MColor.backButton,
-            fontWeight: FontWeight.bold,
-          ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 20,
+              width: 20,
+              child: Radio<dynamic>(
+                value: value,
+                groupValue: groupValue,
+                activeColor: MColor.colorPrimary,
+                fillColor: MaterialStateProperty.all(MColor.colorPrimary),
+                onChanged: (value) {
+                  commonBloc.add(CommonBlocEnrollTypeRadioEvent(
+                      enrollmentRadioTag: value!));
+                  selectedType = sortingList[value].toString();
+                },
+              ),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Flexible(
+              child: Text(
+                label,
+                maxLines: 5,
+                style: const TextStyle(
+                  fontSize: 17.0,
+                  color: MColor.backButton,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(
+              width: 15,
+            ),
+          ],
         ),
-        onChanged: (value) {
-          commonBloc
-              .add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value!));
-          selectedType = sortingList[value].toString();
-        },
       ),
     );
+    // return GestureDetector(
+    //   onTap: () {
+    //     commonBloc
+    //         .add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
+    //     selectedType = sortingList[value];
+    //   },
+    //   child: RadioListTile<dynamic>(
+    //     contentPadding: const EdgeInsets.all(0),
+    //     value: value,
+    //     groupValue: groupValue,
+    //     title: Text(
+    //       label,
+    //       style: const TextStyle(
+    //         fontSize: 17.0,
+    //         color: MColor.backButton,
+    //         fontWeight: FontWeight.bold,
+    //       ),
+    //     ),
+    //     onChanged: (value) {
+    //       commonBloc
+    //           .add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value!));
+    //       selectedType = sortingList[value].toString();
+    //     },
+    //   ),
+    // );
   }
 }

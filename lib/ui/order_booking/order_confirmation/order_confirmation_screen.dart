@@ -64,6 +64,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
                               isScrollControlled: true,
                               builder: (context) {
                                 return OrderConfRemarkBottomSheet(
+                                  retailerId: widget.retailerId,
                                   reason: reason,
                                   remark: remark,
                                   buList: buList,

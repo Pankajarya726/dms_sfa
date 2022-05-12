@@ -9,16 +9,19 @@ import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response
 import 'package:dms/ui/order_booking/retailers_list/retailer_list_item.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
+import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 
 class SearchRetailerScreen extends StatefulWidget {
   final String day;
   final int index;
   final BeatsModal? beatsModal;
+  final String retailerType;
   const SearchRetailerScreen({
     required this.day,
     required this.index,
     required this.beatsModal,
+    required this.retailerType,
     Key? key,
   }) : super(key: key);
 
@@ -30,6 +33,19 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
   TextEditingController edtSearch = TextEditingController();
   List<RetailersModal> retailersList = [];
   StreamController<List<RetailersModal>> searchStream = StreamController();
+  String retailerType = "";
+
+  @override
+  void initState() {
+    if (widget.retailerType == StringConst.retailer) {
+      retailerType = "1";
+    } else if (widget.retailerType == StringConst.teleRetailer) {
+      retailerType = "2";
+    } else {
+      retailerType = "";
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +172,8 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
         "search": text,
         "day": widget.day,
         "beat_id": widget.beatsModal != null ? widget.beatsModal!.id : "",
-        "order_status": widget.index
+        "order_status": widget.index,
+        "retailer_type": retailerType,
       };
       searchStream.addError("loading");
       RetailersResponse response = await repository.searchRetailer(input);

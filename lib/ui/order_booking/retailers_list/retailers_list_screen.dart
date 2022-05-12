@@ -230,6 +230,7 @@ class _RetailerListScreenState extends State<RetailerListScreen>
                               context,
                               MaterialPageRoute(
                                   builder: (_) => SearchRetailerScreen(
+                                        retailerType: selectedEnrollmentType,
                                         beatsModal: beatsModal != null
                                             ? beatsModal!
                                             : BeatsModal(id: "", name: ""),

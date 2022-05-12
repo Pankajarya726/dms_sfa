@@ -20,7 +20,8 @@ import 'package:ntp/ntp.dart';
 
 class NoOrderReasonSheet extends StatefulWidget {
   final String retailerId;
-  const NoOrderReasonSheet({Key? key, required this.retailerId}) : super(key: key);
+  const NoOrderReasonSheet({Key? key, required this.retailerId})
+      : super(key: key);
 
   @override
   _NoOrderReasonSheetState createState() => _NoOrderReasonSheetState();
@@ -32,7 +33,8 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
   List<ReasonsModal> reasonList = [];
   List<BUModal> buList = [];
   ReasonsModal groupValue = ReasonsModal(id: "", tagName: "", taskType: "");
-  StreamController<List<ReasonsModal>> reasonStreamController = StreamController();
+  StreamController<List<ReasonsModal>> reasonStreamController =
+      StreamController();
   StreamController<List<BUModal>> buStreamController = StreamController();
 
   TextEditingController edtRemark = TextEditingController();
@@ -53,12 +55,16 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
         minHeight: MediaQuery.of(context).size.height * 0.20,
       ),
       child: Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             const BottomSheetHeading("Reason for no order"),
+            const SizedBox(
+              height: 10,
+            ),
             Flexible(
               child: SingleChildScrollView(
                 child: Column(
@@ -68,16 +74,76 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                         stream: reasonStreamController.stream,
                         builder: (context, snapshot) {
                           if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                            return RadioGroup<ReasonsModal>.builder(
-                              groupValue: groupValue,
-                              onChanged: (value) => setState(() {
-                                groupValue = value!;
-                              }),
-                              items: reasonList,
-                              itemBuilder: (item) => RadioButtonBuilder(
-                                item.tagName,
+                            return Column(
+                              children: List.generate(
+                                reasonList.length,
+                                (index) {
+                                  return InkWell(
+                                    onTap: () {
+                                      groupValue = reasonList[index];
+                                      reasonStreamController.add(reasonList);
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 10),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            height: 20,
+                                            width: 30,
+                                            child: Radio<ReasonsModal>(
+                                              value: reasonList[index],
+                                              groupValue: groupValue,
+                                              activeColor: MColor.colorPrimary,
+                                              fillColor:
+                                                  MaterialStateProperty.all(
+                                                      MColor.colorPrimary),
+                                              onChanged: (value) {
+                                                groupValue = value!;
+                                                reasonStreamController
+                                                    .add(reasonList);
+                                              },
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Flexible(
+                                            child: Text(
+                                              snapshot.data![index].tagName,
+                                              maxLines: 5,
+                                              style: const TextStyle(
+                                                fontSize: 17.0,
+                                                color: MColor.backButton,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 15,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                             );
+
+                            // return RadioGroup<ReasonsModal>.builder(
+                            //   groupValue: groupValue,
+                            //   onChanged: (value) => setState(() {
+                            //     groupValue = value!;
+                            //   }),
+                            //   items: reasonList,
+                            //   itemBuilder: (item) => RadioButtonBuilder(
+                            //     item.tagName,
+                            //   ),
+                            // );
                           }
                           return Container();
                         }),
@@ -92,15 +158,19 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                         maxLines: 5,
                         decoration: InputDecoration(
                             hintText: "Enter your Reason",
-                            contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                            border: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.circular(10))),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 15),
+                            border: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                                borderRadius: BorderRadius.circular(10))),
                       ),
                     ),
                     const Padding(
                       padding: EdgeInsets.all(15.0),
                       child: Text(
                         "Select BU",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
                     Padding(
@@ -108,7 +178,8 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                       child: StreamBuilder<List<BUModal>>(
                         stream: buStreamController.stream,
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return const Center(
                               child: CircularProgressIndicator(),
                             );
@@ -143,7 +214,8 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                                 textActiveColor: MColor.activeTextColor,
                                 pressEnabled: true,
                                 onPressed: (item) {
-                                  buList[index].selected = !buList[index].selected;
+                                  buList[index].selected =
+                                      !buList[index].selected;
 
                                   buStreamController.add(buList);
                                 },
@@ -151,7 +223,10 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                                 elevation: 0,
                                 activeColor: const Color(0xffFFC9CC),
                                 border: Border.all(
-                                    color: buList[index].selected ? MColor.colorPrimary : const Color(0xffc5c5c5), width: 1),
+                                    color: buList[index].selected
+                                        ? MColor.colorPrimary
+                                        : const Color(0xffc5c5c5),
+                                    width: 1),
                                 color: const Color(0xffFAFAFA),
                               );
                             },
@@ -190,7 +265,8 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
               children: [
                 DoneButton(
                   onPressed: () async {
-                    List<BUModal> bus = buList.where((element) => element.selected).toList();
+                    List<BUModal> bus =
+                        buList.where((element) => element.selected).toList();
 
                     String selectedBu = "";
 
@@ -255,7 +331,8 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
 
   void getBu() async {
     if (await Network.isConnected()) {
-      DateTime dateTime = await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
+      DateTime dateTime =
+          await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
         return DateTime.now();
       });
       Map<String, dynamic> input = {"day": DateFormat("EEEE").format(dateTime)};
