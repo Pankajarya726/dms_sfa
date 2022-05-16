@@ -4,10 +4,11 @@ import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 
 class LastVisitBottomSheet extends StatefulWidget {
-  final RetailerDetailsModal? retailerDetails;
+  final LastVisit? lastVisit;
+
   const LastVisitBottomSheet({
     Key? key,
-    required this.retailerDetails,
+    this.lastVisit,
   }) : super(key: key);
 
   @override
@@ -15,23 +16,12 @@ class LastVisitBottomSheet extends StatefulWidget {
 }
 
 class _LastVisitBottomSheetState extends State<LastVisitBottomSheet> {
-  LastVisit lastVisit = LastVisit(
-      orderId: "", orderDate: "", amount: "", remark: "", products: []);
-  String orderStatus = "";
+  LastVisit lastVisit = LastVisit(orderId: "", orderDate: "", amount: "", remark: "", products: [], orderStatus: '', id: '');
 
   @override
   void initState() {
-    if (widget.retailerDetails!.lastVisit.isNotEmpty) {
-      lastVisit = widget.retailerDetails!.lastVisit.first;
-    }
-    if (widget.retailerDetails!.connectionStatus == "1") {
-      orderStatus = "Not Connected";
-    } else if (widget.retailerDetails!.connectionStatus == "2") {
-      orderStatus = "Connected";
-    } else if (widget.retailerDetails!.connectionStatus == "3") {
-      orderStatus = "Order";
-    } else {
-      orderStatus = "";
+    if (widget.lastVisit != null) {
+      lastVisit = widget.lastVisit!;
     }
 
     super.initState();
@@ -47,26 +37,21 @@ class _LastVisitBottomSheetState extends State<LastVisitBottomSheet> {
           children: [
             const Text(
               "Last Visit Status",
-              style: TextStyle(
-                  color: MColor.colorPrimary,
-                  fontSize: 20,
-                  letterSpacing: 0.67),
+              style: TextStyle(color: MColor.colorPrimary, fontSize: 20, letterSpacing: 0.67),
             ),
             const SizedBox(
               height: 15,
             ),
             const Text(
               "Order Status",
-              style: TextStyle(
-                  color: Colors.black, fontSize: 16, letterSpacing: 0.67),
+              style: TextStyle(color: Colors.black, fontSize: 16, letterSpacing: 0.67),
             ),
             const SizedBox(
               height: 5,
             ),
             Text(
-              orderStatus,
-              style: const TextStyle(
-                  color: MColor.textColor, fontSize: 16, letterSpacing: 0.67),
+              lastVisit.orderStatus,
+              style: const TextStyle(color: MColor.textColor, fontSize: 16, letterSpacing: 0.67),
             ),
             const SizedBox(
               height: 10,
@@ -77,10 +62,7 @@ class _LastVisitBottomSheetState extends State<LastVisitBottomSheet> {
                     children: [
                       const Text(
                         StringConst.remark,
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            letterSpacing: 0.67),
+                        style: TextStyle(color: Colors.black, fontSize: 16, letterSpacing: 0.67),
                       ),
                       const SizedBox(
                         height: 5,

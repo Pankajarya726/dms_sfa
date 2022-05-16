@@ -121,7 +121,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                       delegate: SliverChildListDelegate(
                         [
                           DetailGritItem(
-                            value: retailer!.lastVisit.isNotEmpty ? retailer!.lastVisit.first.orderDate : "No visit yet!",
+                            value: retailer!.lastVisit != null ? retailer!.lastVisit!.orderDate : "No visit yet!",
                             image: "assets/store.png",
                             name: StringConst.lastVisit,
                             type: 1,
@@ -882,12 +882,12 @@ class _DetailGritItemState extends State<DetailGritItem> {
                   Utility.hideKeyboard();
                   FocusScope.of(context).unfocus();
                   if (widget.type == 1) {
-                    widget.retailerDetails.lastVisit.isNotEmpty
+                    widget.retailerDetails.lastVisit != null
                         ? showModalBottomSheet(
                             context: context,
                             shape: bottomSheetShape,
                             builder: (context) => LastVisitBottomSheet(
-                                  retailerDetails: widget.retailerDetails,
+                                  lastVisit: widget.retailerDetails.lastVisit,
                                 ))
                         : null;
                   }
