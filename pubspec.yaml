@@ -76,7 +76,8 @@ dependencies:
 
 # Marquee for auto slide text
   marquee:
-
+  # image_compression:
+  flutter_image_compress:
 
 
 dev_dependencies:
