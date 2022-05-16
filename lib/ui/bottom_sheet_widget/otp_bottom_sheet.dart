@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:dms/model/retailer_form.dart';
 import 'package:dms/ui/common_bloc/common_bloc.dart';
 import 'package:dms/ui/common_bloc/common_bloc_events.dart';
+import 'package:dms/ui/common_bloc/common_bloc_states.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class SelectOtpNumberBottomSheet extends StatefulWidget {
@@ -12,16 +16,24 @@ class SelectOtpNumberBottomSheet extends StatefulWidget {
   final Function onSubmit;
   final RetailerForm form;
 
-  const SelectOtpNumberBottomSheet({Key? key, required this.form, required this.onDone, required this.onSubmit}) : super(key: key);
+  const SelectOtpNumberBottomSheet(
+      {Key? key,
+      required this.form,
+      required this.onDone,
+      required this.onSubmit})
+      : super(key: key);
 
   @override
-  _SelectOtpNumberBottomSheetState createState() => _SelectOtpNumberBottomSheetState();
+  _SelectOtpNumberBottomSheetState createState() =>
+      _SelectOtpNumberBottomSheetState();
 }
 
-class _SelectOtpNumberBottomSheetState extends State<SelectOtpNumberBottomSheet> {
+class _SelectOtpNumberBottomSheetState
+    extends State<SelectOtpNumberBottomSheet> {
   int groupValue = -1;
   TextEditingController otpController = TextEditingController();
   CommonBloc commonBloc = CommonBloc();
+  StreamController<int> radioStreamController = StreamController();
 
   @override
   Widget build(BuildContext context) {
@@ -50,42 +62,41 @@ class _SelectOtpNumberBottomSheetState extends State<SelectOtpNumberBottomSheet>
             const SizedBox(
               height: 10,
             ),
-            Column(
-              children: [
-                RadioListTile<int>(
-                  value: 1,
-                  groupValue: groupValue,
-                  onChanged: (value) {
-                    groupValue = value!;
-                    setState(() {});
-                  },
-                  title: const Text(StringConst.primary),
-                ),
-                RadioListTile<int>(
-                  value: 2,
-                  groupValue: groupValue,
-                  onChanged: (value) {
-                    groupValue = value!;
-                    setState(() {});
-                  },
-                  title: const Text(StringConst.secondary),
-                ),
-                RadioListTile<int>(
-                  value: 3,
-                  groupValue: groupValue,
-                  onChanged: (value) {
-                    groupValue = value!;
-                    setState(() {});
-                  },
-                  title: const Text(StringConst.helper),
-                ),
-              ],
-            ),
+            radioButtonWidget(groupValue, 1, StringConst.primary),
+            radioButtonWidget(groupValue, 2, StringConst.secondary),
+            radioButtonWidget(groupValue, 3, StringConst.helper),
+            // RadioListTile<int>(
+            //   value: 1,
+            //   groupValue: groupValue,
+            //   onChanged: (value) {
+            //     groupValue = value!;
+            //     setState(() {});
+            //   },
+            //   title: const Text(StringConst.primary),
+            // ),
+            // RadioListTile<int>(
+            //   value: 2,
+            //   groupValue: groupValue,
+            //   onChanged: (value) {
+            //     groupValue = value!;
+            //     setState(() {});
+            //   },
+            //   title: const Text(StringConst.secondary),
+            // ),
+            // RadioListTile<int>(
+            //   value: 3,
+            //   groupValue: groupValue,
+            //   onChanged: (value) {
+            //     groupValue = value!;
+            //     setState(() {});
+            //   },
+            //   title: const Text(StringConst.helper),
+            // ),
             const SizedBox(
-              height: 20,
+              height: 15,
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 buttonWidget(context, StringConst.done),
                 buttonWidget(context, StringConst.submitAnyway),
@@ -103,22 +114,26 @@ class _SelectOtpNumberBottomSheetState extends State<SelectOtpNumberBottomSheet>
   Widget buttonWidget(BuildContext context, String label) {
     return Center(
       child: MaterialButton(
+        padding: const EdgeInsets.symmetric(horizontal: 0),
         onPressed: () {
           if (label == StringConst.done) {
             if (groupValue == -1) {
-              Utility.showToast( "Please select an option");
+              Utility.showToast("Please select an option");
               return;
             }
             if (groupValue == 1 && widget.form.primaryMobile.trim().isEmpty) {
-              Utility.showToast( "Primary mobile number is not entered please select different option");
+              Utility.showToast(
+                  "Primary mobile number is not entered please select different option");
               return;
             }
             if (groupValue == 2 && widget.form.secondaryMobile.trim().isEmpty) {
-              Utility.showToast( "Secondary mobile number is not entered please select different option");
+              Utility.showToast(
+                  "Secondary mobile number is not entered please select different option");
               return;
             }
             if (groupValue == 3 && widget.form.helperMobile.trim().isEmpty) {
-              Utility.showToast( "Helper mobile number is not entered please select different option");
+              Utility.showToast(
+                  "Helper mobile number is not entered please select different option");
               return;
             }
 
@@ -135,28 +150,19 @@ class _SelectOtpNumberBottomSheetState extends State<SelectOtpNumberBottomSheet>
             Navigator.pop(context);
           }
         },
-        color: label == StringConst.done ? MColor.colorPrimary : MColor.colorSecondary,
+        color: label == StringConst.done
+            ? MColor.colorPrimary
+            : MColor.colorSecondary,
         height: 40,
-        minWidth: MediaQuery.of(context).size.width / 2.5,
+        minWidth: MediaQuery.of(context).size.width / 2.3,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        // style: ButtonStyle(
-        //   fixedSize: MaterialStateProperty.all(const Size(170, 50)),
-        //   backgroundColor: MaterialStateProperty.all(
-        //       label == done ? MColor.colorPrimary : MColor.colorSecondary),
-        //   elevation: MaterialStateProperty.all(0),
-        //   shape: MaterialStateProperty.all(
-        //     RoundedRectangleBorder(
-        //       borderRadius: BorderRadius.circular(30),
-        //     ),
-        //   ),
-        // ),
         child: Text(
           label,
           style: const TextStyle(
             color: Colors.white,
-            fontSize: 18,
+            fontSize: 17,
             letterSpacing: 0.67,
             fontWeight: FontWeight.bold,
           ),
@@ -166,9 +172,10 @@ class _SelectOtpNumberBottomSheetState extends State<SelectOtpNumberBottomSheet>
   }
 
   Widget radioButtonWidget(groupValue, value, label) {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
-        commonBloc.add(CommonBlocRetailerRadioEvent(retailerRadioTag: value));
+        this.groupValue = value!;
+        setState(() {});
       },
       child: Row(
         children: [
@@ -180,7 +187,8 @@ class _SelectOtpNumberBottomSheetState extends State<SelectOtpNumberBottomSheet>
               activeColor: MColor.colorPrimary,
               fillColor: MaterialStateProperty.all(MColor.colorPrimary),
               onChanged: (value) {
-                commonBloc.add(CommonBlocRetailerRadioEvent(retailerRadioTag: value));
+                this.groupValue = value!;
+                setState(() {});
               },
             ),
           ),

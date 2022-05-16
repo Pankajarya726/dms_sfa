@@ -166,6 +166,8 @@ class _OrderConfRemarkBottomSheetState
                                                 snapshot.data![index].tagName,
                                                 maxLines: 5,
                                                 style: const TextStyle(
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                   fontSize: 17.0,
                                                   color: MColor.backButton,
                                                   fontWeight: FontWeight.bold,

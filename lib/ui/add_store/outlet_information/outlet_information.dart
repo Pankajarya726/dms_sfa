@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:dms/model/retailer_form.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_bloc.dart';
 import 'package:dms/ui/add_store/bloc/edit_store_events.dart';
@@ -31,6 +32,7 @@ import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -56,8 +58,7 @@ class _OutletInformationState extends State<OutletInformation> {
   TextEditingController txtSelectDistrictController = TextEditingController();
   TextEditingController txtSelectDistributorController =
       TextEditingController();
-  TextEditingController txtSelectBeatNameController =
-      TextEditingController();
+  TextEditingController txtSelectBeatNameController = TextEditingController();
   TextEditingController txtOrderBookingController = TextEditingController();
   TextEditingController txtOutletNameController = TextEditingController();
   TextEditingController txtLatitudeController = TextEditingController();
@@ -862,17 +863,51 @@ class _OutletInformationState extends State<OutletInformation> {
     FocusScope.of(context).unfocus();
     try {
       XFile? image = await imagePicker.pickImage(
-          source: ImageSource.camera,
-          preferredCameraDevice: CameraDevice.front
-          imageQuality: 50,
-          );
+        source: ImageSource.camera,
+        preferredCameraDevice: CameraDevice.front,
+      );
 
       if (image != null) {
         outletPhotoFile = File(image.path);
         outletFileName = image.name;
         commonBloc.add(CommonBlocSelectImageEvent(imageFile: outletPhotoFile!));
       }
+
+      File file = File(image!.path);
+
+      // image size before compression
+      Uint8List? result = await FlutterImageCompress.compressWithFile(
+        file.absolute.path,
+        minWidth: 2300,
+        minHeight: 1500,
+        quality: 50,
+      );
+      var sizeInKb = result!.lengthInBytes / 1024;
+      var sizeInMb = sizeInKb / 1024;
+      debugPrint("size before compression\n");
+      // debugPrint("size = ${file.lengthSync()}");
+      debugPrint("bytes size = ${result.lengthInBytes}");
+      debugPrint("kb size = $sizeInKb");
+      debugPrint("mb size = $sizeInMb \n");
+
+      File f = await File(file.absolute.path).create();
+      f.writeAsBytesSync(result);
+
+      Uint8List? result2 = await FlutterImageCompress.compressWithFile(
+        f.absolute.path,
+        minWidth: 2300,
+        minHeight: 1500,
+        quality: 100,
+      );
+      var sizeInKb2 = result2!.lengthInBytes / 1024;
+      var sizeInMb2 = sizeInKb2 / 1024;
+      debugPrint("size before compression\n");
+      // debugPrint("size = ${file.lengthSync()}");
+      debugPrint("bytes size = ${result2.lengthInBytes}");
+      debugPrint("kb size = $sizeInKb2");
+      debugPrint("mb size = $sizeInMb2 \n");
     } catch (exception) {
+      debugPrint(exception.toString());
       Fluttertoast.showToast(
           msg:
               "Permission denied, go to app settings and allow camera permission",

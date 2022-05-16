@@ -148,7 +148,9 @@ class _SelectRetailerTypeBottomSheetState
                                   ? const SizedBox(
                                       height: 20,
                                     )
-                                  : Container(),
+                                  : const SizedBox(
+                                      height: 5,
+                                    ),
                               snapshot.data!.isNotEmpty
                                   ? Flexible(
                                       child: SingleChildScrollView(
@@ -156,26 +158,91 @@ class _SelectRetailerTypeBottomSheetState
                                           crossAxisAlignment:
                                               CrossAxisAlignment.end,
                                           children: List.generate(
-                                            snapshot.data!.length,
-                                            (index) => RadioListTile<int>(
-                                              contentPadding: EdgeInsets.zero,
-                                              value: snapshot.data![index].id,
-                                              groupValue: groupValue,
-                                              title: Text(
-                                                snapshot.data![index].name,
-                                                style: const TextStyle(
-                                                  fontSize: 17.0,
-                                                  color: MColor.backButton,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              onChanged: (value) {
-                                                groupValue = value!;
+                                              snapshot.data!.length, (index) {
+                                            return InkWell(
+                                              onTap: () {
+                                                groupValue =
+                                                    snapshot.data![index].id;
                                                 retailerTypeStream
                                                     .add(snapshot.data!);
                                               },
-                                            ),
-                                          ),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 10),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    SizedBox(
+                                                      height: 20,
+                                                      width: 20,
+                                                      child: Radio<int>(
+                                                        value: snapshot
+                                                            .data![index].id,
+                                                        groupValue: groupValue,
+                                                        activeColor:
+                                                            MColor.colorPrimary,
+                                                        fillColor:
+                                                            MaterialStateProperty
+                                                                .all(MColor
+                                                                    .colorPrimary),
+                                                        onChanged: (value) {
+                                                          groupValue = value!;
+                                                          retailerTypeStream
+                                                              .add(snapshot
+                                                                  .data!);
+                                                        },
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Flexible(
+                                                      child: Text(
+                                                        snapshot
+                                                            .data![index].name,
+                                                        maxLines: 5,
+                                                        style: const TextStyle(
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          fontSize: 17.0,
+                                                          color:
+                                                              MColor.backButton,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 15,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+
+                                            // return RadioListTile<int>(
+                                            //   contentPadding: EdgeInsets.zero,
+                                            //   value: snapshot.data![index].id,
+                                            //   groupValue: groupValue,
+                                            //   title: Text(
+                                            //     snapshot.data![index].name,
+                                            //     style: const TextStyle(
+                                            //       fontSize: 17.0,
+                                            //       color: MColor.backButton,
+                                            //       fontWeight: FontWeight.bold,
+                                            //     ),
+                                            //   ),
+                                            //   onChanged: (value) {
+                                            //     groupValue = value!;
+                                            //     retailerTypeStream
+                                            //         .add(snapshot.data!);
+                                            //   },
+                                            // );
+                                          }),
                                         ),
                                       ),
                                     )

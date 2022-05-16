@@ -117,6 +117,7 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                                               snapshot.data![index].tagName,
                                               maxLines: 5,
                                               style: const TextStyle(
+                                                overflow: TextOverflow.ellipsis,
                                                 fontSize: 17.0,
                                                 color: MColor.backButton,
                                                 fontWeight: FontWeight.bold,
@@ -156,7 +157,9 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                         controller: edtRemark,
                         minLines: 3,
                         maxLines: 5,
+                        maxLength: 200,
                         decoration: InputDecoration(
+                            counterText: "",
                             hintText: "Enter your Reason",
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 15),

@@ -150,7 +150,9 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
                                 ? const SizedBox(
                                     height: 20,
                                   )
-                                : Container(),
+                                : const SizedBox(
+                                    height: 5,
+                                  ),
                             snapshot.data!.isNotEmpty
                                 ? Flexible(
                                     child: SingleChildScrollView(
@@ -164,26 +166,90 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
                                               widget.previousSelectedLang) {
                                             return Container();
                                           }
-                                          return RadioListTile<int>(
-                                            contentPadding:
-                                                const EdgeInsets.all(0),
-                                            value: snapshot.data![index].id,
-                                            groupValue: groupValue,
-                                            title: Text(
-                                              snapshot
-                                                  .data![index].languageName,
-                                              style: const TextStyle(
-                                                fontSize: 17.0,
-                                                color: MColor.backButton,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            onChanged: (value) {
-                                              groupValue = value!;
+                                          return InkWell(
+                                            onTap: () {
+                                              groupValue =
+                                                  snapshot.data![index].id;
                                               languageStream
                                                   .add(snapshot.data!);
                                             },
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 10),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  SizedBox(
+                                                    height: 20,
+                                                    width: 20,
+                                                    child: Radio<int>(
+                                                      value: snapshot
+                                                          .data![index].id,
+                                                      groupValue: groupValue,
+                                                      activeColor:
+                                                          MColor.colorPrimary,
+                                                      fillColor:
+                                                          MaterialStateProperty
+                                                              .all(MColor
+                                                                  .colorPrimary),
+                                                      onChanged: (value) {
+                                                        groupValue = value!;
+                                                        languageStream.add(
+                                                            snapshot.data!);
+                                                      },
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Flexible(
+                                                    child: Text(
+                                                      snapshot.data![index]
+                                                          .languageName,
+                                                      maxLines: 5,
+                                                      style: const TextStyle(
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        fontSize: 17.0,
+                                                        color:
+                                                            MColor.backButton,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 15,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                           );
+
+                                          // return RadioListTile<int>(
+                                          //   contentPadding:
+                                          //       const EdgeInsets.all(0),
+                                          //   value: snapshot.data![index].id,
+                                          //   groupValue: groupValue,
+                                          //   title: Text(
+                                          //     snapshot
+                                          //         .data![index].languageName,
+                                          //     style: const TextStyle(
+                                          //       fontSize: 17.0,
+                                          //       color: MColor.backButton,
+                                          //       fontWeight: FontWeight.bold,
+                                          //     ),
+                                          //   ),
+                                          //   onChanged: (value) {
+                                          //     groupValue = value!;
+                                          //     languageStream
+                                          //         .add(snapshot.data!);
+                                          //   },
+                                          // );
                                         }),
                                       ),
                                     ),

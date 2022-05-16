@@ -103,7 +103,8 @@ class StringConst {
   static const done = "Done";
   static const selectLangFirst = "Select Language ";
   static const selectLangSecond = "Select Language ";
-  static const whatsAppSms = "Does retailer want to opt-in for Whatsapp message / SMS? *";
+  static const whatsAppSms =
+      "Does retailer want to opt-in for Whatsapp message / SMS? *";
   static const filter = "Filter";
   static const productInformation = "Product Info";
   static const schemeInfo = "Scheme Info";
@@ -161,6 +162,6 @@ class StringConst {
   static const secondaryNo = "Secondary No.";
   static const orderHistory = "Order History";
   static const noOrdersTaken = "No orders taken yet!";
-  static const buNotOrdered = "BU not ordered yet";
+  static const buNotOrdered = "No Order Yet";
   static const dataNotFound = "Data not found";
 }
