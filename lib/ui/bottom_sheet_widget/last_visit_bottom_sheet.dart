@@ -16,7 +16,14 @@ class LastVisitBottomSheet extends StatefulWidget {
 }
 
 class _LastVisitBottomSheetState extends State<LastVisitBottomSheet> {
-  LastVisit lastVisit = LastVisit(orderId: "", orderDate: "", amount: "", remark: "", products: [], orderStatus: '', id: '');
+  LastVisit lastVisit = LastVisit(
+      orderId: "",
+      orderDate: "",
+      amount: "",
+      remark: "",
+      products: [],
+      orderStatus: '',
+      id: '');
 
   @override
   void initState() {
@@ -29,55 +36,81 @@ class _LastVisitBottomSheetState extends State<LastVisitBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return IntrinsicHeight(
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.80,
+        minHeight: MediaQuery.of(context).size.height * 0.20,
+      ),
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
               "Last Visit Status",
-              style: TextStyle(color: MColor.colorPrimary, fontSize: 20, letterSpacing: 0.67),
+              style: TextStyle(
+                  color: MColor.colorPrimary,
+                  fontSize: 20,
+                  letterSpacing: 0.67),
             ),
             const SizedBox(
               height: 15,
             ),
-            const Text(
-              "Order Status",
-              style: TextStyle(color: Colors.black, fontSize: 16, letterSpacing: 0.67),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Text(
-              lastVisit.orderStatus,
-              style: const TextStyle(color: MColor.textColor, fontSize: 16, letterSpacing: 0.67),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            lastVisit.remark.isNotEmpty
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        StringConst.remark,
-                        style: TextStyle(color: Colors.black, fontSize: 16, letterSpacing: 0.67),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        lastVisit.remark,
-                        style: const TextStyle(
+            Flexible(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Order Status",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          letterSpacing: 0.67),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      lastVisit.orderStatus,
+                      style: const TextStyle(
                           color: MColor.textColor,
                           fontSize: 16,
-                          letterSpacing: 0.67,
-                        ),
-                      )
-                    ],
-                  )
-                : Container(),
+                          letterSpacing: 0.67),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    lastVisit.remark.isNotEmpty
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                StringConst.remark,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    letterSpacing: 0.67),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                lastVisit.remark,
+                                style: const TextStyle(
+                                  color: MColor.textColor,
+                                  fontSize: 16,
+                                  letterSpacing: 0.67,
+                                ),
+                              )
+                            ],
+                          )
+                        : Container(),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
