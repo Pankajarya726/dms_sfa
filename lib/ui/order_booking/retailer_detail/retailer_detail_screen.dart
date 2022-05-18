@@ -126,6 +126,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                             name: StringConst.lastVisit,
                             type: 1,
                             retailerDetails: retailer!,
+                            onTaskResolve: () {},
                           ),
                           DetailGritItem(
                             value: retailer!.pendingTask.isNotEmpty ? retailer!.pendingTask : "0",
@@ -134,6 +135,10 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                             type: 2,
                             retailerDetails: retailer!,
                             taskList: taskList,
+                            onTaskResolve: () {
+                              retailerDetailsBloc.add(GetTaskEvent(uniqueCode: widget.retailer.uniqueCode));
+                              retailerDetailsBloc.add(GetRetailerDetailsEvent(storeId: widget.retailer.customerId));
+                            },
                           ),
                           DetailGritItem(
                             value: retailer!.tcStatus,
@@ -141,12 +146,14 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                             name: StringConst.tcStatus,
                             type: 3,
                             retailerDetails: retailer!,
+                            onTaskResolve: () {},
                           ),
                           DetailGritItem(
                             value: currencyFormat.format(double.parse(retailer!.potential)),
                             image: "assets/experience.png",
                             name: StringConst.potential,
                             type: 4,
+                            onTaskResolve: () {},
                             retailerDetails: retailer!,
                           ),
                         ],
@@ -836,6 +843,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
 }
 
 class DetailGritItem extends StatefulWidget {
+  final Function onTaskResolve;
   final String image;
   final String name;
   final String value;
@@ -843,15 +851,16 @@ class DetailGritItem extends StatefulWidget {
   final List<Task> taskList;
   final RetailerDetailsModal retailerDetails;
 
-  const DetailGritItem({
-    Key? key,
-    required this.image,
-    required this.name,
-    required this.value,
-    required this.type,
-    required this.retailerDetails,
-    this.taskList = const [],
-  }) : super(key: key);
+  const DetailGritItem(
+      {Key? key,
+      required this.image,
+      required this.name,
+      required this.value,
+      required this.type,
+      required this.retailerDetails,
+      this.taskList = const [],
+      required this.onTaskResolve})
+      : super(key: key);
 
   @override
   _DetailGritItemState createState() => _DetailGritItemState();
@@ -878,7 +887,7 @@ class _DetailGritItemState extends State<DetailGritItem> {
             borderRadius: BorderRadius.circular(10),
           ),
           onTap: widget.type != 4
-              ? () {
+              ? () async {
                   Utility.hideKeyboard();
                   FocusScope.of(context).unfocus();
                   if (widget.type == 1) {
@@ -892,17 +901,22 @@ class _DetailGritItemState extends State<DetailGritItem> {
                         : null;
                   }
                   if (widget.type == 2) {
-                    widget.retailerDetails.pendingTask.isNotEmpty
-                        ? showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            enableDrag: true,
-                            shape: bottomSheetShape,
-                            builder: (context) => TaskBottomSheet(
-                                  taskList: widget.taskList,
-                                  retailerCode: widget.retailerDetails.uniqueCode,
-                                ))
-                        : Utility.showToast("No task available");
+                    if (widget.retailerDetails.pendingTask.isNotEmpty) {
+                      var result = await showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          enableDrag: true,
+                          shape: bottomSheetShape,
+                          builder: (context) => TaskBottomSheet(
+                                taskList: widget.taskList,
+                                retailerCode: widget.retailerDetails.uniqueCode,
+                              ));
+                      if (result != null) {
+                        widget.onTaskResolve();
+                      }
+                    } else {
+                      Utility.showToast("No task available");
+                    }
                   }
                   // tc status bottom sheet
                   // if (widget.type == 3) {

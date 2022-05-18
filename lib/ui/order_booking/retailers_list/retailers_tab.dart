@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:math';
+
 import 'package:dms/listeners/select_beat_listener.dart';
 import 'package:dms/ui/custom_widget/no_internet.dart';
 import 'package:dms/ui/custom_widget/retailer_not_found.dart';
@@ -11,14 +12,17 @@ import 'package:dms/ui/userlocation_bloc/userlocation_bloc.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_events.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_states.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/my_location.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+
 import '../../../main.dart';
 
 class RetailerTab extends StatefulWidget {
@@ -39,31 +43,29 @@ class RetailerTab extends StatefulWidget {
   _RetailerTabState createState() => _RetailerTabState();
 }
 
-class _RetailerTabState extends State<RetailerTab>
-    implements SelectBeatListener {
+class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener {
   List<RetailersModal> retailers = [];
   BeatsModal? selectedBeat;
-  StreamController<List<RetailersModal>> retailerStreamController =
-      StreamController();
+  StreamController<List<RetailersModal>> retailerStreamController = StreamController();
   String day = "";
   String retailerType = "";
+  int pageNo = 1;
 
   double latitude = 0.0;
   double longitude = 0.0;
   String sortingType = "";
   UserLocationBloc userLocationBloc = UserLocationBloc();
-  RefreshController refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController refreshController = RefreshController(initialRefresh: false);
 
   @override
   void initState() {
     debugPrint("RetailerTab-->initState--->${widget.selectedBeat.name}");
     widget.onInit(this);
     selectedBeat ??= widget.selectedBeat;
-    day = widget.day.isEmpty
-        ? DateFormat.EEEE().format(DateTime.now())
-        : widget.day;
+    day = widget.day.isEmpty ? DateFormat.EEEE().format(DateTime.now()) : widget.day;
+    retailerStreamController.addError("loading");
     getRetailers();
+    getLocation();
     super.initState();
   }
 
@@ -74,6 +76,9 @@ class _RetailerTabState extends State<RetailerTab>
     selectedBeat = widget.selectedBeat;
     day = widget.day;
     userLocationBloc.add(GetUserLocationEvent());
+    retailers.clear();
+    pageNo = 1;
+    retailerStreamController.addError("loading");
     getRetailers();
     super.didUpdateWidget(oldWidget);
   }
@@ -104,7 +109,7 @@ class _RetailerTabState extends State<RetailerTab>
 
     return Column(
       children: [
-        userLocation,
+        // userLocation,
         Expanded(
           child: StreamBuilder<List<RetailersModal>>(
             stream: retailerStreamController.stream,
@@ -174,16 +179,16 @@ class _RetailerTabState extends State<RetailerTab>
   }
 
   void getRetailers() async {
-    retailers.clear();
-    retailerStreamController.addError("loading");
+    // retailers.clear();
+
     if (await Network.isConnected()) {
       Map<String, dynamic> input = HashMap<String, dynamic>();
       input["order_status"] = widget.index;
       input["beat_id"] = selectedBeat!.id;
       input["day"] = day;
+      input["page_no"] = pageNo;
       input["retailer_type"] = retailerType;
-      GetRetailersResponse response =
-          await repository.getRetailersOrderWise(input);
+      GetRetailersResponse response = await repository.getRetailersOrderWise(input);
       if (response.success) {
         retailers = response.data!;
         for (var element in retailers) {
@@ -229,20 +234,17 @@ class _RetailerTabState extends State<RetailerTab>
   void onSorting(String type) {
     sortingType = type;
     if (type == StringConst.retailer) {
-      retailers.sort((a, b) =>
-          a.enrollmentTypeId.compareTo(b.enrollmentTypeId)); // ascending order
+      retailers.sort((a, b) => a.enrollmentTypeId.compareTo(b.enrollmentTypeId)); // ascending order
       retailerStreamController.add(retailers);
     }
 
     if (type == StringConst.teleRetailer) {
-      retailers.sort((a, b) =>
-          b.enrollmentTypeId.compareTo(a.enrollmentTypeId)); // descending order
+      retailers.sort((a, b) => b.enrollmentTypeId.compareTo(a.enrollmentTypeId)); // descending order
       retailerStreamController.add(retailers);
     }
 
     if (type == StringConst.nearby) {
-      retailers
-          .sort((a, b) => a.distance.compareTo(b.distance)); // ascending order
+      retailers.sort((a, b) => a.distance.compareTo(b.distance)); // ascending order
       retailerStreamController.add(retailers);
     }
   }
@@ -262,9 +264,7 @@ class _RetailerTabState extends State<RetailerTab>
     double lon2 = double.parse(passedLng);
     var p = 0.017453292519943295;
     var c = cos;
-    var a = 0.5 -
-        c((lat2 - lat1) * p) / 2 +
-        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    var a = 0.5 - c((lat2 - lat1) * p) / 2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     double d = 12742 * asin(sqrt(a));
     // print("distance after converting into kilometers = $d");
     return d.toStringAsFixed(2);
@@ -274,6 +274,12 @@ class _RetailerTabState extends State<RetailerTab>
     retailers.clear();
     getRetailers();
     refreshController.refreshCompleted();
+  }
+
+  void getLocation() async {
+    Position position = await MyLocation.getCurrentLocation();
+    latitude = position.latitude;
+    longitude = position.longitude;
   }
 }
 
@@ -348,25 +354,14 @@ class _BeatWidgetState extends State<BeatWidget> {
             active: widget.tags[index].name == tag.name,
             customData: widget.tags[index],
             textActiveColor: Colors.black,
-            textColor: widget.tags[index].name == tag.name
-                ? Colors.black
-                : const Color(0xff555555),
+            textColor: widget.tags[index].name == tag.name ? Colors.black : const Color(0xff555555),
             elevation: 0,
-            textStyle: const TextStyle(
-                fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+            textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
             padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-            border: Border.all(
-                color: widget.tags[index].name == tag.name
-                    ? MColor.colorPrimary
-                    : const Color(0xffC5C5C5),
-                width: 1.5),
+            border: Border.all(color: widget.tags[index].name == tag.name ? MColor.colorPrimary : const Color(0xffC5C5C5), width: 1.5),
             singleItem: true,
-            activeColor: widget.tags[index].name == tag.name
-                ? const Color(0xffFFC9CC)
-                : const Color(0xffFAFAFA),
-            color: widget.tags[index].name == tag.name
-                ? const Color(0xffFFC9CC)
-                : const Color(0xffFAFAFA),
+            activeColor: widget.tags[index].name == tag.name ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
+            color: widget.tags[index].name == tag.name ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
             title: widget.tags[index].name,
           ),
         );
