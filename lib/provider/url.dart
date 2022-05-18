@@ -33,7 +33,7 @@ class Url {
   static const String searchRetailer = "searchRetailer";
   static const String getBrandAndCategory = "getBrandAndCategoryBeatWise";
   static const String getAllBeats = "getBeatForLoginUser";
-  static const String getBeatByOrderBookingDay = "getBeatByOrderBookingDay";
+  static const String getBeatByOrderBookingDay = "getBeatByOrderBookingDayV1";
   static const String getRetailerOrderWise = "getRetailerOrderWise";
   static const String getRetailerOrderWiseV1 = "getRetailerOrderWiseV1";
   static const String getRetailerInfo = "retailerInfo";
@@ -51,7 +51,7 @@ class Url {
   static const String getOrder = "getOrderForEdit";
   static const String getTaskByRetailer = "getTaskByRetailer";
   static const String noOrderYet = "getNoOrderYet";
-  static const String getRetailersTaskWise = "getRetailerTaskWise";
+  static const String getRetailersTaskWise = "getRetailerTaskWiseV1";
   static const String getPendingTask = "getPendingTask";
   static const String searchTaskRetailers = "searchRetailerInTask";
   static const String taskEscalate = "taskEscalateAndResolve";

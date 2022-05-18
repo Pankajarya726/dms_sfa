@@ -65,8 +65,24 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
       child: Padding(
         padding: MediaQuery.of(context).viewInsets,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
+              child: Text(
+                StringConst.taskDetails,
+                style: TextStyle(
+                  fontSize: 19,
+                  color: MColor.colorPrimary,
+                  letterSpacing: 0.67,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
             Flexible(
               child: SingleChildScrollView(
                 child: Padding(
@@ -74,18 +90,6 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        StringConst.taskDetails,
-                        style: TextStyle(
-                          fontSize: 19,
-                          color: MColor.colorPrimary,
-                          letterSpacing: 0.67,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -209,8 +213,10 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
                       TextFormField(
                         minLines: 3,
                         maxLines: 5,
+                        maxLength: 300,
                         controller: txtRemarkController,
                         decoration: InputDecoration(
+                          counterText: "",
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 10, horizontal: 15),
                           border: OutlineInputBorder(

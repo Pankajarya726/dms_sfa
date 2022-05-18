@@ -83,7 +83,8 @@ class _RetailerListItemsState extends State<RetailerListItems> {
             }
           },
           child: Padding(
-            padding: const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
+            padding:
+                const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
             child: Column(
               children: [
                 Row(
@@ -126,7 +127,8 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                       padding: const EdgeInsets.all(0),
                       constraints: const BoxConstraints(),
                       onPressed: () async {
-                        if (widget.retailer.lat.isEmpty || widget.retailer.lng.isEmpty) {
+                        if (widget.retailer.lat.isEmpty ||
+                            widget.retailer.lng.isEmpty) {
                           Utility.showToast("Coordinates not found");
                         } else {
                           drawRoute(widget.retailer.lat, widget.retailer.lng);
@@ -160,8 +162,17 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                             fit: BoxFit.cover,
                           );
                         },
+                        placeholder: (context, imageProvider) {
+                          return const Image(
+                            image: AssetImage("assets/placeholder.png"),
+                            fit: BoxFit.cover,
+                          );
+                        },
                         errorWidget: (context, url, error) {
-                          return const Icon(Icons.error);
+                          return const Image(
+                            image: AssetImage("assets/placeholder.png"),
+                            fit: BoxFit.cover,
+                          );
                         },
                       ),
                     ),
@@ -202,7 +213,9 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                                   ),
                                   Image(
                                     image: AssetImage(
-                                      widget.retailer.enrollmentTypeId == "1" ? "assets/retailer.png" : "assets/tele.png",
+                                      widget.retailer.enrollmentTypeId == "1"
+                                          ? "assets/retailer.png"
+                                          : "assets/tele.png",
                                     ),
                                   ),
                                 ],
@@ -225,7 +238,8 @@ class _RetailerListItemsState extends State<RetailerListItems> {
   void drawRoute(String lat, String lng) async {
     try {
       Position position = await MyLocation.getCurrentLocation();
-      String source = position.latitude.toString() + "," + position.longitude.toString();
+      String source =
+          position.latitude.toString() + "," + position.longitude.toString();
       String destination = lat.toString() + "," + lng.toString();
       String url =
           'https://www.google.com/maps/dir/?api=1&origin=$source&destination=$destination&travelmode=driving&dir_action=navigate';

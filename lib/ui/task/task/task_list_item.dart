@@ -145,8 +145,17 @@ class _TaskListItemsState extends State<TaskListItems> {
                             fit: BoxFit.cover,
                           );
                         },
+                        placeholder: (context, imageProvider) {
+                          return const Image(
+                            image: AssetImage("assets/placeholder.png"),
+                            fit: BoxFit.cover,
+                          );
+                        },
                         errorWidget: (context, url, error) {
-                          return const Icon(Icons.error);
+                          return const Image(
+                            image: AssetImage("assets/placeholder.png"),
+                            fit: BoxFit.cover,
+                          );
                         },
                       ),
                     ),

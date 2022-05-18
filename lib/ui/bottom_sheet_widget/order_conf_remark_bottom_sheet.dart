@@ -205,7 +205,9 @@ class _OrderConfRemarkBottomSheetState
                         minLines: 3,
                         maxLines: 5,
                         controller: txtRemarkController,
+                        maxLength: 300,
                         decoration: InputDecoration(
+                          counterText: "",
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 10, horizontal: 15),
                           border: OutlineInputBorder(

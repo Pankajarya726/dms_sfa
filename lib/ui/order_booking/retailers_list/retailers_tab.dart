@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:math';
-
 import 'package:dms/listeners/select_beat_listener.dart';
 import 'package:dms/ui/custom_widget/no_internet.dart';
 import 'package:dms/ui/custom_widget/retailer_not_found.dart';
@@ -43,10 +42,12 @@ class RetailerTab extends StatefulWidget {
   _RetailerTabState createState() => _RetailerTabState();
 }
 
-class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener {
+class _RetailerTabState extends State<RetailerTab>
+    implements SelectBeatListener {
   List<RetailersModal> retailers = [];
   BeatsModal? selectedBeat;
-  StreamController<List<RetailersModal>> retailerStreamController = StreamController();
+  StreamController<List<RetailersModal>> retailerStreamController =
+      StreamController();
   String day = "";
   String retailerType = "";
   int pageNo = 1;
@@ -55,7 +56,8 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
   double longitude = 0.0;
   String sortingType = "";
   UserLocationBloc userLocationBloc = UserLocationBloc();
-  RefreshController refreshController = RefreshController(initialRefresh: false);
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -234,17 +236,20 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
   void onSorting(String type) {
     sortingType = type;
     if (type == StringConst.retailer) {
-      retailers.sort((a, b) => a.enrollmentTypeId.compareTo(b.enrollmentTypeId)); // ascending order
+      retailers.sort((a, b) =>
+          a.enrollmentTypeId.compareTo(b.enrollmentTypeId)); // ascending order
       retailerStreamController.add(retailers);
     }
 
     if (type == StringConst.teleRetailer) {
-      retailers.sort((a, b) => b.enrollmentTypeId.compareTo(a.enrollmentTypeId)); // descending order
+      retailers.sort((a, b) =>
+          b.enrollmentTypeId.compareTo(a.enrollmentTypeId)); // descending order
       retailerStreamController.add(retailers);
     }
 
     if (type == StringConst.nearby) {
-      retailers.sort((a, b) => a.distance.compareTo(b.distance)); // ascending order
+      retailers
+          .sort((a, b) => a.distance.compareTo(b.distance)); // ascending order
       retailerStreamController.add(retailers);
     }
   }
@@ -264,7 +269,9 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
     double lon2 = double.parse(passedLng);
     var p = 0.017453292519943295;
     var c = cos;
-    var a = 0.5 - c((lat2 - lat1) * p) / 2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    var a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     double d = 12742 * asin(sqrt(a));
     // print("distance after converting into kilometers = $d");
     return d.toStringAsFixed(2);
@@ -354,14 +361,25 @@ class _BeatWidgetState extends State<BeatWidget> {
             active: widget.tags[index].name == tag.name,
             customData: widget.tags[index],
             textActiveColor: Colors.black,
-            textColor: widget.tags[index].name == tag.name ? Colors.black : const Color(0xff555555),
+            textColor: widget.tags[index].name == tag.name
+                ? Colors.black
+                : const Color(0xff555555),
             elevation: 0,
-            textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+            textStyle: const TextStyle(
+                fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
             padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-            border: Border.all(color: widget.tags[index].name == tag.name ? MColor.colorPrimary : const Color(0xffC5C5C5), width: 1.5),
+            border: Border.all(
+                color: widget.tags[index].name == tag.name
+                    ? MColor.colorPrimary
+                    : const Color(0xffC5C5C5),
+                width: 1.5),
             singleItem: true,
-            activeColor: widget.tags[index].name == tag.name ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
-            color: widget.tags[index].name == tag.name ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
+            activeColor: widget.tags[index].name == tag.name
+                ? const Color(0xffFFC9CC)
+                : const Color(0xffFAFAFA),
+            color: widget.tags[index].name == tag.name
+                ? const Color(0xffFFC9CC)
+                : const Color(0xffFAFAFA),
             title: widget.tags[index].name,
           ),
         );

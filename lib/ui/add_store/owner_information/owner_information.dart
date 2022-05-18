@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:dms/model/retailer_form.dart';
 import 'package:dms/ui/add_store/model/call_time_slot_response.dart';
 import 'package:dms/ui/add_store/model/select_language_response.dart';
@@ -17,6 +18,7 @@ import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -715,14 +717,46 @@ class _OwnerInformationState extends State<OwnerInformation> {
   void selectImage() async {
     try {
       XFile? image = await imagePicker.pickImage(
-          source: ImageSource.camera,
-          maxHeight: 512,
-          maxWidth: 512,
-          preferredCameraDevice: CameraDevice.front
-          imageQuality: 50,);
+        source: ImageSource.camera,
+      );
       if (image != null) {
         ownerPhotoFile = File(image.path);
         ownerFileName = image.name;
+
+        // check original image size
+        Uint8List list = await ownerPhotoFile!.readAsBytes();
+        var sizeInKb = list.lengthInBytes / 1024;
+        var sizeInMb = sizeInKb / 1024;
+        debugPrint("original image size = $sizeInMb");
+
+        // convert XFile to File
+        File file = File(image.path);
+
+        if (sizeInMb >= 2.0) {
+          // convert file to uint8list object to Compress image size
+          Uint8List? result = await FlutterImageCompress.compressWithFile(
+            file.absolute.path,
+            minWidth: 2300,
+            minHeight: 1500,
+            quality: 50,
+          );
+          sizeInKb = result!.lengthInBytes / 1024;
+          sizeInMb = sizeInKb / 1024;
+          debugPrint("bytes size = ${result.lengthInBytes}");
+          debugPrint("kb size = $sizeInKb");
+          debugPrint("mb size = $sizeInMb \n");
+
+          file = await File(file.absolute.path).create();
+          file.writeAsBytesSync(result);
+        }
+        ownerPhotoFile = file;
+
+        // check new compressed image size
+        Uint8List uint8list = await ownerPhotoFile!.readAsBytes();
+        var kb = uint8list.lengthInBytes / 1024;
+        var mb = kb / 1024;
+        debugPrint("compressed image size = $mb");
+
         widget.form.ownerImage = ownerPhotoFile!.path;
         commonBloc.add(CommonBlocSelectImageEvent(imageFile: ownerPhotoFile!));
       }
