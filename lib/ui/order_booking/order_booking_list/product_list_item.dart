@@ -85,34 +85,48 @@ class _ProductListItemState extends State<ProductListItem> {
               children: [
                 Row(
                   children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => FullScreenImageView(
-                                  productImage: widget.products.image)),
-                        );
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: CachedNetworkImage(
-                          width: 80,
-                          height: 80,
-                          fit: BoxFit.cover,
-                          imageUrl: widget.products.image,
-                          imageBuilder: (context, imageProvider) {
-                            return Image(
-                              image: imageProvider,
+                    Material(
+                      borderRadius: BorderRadius.circular(10),
+                      child: InkWell(
+                        customBorder: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FullScreenImageView(
+                                    productImage: widget.products.image)),
+                          );
+                        },
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: CachedNetworkImage(
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.cover,
+                            imageUrl: widget.products.image,
+                            imageBuilder: (context, imageProvider) {
+                              return Image(
+                                image: imageProvider,
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.cover,
+                              );
+                            },
+                            errorWidget: (context, url, error) => Image.asset(
+                              "assets/wall_placeholder.jpg",
                               width: 80,
                               height: 80,
                               fit: BoxFit.cover,
-                            );
-                          },
-                          errorWidget: (context, url, error) =>
-                              Image.asset("assets/placeholder.png"),
-                          placeholder: (context, url) =>
-                              Image.asset("assets/placeholder.png"),
+                            ),
+                            placeholder: (context, url) => Image.asset(
+                              "assets/wall_placeholder.jpg",
+                              width: 80,
+                              height: 80,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
                       ),
                     ),

@@ -355,8 +355,10 @@ class _ProductInformationState extends State<ProductInformation> {
         return "bathingSoapsBrands";
       case 13:
         return "beveragesCarbonatesBrands";
+
       case 14:
-        return "beverageBottledwaterBrand";
+        // return "beverageBottledwaterBrand";
+        return "beverageBottledwaterBrands";
       case 15:
         return "confectioneryChocolateBrands";
       case 16:
@@ -366,7 +368,8 @@ class _ProductInformationState extends State<ProductInformation> {
       case 18:
         return "skincareProductsBrands";
       case 19:
-        return "butterSpreadsBrands";
+        // return "butterSpreadsBrands";
+        return "spreadsPeanutBrands";
       case 20:
         return "noodlesMaggiePastaBrands";
       case 21:
