@@ -1,7 +1,9 @@
+import 'package:dms/main.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ProductInfoBottomSheet extends StatefulWidget {
   final ProductsModal products;
@@ -92,15 +94,15 @@ class _ProductInfoBottomSheetState extends State<ProductInfoBottomSheet> {
                 ),
                 getText(
                   textLabel[5],
-                  widget.products.skuRatePerPiece,
+                  currencyFormat.format(double.parse(widget.products.skuRatePerPiece)),
                 ),
                 getText(
                   textLabel[6],
-                  widget.products.skuRatePerMoq,
+                  currencyFormat.format(double.parse(widget.products.skuRatePerMoq)),
                 ),
                 getText(
                   textLabel[7],
-                  widget.products.skuRatePerPkg,
+                  currencyFormat.format(double.parse(widget.products.skuRatePerPkg)),
                 ),
               ]),
               const SizedBox(
@@ -135,21 +137,20 @@ class _ProductInfoBottomSheetState extends State<ProductInfoBottomSheet> {
                         ),
                         getText(
                           textLabel2[0],
-                          widget.products.schemes.first.discountPercentage
-                                  .isNotEmpty
+                          widget.products.schemes.first.discountPercentage.isNotEmpty
                               ? widget.products.schemes.first.discountPercentage
-                              : "",
+                              : widget.products.schemes.first.discountAmount,
                         ),
                         getText(
                           textLabel2[1],
                           widget.products.schemes.first.fromDate.isNotEmpty
-                              ? widget.products.schemes.first.fromDate
+                              ? DateFormat("dd-MM-yyyy").parse(widget.products.schemes.first.fromDate)
                               : "",
                         ),
                         getText(
                           textLabel2[2],
                           widget.products.schemes.first.toDate.isNotEmpty
-                              ? widget.products.schemes.first.toDate
+                              ? DateFormat("dd-MM-yyyy").parse(widget.products.schemes.first.toDate)
                               : "",
                         ),
                       ],

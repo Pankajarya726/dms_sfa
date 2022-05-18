@@ -180,6 +180,7 @@ class _SchemeProductListItemsState extends State<SchemeProductListItems> {
             context: context,
             shape: bottomSheetShape,
             builder: (context) => BoxMoqSheet(
+                  selected: 0,
                   onSelect: (qty) {},
                   sheetHeading: textLabel,
                   sheetType: sheetType,

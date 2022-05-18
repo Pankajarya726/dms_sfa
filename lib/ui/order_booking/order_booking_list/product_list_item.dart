@@ -53,9 +53,7 @@ class _ProductListItemState extends State<ProductListItem> {
       padding: const EdgeInsets.only(left: 5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(11),
-        color: pkgQty == 0 && moqQty == 0
-            ? Colors.white
-            : const Color.fromRGBO(44, 183, 67, 1),
+        color: pkgQty == 0 && moqQty == 0 ? Colors.white : const Color.fromRGBO(44, 183, 67, 1),
         boxShadow: const [
           BoxShadow(
             color: Colors.black12,
@@ -79,8 +77,7 @@ class _ProductListItemState extends State<ProductListItem> {
                     ));
           },
           child: Padding(
-            padding:
-                const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
+            padding: const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
             child: Column(
               children: [
                 Row(
@@ -89,9 +86,7 @@ class _ProductListItemState extends State<ProductListItem> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => FullScreenImageView(
-                                  productImage: widget.products.image)),
+                          MaterialPageRoute(builder: (context) => FullScreenImageView(productImage: widget.products.image)),
                         );
                       },
                       child: ClipRRect(
@@ -109,10 +104,8 @@ class _ProductListItemState extends State<ProductListItem> {
                               fit: BoxFit.cover,
                             );
                           },
-                          errorWidget: (context, url, error) =>
-                              Image.asset("assets/placeholder.png"),
-                          placeholder: (context, url) =>
-                              Image.asset("assets/placeholder.png"),
+                          errorWidget: (context, url, error) => Image.asset("assets/placeholder.png"),
+                          placeholder: (context, url) => Image.asset("assets/placeholder.png"),
                         ),
                       ),
                     ),
@@ -148,8 +141,7 @@ class _ProductListItemState extends State<ProductListItem> {
                                     ),
                                     children: <TextSpan>[
                                       TextSpan(
-                                        text: currencyFormat.format(
-                                            double.parse(widget.products.mrp)),
+                                        text: currencyFormat.format(double.parse(widget.products.mrp)),
                                         style: const TextStyle(
                                           letterSpacing: 0.67,
                                           color: Colors.black,
@@ -169,29 +161,20 @@ class _ProductListItemState extends State<ProductListItem> {
                                       ),
                                       children: <TextSpan>[
                                         TextSpan(
-                                          text: currencyFormat.format(
-                                              double.parse(widget
-                                                  .products.skuRatePerPiece)),
+                                          text: currencyFormat.format(double.parse(widget.products.skuRatePerPiece)),
                                           style: TextStyle(
                                               letterSpacing: 0.67,
                                               color: MColor.textColor,
                                               overflow: TextOverflow.ellipsis,
                                               fontWeight: FontWeight.bold,
-                                              decoration: double.parse(widget
-                                                          .products
-                                                          .schemeRatePerPcs) ==
-                                                      0.0
+                                              decoration: double.parse(widget.products.schemeRatePerPcs) == 0.0
                                                   ? TextDecoration.none
                                                   : TextDecoration.lineThrough),
                                         ),
                                         TextSpan(
-                                          text: double.parse(widget.products
-                                                      .schemeRatePerPcs) ==
-                                                  0.0
+                                          text: double.parse(widget.products.schemeRatePerPcs) == 0.0
                                               ? ""
-                                              : currencyFormat.format(
-                                                  double.parse(widget.products
-                                                      .schemeRatePerPcs)),
+                                              : currencyFormat.format(double.parse(widget.products.schemeRatePerPcs)),
                                           style: const TextStyle(
                                             letterSpacing: 0.67,
                                             color: MColor.textColor,
@@ -213,9 +196,7 @@ class _ProductListItemState extends State<ProductListItem> {
                                   qty: pkgQty,
                                   productId: widget.products.id,
                                   onChange: (int qty) {
-                                    updateQty(
-                                        pkgQty: qty,
-                                        moqQty: widget.products.moqQty);
+                                    updateQty(pkgQty: qty, moqQty: widget.products.moqQty);
                                   },
                                 ),
                                 PkgWidget(
@@ -223,9 +204,7 @@ class _ProductListItemState extends State<ProductListItem> {
                                   qty: moqQty,
                                   productId: widget.products.id,
                                   onChange: (int qty) {
-                                    updateQty(
-                                        pkgQty: widget.products.pkgQty,
-                                        moqQty: qty);
+                                    updateQty(pkgQty: widget.products.pkgQty, moqQty: qty);
                                   },
                                 ),
                               ],
@@ -267,19 +246,11 @@ class _ProductListItemState extends State<ProductListItem> {
 
     double total = 0;
     if (widget.products.schemes.isEmpty) {
-      total = (double.parse(widget.products.skuRatePerPiece) *
-              double.parse(widget.products.pcsPerMoq) *
-              moqQty) +
-          (double.parse(widget.products.skuRatePerPiece) *
-              double.parse(widget.products.pcsPerPackaging) *
-              pkgQty);
+      total = (double.parse(widget.products.skuRatePerPiece) * double.parse(widget.products.pcsPerMoq) * moqQty) +
+          (double.parse(widget.products.skuRatePerPiece) * double.parse(widget.products.pcsPerPackaging) * pkgQty);
     } else {
-      total = (double.parse(widget.products.schemeRatePerPcs) *
-              double.parse(widget.products.pcsPerMoq) *
-              moqQty) +
-          (double.parse(widget.products.schemeRatePerPcs) *
-              double.parse(widget.products.pcsPerPackaging) *
-              pkgQty);
+      total = (double.parse(widget.products.schemeRatePerPcs) * double.parse(widget.products.pcsPerMoq) * moqQty) +
+          (double.parse(widget.products.schemeRatePerPcs) * double.parse(widget.products.pcsPerPackaging) * pkgQty);
     }
 
     Cart cart = Cart(
@@ -305,12 +276,8 @@ class _ProductListItemState extends State<ProductListItem> {
         categoryId: widget.products.categoryId,
         categoryName: widget.products.categoryName,
         rateCategoryId: widget.products.rateCategoryId,
-        schemeId: widget.products.schemes.isEmpty
-            ? ""
-            : widget.products.schemes.first.id,
-        schemeOn: widget.products.schemes.isEmpty
-            ? ""
-            : widget.products.schemes.first.uom,
+        schemeId: widget.products.schemes.isEmpty ? "" : widget.products.schemes.first.id,
+        schemeOn: widget.products.schemes.isEmpty ? "" : widget.products.schemes.first.uom,
         brandName: widget.products.brandName,
         customerId: widget.products.customerId,
         skuRatePerPkg: widget.products.skuRatePerPkg,
@@ -318,9 +285,7 @@ class _ProductListItemState extends State<ProductListItem> {
         moqName: widget.products.moqName,
         priceAfterDiscount: widget.products.priceAfterDiscount,
         packagingName: widget.products.packagingName,
-        scheme: widget.products.schemes.isEmpty
-            ? ""
-            : widget.products.schemes.first.toJson(),
+        scheme: widget.products.schemes.isEmpty ? "" : widget.products.schemes.first.toJson(),
         totalPrice: total.toStringAsFixed(2));
     int updated = await databaseHelper.addProductToCart(cart);
     debugPrint("update-->$updated");
@@ -334,12 +299,7 @@ class PkgWidget extends StatefulWidget {
   final Function(int qty) onChange;
   final String productId;
 
-  const PkgWidget(
-      {Key? key,
-      required this.qty,
-      required this.name,
-      required this.onChange,
-      required this.productId})
+  const PkgWidget({Key? key, required this.qty, required this.name, required this.onChange, required this.productId})
       : super(key: key);
 
   @override
@@ -365,6 +325,7 @@ class _PkgWidgetState extends State<PkgWidget> {
             context: context,
             shape: bottomSheetShape,
             builder: (context) => BoxMoqSheet(
+                  selected: qty,
                   sheetHeading: widget.name,
                   sheetType: widget.name,
                   onSelect: (int i) {

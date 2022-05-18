@@ -11,6 +11,7 @@ import 'package:dms/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_tags_x/flutter_tags_x.dart';
 
 class OrderDetailScreen extends StatefulWidget {
   final RetailersModal retailer;
@@ -64,33 +65,59 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 },
               ),
               BlocBuilder<OrderDetailBloc, OrderDetailState>(builder: (context, state) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15.0),
-                      child: Text(
+                if (task == null) {
+                  return Container();
+                }
+
+                return Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Text(
                         "Remarks:",
                         style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                      child: Text(
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
                         task != null ? task!.escalationTag : "",
                         style: const TextStyle(
                           color: Colors.black,
                           fontSize: 16,
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Tags(
+                        itemCount: task!.buId.length,
+                        runSpacing: 10,
+                        spacing: 5,
+                        itemBuilder: (index) {
+                          return ItemTags(
+                            index: index,
+                            title: task!.buId[index].buName,
+                            active: true,
+                            pressEnabled: false,
+                            textColor: Color(0xff000000),
+                            textActiveColor: Color(0xff000000),
+                            elevation: 0,
+                            activeColor: Color(0xffE7E7E7),
+                            // textStyle: TextStyle(
+                            //   color: Color(0xff000000),
+                            // ),
+                            color: Color(0xffE7E7E7),
+                            highlightColor: Color(0xffE7E7E7),
+                          );
+                        },
+                      )
+                    ],
+                  ),
                 );
               })
             ]))
@@ -100,18 +127,18 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           height: 50,
           child: Row(
             children: [
-              MaterialButton(
-                elevation: 0,
-                onPressed: () {},
-                shape: const RoundedRectangleBorder(),
-                height: 50,
-                minWidth: MediaQuery.of(context).size.width / 2,
-                color: const Color(0xff3D8FFF),
-                child: const Text(
-                  "OUTLET INFO",
-                  style: TextStyle(color: Colors.white, letterSpacing: 0.5),
-                ),
-              ),
+              // MaterialButton(
+              //   elevation: 0,
+              //   onPressed: () {},
+              //   shape: const RoundedRectangleBorder(),
+              //   height: 50,
+              //   minWidth: MediaQuery.of(context).size.width / 2,
+              //   color: const Color(0xff3D8FFF),
+              //   child: const Text(
+              //     "OUTLET INFO",
+              //     style: TextStyle(color: Colors.white, letterSpacing: 0.5),
+              //   ),
+              // ),
               MaterialButton(
                 elevation: 0,
                 onPressed: () {
@@ -126,10 +153,10 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 shape: const RoundedRectangleBorder(),
                 height: 50,
                 color: const Color(0xff2CB743),
-                minWidth: MediaQuery.of(context).size.width / 2,
+                minWidth: MediaQuery.of(context).size.width,
                 child: const Text(
                   "UPDATE",
-                  style: TextStyle(color: Colors.white, letterSpacing: 0.5),
+                  style: TextStyle(color: Colors.white, letterSpacing: 0.67, fontWeight: FontWeight.bold, fontSize: 18),
                 ),
               ),
             ],

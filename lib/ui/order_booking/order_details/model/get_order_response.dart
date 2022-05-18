@@ -339,7 +339,7 @@ class Task {
   String id;
   String taskId;
   String escalationTag;
-  List<dynamic> buId;
+  List<BuId> buId;
 
   factory Task.fromJson(String str) => Task.fromMap(json.decode(str));
 
@@ -349,13 +349,37 @@ class Task {
         id: json["id"] == null ? "0" : json["id"].toString(),
         taskId: json["task_id"] == null ? "0" : json["task_id"].toString(),
         escalationTag: json["escalation_tag"] == null ? "" : json["escalation_tag"].toString(),
-        buId: json["bu_id"] == null ? [] : List<dynamic>.from(json["bu_id"].map((x) => x)),
+        buId: json["bu_id"] == null ? [] : List<BuId>.from(json["bu_id"].map((x) => BuId.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
         "id": id,
         "task_id": taskId,
         "escalation_tag": escalationTag,
-        "bu_id": List<dynamic>.from(buId.map((x) => x)),
+        "bu_id": buId == null ? null : List<dynamic>.from(buId.map((x) => x.toMap())),
+      };
+}
+
+class BuId {
+  BuId({
+    required this.id,
+    required this.buName,
+  });
+
+  int id;
+  String buName;
+
+  factory BuId.fromJson(String str) => BuId.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory BuId.fromMap(Map<String, dynamic> json) => BuId(
+        id: json["id"] == null ? null : json["id"],
+        buName: json["bu_name"] == null ? null : json["bu_name"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "id": id == null ? null : id,
+        "bu_name": buName == null ? null : buName,
       };
 }

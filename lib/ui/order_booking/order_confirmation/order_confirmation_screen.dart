@@ -14,20 +14,13 @@ class OrderConfirmationScreen extends StatefulWidget {
   final String retailerId;
   final String orderId;
 
-  const OrderConfirmationScreen(
-      {Key? key,
-      required this.beatId,
-      required this.retailerId,
-      required this.orderId})
-      : super(key: key);
+  const OrderConfirmationScreen({Key? key, required this.beatId, required this.retailerId, required this.orderId}) : super(key: key);
 
   @override
-  _OrderConfirmationScreenState createState() =>
-      _OrderConfirmationScreenState();
+  _OrderConfirmationScreenState createState() => _OrderConfirmationScreenState();
 }
 
-class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
-    with TickerProviderStateMixin {
+class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with TickerProviderStateMixin {
   late TabController _tabController;
   ValueNotifier<int> valueNotifier = ValueNotifier(0);
   ReasonsModal reason = ReasonsModal(tagName: "", id: "", taskType: "");
@@ -69,18 +62,13 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
                                   remark: remark,
                                   buList: buList,
                                   issueResolve: issueResolve,
-                                  onReasonSelected:
-                                      (reason, remark, buList, issueResolve) {
+                                  onReasonSelected: (reason, remark, buList, issueResolve) {
                                     this.reason = reason;
                                     this.remark = remark;
                                     this.buList = buList;
                                     this.issueResolve = issueResolve;
                                     if (reasonsListener != null) {
-                                      reasonsListener!.onReasonSelect(
-                                          this.reason,
-                                          this.remark,
-                                          this.buList,
-                                          this.issueResolve);
+                                      reasonsListener!.onReasonSelect(this.reason, this.remark, this.buList, this.issueResolve);
                                     }
                                   },
                                 );
@@ -88,9 +76,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
                             );
                           },
                           icon: Container(
-                            decoration: const BoxDecoration(
-                                color: MColor.colorSecondary,
-                                shape: BoxShape.circle),
+                            decoration: const BoxDecoration(color: MColor.colorSecondary, shape: BoxShape.circle),
                             padding: const EdgeInsets.all(5),
                             alignment: Alignment.center,
                             child: const Icon(
@@ -121,19 +107,13 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
                   Tab(
                     child: Text(
                       "Focus SKU",
-                      style: TextStyle(
-                          color: Color(0xff303030),
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Color(0xff303030), fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
                   Tab(
                     child: Text(
                       "Summary",
-                      style: TextStyle(
-                          color: Color(0xff303030),
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Color(0xff303030), fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],

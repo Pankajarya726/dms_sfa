@@ -7,9 +7,11 @@ import 'package:flutter/material.dart';
 class BoxMoqSheet extends StatefulWidget {
   final String sheetHeading;
   final String sheetType;
+  final int selected;
 
   final Function(int qty) onSelect;
-  const BoxMoqSheet({Key? key, required this.sheetHeading, required this.sheetType, required this.onSelect}) : super(key: key);
+  const BoxMoqSheet({Key? key, required this.sheetHeading, required this.sheetType, required this.selected, required this.onSelect})
+      : super(key: key);
 
   @override
   _BoxMoqSheetState createState() => _BoxMoqSheetState();
@@ -17,6 +19,11 @@ class BoxMoqSheet extends StatefulWidget {
 
 class _BoxMoqSheetState extends State<BoxMoqSheet> {
   int qty = 0;
+  @override
+  void initState() {
+    qty = widget.selected;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,12 +57,14 @@ class _BoxMoqSheetState extends State<BoxMoqSheet> {
                 // itemExtent: 50,
                 // useMagnifier: true,
                 // magnification: 1,
+
                 itemExtent: 25,
                 diameterRatio: 1,
                 useMagnifier: true,
-                scrollController: FixedExtentScrollController(initialItem: 0),
+                scrollController: FixedExtentScrollController(initialItem: widget.selected),
                 magnification: 1.0,
                 looping: true,
+
                 onSelectedItemChanged: (item) {
                   qty = item;
                   debugPrint("item->$item");

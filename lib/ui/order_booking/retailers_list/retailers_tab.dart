@@ -194,6 +194,9 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
       input["beat_id"] = selectedBeat!.id;
       input["day"] = day;
       input["page_no"] = pageNo;
+      input["lat"] = latitude;
+      input["long"] = longitude;
+      input["sort_by"] = sortingType;
       input["retailer_type"] = retailerType;
       GetRetailersResponse response = await repository.getRetailersOrderWise(input);
       refreshController.loadComplete();
@@ -201,13 +204,13 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
       if (response.success) {
         pageNo = pageNo + 1;
         retailers.addAll(response.data!);
-        for (var element in retailers) {
-          element.setDistance(getDistance(element.lat, element.lng));
-        }
+        // for (var element in retailers) {
+        //   element.setDistance(getDistance(element.lat, element.lng));
+        // }
         retailerStreamController.add(retailers);
-        if (sortingType.isNotEmpty) {
-          onSorting(sortingType);
-        }
+        // if (sortingType.isNotEmpty) {
+        //   onSorting(sortingType);
+        // }
         debugPrint("response = ${response.message}");
       } else {
         if (pageNo == 1) {
@@ -250,22 +253,28 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
   @override
   void onSorting(String type) {
     debugPrint("onSorting-->$type");
-    sortingType = type;
 
     if (type == StringConst.retailer) {
-      retailers.sort((a, b) => a.enrollmentTypeId.compareTo(b.enrollmentTypeId)); // ascending order
-      retailerStreamController.add(retailers);
+      sortingType = "1";
+      // retailers.sort((a, b) => a.enrollmentTypeId.compareTo(b.enrollmentTypeId)); // ascending order
+      // retailerStreamController.add(retailers);
     }
 
     if (type == StringConst.teleRetailer) {
-      retailers.sort((a, b) => b.enrollmentTypeId.compareTo(a.enrollmentTypeId)); // descending order
-      retailerStreamController.add(retailers);
+      sortingType = "2";
+      // retailers.sort((a, b) => b.enrollmentTypeId.compareTo(a.enrollmentTypeId)); // descending order
+      // retailerStreamController.add(retailers);
     }
 
     if (type == StringConst.nearby) {
-      retailers.sort((a, b) => a.distance.compareTo(b.distance)); // ascending order
-      retailerStreamController.add(retailers);
+      sortingType = "3";
+      // retailers.sort((a, b) => a.distance.compareTo(b.distance)); // ascending order
+      // retailerStreamController.add(retailers);
     }
+    retailers.clear();
+    pageNo = 1;
+    retailerStreamController.addError("loading");
+    getRetailers();
   }
 
 // convert latitude and longitude into distance

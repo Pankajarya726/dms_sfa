@@ -3,17 +3,15 @@ import 'package:dms/ui/order_booking/order_confirmation/bloc%20/order_book_list_
 import 'package:dms/ui/order_booking/order_confirmation/bloc%20/order_book_list_states.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
-import 'package:dms/utils/utility.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../main.dart';
 
-class OrderConfirmationBloc
-    extends Bloc<OrderConfirmationEvents, OrderConfirmationStates> {
+class OrderConfirmationBloc extends Bloc<OrderConfirmationEvents, OrderConfirmationStates> {
   OrderConfirmationBloc() : super(OrderConfirmationInitialState());
 
   @override
-  Stream<OrderConfirmationStates> mapEventToState(
-      OrderConfirmationEvents event) async* {
+  Stream<OrderConfirmationStates> mapEventToState(OrderConfirmationEvents event) async* {
     if (event is GetFocusSkuEvent) {
       yield OrderConfirmationLoadingState();
       yield* getFocusSku(event);
@@ -26,7 +24,7 @@ class OrderConfirmationBloc
       if (response.success) {
         yield GetFocusSkuState(prouductsModal: response.data!);
       } else {
-        Utility.showToast(response.message);
+        // Utility.showToast(response.message);
         yield OrderConfirmationFailureState(msg: response.message);
       }
     } else {
