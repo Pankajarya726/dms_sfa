@@ -246,7 +246,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                                       ),
                                       Expanded(
                                         child: RetailerDetailItem(
-                                          value: retailer!.orderBookingDay,
+                                          value: retailer!.orderBookingDay.replaceAll(",", " "),
                                           image: "assets/telephone.png",
                                           name: StringConst.callingDay,
                                           type: 1,

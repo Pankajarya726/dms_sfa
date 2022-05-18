@@ -4,8 +4,7 @@ import 'package:photo_view/photo_view.dart';
 
 class FullScreenImageView extends StatefulWidget {
   final String productImage;
-  const FullScreenImageView({Key? key, required this.productImage})
-      : super(key: key);
+  const FullScreenImageView({Key? key, required this.productImage}) : super(key: key);
 
   @override
   _FullScreenImageViewState createState() => _FullScreenImageViewState();
@@ -34,6 +33,7 @@ class _FullScreenImageViewState extends State<FullScreenImageView> {
       ),
       body: Center(
         child: PhotoView(
+          minScale: PhotoViewComputedScale.contained,
           backgroundDecoration: const BoxDecoration(
             color: Colors.white,
           ),
