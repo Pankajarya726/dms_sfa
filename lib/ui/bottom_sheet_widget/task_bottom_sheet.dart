@@ -78,7 +78,9 @@ class _TaskBottomSheetState extends State<TaskBottomSheet> {
                         controller: tecRemark,
                         minLines: 3,
                         maxLines: 5,
+                        maxLength: 300,
                         decoration: InputDecoration(
+                          counterText: "",
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 10, horizontal: 15),
                           border: OutlineInputBorder(
@@ -107,7 +109,7 @@ class _TaskBottomSheetState extends State<TaskBottomSheet> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                   height: 40,
-                  color: MColor.colorPrimary,
+                  color: MColor.colorSecondary,
                   child: const Text(
                     StringConst.done,
                     style: TextStyle(
@@ -125,7 +127,7 @@ class _TaskBottomSheetState extends State<TaskBottomSheet> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                   height: 40,
-                  color: MColor.colorSecondary,
+                  color: MColor.colorPrimary,
                   child: const Text(
                     StringConst.cancel,
                     style: TextStyle(

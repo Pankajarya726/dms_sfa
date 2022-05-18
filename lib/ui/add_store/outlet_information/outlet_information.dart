@@ -864,54 +864,47 @@ class _OutletInformationState extends State<OutletInformation> {
     try {
       XFile? image = await imagePicker.pickImage(
         source: ImageSource.camera,
-        preferredCameraDevice: CameraDevice.front,
       );
 
       if (image != null) {
         outletPhotoFile = File(image.path);
         outletFileName = image.name;
+
+        // check currrent image size
+        Uint8List list = await outletPhotoFile!.readAsBytes();
+        var sizeInKb = list.lengthInBytes / 1024;
+        var sizeInMb = sizeInKb / 1024;
+        debugPrint("original image size = $sizeInMb");
+
+        // convert XFile to File
+        File file = File(image.path);
+
+        if (sizeInMb >= 2.0) {
+          // convert file to uint8list object to Compress image size
+          Uint8List? result = await FlutterImageCompress.compressWithFile(
+            file.absolute.path,
+            minWidth: 2300,
+            minHeight: 1500,
+            quality: 50,
+          );
+          sizeInKb = result!.lengthInBytes / 1024;
+          sizeInMb = sizeInKb / 1024;
+          debugPrint("bytes size = ${result.lengthInBytes}");
+          debugPrint("kb size = $sizeInKb");
+          debugPrint("mb size = $sizeInMb \n");
+
+          file = await File(file.absolute.path).create();
+          file.writeAsBytesSync(result);
+        }
+        outletPhotoFile = file;
+
+        // check new compressed image size
+        Uint8List uint8list = await outletPhotoFile!.readAsBytes();
+        var kb = uint8list.lengthInBytes / 1024;
+        var mb = kb / 1024;
+        debugPrint("compressed image size = $mb");
         commonBloc.add(CommonBlocSelectImageEvent(imageFile: outletPhotoFile!));
       }
-
-      // convert XFile to File
-      File file = File(image!.path);
-
-      var sizeInKb = 0.0;
-      var sizeInMb = 0.0;
-      do {
-        // convert file to uint8list object to Compress image size
-        Uint8List? result = await FlutterImageCompress.compressWithFile(
-          file.absolute.path,
-          minWidth: 2300,
-          minHeight: 1500,
-          quality: 80,
-        );
-        sizeInKb = result!.lengthInBytes / 1024;
-        sizeInMb = sizeInKb / 1024;
-        debugPrint("size before compression\n");
-        debugPrint("bytes size = ${result.lengthInBytes}");
-        debugPrint("kb size = $sizeInKb");
-        debugPrint("mb size = $sizeInMb \n");
-
-        file = await File(file.absolute.path).create();
-        file.writeAsBytesSync(result);
-      } while (sizeInMb > 1.0);
-
-      // // convert uint8list object to file object
-      // file = await File(file.absolute.path).create();
-      // file.writeAsBytesSync(result);
-
-      // // check weather new image is compressed or not
-      // // again convert file to uint8list object and check image size
-      // Uint8List? result2 =
-      //     Uint8List.fromList(File(file.path).readAsBytesSync());
-      // var sizeInKb2 = result2.lengthInBytes / 1024;
-      // var sizeInMb2 = sizeInKb2 / 1024;
-      // debugPrint("size before compression\n");
-      // debugPrint("bytes size = ${result2.lengthInBytes}");
-      // debugPrint("kb size = $sizeInKb2");
-      // debugPrint("mb size = $sizeInMb2 \n");
-
     } catch (exception) {
       debugPrint(exception.toString());
       Fluttertoast.showToast(

@@ -59,7 +59,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     DetailGritItem(
                       value: widget.modal.lastOrder.isNotEmpty
                           ? widget.modal.lastOrder
-                          : "",
+                          : "No order yet!",
                       image: "assets/last_order.png",
                       name: StringConst.lastOrder,
                       type: 1,
@@ -78,7 +78,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     DetailGritItem(
                       value: widget.modal.pendingTask.isNotEmpty
                           ? widget.modal.pendingTask
-                          : "",
+                          : "0",
                       image: "assets/pending_task.png",
                       name: StringConst.pendingTask,
                       type: 3,
@@ -87,7 +87,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     DetailGritItem(
                       value: widget.modal.taskHistory.isNotEmpty
                           ? widget.modal.taskHistory
-                          : "",
+                          : "0",
                       image: "assets/task_history.png",
                       name: StringConst.taskHistory,
                       type: 4,
@@ -250,19 +250,21 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                                               elapseDays: days,
                                                               onTaskResolve:
                                                                   (done) {
-                                                                if (done
-                                                                    .isEmpty) {
-                                                                  taskDetailsBloc.add(GetPendingTaskEvent(
-                                                                      retailerId: widget
-                                                                          .modal
-                                                                          .retailerId,
-                                                                      beatId: widget
-                                                                          .modal
-                                                                          .beatId));
-                                                                } else {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                }
+                                                                // if (done
+                                                                //     .isEmpty) {
+                                                                //   taskDetailsBloc.add(GetPendingTaskEvent(
+                                                                //       retailerId: widget
+                                                                //           .modal
+                                                                //           .retailerId,
+                                                                //       beatId: widget
+                                                                //           .modal
+                                                                //           .beatId));
+                                                                // } else {
+                                                                //   Navigator.pop(
+                                                                //       context);
+                                                                // }
+                                                                Navigator.pop(
+                                                                    context);
                                                               },
                                                             ));
                                             },
