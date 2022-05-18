@@ -3,7 +3,6 @@ import 'package:dms/ui/order_booking/order_booking_list/model/get_products_respo
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class ProductInfoBottomSheet extends StatefulWidget {
   final ProductsModal products;
