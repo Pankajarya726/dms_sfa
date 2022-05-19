@@ -102,14 +102,24 @@ class _ProductListItemState extends State<ProductListItem> {
                               width: 80,
                               height: 80,
                               fit: BoxFit.cover,
-                            ),
-                            placeholder: (context, url) => Image.asset(
+                            );
+                          },
+                          errorWidget: (context, url, _) {
+                            return Image.asset(
                               "assets/wall_placeholder.jpg",
                               width: 80,
                               height: 80,
                               fit: BoxFit.cover,
-                            ),
-                          ),
+                            );
+                          },
+                          placeholder: (context, url) {
+                            return Image.asset(
+                              "assets/wall_placeholder.jpg",
+                              width: 80,
+                              height: 80,
+                              fit: BoxFit.cover,
+                            );
+                          },
                         ),
                       ),
                     ),

@@ -43,10 +43,9 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
               autofocus: true,
               controller: edtSearch,
               onChanged: (text) {
-                if (text.trim().isEmpty) {
+                if (text.trim().length < 3) {
                   productsList.clear();
-                  searchStream
-                      .addError("Enter product name to search products");
+                  searchStream.addError("Enter product name to search products");
                 } else {
                   productsList.clear();
                   searchApi(text);
@@ -59,18 +58,15 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide:
-                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide:
-                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide:
-                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   suffixIcon: IconButton(
                     splashRadius: 20,
                     icon: const Icon(
@@ -81,8 +77,7 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
                       if (edtSearch.text.trim().isNotEmpty) {
                         edtSearch.clear();
                         productsList.clear();
-                        searchStream
-                            .addError("Enter product name to search products");
+                        searchStream.addError("Enter product name to search products");
                       } else {
                         Navigator.pop(context);
                       }
