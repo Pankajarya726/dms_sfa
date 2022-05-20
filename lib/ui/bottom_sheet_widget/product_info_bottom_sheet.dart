@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 
 class ProductInfoBottomSheet extends StatefulWidget {
   final ProductsModal products;
-
   const ProductInfoBottomSheet({
     Key? key,
     required this.products,
