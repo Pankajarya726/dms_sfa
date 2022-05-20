@@ -9,12 +9,14 @@ import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../../main.dart';
 
 class SearchProductScreen extends StatefulWidget {
   final String retailerId;
   final String beatId;
+
   const SearchProductScreen({
     Key? key,
     required this.retailerId,
@@ -28,7 +30,26 @@ class SearchProductScreen extends StatefulWidget {
 class _SearchProductScreenState extends State<SearchProductScreen> {
   TextEditingController edtSearch = TextEditingController();
   List<ProductsModal> productsList = [];
+  final subject = BehaviorSubject<String>();
+
   StreamController<List<ProductsModal>> searchStream = StreamController();
+
+  @override
+  void initState() {
+    subject.stream.debounce((event) => TimerStream(event, const Duration(milliseconds: 1000))).listen((query) {
+      debugPrint("query--->$query");
+      productsList.clear();
+      searchApi(query);
+    });
+    // subject.debounce((event) => TimerStream(event, const Duration(milliseconds: 600)).listen((event) { }));
+    // .switchMap((query) async* {
+    //
+    //   debugPrint("query--->$query");
+    //   productsList.clear();
+    //   searchApi(query);
+    // });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,12 +64,12 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
               autofocus: true,
               controller: edtSearch,
               onChanged: (text) {
-                if (text.trim().length < 3) {
+                if (text.isEmpty) {
                   productsList.clear();
                   searchStream.addError("Enter product name to search products");
-                } else {
+                } else if (text.trim().length >= 3) {
                   productsList.clear();
-                  searchApi(text);
+                  subject.add(text);
                 }
               },
               decoration: InputDecoration(

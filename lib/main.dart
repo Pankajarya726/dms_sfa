@@ -27,6 +27,7 @@ ApiRepository repository = ApiRepository();
 ImagePicker imagePicker = ImagePicker();
 NavigationService navigationService = NavigationService();
 DatabaseHelper databaseHelper = DatabaseHelper();
+
 configLoading() {
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)
@@ -43,7 +44,7 @@ configLoading() {
     ..dismissOnTap = false;
 }
 
-final currencyFormat = NumberFormat.simpleCurrency(locale: "hi_IN", decimalDigits: 1);
+final currencyFormat = NumberFormat.simpleCurrency(locale: "hi_IN", decimalDigits: 2);
 
 void main() {
   dio.interceptors.add(DioCacheManager(CacheConfig(baseUrl: Url.baseUrl)).interceptor);
@@ -58,8 +59,36 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    WidgetsBinding.instance!.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    debugPrint("AppLifecycleState--->$state");
+
+    if (state == AppLifecycleState.paused) {
+      SystemNavigator.pop();
+    }
+
+    super.didChangeAppLifecycleState(state);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

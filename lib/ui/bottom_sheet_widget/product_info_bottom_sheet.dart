@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 
 class ProductInfoBottomSheet extends StatefulWidget {
   final ProductsModal products;
+
   const ProductInfoBottomSheet({
     Key? key,
     required this.products,
@@ -21,7 +22,7 @@ class _ProductInfoBottomSheetState extends State<ProductInfoBottomSheet> {
     "Long Description: ",
     "Variant: ",
     "Weight: ",
-    "Pcs Per Moq: ",
+    "Pcs Per MOQ: ",
     "Pcs Per Packaging: ",
     "PTR Per Piece: ",
     "PTR Per MOQ: ",
@@ -138,21 +139,12 @@ class _ProductInfoBottomSheetState extends State<ProductInfoBottomSheet> {
                         getText(
                           textLabel2[0],
                           widget.products.schemes.first.discountPercentage.isNotEmpty
-                              ? widget.products.schemes.first.discountPercentage
-                              : widget.products.schemes.first.discountAmount,
+                              ? widget.products.schemes.first.discountPercentage + "%"
+                              : currencyFormat.format(double.parse(widget.products.schemes.first.discountAmount)),
                         ),
                         getText(
-                          textLabel2[1],
-                          widget.products.schemes.first.fromDate.isNotEmpty
-                              ? DateFormat("dd-MM-yyyy").parse(widget.products.schemes.first.fromDate)
-                              : "",
-                        ),
-                        getText(
-                          textLabel2[2],
-                          widget.products.schemes.first.toDate.isNotEmpty
-                              ? DateFormat("dd-MM-yyyy").parse(widget.products.schemes.first.toDate)
-                              : "",
-                        ),
+                            textLabel2[1], DateFormat("dd-MM-yyyy").format(DateTime.parse(widget.products.schemes.first.fromDate))),
+                        getText(textLabel2[2], DateFormat("dd-MM-yyyy").format(DateTime.parse(widget.products.schemes.first.toDate))),
                       ],
                     )
                   : const Text(
