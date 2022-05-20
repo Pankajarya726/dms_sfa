@@ -241,6 +241,8 @@ class _FilterOrderBookingBottomSheetState
     if (await Network.isConnected()) {
       if (response.success) {
         mrpList = response.data!;
+        mrpList
+            .sort((a, b) => double.parse(a.mrp).compareTo(double.parse(b.mrp)));
         mrpStreamController.add(mrpList);
       } else {
         mrpStreamController.addError(response.message);

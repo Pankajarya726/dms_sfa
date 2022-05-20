@@ -386,7 +386,10 @@ class _BeatsWidgetState extends State<BeatsWidget> {
               },
               active: widget.tags[index].categoryName == tag.categoryName,
               customData: widget.tags[index],
-              textActiveColor: Colors.black,
+              textActiveColor:
+                  widget.tags[index].categoryName == tag.categoryName
+                      ? Colors.black
+                      : const Color(0xff555555),
               textColor: widget.tags[index].categoryName == tag.categoryName
                   ? Colors.black
                   : const Color(0xff555555),
