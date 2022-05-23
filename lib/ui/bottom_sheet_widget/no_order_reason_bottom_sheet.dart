@@ -157,7 +157,7 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                         controller: edtRemark,
                         minLines: 3,
                         maxLines: 5,
-                        maxLength: 300,
+                        maxLength: 250,
                         decoration: InputDecoration(
                             counterText: "",
                             hintText: "Enter your Reason",
