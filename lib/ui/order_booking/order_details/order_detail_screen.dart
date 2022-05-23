@@ -43,7 +43,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               BlocBuilder<OrderDetailBloc, OrderDetailState>(
                 builder: (context, state) {
                   if (state is OrderDetailInitialState) {
-                    orderBloc.add(GetOrderEvent(retailerId: widget.retailer.customerId, beatId: widget.retailer.beatId));
+                    orderBloc.add(GetOrderEvent(
+                        retailerId: widget.retailer.customerId,
+                        beatId: widget.retailer.beatId));
                     return const Center(
                       child: CircularProgressIndicator(),
                     );
@@ -64,7 +66,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   return Container();
                 },
               ),
-              BlocBuilder<OrderDetailBloc, OrderDetailState>(builder: (context, state) {
+              BlocBuilder<OrderDetailBloc, OrderDetailState>(
+                  builder: (context, state) {
                 if (task == null) {
                   return Container();
                 }
@@ -79,11 +82,26 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       ),
                       const Text(
                         "Remarks:",
-                        style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(
                         height: 10,
                       ),
+                      // task remark added
+                      Text(
+                        task != null ? task!.taskRemark : "",
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      // end of task remark added
                       Text(
                         task != null ? task!.escalationTag : "",
                         style: const TextStyle(
@@ -156,7 +174,11 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 minWidth: MediaQuery.of(context).size.width,
                 child: const Text(
                   "UPDATE",
-                  style: TextStyle(color: Colors.white, letterSpacing: 0.67, fontWeight: FontWeight.bold, fontSize: 18),
+                  style: TextStyle(
+                      color: Colors.white,
+                      letterSpacing: 0.67,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18),
                 ),
               ),
             ],
@@ -214,15 +236,17 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             Positioned(
               // To take AppBar Size only
               top: 60.0,
-              left: 50.0,
-              right: 50.0,
+              left: 45.0,
+              right: 45.0,
               child: AppBar(
                 elevation: 5,
                 toolbarHeight: 60,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5)),
                 backgroundColor: Colors.white,
                 primary: false,
                 automaticallyImplyLeading: false,
+                titleSpacing: 8,
                 title: Row(
                   children: [
                     ClipRRect(
@@ -240,8 +264,10 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             fit: BoxFit.cover,
                           );
                         },
-                        errorWidget: (context, url, error) => Image.asset("assets/placeholder.png"),
-                        placeholder: (context, url) => Image.asset("assets/placeholder.png"),
+                        errorWidget: (context, url, error) =>
+                            Image.asset("assets/placeholder.png"),
+                        placeholder: (context, url) =>
+                            Image.asset("assets/placeholder.png"),
                       ),
                     ),
                     const SizedBox(
@@ -285,7 +311,10 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         child: Image(
                           width: 25,
                           height: 25,
-                          image: AssetImage(widget.retailer.enrollmentTypeId == "1" ? "assets/retailer.png" : "assets/tele.png"),
+                          image: AssetImage(
+                              widget.retailer.enrollmentTypeId == "1"
+                                  ? "assets/retailer.png"
+                                  : "assets/tele.png"),
                         ),
                       ),
                     )

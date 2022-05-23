@@ -603,8 +603,11 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                                 noOrderYet = state.noOrderYet;
                               }
                               if (state is NoOrderYetFailureState) {
-                                return Center(
-                                  child: Text(state.failureMessage),
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 10.0),
+                                  child: Center(
+                                    child: Text(state.failureMessage),
+                                  ),
                                 );
                               }
 
