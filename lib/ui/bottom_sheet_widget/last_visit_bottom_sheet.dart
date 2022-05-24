@@ -50,9 +50,11 @@ class _LastVisitBottomSheetState extends State<LastVisitBottomSheet> {
             const Text(
               "Last Visit Status",
               style: TextStyle(
-                  color: MColor.colorPrimary,
-                  fontSize: 20,
-                  letterSpacing: 0.67),
+                color: MColor.colorPrimary,
+                fontSize: 20,
+                letterSpacing: 0.67,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(
               height: 15,

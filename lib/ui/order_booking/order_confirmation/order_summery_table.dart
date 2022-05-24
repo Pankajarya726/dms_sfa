@@ -56,8 +56,8 @@ class _OrderSummeryTableState extends State<OrderSummeryTable> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             mainAxisSize: MainAxisSize.max,
             children: const [
-              DataCell(value: "Sn", flex: 1),
-              DataCell(value: "SKU Description", flex: 6),
+              DataCell(value: "Sn", flex: 2),
+              DataCell(value: "SKU Description", flex: 5),
               DataCell(value: "MRP", flex: 2),
               DataCell(value: "PTR", flex: 2),
               DataCell(value: "Qty\n(MOQs)", flex: 2),
@@ -87,7 +87,9 @@ class _OrderSummeryTableState extends State<OrderSummeryTable> {
                 DataCell(value: brand.brandName, flex: 11),
                 DataCell(value: brand.moqTotal, flex: 2),
                 DataCell(value: brand.pkgTotal, flex: 2),
-                DataCell(value: double.parse(brand.total).toStringAsFixed(2), flex: 3),
+                DataCell(
+                    value: double.parse(brand.total).toStringAsFixed(2),
+                    flex: 3),
               ],
             ),
           ),
@@ -102,12 +104,15 @@ class _OrderSummeryTableState extends State<OrderSummeryTable> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               mainAxisSize: MainAxisSize.max,
               children: [
-                DataCell(value: "$i", flex: 1),
-                DataCell(value: item.description, flex: 6),
-                DataCell(value: double.parse(item.mrp).toStringAsFixed(2), flex: 2),
+                DataCell(value: "$i", flex: 2),
+                DataCell(value: item.description, flex: 5),
+                DataCell(
+                    value: double.parse(item.mrp).toStringAsFixed(2), flex: 2),
                 DataCell1(
-                    price: double.parse(item.skuRatePerPiece).toStringAsFixed(2),
-                    schemePrice: double.parse(item.schemeRatePerPcs).toStringAsFixed(2),
+                    price:
+                        double.parse(item.skuRatePerPiece).toStringAsFixed(2),
+                    schemePrice:
+                        double.parse(item.schemeRatePerPcs).toStringAsFixed(2),
                     flex: 2),
                 // DataCell(value: item.skuRatePerPiece, flex: 2),
                 DataCell(value: item.moqQty.toString(), flex: 2),
@@ -153,14 +158,17 @@ class DataCell extends StatelessWidget {
   final String value;
   final int flex;
 
-  const DataCell({Key? key, required this.value, required this.flex}) : super(key: key);
+  const DataCell({Key? key, required this.value, required this.flex})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Flexible(
       child: Container(
         padding: const EdgeInsets.all(5),
-        decoration: const BoxDecoration(border: Border(right: BorderSide(width: 0.6, color: Color(0xff555555)))),
+        decoration: const BoxDecoration(
+            border: Border(
+                right: BorderSide(width: 0.6, color: Color(0xff555555)))),
         alignment: Alignment.center,
         child: Text(
           value,
@@ -179,14 +187,21 @@ class DataCell1 extends StatelessWidget {
   final String schemePrice;
   final int flex;
 
-  const DataCell1({Key? key, required this.price, required this.schemePrice, required this.flex}) : super(key: key);
+  const DataCell1(
+      {Key? key,
+      required this.price,
+      required this.schemePrice,
+      required this.flex})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Flexible(
       child: Container(
         padding: const EdgeInsets.all(5),
-        decoration: const BoxDecoration(border: Border(right: BorderSide(width: 0.6, color: Color(0xff555555)))),
+        decoration: const BoxDecoration(
+            border: Border(
+                right: BorderSide(width: 0.6, color: Color(0xff555555)))),
         alignment: Alignment.center,
         child: RichText(
           text: TextSpan(children: [
@@ -195,7 +210,9 @@ class DataCell1 extends StatelessWidget {
               style: TextStyle(
                   color: MColor.textColor,
                   fontSize: 12,
-                  decoration: double.parse(schemePrice) == 0 ? TextDecoration.none : TextDecoration.lineThrough),
+                  decoration: double.parse(schemePrice) == 0
+                      ? TextDecoration.none
+                      : TextDecoration.lineThrough),
             ),
             TextSpan(
               text: double.parse(schemePrice) == 0 ? "" : "\n" + schemePrice,

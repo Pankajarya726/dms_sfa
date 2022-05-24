@@ -282,7 +282,7 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
     getRetailers();
   }
 
-// convert latitude and longitude into distance
+  // convert latitude and longitude into distance
   String getDistance(String passedLat, String passedLng) {
     debugPrint("getDistance-->\t lat $passedLat long $passedLng");
     if (passedLng.isEmpty) {
