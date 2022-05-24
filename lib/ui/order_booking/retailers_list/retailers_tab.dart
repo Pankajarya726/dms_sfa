@@ -43,12 +43,10 @@ class RetailerTab extends StatefulWidget {
   _RetailerTabState createState() => _RetailerTabState();
 }
 
-class _RetailerTabState extends State<RetailerTab>
-    implements SelectBeatListener {
+class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener {
   List<RetailersModal> retailers = [];
   BeatsModal? selectedBeat;
-  StreamController<List<RetailersModal>> retailerStreamController =
-      StreamController();
+  StreamController<List<RetailersModal>> retailerStreamController = StreamController();
   String day = "";
   String retailerType = "";
   int pageNo = 1;
@@ -57,17 +55,14 @@ class _RetailerTabState extends State<RetailerTab>
   double longitude = 0.0;
   String sortingType = "";
   UserLocationBloc userLocationBloc = UserLocationBloc();
-  RefreshController refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController refreshController = RefreshController(initialRefresh: false);
 
   @override
   void initState() {
     debugPrint("RetailerTab-->initState--->${widget.selectedBeat.name}");
     widget.onInit(this);
     selectedBeat ??= widget.selectedBeat;
-    day = widget.day.isEmpty
-        ? DateFormat.EEEE().format(DateTime.now())
-        : widget.day;
+    day = widget.day.isEmpty ? DateFormat.EEEE().format(DateTime.now()) : widget.day;
     retailerStreamController.addError("loading");
     getRetailers();
     getLocation();
@@ -86,6 +81,18 @@ class _RetailerTabState extends State<RetailerTab>
     retailerStreamController.addError("loading");
     getRetailers();
     super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void deactivate() {
+    debugPrint("retailer_tab --> deactivate");
+    super.deactivate();
+  }
+
+  @override
+  void reassemble() {
+    debugPrint("retailer_tab --> reassemble");
+    super.reassemble();
   }
 
   @override
@@ -203,21 +210,13 @@ class _RetailerTabState extends State<RetailerTab>
       input["long"] = longitude;
       input["sort_by"] = sortingType;
       input["retailer_type"] = retailerType;
-      GetRetailersResponse response =
-          await repository.getRetailersOrderWise(input);
+      GetRetailersResponse response = await repository.getRetailersOrderWise(input);
       refreshController.loadComplete();
       refreshController.refreshCompleted();
       if (response.success) {
         pageNo = pageNo + 1;
         retailers.addAll(response.data!);
-        // for (var element in retailers) {
-        //   element.setDistance(getDistance(element.lat, element.lng));
-        // }
         retailerStreamController.add(retailers);
-        // if (sortingType.isNotEmpty) {
-        //   onSorting(sortingType);
-        // }
-        debugPrint("response = ${response.message}");
       } else {
         if (pageNo == 1) {
           retailerStreamController.add([]);
@@ -231,8 +230,8 @@ class _RetailerTabState extends State<RetailerTab>
 
   @override
   void onBeatSelect(BeatsModal beatsModal, String day, String type) {
-    if (selectedBeat!.id != beatsModal.id) {
-      // retailerStreamController.add([]);
+    if (selectedBeat!.id == beatsModal.id && day == this.day) {
+      return;
     }
 
     selectedBeat = beatsModal;
@@ -298,9 +297,7 @@ class _RetailerTabState extends State<RetailerTab>
     double lon2 = double.parse(passedLng);
     var p = 0.017453292519943295;
     var c = cos;
-    var a = 0.5 -
-        c((lat2 - lat1) * p) / 2 +
-        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    var a = 0.5 - c((lat2 - lat1) * p) / 2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     double d = 12742 * asin(sqrt(a));
     // print("distance after converting into kilometers = $d");
     return d.toStringAsFixed(2);
@@ -391,28 +388,15 @@ class _BeatWidgetState extends State<BeatWidget> {
             },
             active: widget.tags[index].name == tag.name,
             customData: widget.tags[index],
-            textActiveColor: widget.tags[index].name == tag.name
-                ? Colors.black
-                : const Color(0xff555555),
-            textColor: widget.tags[index].name == tag.name
-                ? Colors.black
-                : const Color(0xff555555),
+            textActiveColor: widget.tags[index].name == tag.name ? Colors.black : const Color(0xff555555),
+            textColor: widget.tags[index].name == tag.name ? Colors.black : const Color(0xff555555),
             elevation: 0,
-            textStyle: const TextStyle(
-                fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+            textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5),
             padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-            border: Border.all(
-                color: widget.tags[index].name == tag.name
-                    ? MColor.colorPrimary
-                    : const Color(0xffC5C5C5),
-                width: 1.5),
+            border: Border.all(color: widget.tags[index].name == tag.name ? MColor.colorPrimary : const Color(0xffC5C5C5), width: 1.5),
             singleItem: true,
-            activeColor: widget.tags[index].name == tag.name
-                ? const Color(0xffFFC9CC)
-                : const Color(0xffFAFAFA),
-            color: widget.tags[index].name == tag.name
-                ? const Color(0xffFFC9CC)
-                : const Color(0xffFAFAFA),
+            activeColor: widget.tags[index].name == tag.name ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
+            color: widget.tags[index].name == tag.name ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
             title: widget.tags[index].name,
           ),
         );

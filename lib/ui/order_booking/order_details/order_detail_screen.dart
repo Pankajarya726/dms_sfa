@@ -24,11 +24,15 @@ class OrderDetailScreen extends StatefulWidget {
 
 class _OrderDetailScreenState extends State<OrderDetailScreen> {
   OrderDetailBloc orderBloc = OrderDetailBloc();
-
   String orderId = "";
   List<Product> product = [];
   Order? order;
   Task? task;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +72,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 if (task == null) {
                   return Container();
                 }
-
                 return Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Column(

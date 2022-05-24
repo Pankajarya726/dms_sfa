@@ -25,7 +25,7 @@ class OrderDetailBloc extends Bloc<OrderDetailEvent, OrderDetailState> {
           yield* saveOrderToCart(
               orders: response.orders.first, products: response.data, task: response.task.isNotEmpty ? response.task.first : null);
         } else {
-          yield GetOrderFailureState(msg: "Could not fetch order detal");
+          yield GetOrderFailureState(msg: "Could not fetch order detail");
         }
       } else {
         yield GetOrderFailureState(msg: response.message);
