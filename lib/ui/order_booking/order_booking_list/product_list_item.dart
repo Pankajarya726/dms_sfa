@@ -260,8 +260,7 @@ class _ProductListItemState extends State<ProductListItem> {
 
     double total = 0;
     if (widget.products.schemes.isEmpty) {
-      total = (double.parse(widget.products.skuRatePerPiece) * double.parse(widget.products.pcsPerMoq) * moqQty) +
-          (double.parse(widget.products.skuRatePerPiece) * double.parse(widget.products.pcsPerPackaging) * pkgQty);
+      total = (double.parse(widget.products.skuRatePerMoq) * moqQty) + (double.parse(widget.products.skuRatePerPkg) * pkgQty);
     } else {
       total = (double.parse(widget.products.schemeRatePerPcs) * double.parse(widget.products.pcsPerMoq) * moqQty) +
           (double.parse(widget.products.schemeRatePerPcs) * double.parse(widget.products.pcsPerPackaging) * pkgQty);
