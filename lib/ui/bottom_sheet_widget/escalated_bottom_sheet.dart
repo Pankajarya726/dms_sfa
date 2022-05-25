@@ -81,12 +81,12 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
               ),
             ),
             const SizedBox(
-              height: 20,
+              height: 15,
             ),
             Flexible(
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

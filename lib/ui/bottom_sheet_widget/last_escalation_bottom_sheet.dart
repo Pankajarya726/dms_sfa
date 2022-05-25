@@ -107,28 +107,35 @@ class _LastEscalationBottomSheetState extends State<LastEscalationBottomSheet> {
                         );
                       },
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    const Text(
-                      StringConst.remark,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xff272727),
-                        letterSpacing: 0.67,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      lastEscalation!.reassignRemark,
-                      style: const TextStyle(
-                        color: Color(0xff555555),
-                        fontSize: 16,
-                      ),
-                    ),
+                    lastEscalation!.reassignRemark.isNotEmpty
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              const Text(
+                                StringConst.remark,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xff272727),
+                                  letterSpacing: 0.67,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                lastEscalation!.reassignRemark,
+                                style: const TextStyle(
+                                  color: Color(0xff555555),
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Container(),
                     const SizedBox(
                       height: 20,
                     ),
