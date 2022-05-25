@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/ui/drawer_menu/home_screen/home_screen.dart';
 import 'package:dms/ui/end_day/end_day_screen.dart';
 import 'package:dms/ui/login_screen/login_screen.dart';
+import 'package:dms/ui/order_summery/order_summery_screen.dart';
 import 'package:dms/ui/screen_after_login/screen_after_login.dart';
 import 'package:dms/ui/settings_screen/settings_screen.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_bloc.dart';
@@ -16,7 +17,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kf_drawer/kf_drawer.dart';
 import 'package:marquee/marquee.dart';
 
@@ -199,9 +199,11 @@ class _DrawerScreenState extends State<DrawerScreen> {
               ListTile(
                 onTap: () {
                   // controller.close!.call();
-                  Utility.showToast( StringConst.comingSoon);
+                  controller.close!.call();
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const OrderSummeryScreen()));
+                  // Utility.showToast(StringConst.comingSoon);
                 },
-                title: const Text("Script", style: TextStyle(color: Colors.white, fontSize: 18)),
+                title: const Text("Order Summary", style: TextStyle(color: Colors.white, fontSize: 18)),
                 leading: SvgPicture.asset(
                   "assets/Script.svg",
                   height: 28,
@@ -212,7 +214,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
               ListTile(
                 onTap: () {
                   // controller.close!.call();
-                  Utility.showToast( StringConst.comingSoon);
+                  Utility.showToast(StringConst.comingSoon);
                 },
                 title: const Text("Message", style: TextStyle(color: Colors.white, fontSize: 18)),
                 leading: SvgPicture.asset(
@@ -227,7 +229,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 child: BlocListener<StartMyDayBloc, StartMyDayStates>(
                   listener: (context, state) {
                     if (state is EndMyDaySuccessState) {
-                      Utility.showToast( state.endMyDayResponse.message);
+                      Utility.showToast(state.endMyDayResponse.message);
                       controller.close!.call();
                       // Navigator.pop(context);
                     }
@@ -283,7 +285,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
               ListTile(
                 onTap: () {
                   // controller.close!.call();
-                  Utility.showToast( StringConst.comingSoon);
+                  Utility.showToast(StringConst.comingSoon);
                 },
                 title: const Text("Sync", style: TextStyle(color: Colors.white, fontSize: 18)),
                 leading: SvgPicture.asset(

@@ -168,6 +168,16 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
                 onLoading: () {
                   getRetailers();
                 },
+                footer: CustomFooter(
+                  builder: (context, loadStatus) {
+                    if (loadStatus == LoadStatus.loading) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return Container();
+                  },
+                ),
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
                   itemCount: snapshot.data!.length,
