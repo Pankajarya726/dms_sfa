@@ -24,11 +24,15 @@ class OrderDetailScreen extends StatefulWidget {
 
 class _OrderDetailScreenState extends State<OrderDetailScreen> {
   OrderDetailBloc orderBloc = OrderDetailBloc();
-
   String orderId = "";
   List<Product> product = [];
   Order? order;
   Task? task;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +75,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 if (task == null) {
                   return Container();
                 }
-
                 return Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Column(
@@ -115,6 +118,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       Tags(
                         itemCount: task!.buId.length,
                         runSpacing: 10,
+                        alignment: WrapAlignment.start,
                         spacing: 5,
                         itemBuilder: (index) {
                           return ItemTags(
@@ -122,15 +126,15 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             title: task!.buId[index].buName,
                             active: true,
                             pressEnabled: false,
-                            textColor: Color(0xff000000),
-                            textActiveColor: Color(0xff000000),
+                            textColor: const Color(0xff000000),
+                            textActiveColor: const Color(0xff000000),
                             elevation: 0,
-                            activeColor: Color(0xffE7E7E7),
+                            activeColor: const Color(0xffE7E7E7),
                             // textStyle: TextStyle(
                             //   color: Color(0xff000000),
                             // ),
-                            color: Color(0xffE7E7E7),
-                            highlightColor: Color(0xffE7E7E7),
+                            color: const Color(0xffE7E7E7),
+                            highlightColor: const Color(0xffE7E7E7),
                           );
                         },
                       )

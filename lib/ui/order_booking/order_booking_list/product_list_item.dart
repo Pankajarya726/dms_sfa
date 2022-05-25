@@ -260,8 +260,7 @@ class _ProductListItemState extends State<ProductListItem> {
 
     double total = 0;
     if (widget.products.schemes.isEmpty) {
-      total = (double.parse(widget.products.skuRatePerPiece) * double.parse(widget.products.pcsPerMoq) * moqQty) +
-          (double.parse(widget.products.skuRatePerPiece) * double.parse(widget.products.pcsPerPackaging) * pkgQty);
+      total = (double.parse(widget.products.skuRatePerMoq) * moqQty) + (double.parse(widget.products.skuRatePerPkg) * pkgQty);
     } else {
       total = (double.parse(widget.products.schemeRatePerPcs) * double.parse(widget.products.pcsPerMoq) * moqQty) +
           (double.parse(widget.products.schemeRatePerPcs) * double.parse(widget.products.pcsPerPackaging) * pkgQty);
@@ -301,7 +300,14 @@ class _ProductListItemState extends State<ProductListItem> {
         packagingName: widget.products.packagingName,
         scheme: widget.products.schemes.isEmpty ? "" : widget.products.schemes.first.toJson(),
         totalPrice: total.toStringAsFixed(2));
-    int updated = await databaseHelper.addProductToCart(cart);
+
+    int updated;
+    if (pkgQty == 0 && moqQty == 0) {
+      updated = await databaseHelper.deleteProductFromCart(cart.productId);
+    } else {
+      updated = await databaseHelper.addProductToCart(cart);
+    }
+
     debugPrint("update-->$updated");
     setState(() {});
   }

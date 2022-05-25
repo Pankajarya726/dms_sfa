@@ -21,7 +21,7 @@ class _ProductInfoBottomSheetState extends State<ProductInfoBottomSheet> {
     "Long Description: ",
     "Variant: ",
     "Weight: ",
-    "Pcs Per Moq: ",
+    "Pcs Per MOQ: ",
     "Pcs Per Packaging: ",
     "PTR Per Piece: ",
     "PTR Per MOQ: ",
@@ -41,160 +41,121 @@ class _ProductInfoBottomSheetState extends State<ProductInfoBottomSheet> {
         maxHeight: MediaQuery.of(context).size.height * 0.80,
         minHeight: MediaQuery.of(context).size.height * 0.20,
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(15, 20, 15, 5),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    StringConst.productInfo,
-                    style: TextStyle(
-                      fontSize: 19,
-                      color: MColor.colorPrimary,
-                      letterSpacing: 0.67,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    widget.products.skuCode,
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      letterSpacing: 0.67,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      getText(
-                        textLabel[0],
-                        widget.products.longDescription,
-                      ),
-                      getText(
-                        textLabel[1],
-                        widget.products.variantName,
-                      ),
-                      getText(
-                        textLabel[2],
-                        widget.products.weight,
-                      ),
-                      getText(
-                        textLabel[3],
-                        widget.products.pcsPerMoq,
-                      ),
-                      getText(
-                        textLabel[4],
-                        widget.products.pcsPerPackaging,
-                      ),
-                      getText(
-                        textLabel[5],
-                        currencyFormat.format(
-                            double.parse(widget.products.skuRatePerPiece)),
-                      ),
-                      getText(
-                        textLabel[6],
-                        currencyFormat.format(
-                            double.parse(widget.products.skuRatePerMoq)),
-                      ),
-                      getText(
-                        textLabel[7],
-                        currencyFormat.format(
-                            double.parse(widget.products.skuRatePerPkg)),
-                      ),
-                    ],
-                  ),
-                ],
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(15, 20, 15, 15),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                StringConst.productInfo,
+                style: TextStyle(
+                  fontSize: 19,
+                  color: MColor.colorPrimary,
+                  letterSpacing: 0.67,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            Container(
-              height: 1,
-              color: const Color(0xffDCDCDC),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(15, 15, 15, 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    StringConst.schemeInfo,
-                    style: TextStyle(
-                      fontSize: 19,
-                      color: MColor.colorPrimary,
-                      letterSpacing: 0.67,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  widget.products.schemes.isNotEmpty
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.products.schemes.first.schemeName,
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                letterSpacing: 0.67,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            getText(
-                              textLabel2[0],
-                              widget.products.schemes.first.discountPercentage
-                                      .isNotEmpty
-                                  ? widget
-                                      .products.schemes.first.discountPercentage
-                                  : widget
-                                      .products.schemes.first.discountAmount,
-                            ),
-                            getText(
-                              textLabel2[1],
-                              widget.products.schemes.first.fromDate.isNotEmpty
-                                  ? DateFormat("dd-MM-yyyy").format(
-                                      DateTime.parse(widget
-                                          .products.schemes.first.fromDate))
-                                  : "",
-                            ),
-                            getText(
-                              textLabel2[2],
-                              widget.products.schemes.first.toDate.isNotEmpty
-                                  ? DateFormat("dd-MM-yyyy").format(
-                                      DateTime.parse(
-                                          widget.products.schemes.first.toDate))
-                                  : "",
-                            ),
-                          ],
-                        )
-                      : const Padding(
-                          padding: EdgeInsets.only(bottom: 10),
-                          child: Text(
-                            "Schemes not found",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              letterSpacing: 0.67,
-                            ),
+              const SizedBox(
+                height: 10,
+              ),
+              Text(
+                widget.products.skuCode,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  letterSpacing: 0.67,
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                getText(
+                  textLabel[0],
+                  widget.products.longDescription,
+                ),
+                getText(
+                  textLabel[1],
+                  widget.products.variantName,
+                ),
+                getText(
+                  textLabel[2],
+                  widget.products.weight,
+                ),
+                getText(
+                  textLabel[3],
+                  widget.products.pcsPerMoq,
+                ),
+                getText(
+                  textLabel[4],
+                  widget.products.pcsPerPackaging,
+                ),
+                getText(
+                  textLabel[5],
+                  currencyFormat.format(double.parse(widget.products.skuRatePerPiece)),
+                ),
+                getText(
+                  textLabel[6],
+                  currencyFormat.format(double.parse(widget.products.skuRatePerMoq)),
+                ),
+                getText(
+                  textLabel[7],
+                  currencyFormat.format(double.parse(widget.products.skuRatePerPkg)),
+                ),
+              ]),
+              const SizedBox(
+                height: 30,
+              ),
+              const Text(
+                StringConst.schemeInfo,
+                style: TextStyle(
+                  fontSize: 19,
+                  color: MColor.colorPrimary,
+                  letterSpacing: 0.67,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              widget.products.schemes.isNotEmpty
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.products.schemes.first.schemeName,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            letterSpacing: 0.67,
                           ),
                         ),
-                ],
-              ),
-            ),
-          ],
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        getText(
+                          textLabel2[0],
+                          widget.products.schemes.first.discountPercentage.isNotEmpty
+                              ? widget.products.schemes.first.discountPercentage + "%"
+                              : currencyFormat.format(double.parse(widget.products.schemes.first.discountAmount)),
+                        ),
+                        getText(
+                            textLabel2[1], DateFormat("dd-MM-yyyy").format(DateTime.parse(widget.products.schemes.first.fromDate))),
+                        getText(textLabel2[2], DateFormat("dd-MM-yyyy").format(DateTime.parse(widget.products.schemes.first.toDate))),
+                      ],
+                    )
+                  : const Text(
+                      "Schemes not found",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        letterSpacing: 0.67,
+                      ),
+                    ),
+            ],
+          ),
         ),
       ),
     );

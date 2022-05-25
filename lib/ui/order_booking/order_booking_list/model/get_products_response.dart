@@ -229,12 +229,12 @@ class Scheme {
         discountPercentage: json["discount_percentage"] == null ? "" : json["discount_percentage"].toString(),
         discountAmount: json["discount_amount"] == null ? "" : json["discount_amount"].toString(),
         uom: json["uom"] == null ? "" : json["uom"].toString(),
-        fromDate: json["from_date"] == null ? "" : json["from_date"].toString(),
-        toDate: json["to_date"] == null ? "" : json["to_date"].toString(),
+        fromDate: json["from_date"] == null ? DateTime.now().toString() : json["from_date"].toString(),
+        toDate: json["to_date"] == null ? DateTime.now().toString() : json["to_date"].toString(),
         isActive: json["is_active"] == null ? "" : json["is_active"].toString(),
         createdBy: json["created_by"] == null ? "" : json["created_by"].toString(),
-        createdAt: json["created_at"] == null ? "" : json["created_at"].toString(),
-        updatedAt: json["updated_at"] == null ? "" : json["updated_at"].toString(),
+        createdAt: json["created_at"] == null ? DateTime.now().toString() : json["created_at"].toString(),
+        updatedAt: json["updated_at"] == null ? DateTime.now().toString() : json["updated_at"].toString(),
       );
 
   Map<String, dynamic> toMap() => {
