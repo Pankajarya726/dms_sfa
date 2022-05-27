@@ -76,11 +76,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     debugPrint("AppLifecycleState--->$state");
-
-    if (state == AppLifecycleState.paused) {
-      SystemNavigator.pop();
-    }
-
+    // if (state == AppLifecycleState.paused) {
+    //   SystemNavigator.pop();
+    // }
     super.didChangeAppLifecycleState(state);
   }
 
