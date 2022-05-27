@@ -152,50 +152,64 @@ class _TaskDetailsBottomSheetState extends State<TaskDetailsBottomSheet> {
                       const SizedBox(
                         height: 15,
                       ),
-                      const Text(
-                        StringConst.remark,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xff272727),
-                          letterSpacing: 0.67,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      Text(
-                        pendingTaskModal.taskRemark,
-                        style: const TextStyle(
-                          color: Color(0xff555555),
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      const Text(
-                        StringConst.escalatedRemark,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xff272727),
-                          letterSpacing: 0.67,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      Text(
-                        pendingTaskModal.escalationRemark,
-                        style: const TextStyle(
-                          color: Color(0xff555555),
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
+                      pendingTaskModal.taskRemark.isNotEmpty
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  StringConst.remark,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xff272727),
+                                    letterSpacing: 0.67,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                                Text(
+                                  pendingTaskModal.taskRemark,
+                                  style: const TextStyle(
+                                    color: Color(0xff555555),
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                              ],
+                            )
+                          : Container(),
+                      pendingTaskModal.escalationRemark.isNotEmpty
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  StringConst.escalatedRemark,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xff272727),
+                                    letterSpacing: 0.67,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                                Text(
+                                  pendingTaskModal.escalationRemark,
+                                  style: const TextStyle(
+                                    color: Color(0xff555555),
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                              ],
+                            )
+                          : Container(),
                       RichText(
                         text: TextSpan(
                           text: StringConst.taskElapseDays,
