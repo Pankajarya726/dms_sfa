@@ -11,6 +11,7 @@ import 'package:dms/utils/network.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
+import 'package:rxdart/rxdart.dart';
 
 class SearchTaskScreen extends StatefulWidget {
   final String day;
@@ -29,9 +30,18 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
   StreamController<List<RetailersTaskModal>> searchStream = StreamController();
   DateTime? currentDate;
   String day = "";
+  final subject = BehaviorSubject<String>();
 
   @override
   void initState() {
+    subject.stream
+        .debounce(
+            (event) => TimerStream(event, const Duration(milliseconds: 1000)))
+        .listen((query) {
+      debugPrint("query--->$query");
+      retailersList.clear();
+      searchApi(query);
+    });
     day = widget.day;
     super.initState();
   }
@@ -53,9 +63,9 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
                   retailersList.clear();
                   searchStream.addError(
                       "Enter Name or mobile number to search retailer");
-                } else {
+                } else if (text.trim().length >= 3) {
                   retailersList.clear();
-                  searchApi(text);
+                  subject.add(text);
                 }
               },
               decoration: InputDecoration(

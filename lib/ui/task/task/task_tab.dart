@@ -169,6 +169,7 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
   }
 
   void getTaskRetailers() async {
+    retailers.clear();
     retailerStreamController.addError("loading");
     if (await Network.isConnected()) {
       if (day.isEmpty) {
@@ -201,8 +202,9 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
 
   @override
   void onBeatSelect(BeatsModal beatsModal, String day, String type) async {
-    if (selectedBeat!.id != beatsModal.id) {
-      retailerStreamController.add([]);
+    if (selectedBeat!.id == beatsModal.id && day == this.day) {
+      // retailerStreamController.add([]);
+      return;
     }
 
     selectedBeat = beatsModal;
@@ -215,6 +217,7 @@ class _TaskTabState extends State<TaskTab> implements SelectBeatListener {
     } else {
       this.day = day;
     }
+
     getTaskRetailers();
   }
 

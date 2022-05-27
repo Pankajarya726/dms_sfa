@@ -11,6 +11,7 @@ import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 
 class SearchRetailerScreen extends StatefulWidget {
   final String day;
@@ -34,9 +35,18 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
   List<RetailersModal> retailersList = [];
   StreamController<List<RetailersModal>> searchStream = StreamController();
   String retailerType = "";
+  final subject = BehaviorSubject<String>();
 
   @override
   void initState() {
+    subject.stream
+        .debounce(
+            (event) => TimerStream(event, const Duration(milliseconds: 1000)))
+        .listen((query) {
+      debugPrint("query--->$query");
+      retailersList.clear();
+      searchApi(query);
+    });
     if (widget.retailerType == StringConst.retailer) {
       retailerType = "1";
     } else if (widget.retailerType == StringConst.teleRetailer) {
@@ -44,6 +54,7 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
     } else {
       retailerType = "";
     }
+
     super.initState();
   }
 
@@ -64,9 +75,9 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
                   retailersList.clear();
                   searchStream.addError(
                       "Enter Name or mobile number to search retailer");
-                } else {
+                } else if (text.trim().length >= 3) {
                   retailersList.clear();
-                  searchApi(text);
+                  subject.add(text);
                 }
               },
               decoration: InputDecoration(

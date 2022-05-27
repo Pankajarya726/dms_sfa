@@ -119,8 +119,10 @@ class _ProductTabsState extends State<ProductTabs>
                 tags: categoryList,
                 onSelect: (Category tag) {
                   debugPrint("onBeatSelect-->${tag.categoryName}");
-                  category = tag;
-                  getProduct(widget.brands.id, category!.id);
+                  if (category!.id != tag.id) {
+                    category = tag;
+                    getProduct(widget.brands.id, category!.id);
+                  }
                 },
               )
             : Container(),

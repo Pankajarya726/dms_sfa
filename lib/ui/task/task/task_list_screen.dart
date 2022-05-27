@@ -35,6 +35,7 @@ class _TaskListScreenState extends State<TaskListScreen>
   String selectedDay = "";
   StreamController<List<BeatsModal>> beatsStreamController = StreamController();
   StreamController<int> tabStream = StreamController();
+  int duplicateTabIndex = 0;
 
   @override
   void initState() {
@@ -154,7 +155,10 @@ class _TaskListScreenState extends State<TaskListScreen>
                       indicatorColor: MColor.colorPrimary,
                       labelPadding: const EdgeInsets.symmetric(horizontal: 0),
                       onTap: (index) {
-                        tabStream.add(index + 1);
+                        if (duplicateTabIndex != index) {
+                          tabStream.add(index + 1);
+                        }
+                        duplicateTabIndex = index;
                       },
                       tabs: [
                         Tab(

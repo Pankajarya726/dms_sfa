@@ -52,6 +52,7 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
   String packQty = "";
   MrpFilterListener? mrpFilterListener;
   StreamController<int> tabStream = StreamController();
+  int duplicateTabIndex = 0;
 
   @override
   void dispose() {
@@ -256,10 +257,13 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
                           height: 50,
                           color: const Color(0xffEDEDED),
                           child: TabBar(
-                            onTap: (value) {
+                            onTap: (index) {
                               // BlocProvider.of<OrderBookListBloc>(context)
                               //     .add(ChangeTabEvent(index: value));
-                              tabStream.add(value);
+                              if (duplicateTabIndex != index) {
+                                tabStream.add(index);
+                              }
+                              duplicateTabIndex = index;
                             },
                             isScrollable: true,
                             controller: tabController,

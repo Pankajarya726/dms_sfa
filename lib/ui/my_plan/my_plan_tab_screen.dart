@@ -15,19 +15,23 @@ class MyPlanTabScreen extends StatefulWidget {
   final List<PlanDataModel> plans;
   final DateTime dateTime;
 
-  const MyPlanTabScreen({Key? key, required this.plans, required this.dateTime}) : super(key: key);
+  const MyPlanTabScreen({Key? key, required this.plans, required this.dateTime})
+      : super(key: key);
 
   @override
   _MyPlanTabScreenState createState() => _MyPlanTabScreenState();
 }
 
 class _MyPlanTabScreenState extends State<MyPlanTabScreen>
-    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<MyPlanTabScreen> {
+    with
+        TickerProviderStateMixin,
+        AutomaticKeepAliveClientMixin<MyPlanTabScreen> {
   List<String> week = [];
   List<WeeklyPlanModel> weeklyPlan = [];
   TabController? tabController;
 
-  StreamController<List<PlanDataModel>> planStreamController = StreamController.broadcast();
+  StreamController<List<PlanDataModel>> planStreamController =
+      StreamController.broadcast();
 
   @override
   void initState() {
@@ -63,7 +67,8 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen>
                       initialData: weeklyPlan.first.planList,
                       builder: (builder, snapshot) {
                         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                          snapshot.data!.sort((a, b) => a.addPlanDate.compareTo(b.addPlanDate));
+                          snapshot.data!.sort(
+                              (a, b) => a.addPlanDate.compareTo(b.addPlanDate));
 
                           return PlanListWidget(
                             planList: snapshot.data!,
@@ -84,8 +89,10 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen>
   Future<List<WeeklyPlanModel>> getPlans() async {
     if (await Network.isConnected()) {
       // planStreamController.close();
-      String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
-      GetPlanResponse response = await repository.getPlanByMonth(userId, DateFormat("yyyy-MM").format(widget.dateTime));
+      String userId =
+          await SharedPreference.getStringPreference(SharedPreference.userId);
+      GetPlanResponse response = await repository.getPlanByMonth(
+          userId, DateFormat("yyyy-MM").format(widget.dateTime));
 
       if (response.success) {
         week.clear();
@@ -97,7 +104,8 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen>
         debugPrint("weeks in data $week");
         weeklyPlan.clear();
         for (var w in week) {
-          List<PlanDataModel> pm = response.data.where((element) => element.week == w).toList();
+          List<PlanDataModel> pm =
+              response.data.where((element) => element.week == w).toList();
           weeklyPlan.add(WeeklyPlanModel(week: w, planList: pm));
         }
         weeklyPlan.sort((a, b) => a.week.compareTo(b.week));
@@ -121,7 +129,8 @@ class WeekTabWidget extends StatefulWidget {
   final List<WeeklyPlanModel> weeks;
   final Function(WeeklyPlanModel week) onSelect;
 
-  const WeekTabWidget({Key? key, required this.weeks, required this.onSelect}) : super(key: key);
+  const WeekTabWidget({Key? key, required this.weeks, required this.onSelect})
+      : super(key: key);
 
   @override
   _WeekTabWidgetState createState() => _WeekTabWidgetState();
@@ -161,15 +170,22 @@ class _WeekTabWidgetState extends State<WeekTabWidget> {
             textActiveColor: Colors.black,
             textColor: const Color(0xff555555),
             elevation: 0,
-            textStyle: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+            textStyle: const TextStyle(
+                color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
             // textStyle: const TextStyle(fontSize: 16),
             padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
             border: Border.all(
-              color: widget.weeks[index].week == week ? MColor.colorPrimary : const Color(0xffC5C5C5),
+              color: widget.weeks[index].week == week
+                  ? MColor.colorPrimary
+                  : const Color(0xffC5C5C5),
             ),
             singleItem: true,
-            activeColor: widget.weeks[index].week == week ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
-            color: widget.weeks[index].week == week ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
+            activeColor: widget.weeks[index].week == week
+                ? const Color(0xffFFC9CC)
+                : const Color(0xffFAFAFA),
+            color: widget.weeks[index].week == week
+                ? const Color(0xffFFC9CC)
+                : const Color(0xffFAFAFA),
             title: "Week " + widget.weeks[index].week,
           );
         },
