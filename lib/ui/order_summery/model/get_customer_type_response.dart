@@ -17,19 +17,11 @@ class GetCustomerTypeResponse {
 
   factory GetCustomerTypeResponse.fromJson(String str) => GetCustomerTypeResponse.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory GetCustomerTypeResponse.fromMap(Map<String, dynamic> json) => GetCustomerTypeResponse(
         success: json["success"] ?? false,
         message: json["message"] ?? "Data not found",
         data: json["data"] == null ? [] : List<CustomerType>.from(json["data"].map((x) => CustomerType.fromMap(x))),
       );
-
-  Map<String, dynamic> toMap() => {
-        "success": success ?? false,
-        "message": message ?? "",
-        "data": List<dynamic>.from(data.map((x) => x.toMap())),
-      };
 }
 
 class CustomerType {
@@ -38,7 +30,7 @@ class CustomerType {
     required this.name,
   });
 
-  int id;
+  String id;
   String name;
 
   factory CustomerType.fromJson(String str) => CustomerType.fromMap(json.decode(str));
@@ -46,7 +38,7 @@ class CustomerType {
   String toJson() => json.encode(toMap());
 
   factory CustomerType.fromMap(Map<String, dynamic> json) => CustomerType(
-        id: json["id"] ?? 0,
+        id: json["id"] == null ? "" : json["id"].toString(),
         name: json["name"] ?? "",
       );
 

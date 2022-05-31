@@ -208,7 +208,9 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
   }
 
   void getRetailers() async {
+    debugPrint("getRetailers-->$pageNo${selectedBeat!.id}");
     // retailers.clear();
+    int page = pageNo;
 
     if (await Network.isConnected()) {
       Map<String, dynamic> input = HashMap<String, dynamic>();
@@ -220,6 +222,7 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
       input["long"] = longitude;
       input["sort_by"] = sortingType;
       input["retailer_type"] = retailerType;
+
       GetRetailersResponse response = await repository.getRetailersOrderWise(input);
       refreshController.loadComplete();
       refreshController.refreshCompleted();
@@ -228,6 +231,7 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
         retailers.addAll(response.data!);
         retailerStreamController.add(retailers);
       } else {
+        debugPrint("pageNo-->$pageNo---$page");
         if (pageNo == 1) {
           retailerStreamController.add([]);
         }

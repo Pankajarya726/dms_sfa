@@ -22,6 +22,8 @@ BaseOptions options = BaseOptions(
     sendTimeout: 60000,
     receiveTimeout: 60000,
     headers: {"Accept": "application/json"});
+
+CancelToken cancelToken=CancelToken();
 Dio dio = Dio(options);
 ApiRepository repository = ApiRepository();
 ImagePicker imagePicker = ImagePicker();

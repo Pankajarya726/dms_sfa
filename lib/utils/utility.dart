@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'colors.dart';
@@ -49,6 +52,11 @@ class Utility {
 
   static hideKeyboard() {
     SystemChannels.textInput.invokeMethod('TextInput.hide');
+  }
+
+  static Future<String> findLocalPath() async {
+    final directory = Platform.isAndroid ? await getTemporaryDirectory() : await getApplicationDocumentsDirectory();
+    return directory.path;
   }
 
   static Future<bool?> showConfirmAlert(

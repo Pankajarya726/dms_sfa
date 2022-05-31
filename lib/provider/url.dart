@@ -59,4 +59,8 @@ class Url {
   static const String getTaskHistory = "getTaskHistory";
   static const String taskResolve = "taskResolve";
   static const String checkMobileNumber = "checkMobile";
+  static const String getFilterLocation = "getFilterLocation";
+  static const String getCustomerType = "getCustomerType";
+  static const String getFilterWiseCustomer = "getFilterWiseCustomer";
+  static const String getOrderSummary = "getOrderSummary";
 }

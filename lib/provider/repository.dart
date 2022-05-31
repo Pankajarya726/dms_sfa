@@ -39,6 +39,10 @@ import 'package:dms/ui/order_booking/retailer_detail/model/retailer_details_resp
 import 'package:dms/ui/order_booking/retailer_detail/model/task_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
+import 'package:dms/ui/order_summery/model/get_customer_response.dart';
+import 'package:dms/ui/order_summery/model/get_customer_type_response.dart';
+import 'package:dms/ui/order_summery/model/get_location_response.dart';
+import 'package:dms/ui/order_summery/model/get_order_summery_response.dart';
 import 'package:dms/ui/splash_screen/model/splash_model.dart';
 import 'package:dms/ui/start_my_day/model/end_my_day_response.dart';
 import 'package:dms/ui/start_my_day/model/quotes_and_images_response.dart';
@@ -855,7 +859,7 @@ class ApiRepository {
 
   Future<GetRetailersResponse> getRetailersOrderWise(Map input) async {
     try {
-      Response response = await dio.post(Url.getRetailerOrderWiseV2, data: input);
+      Response response = await dio.post(Url.getRetailerOrderWiseV2, data: input, cancelToken: cancelToken);
       GetRetailersResponse baseResponse = GetRetailersResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
@@ -1348,6 +1352,78 @@ class ApiRepository {
         success: false,
         message: "",
       );
+    }
+  }
+
+  Future<GetCustomerResponse> getCustomers() async {
+    try {
+      Response response = await dio.get(Url.getFilterWiseCustomer);
+      GetCustomerResponse baseResponse = GetCustomerResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = StringConst.somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return GetCustomerResponse(success: false, message: "", data: []);
+    }
+  }
+
+  Future<GetLocationResponse> getLocation(Map<String, dynamic> input) async {
+    try {
+      Response response = await dio.post(Url.getFilterWiseCustomer, data: input);
+      GetLocationResponse baseResponse = GetLocationResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = StringConst.somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return GetLocationResponse(success: false, message: "", data: []);
+    }
+  }
+
+  Future<GetCustomerTypeResponse> getCustomerType() async {
+    try {
+      Response response = await dio.get(Url.getCustomerType);
+      GetCustomerTypeResponse baseResponse = GetCustomerTypeResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = StringConst.somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return GetCustomerTypeResponse(success: false, message: "", data: []);
+    }
+  }
+
+  Future<GetOrderSummeryResponse> getOrderSummery(Map input) async {
+    try {
+      Response response = await dio.post(Url.getOrderSummary, data: input);
+      GetOrderSummeryResponse baseResponse = GetOrderSummeryResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = StringConst.somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return GetOrderSummeryResponse(success: false, message: "", data: []);
     }
   }
 }

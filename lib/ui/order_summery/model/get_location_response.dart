@@ -45,13 +45,13 @@ class LocationModel {
     required this.updatedAt,
   });
 
-  int id;
+  String id;
   String parentId;
   String locationCode;
   String locationDescription;
   String locationPincode;
-  int isDelete;
-  int isActive;
+  String isDelete;
+  String isActive;
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -60,13 +60,13 @@ class LocationModel {
   String toJson() => json.encode(toMap());
 
   factory LocationModel.fromMap(Map<String, dynamic> json) => LocationModel(
-        id: json["id"] ?? 0,
-        parentId: json["parent_id"] ?? "0",
-        locationCode: json["location_code"] ?? "",
+        id: json["id"] == null? "0": json["id"].toString(),
+        parentId: json["parent_id"] == null? "0": json["parent_id"].toString(),
+        locationCode: json["location_code"] == null? "": json["location_code"].toString(),
         locationDescription: json["location_description"] ?? "",
-        locationPincode: json["location_pincode"] ?? "",
-        isDelete: json["is_delete"] ?? 0,
-        isActive: json["is_active"] ?? 0,
+        locationPincode: json["location_pincode"] == null? "": json["location_pincode"].toString(),
+        isDelete: json["is_delete"] == null? "0": json["is_delete"].toString(),
+        isActive: json["is_active"] == null? "0": json["is_active"].toString(),
         createdAt: json["created_at"] == null ? DateTime.now() : DateTime.parse(json["created_at"]),
         updatedAt: json["updated_at"] == null ? DateTime.now() : DateTime.parse(json["updated_at"]),
       );
