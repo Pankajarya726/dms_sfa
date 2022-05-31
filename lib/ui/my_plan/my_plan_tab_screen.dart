@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:dms/main.dart';
 import 'package:dms/model/get_plan_response.dart';
+import 'package:dms/ui/custom_widget/no_internet.dart';
+import 'package:dms/ui/custom_widget/no_plan_found.dart';
 import 'package:dms/ui/my_plan/my_plan.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/utility.dart';
@@ -32,24 +35,53 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen>
 
   StreamController<List<PlanDataModel>> planStreamController =
       StreamController.broadcast();
+  StreamController<List<WeeklyPlanModel>> myPlanStreamController =
+      StreamController();
 
   @override
   void initState() {
     debugPrint("MyPlanTabScreen--->");
+    getPlans();
     super.initState();
   }
 
   @override
   // ignore: must_call_super
   Widget build(BuildContext context) {
-    return FutureBuilder<List<WeeklyPlanModel>>(
-        future: getPlans(),
+    return StreamBuilder<List<WeeklyPlanModel>>(
+        // future: getPlans(),
+        stream: myPlanStreamController.stream,
         initialData: const [],
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+          // if (snapshot.connectionState == ConnectionState.waiting) {
+          //   return const Center(
+          //     child: CircularProgressIndicator(),
+          //   );
+          // }
+
+          if (snapshot.hasError) {
+            if (snapshot.error.toString() == "loading") {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (snapshot.error.toString() == Constants.internetAlert) {
+              return Center(
+                child: NoInternetConnection(
+                  onRefresh: () {
+                    getPlans();
+                  },
+                ),
+              );
+            } else {
+              return Center(
+                child: NoPlanFound(
+                  onRefresh: () {
+                    getPlans();
+                  },
+                ),
+              );
+            }
           }
 
           if (snapshot.hasData && snapshot.data!.isNotEmpty) {
@@ -81,14 +113,19 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen>
             );
           }
           return const Center(
-            child: Text("Record not found"),
+            child: CircularProgressIndicator(),
           );
+          // return const Center(
+          //   child: Text("Record not found"),
+          // );
         });
   }
 
-  Future<List<WeeklyPlanModel>> getPlans() async {
+  // Future<List<WeeklyPlanModel>> getPlans() async {
+  void getPlans() async {
     if (await Network.isConnected()) {
       // planStreamController.close();
+      myPlanStreamController.addError("loading");
       String userId =
           await SharedPreference.getStringPreference(SharedPreference.userId);
       GetPlanResponse response = await repository.getPlanByMonth(
@@ -111,13 +148,16 @@ class _MyPlanTabScreenState extends State<MyPlanTabScreen>
         weeklyPlan.sort((a, b) => a.week.compareTo(b.week));
 
         tabController = TabController(length: weeklyPlan.length, vsync: this);
-        return weeklyPlan;
+        // return weeklyPlan;
+        myPlanStreamController.add(weeklyPlan);
       } else {
-        return [];
+        myPlanStreamController.addError(response.message);
+        // return [];
       }
     } else {
-      Utility.showToast("Please check your internet connection!");
-      return [];
+      // Utility.showToast("Please check your internet connection!");
+      // return [];
+      myPlanStreamController.addError(Constants.internetAlert);
     }
   }
 
