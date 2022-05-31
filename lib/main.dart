@@ -22,6 +22,8 @@ BaseOptions options = BaseOptions(
     sendTimeout: 60000,
     receiveTimeout: 60000,
     headers: {"Accept": "application/json"});
+
+CancelToken cancelToken=CancelToken();
 Dio dio = Dio(options);
 ApiRepository repository = ApiRepository();
 ImagePicker imagePicker = ImagePicker();
@@ -76,11 +78,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     debugPrint("AppLifecycleState--->$state");
-
-    if (state == AppLifecycleState.paused) {
-      SystemNavigator.pop();
-    }
-
+    // if (state == AppLifecycleState.paused) {
+    //   SystemNavigator.pop();
+    // }
     super.didChangeAppLifecycleState(state);
   }
 

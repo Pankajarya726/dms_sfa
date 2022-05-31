@@ -63,6 +63,7 @@ dependencies:
   in_app_update:
   url_launcher:
   flutter_slidable:
+  permission_handler:
 
 #  for review and rate the app on store
   in_app_review:
