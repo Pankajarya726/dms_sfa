@@ -52,7 +52,7 @@ class Url {
   static const String getOrder = "getOrderForEdit";
   static const String getTaskByRetailer = "getTaskByRetailer";
   static const String noOrderYet = "getNoOrderYet";
-  static const String getRetailersTaskWise = "getRetailerTaskWiseV1";
+  static const String getRetailersTaskWise = "getRetailerTaskWiseV2";
   static const String getPendingTask = "getPendingTask";
   static const String searchTaskRetailers = "searchRetailerInTaskV1";
   static const String taskEscalate = "taskEscalateAndResolve";
