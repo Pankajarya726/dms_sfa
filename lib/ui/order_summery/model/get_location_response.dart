@@ -35,51 +35,23 @@ class GetLocationResponse {
 class LocationModel {
   LocationModel({
     required this.id,
-    required this.parentId,
-    required this.locationCode,
-    required this.locationDescription,
-    required this.locationPincode,
-    required this.isDelete,
-    required this.isActive,
-    required this.createdAt,
-    required this.updatedAt,
+    required this.name,
   });
 
   String id;
-  String parentId;
-  String locationCode;
-  String locationDescription;
-  String locationPincode;
-  String isDelete;
-  String isActive;
-  DateTime createdAt;
-  DateTime updatedAt;
+  String name;
 
   factory LocationModel.fromJson(String str) => LocationModel.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
   factory LocationModel.fromMap(Map<String, dynamic> json) => LocationModel(
-        id: json["id"] == null? "0": json["id"].toString(),
-        parentId: json["parent_id"] == null? "0": json["parent_id"].toString(),
-        locationCode: json["location_code"] == null? "": json["location_code"].toString(),
-        locationDescription: json["location_description"] ?? "",
-        locationPincode: json["location_pincode"] == null? "": json["location_pincode"].toString(),
-        isDelete: json["is_delete"] == null? "0": json["is_delete"].toString(),
-        isActive: json["is_active"] == null? "0": json["is_active"].toString(),
-        createdAt: json["created_at"] == null ? DateTime.now() : DateTime.parse(json["created_at"]),
-        updatedAt: json["updated_at"] == null ? DateTime.now() : DateTime.parse(json["updated_at"]),
+        id: json["id"] == null ? "0" : json["id"].toString(),
+        name: json["name"] == null ? "0" : json["name"].toString(),
       );
 
   Map<String, dynamic> toMap() => {
         "id": id,
-        "parent_id": parentId,
-        "location_code": locationCode,
-        "location_description": locationDescription,
-        "location_pincode": locationPincode,
-        "is_delete": isDelete,
-        "is_active": isActive,
-        "created_at": createdAt.toIso8601String(),
-        "updated_at": updatedAt.toIso8601String(),
+        "name": name,
       };
 }

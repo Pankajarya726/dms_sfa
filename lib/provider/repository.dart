@@ -1355,9 +1355,9 @@ class ApiRepository {
     }
   }
 
-  Future<GetCustomerResponse> getCustomers() async {
+  Future<GetCustomerResponse> getCustomers(Map<String, dynamic> input) async {
     try {
-      Response response = await dio.get(Url.getFilterWiseCustomer);
+      Response response = await dio.post(Url.getFilterWiseCustomer, data: input);
       GetCustomerResponse baseResponse = GetCustomerResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {
@@ -1406,6 +1406,24 @@ class ApiRepository {
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return GetCustomerTypeResponse(success: false, message: "", data: []);
+    }
+  }
+
+  Future<GetLocationResponse> getFilterLocation(Map<String, dynamic> input) async {
+    try {
+      Response response = await dio.post(Url.getFilterLocation, data: input);
+      GetLocationResponse baseResponse = GetLocationResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = StringConst.somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return GetLocationResponse(success: false, message: "", data: []);
     }
   }
 

@@ -285,7 +285,7 @@ class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener 
       productMap["category_id"] = product.categoryId;
       productMap["variant_id"] = product.variantId;
       productMap["mrp"] = product.mrp;
-      productMap["ptr_pkg_price"] = product.skuRatePerPiece;
+      productMap["ptr_pkg_price"] = product.skuRatePerPkg;
       productMap["ptr_moq_price"] = product.skuRatePerMoq;
       productMap["ptr_rate_per_pcs"] = product.skuRatePerPiece;
       productMap["scheme_rate_per_pcs"] = product.schemeId.isNotEmpty ? product.schemeRatePerPcs : "0";
