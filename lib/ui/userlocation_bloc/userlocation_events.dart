@@ -6,6 +6,7 @@ class UserLocationEvents extends Equatable {
 }
 
 class GetUserLocationEvent extends UserLocationEvents {
+  GetUserLocationEvent();
   @override
   List<Object> get props => [];
 }
