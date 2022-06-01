@@ -25,25 +25,23 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Please allow ("Drniš Natura 2000") to access device camera for clicking image to save on device and allow share it on social media platform.</string>
+	<string>Please allow ("VV SalesMitra") to access device camera for clicking image to save on device and allow share it on social media platform.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Please allow ("Drniš Natura 2000") to access device location to provide result based on your current location eg. (Hotel's ,Cafe's information etc).</string>
+	<string>Please allow ("VV SalesMitra") to access device location to provide result based on your current location eg. (Hotel's ,Cafe's information etc).</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Please allow ("Drniš Natura 2000") to access device location to provide result based on your current location updates.</string>
+	<string>Please allow ("VV SalesMitra") to access device location to provide result based on your current location updates.</string>
 	<key>NSLocationUsageDescription</key>
-	<string>Please allow ("Drniš Natura 2000") to access device location to provide result based on your current location.</string>
+	<string>Please allow ("VV SalesMitra") to access device location to provide result based on your current location.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Please allow ("Drniš Natura 2000") to access device location to provide result based on your current location.</string>
+	<string>Please allow ("VV SalesMitra") to access device location to provide result based on your current location.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Please allow ("Drniš Natura 2000") to access device photo gallery for uploading image on server and sharing image on social media platform.</string>
+	<string>Please allow ("VV SalesMitra") to access device photo gallery for uploading image on server and sharing image on social media platform.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-	</array>
+	<array/>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
