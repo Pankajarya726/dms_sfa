@@ -3,8 +3,10 @@ import 'dart:ui';
 
 import 'package:dms/main.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
-import 'package:dms/ui/bottom_sheet_widget/date_picker_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/filter_order_summery.dart';
+import 'package:dms/ui/order_summery/model/get_customer_response.dart';
+import 'package:dms/ui/order_summery/model/get_customer_type_response.dart';
+import 'package:dms/ui/order_summery/model/get_location_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
@@ -28,12 +30,14 @@ class OrderSummeryScreen extends StatefulWidget {
 }
 
 class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
-  DateTime fromDate = DateTime.now();
-  DateTime toDate = DateTime.now();
+  DateTime fromDate = DateFormat("yyyy-MM-dd").parse(DateTime.now().toString());
+  DateTime toDate = DateFormat("yyyy-MM-dd").parse(DateTime.now().toString());
   String locationType = "";
   String locationId = "";
   String customerId = "";
-  String customerType = "";
+  CustomerType? customerType;
+  Customer? customer;
+  LocationModel? location;
 
   List<OrderSummery> summeryList = [];
   StreamController<List<OrderSummery>> summeryStream = StreamController();
@@ -63,7 +67,25 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
                     context: context,
                     isScrollControlled: true,
                     shape: bottomSheetShape,
-                    builder: (context) => const FilterOrderSummerySheet());
+                    builder: (context) => FilterOrderSummerySheet(
+                          fromDate: fromDate,
+                          toDate: toDate,
+                          location: location,
+                          locationType: locationType,
+                          customer: customer,
+                          customerType: customerType,
+                          onSelect: (DateTime fromDate, DateTime toDate, String? locaitonType, LocationModel? location,
+                              CustomerType? customerType, Customer? customer) {
+                            this.customer = customer;
+                            this.customerType = customerType;
+                            this.location = location;
+                            locationType = locaitonType ?? "";
+                            this.fromDate = DateFormat("yyyy-MM-dd").parse(fromDate.toString());
+                            this.toDate = DateFormat("yyyy-MM-dd").parse(toDate.toString());
+
+                            getOrderSummery();
+                          },
+                        ));
               },
               splashRadius: 25,
               icon: Image.asset(
@@ -121,52 +143,99 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                  color: const Color(0xffEDEDED),
-                  width: MediaQuery.of(context).size.width,
-                  alignment: Alignment.centerLeft,
-                  child: InkWell(
-                    onTap: () async {
-                      showModalBottomSheet(
-                          context: context,
-                          shape: bottomSheetShape,
-                          builder: (context) => DatePickerSheet(
-                                onSelect: (DateTime frmDate, DateTime endDate) {
-                                  fromDate = frmDate;
-                                  toDate = endDate;
-                                  setState(() {});
-                                },
-                                toDate: toDate,
-                                fromDate: fromDate,
-                              ));
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25), border: Border.all(color: Color(0xffC5C5C5), width: 1)),
+                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    color: const Color(0xffEDEDED),
+                    width: MediaQuery.of(context).size.width,
+                    alignment: Alignment.centerLeft,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
                       child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            fromDate == toDate
-                                ? "\t${DateFormat('dd/MM/yyyy').format(fromDate)}\t"
-                                : "\t${DateFormat('dd/MM/yyyy').format(fromDate)}\tto\t${DateFormat('dd/MM/yyyy').format(toDate)}\t",
-                            style: GoogleFonts.roboto(color: const Color(0xff303030), fontSize: 15, fontWeight: FontWeight.w500),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8), border: Border.all(color: Color(0xffC5C5C5), width: 1)),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  fromDate == toDate
+                                      ? "\t${DateFormat('dd/MM/yyyy').format(fromDate)}\t"
+                                      : "\t${DateFormat('dd/MM/yyyy').format(fromDate)}\tto\t${DateFormat('dd/MM/yyyy').format(toDate)}\t",
+                                  style: GoogleFonts.roboto(color: const Color(0xff303030), fontSize: 15, fontWeight: FontWeight.w500),
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Image.asset(
+                                  "assets/date.png",
+                                  width: 20,
+                                  height: 20,
+                                )
+                              ],
+                            ),
                           ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Image.asset(
-                            "assets/date.png",
-                            width: 20,
-                            height: 20,
-                          )
+                          locationType.isNotEmpty
+                              ? Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                  margin: EdgeInsets.only(left: 10),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8), border: Border.all(color: Color(0xffC5C5C5), width: 1)),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "\t$locationType :\t${location != null ? location!.name : ""}\t",
+                                        style: GoogleFonts.roboto(
+                                            color: const Color(0xff303030), fontSize: 15, fontWeight: FontWeight.w500),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Container(),
+                          customerType != null
+                              ? Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                  margin: EdgeInsets.only(left: 10),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8), border: Border.all(color: Color(0xffC5C5C5), width: 1)),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "\tCustomer Type :\t${customerType!.name}\t",
+                                        style: GoogleFonts.roboto(
+                                            color: const Color(0xff303030), fontSize: 15, fontWeight: FontWeight.w500),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Container(),
+                          customer != null
+                              ? Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                  margin: const EdgeInsets.only(left: 10),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8), border: Border.all(color: Color(0xffC5C5C5), width: 1)),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "\tCustomer :\t${customer!.customerName}\t",
+                                        style: GoogleFonts.roboto(
+                                            color: const Color(0xff303030), fontSize: 15, fontWeight: FontWeight.w500),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Container(),
                         ],
                       ),
-                    ),
-                  ),
-                )
+                    ))
               ],
             ),
           ),
@@ -456,14 +525,14 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
       Map<String, dynamic> input = {};
       input["from_date"] = DateFormat("yyyy-MM-dd").format(fromDate);
       input["to_date"] = DateFormat("yyyy-MM-dd").format(toDate);
-      input["location_type"] = "";
-      input["location_id"] = "";
-      input["customer_id"] = "";
+      input["location_type"] = locationType;
+      input["location_id"] = location != null ? location!.id : "";
+      input["customer_id"] = customer != null ? customer!.id : "";
 
       GetOrderSummeryResponse response = await repository.getOrderSummery(input);
       if (response.success) {
         summeryList = response.data;
-
+        summeryList.sort((a, b) => a.date.compareTo(b.date));
         summeryStream.add(summeryList);
       } else {}
     } else {
