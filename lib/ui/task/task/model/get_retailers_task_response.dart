@@ -161,6 +161,7 @@ class RetailersTaskModal {
 
 class LastEscalation {
   LastEscalation({
+    required this.taskDate,
     required this.reassignDate,
     required this.escalationTag,
     required this.taskRemark,
@@ -168,6 +169,7 @@ class LastEscalation {
     required this.bus,
   });
 
+  String taskDate;
   String reassignDate;
   String escalationTag;
   String taskRemark;
@@ -180,6 +182,7 @@ class LastEscalation {
   String toJson() => json.encode(toMap());
 
   factory LastEscalation.fromMap(Map<String, dynamic> json) => LastEscalation(
+        taskDate: json["task_date"] == null ? "" : json["task_date"].toString(),
         reassignDate: json["reassign_date"] == null
             ? ""
             : json["reassign_date"].toString(),
@@ -197,6 +200,7 @@ class LastEscalation {
       );
 
   Map<String, dynamic> toMap() => {
+        "task_date": taskDate,
         "reassign_date": reassignDate,
         "escalation_tag": escalationTag,
         "task_remark": taskRemark,

@@ -56,7 +56,7 @@ class _LastEscalationBottomSheetState extends State<LastEscalationBottomSheet> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        lastEscalation!.reassignDate,
+                        lastEscalation!.taskDate,
                         style: const TextStyle(
                           color: Color(0xff777777),
                         ),

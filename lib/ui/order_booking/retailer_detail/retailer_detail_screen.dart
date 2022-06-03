@@ -163,8 +163,10 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                             onTaskResolve: () {},
                           ),
                           DetailGritItem(
-                            value: currencyFormat
-                                .format(double.parse(retailer!.potential)),
+                            value: retailer!.potential.isNotEmpty
+                                ? currencyFormat
+                                    .format(double.parse(retailer!.potential))
+                                : currencyFormat.format(double.parse("0")),
                             image: "assets/experience.png",
                             name: StringConst.potential,
                             type: 4,

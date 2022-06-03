@@ -220,7 +220,7 @@ class _TaskHistoryItemsState extends State<TaskHistoryItems> {
                           ? "assets/hit.png"
                           : widget.taskHistoryModal.taskType == "ST"
                               ? "assets/special.png"
-                              : widget.taskHistoryModal.taskType == "KEY"
+                              : widget.taskHistoryModal.taskType == "KT"
                                   ? "assets/key.png"
                                   : "assets/blue_dash.png",
                     ),

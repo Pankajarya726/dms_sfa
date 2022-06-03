@@ -41,10 +41,9 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
       taskCode: "",
       taskDate: "",
       taskType: "",
-      escalationTag: "",
+      escalationTag: [],
       escalationRemark: "",
       taskRemark: "",
-      elapseDays: "",
       escalationTo: [],
       buId: []);
   TaskDetailsBloc taskDetailsBloc = TaskDetailsBloc();
@@ -119,7 +118,7 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
                         height: 15,
                       ),
                       Text(
-                        pendingTaskModal.escalationTag,
+                        pendingTaskModal.escalationTag.first.tagName,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xff272727),
@@ -267,20 +266,24 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
                       }
                       // if escalationTo data is more than one then bottom sheet will open
                       else {
-                        showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            shape: bottomSheetShape,
-                            builder: (context) => EscalateToBottomSheet(
-                                  pendingTaskModal: pendingTaskModal,
-                                  retailerId: widget.retailerId,
-                                  elapseDays: widget.elapseDays,
-                                  remark: txtRemarkController.text,
-                                  onTaskEscalated: () {
-                                    widget.onTaskResolve("");
-                                    Navigator.pop(context, "");
-                                  },
-                                ));
+                        if (txtRemarkController.text.isNotEmpty) {
+                          showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              shape: bottomSheetShape,
+                              builder: (context) => EscalateToBottomSheet(
+                                    pendingTaskModal: pendingTaskModal,
+                                    retailerId: widget.retailerId,
+                                    elapseDays: widget.elapseDays,
+                                    remark: txtRemarkController.text,
+                                    onTaskEscalated: () {
+                                      widget.onTaskResolve("");
+                                      Navigator.pop(context, "");
+                                    },
+                                  ));
+                        } else {
+                          Utility.showToast("Please enter remark");
+                        }
                       }
                     },
                     shape: const RoundedRectangleBorder(),
