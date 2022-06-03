@@ -39,6 +39,7 @@ class Task {
     required this.id,
     required this.taskId,
     required this.escalationTag,
+    required this.escalationTagId,
     required this.taskRemark,
     required this.taskDate,
     required this.bus,
@@ -49,6 +50,7 @@ class Task {
   String taskId;
   String id;
   String escalationTag;
+  String escalationTagId;
   String taskRemark;
   String taskDate;
   List<Bus> bus;
@@ -68,6 +70,9 @@ class Task {
         escalationTag: json["escalation_tag"] == null
             ? ""
             : json["escalation_tag"].toString(),
+        escalationTagId: json["escalation_tag_id"] == null
+            ? ""
+            : json["escalation_tag_id"].toString(),
         taskRemark:
             json["task_remark"] == null ? "" : json["task_remark"].toString(),
         taskDate: json["task_date"] == null ? "" : json["task_date"].toString(),
@@ -82,6 +87,7 @@ class Task {
         "task_id": taskId,
         "id": id,
         "escalation_tag": escalationTag,
+        "escalation_tag_id": escalationTagId,
         "task_remark": taskRemark,
         "task_date": taskDate,
         "bus":

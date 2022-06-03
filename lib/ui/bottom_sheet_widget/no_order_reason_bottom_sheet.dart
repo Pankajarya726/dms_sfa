@@ -284,7 +284,7 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                     Map<String, dynamic> input = {
                       "retailer_id": widget.retailerId,
                       "bu": selectedBu,
-                      "reason": groupValue.tagName,
+                      "reason": groupValue.id,
                       "task_type": groupValue.taskType,
                       "remark": edtRemark.text.trim(),
                       "is_resolve": issueResolve ? 1 : 0

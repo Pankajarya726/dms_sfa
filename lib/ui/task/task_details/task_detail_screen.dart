@@ -343,7 +343,9 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                                       Flexible(
                                                         child: Text(
                                                           pendingTaskList[index]
-                                                              .escalationTag,
+                                                              .escalationTag
+                                                              .first
+                                                              .tagName,
                                                           maxLines: 3,
                                                           style:
                                                               const TextStyle(
@@ -692,13 +694,15 @@ class _DetailGritItemState extends State<DetailGritItem> {
                                     : null));
                   }
                   if (widget.type == 4) {
-                    showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        shape: bottomSheetShape,
-                        builder: (context) => TaskHistoryBottomSheet(
-                              modal: widget.modal,
-                            ));
+                    widget.value != "0"
+                        ? showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            shape: bottomSheetShape,
+                            builder: (context) => TaskHistoryBottomSheet(
+                                  modal: widget.modal,
+                                ))
+                        : null;
                   }
                 }
               : null,

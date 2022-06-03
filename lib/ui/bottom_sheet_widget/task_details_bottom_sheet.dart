@@ -34,10 +34,9 @@ class _TaskDetailsBottomSheetState extends State<TaskDetailsBottomSheet> {
       taskCode: "",
       taskDate: "",
       taskType: "",
-      escalationTag: "",
+      escalationTag: [],
       escalationRemark: "",
       taskRemark: "",
-      elapseDays: "",
       escalationTo: [],
       buId: []);
   TaskDetailsBloc taskDetailsBloc = TaskDetailsBloc();
@@ -108,7 +107,7 @@ class _TaskDetailsBottomSheetState extends State<TaskDetailsBottomSheet> {
                         height: 15,
                       ),
                       Text(
-                        pendingTaskModal.escalationTag,
+                        pendingTaskModal.escalationTag.first.tagName,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xff272727),
