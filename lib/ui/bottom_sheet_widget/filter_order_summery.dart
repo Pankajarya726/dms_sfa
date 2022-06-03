@@ -164,10 +164,13 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
                     ),
                     hintText: "Select Location Type"),
                 onTap: () async {
-                  List<Selection> selection = [];
-
-                  await Future.forEach(
-                      locationType, (String element) => selection.add(Selection(id: element.toLowerCase(), name: element)));
+                  List<Selection> selection = [
+                    Selection(id: "Zone".toLowerCase(), name: "Zone"),
+                    Selection(id: "State".toLowerCase(), name: "State"),
+                    Selection(id: "Division".toLowerCase(), name: "Division"),
+                    Selection(id: "District".toLowerCase(), name: "District"),
+                    Selection(id: "city".toLowerCase(), name: "Tahsil")
+                  ];
 
                   showModalBottomSheet(
                       context: context,
