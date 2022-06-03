@@ -163,10 +163,10 @@ class _ProductInformationState extends State<ProductInformation> {
         productList.where((element) => element.check).toList();
 
     debugPrint("selectedProduct--->$selected");
-    if (selected.isEmpty) {
-      Utility.showToast("Please select at least one Product");
-      return;
-    }
+    // if (selected.isEmpty) {
+    //   Utility.showToast("Please select at least one Product");
+    //   return;
+    // }
     Map<String, dynamic> input = widget.form.toMap();
     Map<String, dynamic> category = {};
     bool error = false;
