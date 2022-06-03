@@ -48,6 +48,7 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
   void initState() {
     tabController = TabController(length: 3, vsync: this);
     getBeats();
+    // EasyLoading.show();
     super.initState();
   }
 

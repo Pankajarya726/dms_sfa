@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+
 import 'package:dms/listeners/mrp_filter_listener.dart';
 import 'package:dms/listeners/select_category_listener.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
@@ -37,8 +38,7 @@ class OrderBookingListScreen extends StatefulWidget {
   _OrderBookingListScreenState createState() => _OrderBookingListScreenState();
 }
 
-class _OrderBookingListScreenState extends State<OrderBookingListScreen>
-    with TickerProviderStateMixin {
+class _OrderBookingListScreenState extends State<OrderBookingListScreen> with TickerProviderStateMixin {
   TabController? tabController;
   FilterMrpModal? filterMrpModal;
   List<Category> tags = [];
@@ -71,26 +71,19 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
         listener: (context, state) {
           if (state is GetBrandAndCatgState) {
             if (widget.showOrder) {
-              tabList.add(
-                  BrandAndCategoryModel(id: "", name: "Order", category: []));
+              tabList.add(BrandAndCategoryModel(id: "", name: "Order", category: []));
             }
-            tabList.add(
-                BrandAndCategoryModel(id: "", name: "Suggested", category: []));
-            tabList.add(
-                BrandAndCategoryModel(id: "", name: "Scheme", category: []));
+            tabList.add(BrandAndCategoryModel(id: "", name: "Suggested", category: []));
+            tabList.add(BrandAndCategoryModel(id: "", name: "Scheme", category: []));
             tabList.addAll(state.brandAndCategoryModal);
-            tabController = TabController(
-                length: tabList.length, vsync: this, initialIndex: 0);
+            tabController = TabController(length: tabList.length, vsync: this, initialIndex: 0);
             // BlocProvider.of<OrderBookListBloc>(context).add(ChangeTabEvent(index: 0));
             tabStream.add(tabController!.index);
           }
           if (state is GetBrandsFailureState) {
-            tabList.add(
-                BrandAndCategoryModel(id: "", name: "Suggested", category: []));
-            tabList.add(
-                BrandAndCategoryModel(id: "", name: "Scheme", category: []));
-            tabController = TabController(
-                length: tabList.length, vsync: this, initialIndex: 0);
+            tabList.add(BrandAndCategoryModel(id: "", name: "Suggested", category: []));
+            tabList.add(BrandAndCategoryModel(id: "", name: "Scheme", category: []));
+            tabController = TabController(length: tabList.length, vsync: this, initialIndex: 0);
             // BlocProvider.of<OrderBookListBloc>(context).add(ChangeTabEvent(index: 0));
             tabStream.add(tabController!.index);
           }
@@ -198,8 +191,7 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
               child: Column(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 15),
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                     child: TextFormField(
                       style: const TextStyle(fontSize: 16),
                       readOnly: true,
@@ -207,9 +199,7 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => SearchProductScreen(
-                                    beatId: widget.beatId,
-                                    retailerId: widget.retailerId)));
+                                builder: (_) => SearchProductScreen(beatId: widget.beatId, retailerId: widget.retailerId)));
                       },
                       decoration: InputDecoration(
                           hintText: StringConst.search,
@@ -218,18 +208,15 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5),
                               gapPadding: 2,
-                              borderSide: const BorderSide(
-                                  width: 1, color: Color(0xffC5C5C5))),
+                              borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                           disabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5),
                               gapPadding: 2,
-                              borderSide: const BorderSide(
-                                  width: 1, color: Color(0xffC5C5C5))),
+                              borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                           focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5),
                               gapPadding: 2,
-                              borderSide: const BorderSide(
-                                  width: 1, color: Color(0xffC5C5C5))),
+                              borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                           prefixIcon: const Icon(
                             Icons.search,
                             color: Color(0xff555555),
@@ -242,11 +229,9 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
                     child: BlocBuilder<OrderBookListBloc, OrderBookListStates>(
                       builder: (context, state) {
                         if (state is OrderBookListInitialState) {
-                          Map<String, dynamic> input =
-                              HashMap<String, dynamic>();
+                          Map<String, dynamic> input = HashMap<String, dynamic>();
                           input["beat_id"] = widget.beatId;
-                          BlocProvider.of<OrderBookListBloc>(context)
-                              .add(GetBrandAndCatgEvent(input: input));
+                          BlocProvider.of<OrderBookListBloc>(context).add(GetBrandAndCatgEvent(input: input));
                           return Container();
                         }
                         if (tabController == null) {
@@ -270,21 +255,15 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
                             indicatorSize: TabBarIndicatorSize.tab,
                             indicatorWeight: 4,
                             indicatorColor: MColor.colorPrimary,
-                            labelPadding:
-                                const EdgeInsets.symmetric(horizontal: 20),
-                            indicatorPadding:
-                                const EdgeInsets.symmetric(horizontal: 5),
+                            labelPadding: const EdgeInsets.symmetric(horizontal: 20),
+                            indicatorPadding: const EdgeInsets.symmetric(horizontal: 5),
                             tabs: List.generate(tabList.length, (index) {
                               return Tab(
                                 child: Text(
                                   tabList[index].name,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1!
-                                      .merge(
+                                  style: Theme.of(context).textTheme.bodyText1!.merge(
                                         TextStyle(
-                                          color: const Color(0xff303030)
-                                              .withOpacity(0.85),
+                                          color: const Color(0xff303030).withOpacity(0.85),
                                           letterSpacing: 0.67,
                                           fontWeight: FontWeight.w600,
                                           fontSize: 17,
@@ -317,8 +296,7 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
                     onRefresh: () {
                       Map<String, dynamic> input = HashMap<String, dynamic>();
                       input["beat_id"] = widget.beatId;
-                      BlocProvider.of<OrderBookListBloc>(context)
-                          .add(GetBrandAndCatgEvent(input: input));
+                      BlocProvider.of<OrderBookListBloc>(context).add(GetBrandAndCatgEvent(input: input));
                     },
                   ),
                 );
@@ -341,16 +319,15 @@ class _OrderBookingListScreenState extends State<OrderBookingListScreen>
                             return const OrderedProductList();
                           } else {
                             return ProductTabs(
-                              index: snapshot.data!,
+                              index: widget.showOrder ? snapshot.data! - 1 : snapshot.data!,
                               brands: tabList[snapshot.data!],
                               retailerId: widget.retailerId,
                               beatId: widget.beatId,
                               onInit: (listener) {
                                 mrpFilterListener = listener;
                               },
-                              mrpFilter: filterMrpModal != null
-                                  ? filterMrpModal!.mrp
-                                  : "",
+                              mrpFilter: filterMrpModal != null ? filterMrpModal!.mrp : "",
+                              orderId: widget.orderId,
                             );
                           }
                         }

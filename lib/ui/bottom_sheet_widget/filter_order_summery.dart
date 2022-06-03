@@ -83,9 +83,15 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
     }
     if (locType.isNotEmpty) {
       txtLocationType.text = locType;
+      getLocation(locType);
     }
     if (location != null) {
       txtLocation.text = location!.name;
+    }
+    if (fromDate != toDate) {
+      txtDate.text = DateFormat("dd/MM/yyyy").format(fromDate) + " to " + DateFormat("dd/MM/yyyy").format(toDate);
+    } else {
+      txtDate.text = DateFormat("dd/MM/yyyy").format(fromDate);
     }
 
     getCustomer();
@@ -186,7 +192,7 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
                                 getLocation(locType.toLowerCase());
                               }
                             },
-                            header: "Select Customer Type",
+                            header: "Select Location Type",
                           ));
                 },
               ),
@@ -310,7 +316,7 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
                                 txtCustomer.text = type.name;
                               }
                             },
-                            header: "Select Customer Type",
+                            header: "Select Customer",
                           ));
                 },
               ),
@@ -322,7 +328,11 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
                 children: [
                   MaterialButton(
                     onPressed: () {
-                      if (fromDate != toDate && (customer == null || customer!.id.isEmpty)) {
+                      if (((DateFormat("dd-MM-yyyy").format(fromDate) == DateFormat("dd-MM-yyyy").format(toDate)) &&
+                              DateFormat("dd-MM-yyyy").format(fromDate) != DateFormat("dd-MM-yyyy").format(DateTime.now())) &&
+                          (customer == null || customer!.id.isEmpty)) {
+                        Utility.showToast("Please select customer");
+                      } else if (fromDate != toDate && (customer == null || customer!.id.isEmpty)) {
                         Utility.showToast("Please select customer");
                       } else if (locType.isNotEmpty && location == null) {
                         Utility.showToast("Please select location");

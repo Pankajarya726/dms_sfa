@@ -47,7 +47,8 @@ class Url {
   static const String getReasons = "getReason";
   static const String getBU = "getBusinessUnit";
   static const String saveOrder = "orderSubmit";
-  static const String editUpdate = "OrderUpdate";
+  // static const String editUpdate = "OrderUpdate";
+  static const String editUpdate = "OrderUpdateV1";
   static const String saveNoOrder = "saveNoOrder";
   static const String getOrder = "getOrderForEdit";
   static const String getTaskByRetailer = "getTaskByRetailer";
@@ -59,7 +60,7 @@ class Url {
   static const String getTaskHistory = "getTaskHistory";
   static const String taskResolve = "taskResolve";
   static const String checkMobileNumber = "checkMobile";
-  static const String getFilterLocation = "getFilterLocation";
+  static const String getFilterLocation = "getFilterLocationV1";
   static const String getCustomerType = "getCustomerType";
   static const String getFilterWiseCustomer = "getFilterWiseCustomer";
   static const String getOrderSummary = "getOrderSummary";

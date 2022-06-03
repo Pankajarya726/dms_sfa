@@ -24,28 +24,28 @@ class ProductTabs extends StatefulWidget {
   final BrandAndCategoryModel brands;
   final Function(MrpFilterListener listener) onInit;
   final String mrpFilter;
-  const ProductTabs({
-    Key? key,
-    required this.index,
-    required this.brands,
-    required this.beatId,
-    required this.retailerId,
-    required this.onInit,
-    required this.mrpFilter,
-  }) : super(key: key);
+  final String orderId;
+  const ProductTabs(
+      {Key? key,
+      required this.index,
+      required this.brands,
+      required this.beatId,
+      required this.retailerId,
+      required this.onInit,
+      required this.mrpFilter,
+      required this.orderId})
+      : super(key: key);
 
   @override
   _ProductTabsState createState() => _ProductTabsState();
 }
 
-class _ProductTabsState extends State<ProductTabs>
-    implements MrpFilterListener {
+class _ProductTabsState extends State<ProductTabs> implements MrpFilterListener {
   List<ProductsModal> productList = [];
   StreamController<List<ProductsModal>> productStream = StreamController();
   List<Category> categoryList = [];
   Category? category;
-  RefreshController refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController refreshController = RefreshController(initialRefresh: false);
   String filterMrp = "";
 
   @override
@@ -113,9 +113,7 @@ class _ProductTabsState extends State<ProductTabs>
       children: [
         widget.index > 1 && widget.brands.category.isNotEmpty
             ? BeatsWidget(
-                category: category != null
-                    ? category!
-                    : Category(id: "", categoryName: ""),
+                category: category != null ? category! : Category(id: "", categoryName: ""),
                 tags: categoryList,
                 onSelect: (Category tag) {
                   debugPrint("onBeatSelect-->${tag.categoryName}");
@@ -142,8 +140,7 @@ class _ProductTabsState extends State<ProductTabs>
                         } else if (widget.index == 1) {
                           getSchemeProduct();
                         } else {
-                          getProduct(widget.brands.id,
-                              category == null ? "" : category!.id);
+                          getProduct(widget.brands.id, category == null ? "" : category!.id);
                         }
                       },
                     ),
@@ -191,8 +188,7 @@ class _ProductTabsState extends State<ProductTabs>
                           } else if (widget.index == 1) {
                             getSchemeProduct();
                           } else {
-                            getProduct(widget.brands.id,
-                                category == null ? "" : category!.id);
+                            getProduct(widget.brands.id, category == null ? "" : category!.id);
                           }
                         },
                       ),
@@ -238,8 +234,7 @@ class _ProductTabsState extends State<ProductTabs>
       input["beat_id"] = widget.beatId;
       input["retailer_id"] = widget.retailerId;
 
-      GetProductsResponse response =
-          await repository.getSuggestedProduct(input);
+      GetProductsResponse response = await repository.getSuggestedProduct(input);
       if (response.success) {
         if (filterMrp.isNotEmpty) {
           productList.clear();
@@ -388,13 +383,8 @@ class _BeatsWidgetState extends State<BeatsWidget> {
               },
               active: widget.tags[index].categoryName == tag.categoryName,
               customData: widget.tags[index],
-              textActiveColor:
-                  widget.tags[index].categoryName == tag.categoryName
-                      ? Colors.black
-                      : const Color(0xff555555),
-              textColor: widget.tags[index].categoryName == tag.categoryName
-                  ? Colors.black
-                  : const Color(0xff555555),
+              textActiveColor: widget.tags[index].categoryName == tag.categoryName ? Colors.black : const Color(0xff555555),
+              textColor: widget.tags[index].categoryName == tag.categoryName ? Colors.black : const Color(0xff555555),
               elevation: 0,
               textStyle: const TextStyle(
                 fontSize: 15,
@@ -403,17 +393,11 @@ class _BeatsWidgetState extends State<BeatsWidget> {
               ),
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
               border: Border.all(
-                color: widget.tags[index].categoryName == tag.categoryName
-                    ? MColor.colorPrimary
-                    : const Color(0xffC5C5C5),
+                color: widget.tags[index].categoryName == tag.categoryName ? MColor.colorPrimary : const Color(0xffC5C5C5),
               ),
               singleItem: true,
-              activeColor: widget.tags[index].categoryName == tag.categoryName
-                  ? const Color(0xffFFC9CC)
-                  : const Color(0xffFAFAFA),
-              color: widget.tags[index].categoryName == tag.categoryName
-                  ? const Color(0xffFFC9CC)
-                  : const Color(0xffFAFAFA),
+              activeColor: widget.tags[index].categoryName == tag.categoryName ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
+              color: widget.tags[index].categoryName == tag.categoryName ? const Color(0xffFFC9CC) : const Color(0xffFAFAFA),
               title: widget.tags[index].categoryName,
             ),
           );

@@ -88,8 +88,8 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
                               locationType = locaitonType ?? "";
                               this.fromDate = DateFormat("yyyy-MM-dd").parse(fromDate.toString());
                               this.toDate = DateFormat("yyyy-MM-dd").parse(toDate.toString());
-
                               orderSummeryBloc.add(ApplyFilterEvent());
+                              summeryStream.addError("loading");
                               getOrderSummery();
                             },
                           ));
@@ -472,6 +472,17 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
                         ),
                       );
                     });
+              }
+
+              if (snapshot.hasData && snapshot.data!.isEmpty) {
+                return const Center(
+                  child: Text("Record not available"),
+                );
+              }
+              if (snapshot.hasError && snapshot.error.toString() == "loading") {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
               }
               return Container();
             },

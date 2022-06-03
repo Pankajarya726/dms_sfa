@@ -289,8 +289,10 @@ class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener 
       productMap["ptr_moq_price"] = product.skuRatePerMoq;
       productMap["ptr_rate_per_pcs"] = product.skuRatePerPiece;
       productMap["scheme_rate_per_pcs"] = product.schemeId.isNotEmpty ? product.schemeRatePerPcs : "0";
-      productMap["scheme_pkg_price"] = product.priceAfterDiscount;
-      productMap["scheme_moq_price"] = product.priceAfterDiscount;
+      productMap["scheme_pkg_price"] =
+          product.schemeId.isNotEmpty ? (double.parse(product.schemeRatePerPcs) * product.pcsPerPackaging).toString() : "0";
+      productMap["scheme_moq_price"] =
+          product.schemeId.isNotEmpty ? (double.parse(product.schemeRatePerPcs) * product.pcsPerMoq).toString() : "0";
       productMap["qty_pkg"] = product.pkgOty;
       productMap["qty_moq"] = product.moqQty;
       productMap["rate_category_id"] = product.rateCategoryId;
@@ -315,23 +317,25 @@ class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener 
     input["products"] = productListMap;
     input["is_ready_stock_bill"] = isReadyStock == "Yes" ? 1 : 0;
 
-    if (widget.orderId.isEmpty) {
-      input["task_type"] = reason.taskType;
-      input["escalation_id"] = reason.id;
-      input["escalation_tag"] = reason.tagName;
-      input["task_remark"] = remark;
+    input["task_type"] = reason.taskType;
+    input["escalation_id"] = reason.id;
+    input["escalation_tag"] = reason.tagName;
+    input["is_resolve"] = issueResolve ? 1 : 0;
+    input["task_remark"] = remark;
 
-      String buIds = "";
+    String buIds = "";
 
-      for (int i = 0; i < buList.length; i++) {
-        if (i == buList.length - 1) {
-          buIds += buList[i].id;
-        } else {
-          buIds += buList[i].id + ",";
-        }
+    for (int i = 0; i < buList.length; i++) {
+      if (i == buList.length - 1) {
+        buIds += buList[i].id;
+      } else {
+        buIds += buList[i].id + ",";
       }
+    }
 
-      input["bu_id"] = buIds;
+    input["bu_id"] = buIds;
+
+    if (widget.orderId.isEmpty) {
     } else {
       input["order_id"] = widget.orderId;
     }

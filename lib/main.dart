@@ -23,7 +23,7 @@ BaseOptions options = BaseOptions(
     receiveTimeout: 60000,
     headers: {"Accept": "application/json"});
 
-CancelToken cancelToken=CancelToken();
+CancelToken cancelToken = CancelToken();
 Dio dio = Dio(options);
 ApiRepository repository = ApiRepository();
 ImagePicker imagePicker = ImagePicker();
@@ -57,7 +57,7 @@ void main() {
       logPrint: (text) {
         log(text.toString());
       }));
-  configLoading();
+
   runApp(const MyApp());
 }
 

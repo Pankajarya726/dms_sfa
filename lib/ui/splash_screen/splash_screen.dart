@@ -31,6 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     // checkForUpdate();
+    configLoading();
     addEvent();
   }
 

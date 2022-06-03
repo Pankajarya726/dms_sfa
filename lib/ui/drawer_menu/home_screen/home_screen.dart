@@ -285,7 +285,7 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
                           borderRadius: BorderRadius.circular(15),
                         ),
                         onTap: () {
-                          navigateToHomeItems(index);
+                          navigateToHomeItems(menu[index].id);
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10),
@@ -331,25 +331,25 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
 
   void navigateToHomeItems(index) {
     switch (index) {
-      case 0:
-        Utility.showToast(StringConst.comingSoon);
-        break;
       case 1:
         Utility.showToast(StringConst.comingSoon);
         break;
       case 2:
+        Utility.showToast(StringConst.comingSoon);
+        break;
+      case 3:
         // Fluttertoast.showToast(msg: StringConst.comingSoon);
         Navigator.push(context, MaterialPageRoute(builder: (context) => const TaskListScreen()));
         break;
-      case 3:
+      case 4:
         // Utility.showToast( StringConst.comingSoon);
         Navigator.push(context, MaterialPageRoute(builder: (context) => const OutletInformation()));
         break;
-      case 4:
+      case 5:
         // Fluttertoast.showToast(msg: StringConst.comingSoon);
         Navigator.push(context, MaterialPageRoute(builder: (context) => const RetailerListScreen()));
         break;
-      case 5:
+      case 6:
         Utility.showToast(StringConst.comingSoon);
         break;
     }

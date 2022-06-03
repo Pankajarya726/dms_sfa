@@ -28,7 +28,8 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with 
   List<BUModal> buList = [];
   bool issueResolve = false;
   ReasonsListener? reasonsListener;
-
+  GlobalKey _globalKey = GlobalKey();
+  GlobalKey _globalKey1 = GlobalKey();
   @override
   void initState() {
     _tabController = TabController(length: 2, initialIndex: 0, vsync: this);
@@ -41,6 +42,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with 
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        key: _globalKey,
         appBar: AppBar(
           elevation: 1,
           title: const Text("Order Confirmation"),
@@ -92,6 +94,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with 
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(50),
             child: Container(
+              key: _globalKey1,
               color: const Color(0xffEDEDED),
               child: TabBar(
                 controller: _tabController,
@@ -101,6 +104,8 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with 
                 indicatorPadding: const EdgeInsets.symmetric(horizontal: 15),
                 physics: const NeverScrollableScrollPhysics(),
                 onTap: (index) {
+                  debugPrint(_globalKey1.currentContext!.size!.height.toString());
+                  debugPrint(_globalKey.currentContext!.size!.height.toString());
                   valueNotifier.value = index;
                 },
                 tabs: const [

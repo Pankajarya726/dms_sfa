@@ -26,8 +26,10 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
 
   @override
   initState() {
+    debugPrint("widget.selected-->${widget.selected}");
     if (widget.selected != null) {
       selected = widget.selected;
+      groupValue = selected!;
     }
     selection = widget.selection;
     searchStream.add(selection);

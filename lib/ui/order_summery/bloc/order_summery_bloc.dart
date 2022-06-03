@@ -18,6 +18,7 @@ class OrderSummeryBloc extends Bloc<OrderSummeryEvent, OrderSummeryState> {
     }
 
     if (event is ApplyFilterEvent) {
+      yield GetOrderLoadingState();
       yield ApplyFilterState();
     }
   }
