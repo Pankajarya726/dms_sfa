@@ -15,14 +15,14 @@ import 'bottom_sheet_widget.dart';
 import 'date_picker_sheet.dart';
 
 class FilterOrderSummerySheet extends StatefulWidget {
-  final Function(DateTime fromDate, DateTime toDate, String? locaitonType, LocationModel? location, CustomerType? customerType,
-      Customer? customer) onSelect;
+  final Function(DateTime fromDate, DateTime toDate, Selection? locaitonType, Selection? location, Selection? customerType,
+      Selection? customer) onSelect;
   final DateTime fromDate;
   final DateTime toDate;
-  final LocationModel? location;
-  final String locationType;
-  final Customer? customer;
-  final CustomerType? customerType;
+  final Selection? location;
+  final Selection? locationType;
+  final Selection? customer;
+  final Selection? customerType;
 
   const FilterOrderSummerySheet(
       {Key? key,
@@ -50,44 +50,57 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
   List<CustomerType> customerTypeList = [];
   List<Customer> customerList = [];
   List<LocationModel> locationList = [];
-
-  List<String> locationType = [
-    "Zone",
-    "State",
-    "Division",
-    "District",
-    "Tahsil",
+  List<Selection> locationTypes = [
+    Selection(id: "Zone", name: "Zone"),
+    Selection(id: "State", name: "State"),
+    Selection(id: "Division", name: "Division"),
+    Selection(id: "District", name: "District"),
+    Selection(id: "City", name: "Tehsil"),
+    Selection(id: "Beat", name: "Beat")
   ];
+  Selection? locationType;
+  Selection? location;
+  Selection? customer;
+  Selection? customerType;
+
   String locType = "";
 
-  CustomerType? customerType;
-  Customer? customer;
-  LocationModel? location;
+  // CustomerType? customerType;
+  // Customer? customer;
+  // LocationModel? location;
 
   @override
   initState() {
     txtDate.text = DateFormat("dd/MM/yyyy").format(fromDate);
+    if (widget.customer != null) {
+      customer = widget.customer;
+      txtCustomer.text = customer!.name;
+    }
+    if (widget.customerType != null) {
+      customerType = widget.customerType;
+      txtCustomerType.text = customerType!.name;
+    }
 
-    customer = widget.customer;
-    customerType = widget.customerType;
-    location = widget.location;
-    locType = widget.locationType;
+    if (widget.location != null) {
+      location = widget.location;
+      txtLocation.text = location!.name;
+    }
+
+    if (widget.locationType != null) {
+      locType = widget.locationType!.id;
+      locationType = widget.locationType;
+      txtLocationType.text = locationType!.name;
+      getLocation(locationType!.id);
+    }
+
     fromDate = widget.fromDate;
     toDate = widget.toDate;
 
-    if (customer != null) {
-      txtCustomer.text = customer!.customerName;
-    }
-    if (customerType != null) {
-      txtCustomerType.text = customerType!.name;
-    }
     if (locType.isNotEmpty) {
       txtLocationType.text = locType;
       getLocation(locType);
     }
-    if (location != null) {
-      txtLocation.text = location!.name;
-    }
+
     if (fromDate != toDate) {
       txtDate.text = DateFormat("dd/MM/yyyy").format(fromDate) + " to " + DateFormat("dd/MM/yyyy").format(toDate);
     } else {
@@ -170,26 +183,19 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
                     ),
                     hintText: "Select Location Type"),
                 onTap: () async {
-                  List<Selection> selection = [
-                    Selection(id: "Zone".toLowerCase(), name: "Zone"),
-                    Selection(id: "State".toLowerCase(), name: "State"),
-                    Selection(id: "Division".toLowerCase(), name: "Division"),
-                    Selection(id: "District".toLowerCase(), name: "District"),
-                    Selection(id: "city".toLowerCase(), name: "Tahsil")
-                  ];
-
                   showModalBottomSheet(
                       context: context,
                       shape: bottomSheetShape,
                       isScrollControlled: true,
                       builder: (context) => SelectionBottomSheet(
-                            selection: selection,
-                            selected: Selection(id: "id", name: "name"),
+                            selection: locationTypes,
+                            selected: locationType ?? Selection(id: "id", name: "name"),
                             onSelect: (Selection type) {
                               if (type.id.isNotEmpty) {
                                 locType = type.id;
+                                locationType = type;
                                 txtLocationType.text = type.name;
-                                getLocation(locType.toLowerCase());
+                                getLocation(locType);
                               }
                             },
                             header: "Select Location Type",
@@ -211,11 +217,11 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
                     hintText: "Select Location"),
                 onTap: () async {
                   List<Selection> selection = [];
-                  debugPrint("locationList--->${locationList}");
+                  debugPrint("locationList--->$locationList");
                   await Future.forEach(
                       locationList, (LocationModel element) => selection.add(Selection(id: element.id, name: element.name)));
 
-                  debugPrint("selection--->${selection}");
+                  debugPrint("selection--->$selection");
 
                   showModalBottomSheet(
                       context: context,
@@ -223,13 +229,10 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
                       isScrollControlled: true,
                       builder: (context) => SelectionBottomSheet(
                             selection: selection,
-                            selected: Selection(id: "id", name: "name"),
+                            selected: location ?? Selection(id: "id", name: "name"),
                             onSelect: (Selection type) {
                               if (type.id.isNotEmpty) {
-                                location = LocationModel(
-                                  id: type.id,
-                                  name: type.name,
-                                );
+                                location = type;
                                 txtLocation.text = type.name;
                               }
                             },
@@ -262,10 +265,10 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
                       isScrollControlled: true,
                       builder: (context) => SelectionBottomSheet(
                             selection: selection,
-                            selected: Selection(id: "id", name: "name"),
+                            selected: customerType ?? Selection(id: "id", name: "name"),
                             onSelect: (Selection type) {
                               if (type.id.isNotEmpty) {
-                                customerType = CustomerType(id: type.id, name: type.name);
+                                customerType = type;
                                 txtCustomerType.text = type.name;
                                 getCustomer();
                               }
@@ -307,12 +310,11 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
                       isScrollControlled: true,
                       builder: (context) => SelectionBottomSheet(
                             selection: selection,
-                            selected: customer != null
-                                ? Selection(id: customer!.id, name: customer!.customerName)
-                                : Selection(id: "id", name: "name"),
+                            selected: customer ?? Selection(id: "id", name: "name"),
                             onSelect: (Selection type) {
                               if (type.id.isNotEmpty) {
-                                customer = customerList.singleWhere((element) => element.id == type.id);
+                                customer = type;
+                                // customerList.singleWhere((element) => element.id == type.id);
                                 txtCustomer.text = type.name;
                               }
                             },
@@ -339,7 +341,7 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
                       } else if (customerType != null && customer == null) {
                         Utility.showToast("Please select customer");
                       } else {
-                        widget.onSelect(fromDate, toDate, locType, location, customerType, customer);
+                        widget.onSelect(fromDate, toDate, locationType, location, customerType, customer);
                         Navigator.pop(context);
                       }
                     },
@@ -403,7 +405,7 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
 
   void getLocation(String locationType) async {
     if (await Network.isConnected()) {
-      Map<String, dynamic> input = {"filter_type": locationType == "tahsil" ? "city" : locationType};
+      Map<String, dynamic> input = {"filter_type": locationType.toLowerCase() == "tehsil" ? "city" : locationType.toLowerCase()};
 
       GetLocationResponse response = await repository.getFilterLocation(input);
 

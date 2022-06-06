@@ -22,14 +22,17 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
   Selection? selected;
   StreamController<List<Selection>> searchStream = StreamController();
   TextEditingController txtSearchController = TextEditingController();
-  Selection groupValue = Selection(id: "", name: "");
+
+  String groupValue = "";
+
+  // Selection groupValue = Selection(id: "", name: "");
 
   @override
   initState() {
     debugPrint("widget.selected-->${widget.selected}");
     if (widget.selected != null) {
       selected = widget.selected;
-      groupValue = selected!;
+      groupValue = selected!.id;
     }
     selection = widget.selection;
     searchStream.add(selection);
@@ -128,7 +131,7 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
                           children: List.generate(snapshot.data!.length, (index) {
                             return InkWell(
                               onTap: () {
-                                groupValue = snapshot.data![index];
+                                groupValue = snapshot.data![index].id;
                                 searchStream.add(snapshot.data!);
                               },
                               child: Padding(
@@ -140,8 +143,8 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
                                     SizedBox(
                                       height: 20,
                                       width: 20,
-                                      child: Radio<Selection>(
-                                        value: snapshot.data![index],
+                                      child: Radio<String>(
+                                        value: snapshot.data![index].id,
                                         groupValue: groupValue,
                                         activeColor: MColor.colorPrimary,
                                         fillColor: MaterialStateProperty.all(MColor.colorPrimary),
@@ -209,8 +212,8 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  if (groupValue.id != "") {
-                    selected = selection.singleWhere((element) => element.id == groupValue.id);
+                  if (groupValue != "") {
+                    selected = selection.singleWhere((element) => element.id == groupValue);
                     widget.onSelect(selected!);
                   }
 

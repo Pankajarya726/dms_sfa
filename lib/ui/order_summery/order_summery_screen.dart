@@ -4,12 +4,10 @@ import 'dart:ui';
 import 'package:dms/main.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
 import 'package:dms/ui/bottom_sheet_widget/filter_order_summery.dart';
+import 'package:dms/ui/bottom_sheet_widget/selection_bottom_sheet.dart';
 import 'package:dms/ui/order_summery/bloc/order_summery_bloc.dart';
 import 'package:dms/ui/order_summery/bloc/order_summery_event.dart';
 import 'package:dms/ui/order_summery/bloc/order_summery_state.dart';
-import 'package:dms/ui/order_summery/model/get_customer_response.dart';
-import 'package:dms/ui/order_summery/model/get_customer_type_response.dart';
-import 'package:dms/ui/order_summery/model/get_location_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
@@ -36,12 +34,12 @@ class OrderSummeryScreen extends StatefulWidget {
 class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
   DateTime fromDate = DateFormat("yyyy-MM-dd").parse(DateTime.now().toString());
   DateTime toDate = DateFormat("yyyy-MM-dd").parse(DateTime.now().toString());
-  String locationType = "";
+  Selection? locationType;
   String locationId = "";
   String customerId = "";
-  CustomerType? customerType;
-  Customer? customer;
-  LocationModel? location;
+  Selection? customerType;
+  Selection? customer;
+  Selection? location;
 
   List<OrderSummery> summeryList = [];
   StreamController<List<OrderSummery>> summeryStream = StreamController();
@@ -77,15 +75,15 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
                             fromDate: fromDate,
                             toDate: toDate,
                             location: location,
-                            locationType: locationType,
+                            locationType: locationType ?? Selection(name: "", id: ""),
                             customer: customer,
                             customerType: customerType,
-                            onSelect: (DateTime fromDate, DateTime toDate, String? locaitonType, LocationModel? location,
-                                CustomerType? customerType, Customer? customer) {
-                              this.customer = customer;
-                              this.customerType = customerType;
-                              this.location = location;
-                              locationType = locaitonType ?? "";
+                            onSelect: (DateTime fromDate, DateTime toDate, Selection? locationType, Selection? location,
+                                Selection? customerType, Selection? customer) {
+                              this.customer = customer ?? Selection(name: "", id: "");
+                              this.customerType = customerType ?? Selection(name: "", id: "");
+                              this.location = location ?? Selection(name: "", id: "");
+                              this.locationType = locationType ?? Selection(name: "", id: "");
                               this.fromDate = DateFormat("yyyy-MM-dd").parse(fromDate.toString());
                               this.toDate = DateFormat("yyyy-MM-dd").parse(toDate.toString());
                               orderSummeryBloc.add(ApplyFilterEvent());
@@ -186,7 +184,7 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
                                     ],
                                   ),
                                 ),
-                                locationType.isNotEmpty
+                                locationType != null && locationType!.id.isNotEmpty
                                     ? Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                         margin: EdgeInsets.only(left: 10),
@@ -198,7 +196,7 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
                                             Text(
-                                              "\t$locationType :\t${location != null ? location!.name : ""}\t",
+                                              "\t${locationType!.name} :\t${location != null ? location!.name : ""}\t",
                                               style: GoogleFonts.roboto(
                                                   color: const Color(0xff303030), fontSize: 15, fontWeight: FontWeight.w500),
                                             ),
@@ -238,7 +236,7 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
                                             Text(
-                                              "\tCustomer :\t${customer!.customerName}\t",
+                                              "\tCustomer :\t${customer!.name}\t",
                                               style: GoogleFonts.roboto(
                                                   color: const Color(0xff303030), fontSize: 15, fontWeight: FontWeight.w500),
                                             ),
@@ -560,7 +558,7 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
       Map<String, dynamic> input = {};
       input["from_date"] = DateFormat("yyyy-MM-dd").format(fromDate);
       input["to_date"] = DateFormat("yyyy-MM-dd").format(toDate);
-      input["location_type"] = locationType;
+      input["location_type"] = locationType != null ? locationType!.id : "";
       input["location_id"] = location != null ? location!.id : "";
       input["customer_id"] = customer != null ? customer!.id : "";
 
