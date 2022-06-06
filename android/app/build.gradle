@@ -28,13 +28,13 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 android {
     signingConfigs {
         debug {
-            storeFile file('/Users/mac/Downloads/dms/android/app/src/main/assets/sfa.jks')
+            storeFile file('/Users/mac/Desktop/pankaj/git/dms_app/android/app/src/main/assets/sfa.jks')
             keyAlias 'sfa'
             storePassword '123456'
             keyPassword '123456'
         }
         release {
-            storeFile file('/Users/mac/Downloads/dms/android/app/src/main/assets/sfa.jks')
+            storeFile file('/Users/mac/Desktop/pankaj/git/dms_app/android/app/src/main/assets/sfa.jks')
             storePassword '123456'
             keyAlias 'sfa'
             keyPassword '123456'
@@ -56,12 +56,11 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.vvapps.dms"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 7
-        versionName '1.6'
+        versionCode 8
+        versionName '1.7'
         signingConfig signingConfigs.release
     }
 
