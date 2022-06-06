@@ -299,36 +299,36 @@ class _OwnerInformationState extends State<OwnerInformation> {
                   ),
                   sizedBoxWidget(12.0),
                   textFields(txtSecondaryLang, StringConst.selectHint),
+                  // sizedBoxWidget(20.0),
+                  // Row(
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  //   children: [
+                  //     Image.asset("assets/whatsapp.png"),
+                  //     const SizedBox(
+                  //       width: 10,
+                  //     ),
+                  //     textWidget(StringConst.whatsAppSms),
+                  //   ],
+                  // ),
+                  // sizedBoxWidget(5.0),
+                  // BlocBuilder<CommonBloc, CommonBlocStates>(
+                  //   builder: (context, state) {
+                  //     if (state is CommonBlocWhatsAppRadioState) {
+                  //       whatsAppSmsRadio = state.whatsAppRadioTag;
+                  //       widget.form.isWhatsappSms = state.whatsAppRadioTag;
+                  //       debugPrint(whatsAppSmsRadio);
+                  //     }
+                  //     return Row(
+                  //       children: [
+                  //         radioButtonWidget(
+                  //             whatsAppSmsRadio, "1", StringConst.yes),
+                  //         radioButtonWidget(
+                  //             whatsAppSmsRadio, "2", StringConst.no),
+                  //       ],
+                  //     );
+                  //   },
+                  // ),
                   sizedBoxWidget(20.0),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Image.asset("assets/whatsapp.png"),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      textWidget(StringConst.whatsAppSms),
-                    ],
-                  ),
-                  sizedBoxWidget(5.0),
-                  BlocBuilder<CommonBloc, CommonBlocStates>(
-                    builder: (context, state) {
-                      if (state is CommonBlocWhatsAppRadioState) {
-                        whatsAppSmsRadio = state.whatsAppRadioTag;
-                        widget.form.isWhatsappSms = state.whatsAppRadioTag;
-                        debugPrint(whatsAppSmsRadio);
-                      }
-                      return Row(
-                        children: [
-                          radioButtonWidget(
-                              whatsAppSmsRadio, "1", StringConst.yes),
-                          radioButtonWidget(
-                              whatsAppSmsRadio, "2", StringConst.no),
-                        ],
-                      );
-                    },
-                  ),
-                  sizedBoxWidget(5.0),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -490,10 +490,12 @@ class _OwnerInformationState extends State<OwnerInformation> {
               Utility.showToast("Please select call time slot");
             } else if (txtPrimaryLang.text.isEmpty) {
               Utility.showToast("Please select language 1st");
-            } else if (whatsAppSmsRadio == "") {
-              Utility.showToast(
-                  "Please select opt-in for whatsapp message / SMS");
-            } else if (txtOwnerName.text.length < 3) {
+            }
+            // else if (whatsAppSmsRadio == "") {
+            //   Utility.showToast(
+            //       "Please select opt-in for whatsapp message / SMS");
+            // }
+            else if (txtOwnerName.text.length < 3) {
               Utility.showToast(
                   "Owner name should be minimum 3 characters long");
             } else if (txtPrimaryMobile.text.length < 10) {
@@ -526,7 +528,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
               widget.form.callTimeSlot = callTimeSlotModel;
               widget.form.primaryLang = primaryLanguage;
               widget.form.secondaryLang = secondaryLanguage;
-              widget.form.isWhatsappSms = whatsAppSmsRadio == "1" ? "1" : "0";
+              widget.form.isWhatsappSms = whatsAppSmsRadio == "1" ? "1" : "1";
               widget.form.pan = txtPAN.text.trim();
               widget.form.aadhaarNumber = txtAdhaar.text.trim();
               widget.form.birthday = txtBirthday.text.trim();
