@@ -61,6 +61,7 @@ class _OutletInformationState extends State<OutletInformation> {
   TextEditingController txtSelectBeatNameController = TextEditingController();
   TextEditingController txtOrderBookingController = TextEditingController();
   TextEditingController txtOutletNameController = TextEditingController();
+  TextEditingController txtOutletCloseController = TextEditingController();
   TextEditingController txtLatitudeController = TextEditingController();
   TextEditingController txtLongtitudeController = TextEditingController();
   TextEditingController txtAddressController = TextEditingController();
@@ -91,6 +92,7 @@ class _OutletInformationState extends State<OutletInformation> {
   String? retailerCategoryName;
   GlobalKey globalKeyLandmark = GlobalKey();
   GlobalKey globalKeyName = GlobalKey();
+  GlobalKey globalKeyClose = GlobalKey();
   GlobalKey globalKeyGST = GlobalKey();
   GlobalKey globalKeyAddress = GlobalKey();
   List<OrderBookingDayModal> orderBookingDayList = [];
@@ -278,6 +280,26 @@ class _OutletInformationState extends State<OutletInformation> {
                     },
                   ),
                   sizedBoxWidget(20.0),
+                  Row(
+                    children: [
+                      Image.asset("assets/store.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(StringConst.outletCloseTime),
+                    ],
+                  ),
+                  SizedBox(
+                    key: globalKeyName,
+                    height: 12.0,
+                  ),
+                  OutletCloseEditText(
+                    controller: txtOutletCloseController,
+                    hint: StringConst.enterHere,
+                    globalKey: globalKeyClose,
+                    onChange: (text) {},
+                  ),
+                  sizedBoxWidget(20.0),
                   BlocBuilder<UserLocationBloc, UserLocationStates>(
                     bloc: userLocationBloc,
                     builder: (context, state) {
@@ -319,7 +341,7 @@ class _OutletInformationState extends State<OutletInformation> {
                             ],
                           ),
                           SizedBox(
-                            key: globalKeyName,
+                            key: globalKeyClose,
                             height: 12.0,
                           ),
                           FreezedEditText(
@@ -557,6 +579,8 @@ class _OutletInformationState extends State<OutletInformation> {
               Utility.showToast("Please select beat name");
             } else if (txtOutletNameController.text.trim().isEmpty) {
               Utility.showToast("Please enter outlet name");
+            } else if (txtOutletCloseController.text.trim().isEmpty) {
+              Utility.showToast("Please enter outlet close time");
             } else if (txtLandmarkController.text.trim().isEmpty) {
               Utility.showToast("Please enter landmark");
             } else if (existingRetailerRadio == "") {
@@ -625,6 +649,7 @@ class _OutletInformationState extends State<OutletInformation> {
               form.orderBookingDay1 = orderBookingDay1 ?? "";
               form.orderBookingDay2 = orderBookingDay2 ?? "";
               form.outletName = txtOutletNameController.text.trim();
+              form.outletCloseTime = txtOutletCloseController.text.trim();
               form.latitude = txtLatitudeController.text.trim();
               form.longitude = txtLongtitudeController.text.trim();
               form.address = txtAddressController.text.trim();

@@ -69,6 +69,70 @@ class _OutletNameEditTextState extends State<OutletNameEditText> {
   }
 }
 
+class OutletCloseEditText extends StatefulWidget {
+  final TextEditingController controller;
+  final String hint;
+  final GlobalKey globalKey;
+  final Function(String text) onChange;
+
+  const OutletCloseEditText({
+    Key? key,
+    required this.controller,
+    required this.hint,
+    required this.onChange,
+    required this.globalKey,
+  }) : super(key: key);
+
+  @override
+  _OutletCloseEditTextState createState() => _OutletCloseEditTextState();
+}
+
+class _OutletCloseEditTextState extends State<OutletCloseEditText> {
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      onChanged: widget.onChange,
+      onTap: () async {
+        await Future.delayed(const Duration(milliseconds: 500));
+        RenderObject? object =
+            widget.globalKey.currentContext!.findRenderObject();
+        object!.showOnScreen();
+      },
+      autofocus: false,
+      maxLength: 200,
+      style: const TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 0.67,
+        color: MColor.backButton,
+      ),
+      controller: widget.controller,
+      keyboardType: TextInputType.number,
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp(r"[0-9 .-]")),
+        FilteringTextInputFormatter.deny(RegExp(r"\s")),
+      ],
+      decoration: InputDecoration(
+        hintText: widget.hint,
+        counterText: "",
+        hintStyle: const TextStyle(
+          color: MColor.backButton,
+          letterSpacing: 0.67,
+          fontWeight: FontWeight.bold,
+          fontSize: 15,
+        ),
+        contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+        filled: true,
+        fillColor: const Color(0xffF2F2F2),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
+  }
+}
+
 class OwnerNameEditText extends StatefulWidget {
   final TextEditingController controller;
   final String hint;

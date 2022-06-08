@@ -16,6 +16,7 @@ class RetailerForm {
   String orderBookingDay1 = "";
   String orderBookingDay2 = "";
   String outletName = "";
+  String outletCloseTime = "";
   String latitude = "";
   String longitude = "";
   String address = "";
@@ -78,6 +79,7 @@ class RetailerForm {
                 filename: path.basename(outletImage)),
         "anniversary": anniversary,
         "outlet_name": outletName,
+        "outlet_close_time": outletCloseTime,
         "beat_name": beatId,
         "distributor": distributorId,
         "latitude": latitude,
