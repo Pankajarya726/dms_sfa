@@ -64,6 +64,7 @@ class StringConst {
   static const orderBookingDay = "Order Booking Day";
   static const orderBooking = "Order Booking";
   static const outletName = "Outlet Name *";
+  static const outletCloseTime = "Outlet Close Time *";
   static const ownerNameMand = "Owner Name *";
   static const ownerName = "Owner Name";
   static const latitude = "Latitude";

@@ -83,15 +83,14 @@ class _TaskHistoryState extends State<TaskHistory> {
                 );
               },
               itemBuilder: (context, index) {
-                String days = "";
+                int days = 1;
                 String daysPending = "";
                 if (taskHistoryList[index].isResolve == "0") {
                   if (taskHistoryList[index].taskDate.isNotEmpty) {
                     DateTime enrolledDate =
                         DateTime.parse(taskHistoryList[index].taskDate);
-                    days =
-                        currentDate!.difference(enrolledDate).inDays.toString();
-                    if (int.parse(days) < 2) {
+                    days = days + currentDate!.difference(enrolledDate).inDays;
+                    if (days < 2) {
                       daysPending = days.toString() + " day pending";
                     } else {
                       daysPending = days.toString() + " days pending";
@@ -101,9 +100,8 @@ class _TaskHistoryState extends State<TaskHistory> {
                   if (taskHistoryList[index].resolveDate.isNotEmpty) {
                     DateTime enrolledDate =
                         DateTime.parse(taskHistoryList[index].resolveDate);
-                    days =
-                        currentDate!.difference(enrolledDate).inDays.toString();
-                    if (int.parse(days) < 2) {
+                    days = currentDate!.difference(enrolledDate).inDays;
+                    if (days < 2) {
                       daysPending = days.toString() + " day pending";
                     } else {
                       daysPending = days.toString() + " days pending";

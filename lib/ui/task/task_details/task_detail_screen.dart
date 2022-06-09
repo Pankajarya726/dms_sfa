@@ -185,7 +185,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                     children: List.generate(
                                       pendingTaskList.length,
                                       (index) {
-                                        String days = "";
+                                        int days = 1;
                                         String daysPending = "";
                                         if (pendingTaskList[index]
                                             .taskDate
@@ -194,11 +194,11 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                               DateTime.parse(
                                                   pendingTaskList[index]
                                                       .taskDate);
-                                          days = currentDate!
-                                              .difference(enrolledDate)
-                                              .inDays
-                                              .toString();
-                                          if (int.parse(days) < 2) {
+                                          days = days +
+                                              currentDate!
+                                                  .difference(enrolledDate)
+                                                  .inDays;
+                                          if (days < 2) {
                                             daysPending = days.toString() +
                                                 " day pending";
                                           } else {
@@ -230,7 +230,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                                               pendingTaskModal:
                                                                   pendingTaskList[
                                                                       index],
-                                                              elapseDays: days,
+                                                              elapseDays: days
+                                                                  .toString(),
                                                               retailerId: widget
                                                                   .modal
                                                                   .retailerId,
@@ -247,7 +248,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                                               retailerId: widget
                                                                   .modal
                                                                   .retailerId,
-                                                              elapseDays: days,
+                                                              elapseDays: days
+                                                                  .toString(),
                                                               onTaskResolve:
                                                                   (done) {
                                                                 // if (done
