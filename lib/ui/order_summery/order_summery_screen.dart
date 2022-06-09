@@ -20,6 +20,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'model/get_order_summery_response.dart';
@@ -44,9 +45,17 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
   List<OrderSummery> summeryList = [];
   StreamController<List<OrderSummery>> summeryStream = StreamController();
   OrderSummeryBloc orderSummeryBloc = OrderSummeryBloc();
+  final subject = BehaviorSubject<String>();
+
   @override
   void initState() {
     getOrderSummery();
+    subject.stream.debounce((event) => TimerStream(event, const Duration(milliseconds: 1000))).listen((query) {
+      debugPrint("query--->$query");
+      List<OrderSummery> searchList = [];
+      searchList = summeryList.where((element) => element.customerName.toLowerCase().contains(query.toLowerCase())).toList();
+      summeryStream.sink.add(searchList);
+    });
     super.initState();
   }
 
@@ -109,7 +118,14 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
                     padding: const EdgeInsets.fromLTRB(15, 0, 15, 8),
                     child: TextFormField(
                       style: const TextStyle(fontSize: 16),
-                      readOnly: true,
+                      readOnly: false,
+                      onChanged: (text) {
+                        if (text.trim().length >= 3) {
+                          subject.add(text);
+                        } else if (text.isEmpty) {
+                          summeryStream.add(summeryList);
+                        }
+                      },
                       onTap: () {
                         // Navigator.push(
                         //     context,
@@ -167,7 +183,7 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
                                       Text(
-                                        fromDate == toDate
+                                        DateFormat('dd/MM/yyyy').format(fromDate) == DateFormat('dd/MM/yyyy').format(toDate)
                                             ? "\t${DateFormat('dd/MM/yyyy').format(fromDate)}\t"
                                             : "\t${DateFormat('dd/MM/yyyy').format(fromDate)}\tto\t${DateFormat('dd/MM/yyyy').format(toDate)}\t",
                                         style: GoogleFonts.roboto(
@@ -204,7 +220,7 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
                                         ),
                                       )
                                     : Container(),
-                                customerType != null
+                                customerType != null && customerType!.id.isNotEmpty
                                     ? Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                         margin: EdgeInsets.only(left: 10),
@@ -224,7 +240,7 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
                                         ),
                                       )
                                     : Container(),
-                                customer != null
+                                customer != null && customer!.id.isNotEmpty
                                     ? Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                         margin: const EdgeInsets.only(left: 10),
@@ -301,7 +317,7 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
                                     ),
                                     Expanded(
                                       child: Text(
-                                        data.totalAmount,
+                                        NumberFormat("###.0#").format(double.parse(data.totalAmount)),
                                         style: GoogleFonts.roboto(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500),
                                       ),
                                     ),
@@ -458,7 +474,11 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
                                 flex: 2,
                                 onPressed: (e) {
                                   debugPrint("e-->${e.toString()}");
-                                  download(data.pdfLink);
+                                  if (data.pdfLink.trim().isEmpty) {
+                                    Utility.showToast("File not exists");
+                                  } else {
+                                    download(data.pdfLink);
+                                  }
                                 },
                                 backgroundColor: MColor.colorPrimary,
                                 foregroundColor: Colors.white,
@@ -491,6 +511,7 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
   void download(String url) async {
     if (await Network.isConnected()) {
       if (await canLaunch(url)) {
+        // Isolate(controlPort);
         await launch(url);
       } else {
         Utility.showToast("Unable to get route...");

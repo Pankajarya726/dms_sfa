@@ -1,5 +1,6 @@
 class Url {
   static const String baseUrl = "http://dmsapp.tekzee.in/api/";
+
   // static const String baseUrl = "http://sfa.vyapaar-vistaar.in/api/";
   static const String validateAppVer = "validateAppVersion";
   static const String login = "login";
@@ -34,9 +35,14 @@ class Url {
   static const String getBrandAndCategory = "getBrandAndCategoryBeatWise";
   static const String getAllBeats = "getBeatForLoginUser";
   static const String getBeatByOrderBookingDay = "getBeatByOrderBookingDayV1";
-  static const String getRetailerOrderWise = "getRetailerOrderWise";
-  static const String getRetailerOrderWiseV1 = "getRetailerOrderWiseV1";
-  static const String getRetailerOrderWiseV2 = "getRetailerOrderWiseV2";
+
+  static const String getRetailerOrderWise = "getRetailerOrderWiseV3";
+
+  // static const String getRetailerOrderWise = "getRetailerOrderWise";
+  // static const String getRetailerOrderWiseV1 = "getRetailerOrderWiseV1";
+  // static const String getRetailerOrderWiseV2 = "getRetailerOrderWiseV2";
+  // static const String getRetailerOrderWiseV4 = "getRetailerOrderWiseV4";
+  .
   static const String getRetailerInfo = "retailerInfo";
   static const String getProducts = "getAllProductBeatWise";
   static const String getSuggestedProduct = "getSuggestedProduct";
@@ -47,6 +53,7 @@ class Url {
   static const String getReasons = "getReason";
   static const String getBU = "getBusinessUnit";
   static const String saveOrder = "orderSubmit";
+
   // static const String editUpdate = "OrderUpdate";
   static const String editUpdate = "OrderUpdateV1";
   static const String saveNoOrder = "saveNoOrder";

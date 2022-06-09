@@ -44,10 +44,14 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
   StreamController<int> tabStream = StreamController();
   int duplicateTabIndex = 0;
 
+  DateTime _today = DateTime.now();
+
   @override
   void initState() {
+    WidgetsBinding.instance!.addObserver(this);
     tabController = TabController(length: 3, vsync: this);
     getBeats();
+
     // EasyLoading.show();
     super.initState();
   }
@@ -55,7 +59,25 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     debugPrint('AppLifecycleState: $state');
+
+    if (state == AppLifecycleState.resumed) {
+      debugPrint('old_date: $_today');
+      debugPrint('current_date: ${DateTime.now()}');
+      if (DateFormat("dd-MM-yyyy").format(DateTime.now()) != DateFormat("dd-MM-yyyy").format(_today)) {
+        selectedDay = "";
+        beatList.clear();
+        beatsModal = null;
+        getBeats();
+      }
+    }
+
     super.didChangeAppLifecycleState(state);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    super.dispose();
   }
 
   @override

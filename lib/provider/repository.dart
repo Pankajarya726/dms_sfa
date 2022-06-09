@@ -859,7 +859,7 @@ class ApiRepository {
 
   Future<GetRetailersResponse> getRetailersOrderWise(Map input) async {
     try {
-      Response response = await dio.post(Url.getRetailerOrderWiseV2, data: input, cancelToken: cancelToken);
+      Response response = await dio.post(Url.getRetailerOrderWise, data: input, cancelToken: cancelToken);
       GetRetailersResponse baseResponse = GetRetailersResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {

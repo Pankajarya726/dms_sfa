@@ -72,6 +72,12 @@ class _StartDayScreenState extends State<StartDayScreen> {
   int locationCounter = 0;
 
   @override
+  void initState() {
+    getLostData();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
@@ -1096,5 +1102,18 @@ class _StartDayScreenState extends State<StartDayScreen> {
       debugPrint("start_my_day_input-->");
       startMyDayBloc.add(StartMyDayEvent(input: input));
     } //end of else
+  }
+
+  Future<void> getLostData() async {
+    final LostDataResponse response = await imagePicker.retrieveLostData();
+    if (response.isEmpty) {
+      return;
+    }
+    if (response.files != null && response.files!.isNotEmpty) {
+      imageFile = File(response.files!.last.path);
+      commonBloc.add(CommonBlocSelectImageEvent(imageFile: imageFile!));
+    } else {
+      debugPrint("No previous image");
+    }
   }
 }

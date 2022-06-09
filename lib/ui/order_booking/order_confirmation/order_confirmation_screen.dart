@@ -23,10 +23,12 @@ class OrderConfirmationScreen extends StatefulWidget {
 class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with TickerProviderStateMixin {
   late TabController _tabController;
   ValueNotifier<int> valueNotifier = ValueNotifier(0);
+
   ReasonsModal reason = ReasonsModal(tagName: "", id: "", taskType: "");
   String remark = "";
   List<BUModal> buList = [];
   bool issueResolve = false;
+
   ReasonsListener? reasonsListener;
   GlobalKey _globalKey = GlobalKey();
   GlobalKey _globalKey1 = GlobalKey();

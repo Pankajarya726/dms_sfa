@@ -135,7 +135,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                                         width: MediaQuery.of(context).size.width * 0.45,
                                         height: 30,
                                         child: Marquee(
-                                          text: "Constants.designation",
+                                          text: Constants.designation,
                                           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
 
                                           // scrollAxis: Axis.horizontal,

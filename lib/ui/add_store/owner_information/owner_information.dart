@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:dms/model/retailer_form.dart';
 import 'package:dms/ui/add_store/model/call_time_slot_response.dart';
 import 'package:dms/ui/add_store/model/select_language_response.dart';
@@ -22,6 +23,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+
 import '../../../main.dart';
 
 class OwnerInformation extends StatefulWidget {
@@ -54,8 +56,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
   TextEditingController txtAdhaar = TextEditingController();
   TextEditingController txtBirthday = TextEditingController();
   TextEditingController txtAnniversary = TextEditingController();
-  RefreshController refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController refreshController = RefreshController(initialRefresh: false);
   GlobalKey globalKeyName = GlobalKey();
   GlobalKey globalKeyPrimMob = GlobalKey();
   GlobalKey globalKeySecMob = GlobalKey();
@@ -70,12 +71,12 @@ class _OwnerInformationState extends State<OwnerInformation> {
   @override
   void initState() {
     super.initState();
+    getLostData();
     restorePrevSession();
   }
 
   restorePrevSession() {
-    ownerPhotoFile =
-        widget.form.ownerImage.isEmpty ? null : File(widget.form.ownerImage);
+    ownerPhotoFile = widget.form.ownerImage.isEmpty ? null : File(widget.form.ownerImage);
     whatsAppSmsRadio = widget.form.isWhatsappSms;
     txtOwnerName.text = widget.form.ownerName;
     txtPrimaryMobile.text = widget.form.primaryMobile;
@@ -85,12 +86,12 @@ class _OwnerInformationState extends State<OwnerInformation> {
 
     callTimeSlotModel = widget.form.callTimeSlot;
     if (callTimeSlotModel != null) {
-      txtCallTime.text =
-          callTimeSlotModel!.from + " to " + callTimeSlotModel!.to;
+      txtCallTime.text = callTimeSlotModel!.from + " to " + callTimeSlotModel!.to;
     }
 
     primaryLanguage = widget.form.primaryLang;
     secondaryLanguage = widget.form.secondaryLang;
+
     if (primaryLanguage != null) {
       txtPrimaryLang.text = primaryLanguage!.languageName;
     }
@@ -205,8 +206,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
                     globalKey: globalKeySecMob,
                     onChange: (text) {
                       if (text == txtPrimaryMobile.text) {
-                        Utility.showToast(
-                            "Primary and secondary mobile number should not be same");
+                        Utility.showToast("Primary and secondary mobile number should not be same");
                       }
                       widget.form.secondaryMobile = text;
                     },
@@ -389,10 +389,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
                       if (state is CommonBlocBirthdayState) {
-                        txtBirthday.text =
-                            DateFormat("yyyy-MM-dd").format(state.dateTime);
-                        widget.form.birthday =
-                            DateFormat("yyyy-MM-dd").format(state.dateTime);
+                        txtBirthday.text = DateFormat("yyyy-MM-dd").format(state.dateTime);
+                        widget.form.birthday = DateFormat("yyyy-MM-dd").format(state.dateTime);
                       }
 
                       return DateEditText(
@@ -420,10 +418,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
                       if (state is CommonBlocAnniversaryState) {
-                        txtAnniversary.text =
-                            DateFormat("yyyy-MM-dd").format(state.dateTime);
-                        widget.form.anniversary =
-                            DateFormat("yyyy-MM-dd").format(state.dateTime);
+                        txtAnniversary.text = DateFormat("yyyy-MM-dd").format(state.dateTime);
+                        widget.form.anniversary = DateFormat("yyyy-MM-dd").format(state.dateTime);
                       }
                       return DateEditText(
                         controller: txtAnniversary,
@@ -484,8 +480,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
             } else if (txtPrimaryMobile.text.isEmpty) {
               Utility.showToast("Please enter primary mobile");
             } else if (txtPrimaryMobile.text == txtSecondaryMobile.text) {
-              Utility.showToast(
-                  "Primary and secondary mobile number should not be same");
+              Utility.showToast("Primary and secondary mobile number should not be same");
             } else if (txtCallTime.text.isEmpty) {
               Utility.showToast("Please select call time slot");
             } else if (txtPrimaryLang.text.isEmpty) {
@@ -496,28 +491,22 @@ class _OwnerInformationState extends State<OwnerInformation> {
             //       "Please select opt-in for whatsapp message / SMS");
             // }
             else if (txtOwnerName.text.length < 3) {
-              Utility.showToast(
-                  "Owner name should be minimum 3 characters long");
+              Utility.showToast("Owner name should be minimum 3 characters long");
             } else if (txtPrimaryMobile.text.length < 10) {
               Utility.showToast("Please enter valid primary mobile number");
             } else if (widget.form.checkMobileNumber == false) {
               Utility.showToast("Mobile number already exist");
-            } else if (txtSecondaryMobile.text.length < 10 &&
-                txtSecondaryMobile.text.isNotEmpty) {
+            } else if (txtSecondaryMobile.text.length < 10 && txtSecondaryMobile.text.isNotEmpty) {
               Utility.showToast("Please enter valid secondary mobile number");
-            } else if (txtHelperMobile.text.length < 10 &&
-                txtHelperMobile.text.isNotEmpty) {
+            } else if (txtHelperMobile.text.length < 10 && txtHelperMobile.text.isNotEmpty) {
               Utility.showToast("Please enter valid helper mobile number");
             } else if (txtEmail.text.isNotEmpty &&
                 !txtEmail.text.contains(RegExp(
                     r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'))) {
               Utility.showToast("Please enter valid email address");
-            } else if (!txtPAN.text
-                    .contains(RegExp("[A-Z]{5}[0-9]{4}[A-Z]{1}")) &&
-                txtPAN.text.isNotEmpty) {
+            } else if (!txtPAN.text.contains(RegExp("[A-Z]{5}[0-9]{4}[A-Z]{1}")) && txtPAN.text.isNotEmpty) {
               Utility.showToast("Please enter valid PAN number");
-            } else if (!txtAdhaar.text.contains(RegExp('^[2-9]{1}[0-9]{11}')) &&
-                txtAdhaar.text.isNotEmpty) {
+            } else if (!txtAdhaar.text.contains(RegExp('^[2-9]{1}[0-9]{11}')) && txtAdhaar.text.isNotEmpty) {
               Utility.showToast("Please enter valid aadhar number");
             } else {
               widget.form.ownerName = txtOwnerName.text.trim();
@@ -533,8 +522,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
               widget.form.aadhaarNumber = txtAdhaar.text.trim();
               widget.form.birthday = txtBirthday.text.trim();
               widget.form.anniversary = txtAnniversary.text.trim();
-              widget.form.ownerImage =
-                  ownerPhotoFile != null ? ownerPhotoFile!.path : "";
+              widget.form.ownerImage = ownerPhotoFile != null ? ownerPhotoFile!.path : "";
 
               Navigator.push(
                 context,
@@ -661,8 +649,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
               activeColor: MColor.colorPrimary,
               fillColor: MaterialStateProperty.all(MColor.colorPrimary),
               onChanged: (value) {
-                commonBloc
-                    .add(CommonBlocWhatsAppRadioEvent(whatsAppRadioTag: value));
+                commonBloc.add(CommonBlocWhatsAppRadioEvent(whatsAppRadioTag: value));
               },
             ),
           ),
@@ -714,6 +701,54 @@ class _OwnerInformationState extends State<OwnerInformation> {
               ),
             ),
     );
+  }
+
+  Future<void> getLostData() async {
+    final LostDataResponse response = await imagePicker.retrieveLostData();
+    if (response.isEmpty) {
+      return;
+    }
+    if (response.files != null && response.files!.isNotEmpty) {
+      ownerPhotoFile = File(response.files!.last.path);
+      ownerFileName = response.files!.last.name;
+
+      // check currrent image size
+      Uint8List list = await ownerPhotoFile!.readAsBytes();
+      var sizeInKb = list.lengthInBytes / 1024;
+      var sizeInMb = sizeInKb / 1024;
+      debugPrint("original image size = $sizeInMb");
+
+      // convert XFile to File
+      File file = ownerPhotoFile!;
+
+      if (sizeInMb >= 2.0) {
+        // convert file to uint8list object to Compress image size
+        Uint8List? result = await FlutterImageCompress.compressWithFile(
+          file.absolute.path,
+          minWidth: 2300,
+          minHeight: 1500,
+          quality: 50,
+        );
+        sizeInKb = result!.lengthInBytes / 1024;
+        sizeInMb = sizeInKb / 1024;
+        debugPrint("bytes size = ${result.lengthInBytes}");
+        debugPrint("kb size = $sizeInKb");
+        debugPrint("mb size = $sizeInMb \n");
+
+        file = await File(file.absolute.path).create();
+        file.writeAsBytesSync(result);
+      }
+      ownerPhotoFile = file;
+
+      // check new compressed image size
+      Uint8List uint8list = await ownerPhotoFile!.readAsBytes();
+      var kb = uint8list.lengthInBytes / 1024;
+      var mb = kb / 1024;
+      debugPrint("compressed image size = $mb");
+      commonBloc.add(CommonBlocSelectImageEvent(imageFile: ownerPhotoFile!));
+    } else {
+      debugPrint("No previous image");
+    }
   }
 
   void selectImage() async {
@@ -808,8 +843,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       onCallTimeSlotSelect: (callTimeSlot) {
                         if (callTimeSlot != null) {
                           callTimeSlotModel = callTimeSlot;
-                          txtCallTime.text =
-                              callTimeSlot.from + " to " + callTimeSlot.to;
+                          txtCallTime.text = callTimeSlot.from + " to " + callTimeSlot.to;
                           widget.form.callTimeSlot = callTimeSlotModel;
                         }
                       },

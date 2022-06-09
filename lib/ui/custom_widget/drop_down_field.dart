@@ -7,11 +7,11 @@ class DropDownField extends StatefulWidget {
   final String? hint;
   final List<String> menuList;
   final String prevSelected;
-  List<BeatsModal>? beats;
-  Function(BeatsModal? value)? onBeatSelected;
-  Function(PopUpMenuListener listener) onMenuItemSelected;
+  final List<BeatsModal>? beats;
+  final Function(BeatsModal? value)? onBeatSelected;
+  final Function(PopUpMenuListener listener) onMenuItemSelected;
 
-  DropDownField({
+  const DropDownField({
     Key? key,
     required this.onSelect,
     this.hint = "Select",
@@ -26,8 +26,7 @@ class DropDownField extends StatefulWidget {
   _DropDownFieldState createState() => _DropDownFieldState();
 }
 
-class _DropDownFieldState extends State<DropDownField>
-    implements PopUpMenuListener {
+class _DropDownFieldState extends State<DropDownField> implements PopUpMenuListener {
   String selected = "";
 
   @override

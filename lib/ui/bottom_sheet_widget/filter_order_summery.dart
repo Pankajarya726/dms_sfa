@@ -129,14 +129,47 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
               const SizedBox(
                 height: 10,
               ),
-              const Text(
-                StringConst.filter,
-                style: TextStyle(
-                  color: MColor.colorPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.67,
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    StringConst.filter,
+                    style: TextStyle(
+                      color: MColor.colorPrimary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.67,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      customer = null;
+                      customerType = null;
+                      location = null;
+                      locationType = null;
+                      txtCustomer.clear();
+                      txtCustomerType.clear();
+                      txtLocation.clear();
+                      txtLocationType.clear();
+                      locType = "";
+                      fromDate = DateTime.now();
+                      toDate = DateTime.now();
+
+                      txtDate.text = DateFormat("dd/MM/yyyy").format(fromDate);
+                    },
+                    child: const Text(
+                      "Reset",
+                      style: TextStyle(
+                        color: MColor.colorPrimary,
+                        fontSize: 18,
+                        decoration: TextDecoration.underline,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.67,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(
                 height: 20,
@@ -157,7 +190,7 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
                             onSelect: (DateTime frmDate, DateTime endDate) {
                               fromDate = frmDate;
                               toDate = endDate;
-                              if (fromDate != toDate) {
+                              if (DateFormat("dd/MM/yyyy").format(fromDate) != DateFormat("dd/MM/yyyy").format(toDate)) {
                                 txtDate.text =
                                     DateFormat("dd/MM/yyyy").format(fromDate) + " to " + DateFormat("dd/MM/yyyy").format(toDate);
                               } else {
@@ -195,6 +228,10 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
                                 locType = type.id;
                                 locationType = type;
                                 txtLocationType.text = type.name;
+                                location = null;
+                                txtLocation.clear();
+                                customer = null;
+                                txtCustomer.clear();
                                 getLocation(locType);
                               }
                             },
@@ -216,12 +253,22 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
                     ),
                     hintText: "Select Location"),
                 onTap: () async {
+                  if (locationType == null || locationType!.id.isEmpty) {
+                    Utility.showToast("Please select location type");
+                    return;
+                  }
+
                   List<Selection> selection = [];
                   debugPrint("locationList--->$locationList");
                   await Future.forEach(
                       locationList, (LocationModel element) => selection.add(Selection(id: element.id, name: element.name)));
 
                   debugPrint("selection--->$selection");
+
+                  if (selection.isEmpty) {
+                    Utility.showToast("${locationType!.name} not found");
+                    return;
+                  }
 
                   showModalBottomSheet(
                       context: context,
@@ -234,6 +281,8 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
                               if (type.id.isNotEmpty) {
                                 location = type;
                                 txtLocation.text = type.name;
+                                customer = null;
+                                txtCustomer.clear();
                               }
                             },
                             header: "Select Location",
@@ -268,9 +317,13 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
                             selected: customerType ?? Selection(id: "id", name: "name"),
                             onSelect: (Selection type) {
                               if (type.id.isNotEmpty) {
-                                customerType = type;
-                                txtCustomerType.text = type.name;
-                                getCustomer();
+                                if (customerType == null || customerType!.id != type.id) {
+                                  customerType = type;
+                                  txtCustomerType.text = type.name;
+                                  customer = null;
+                                  txtCustomer.clear();
+                                  getCustomer();
+                                }
                               }
                             },
                             header: "Select Customer Type",
@@ -304,6 +357,11 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
                     });
                   }
 
+                  if (selection.isEmpty) {
+                    Utility.showToast("Customers not found");
+                    return;
+                  }
+
                   showModalBottomSheet(
                       context: context,
                       shape: bottomSheetShape,
@@ -334,7 +392,9 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
                               DateFormat("dd-MM-yyyy").format(fromDate) != DateFormat("dd-MM-yyyy").format(DateTime.now())) &&
                           (customer == null || customer!.id.isEmpty)) {
                         Utility.showToast("Please select customer");
-                      } else if (fromDate != toDate && (customer == null || customer!.id.isEmpty)) {
+                      } else if (DateFormat("dd-MM-yyyy").parse(fromDate.toString()) !=
+                              DateFormat("dd-MM-yyyy").parse(toDate.toString()) &&
+                          (customer == null || customer!.id.isEmpty)) {
                         Utility.showToast("Please select customer");
                       } else if (locType.isNotEmpty && location == null) {
                         Utility.showToast("Please select location");

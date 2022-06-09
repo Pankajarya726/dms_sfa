@@ -21,9 +21,13 @@ class _DatePickerSheetState extends State<DatePickerSheet> {
   void initState() {
     fromDate = widget.fromDate;
     toDate = widget.toDate;
-    if (widget.fromDate != widget.toDate) {
-      controller.selectedRange = PickerDateRange(widget.fromDate, widget.toDate);
-    }
+    // if (DateFormat("dd-MM-yyyy").parse(widget.fromDate.toString()) != DateFormat("dd-MM-yyyy").parse(widget.toDate.toString())) {
+    //   controller.selectedRange = PickerDateRange(widget.fromDate, widget.toDate);
+    // } else {
+    //   controller.selectedDate = fromDate;
+    //   controller.selectedDates = [fromDate];
+    // }
+    controller.selectedRange = PickerDateRange(widget.fromDate, widget.toDate);
     super.initState();
   }
 
@@ -40,6 +44,8 @@ class _DatePickerSheetState extends State<DatePickerSheet> {
               initialDisplayDate: DateTime.now(),
               selectionMode: DateRangePickerSelectionMode.range,
               showActionButtons: true,
+              initialSelectedDate: fromDate,
+              maxDate: DateTime.now(),
               onCancel: () {
                 Navigator.pop(context);
               },

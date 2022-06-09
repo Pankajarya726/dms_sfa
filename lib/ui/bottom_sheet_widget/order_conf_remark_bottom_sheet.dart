@@ -19,8 +19,7 @@ class OrderConfRemarkBottomSheet extends StatefulWidget {
   final List<BUModal> buList;
   final bool issueResolve;
   final String retailerId;
-  final Function(ReasonsModal reason, String remark, List<BUModal> buList,
-      bool issueResolve) onReasonSelected;
+  final Function(ReasonsModal reason, String remark, List<BUModal> buList, bool issueResolve) onReasonSelected;
 
   const OrderConfRemarkBottomSheet({
     Key? key,
@@ -33,18 +32,15 @@ class OrderConfRemarkBottomSheet extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _OrderConfRemarkBottomSheetState createState() =>
-      _OrderConfRemarkBottomSheetState();
+  _OrderConfRemarkBottomSheetState createState() => _OrderConfRemarkBottomSheetState();
 }
 
-class _OrderConfRemarkBottomSheetState
-    extends State<OrderConfRemarkBottomSheet> {
+class _OrderConfRemarkBottomSheetState extends State<OrderConfRemarkBottomSheet> {
   List<ReasonsModal> reasons = [];
   List<BUModal> buList = [];
   ReasonsModal groupValue = ReasonsModal(taskType: "", id: "", tagName: "");
   bool issueResolve = false;
-  StreamController<List<ReasonsModal>> reasonStreamController =
-      StreamController();
+  StreamController<List<ReasonsModal>> reasonStreamController = StreamController();
   StreamController<List<BUModal>> buStreamController = StreamController();
   StreamController<bool> issueStreamController = StreamController();
   TextEditingController txtRemarkController = TextEditingController();
@@ -52,9 +48,6 @@ class _OrderConfRemarkBottomSheetState
 
   @override
   void initState() {
-    if (widget.reason != null) {
-      groupValue = widget.reason!;
-    }
     txtRemarkController.text = widget.remark;
     issueResolve = widget.issueResolve;
     selectedBUList = widget.buList;
@@ -107,8 +100,7 @@ class _OrderConfRemarkBottomSheetState
                       StreamBuilder<List<ReasonsModal>>(
                           stream: reasonStreamController.stream,
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
                               return const Center(
                                 child: CircularProgressIndicator(),
                               );
@@ -131,13 +123,10 @@ class _OrderConfRemarkBottomSheetState
                                         reasonStreamController.add(reasons);
                                       },
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 10),
+                                        padding: const EdgeInsets.symmetric(vertical: 10),
                                         child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             SizedBox(
                                               height: 20,
@@ -145,15 +134,11 @@ class _OrderConfRemarkBottomSheetState
                                               child: Radio<ReasonsModal>(
                                                 value: reasons[index],
                                                 groupValue: groupValue,
-                                                activeColor:
-                                                    MColor.colorPrimary,
-                                                fillColor:
-                                                    MaterialStateProperty.all(
-                                                        MColor.colorPrimary),
+                                                activeColor: MColor.colorPrimary,
+                                                fillColor: MaterialStateProperty.all(MColor.colorPrimary),
                                                 onChanged: (value) {
                                                   groupValue = value!;
-                                                  reasonStreamController
-                                                      .add(reasons);
+                                                  reasonStreamController.add(reasons);
                                                 },
                                               ),
                                             ),
@@ -165,8 +150,7 @@ class _OrderConfRemarkBottomSheetState
                                                 snapshot.data![index].tagName,
                                                 maxLines: 5,
                                                 style: const TextStyle(
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                                  overflow: TextOverflow.ellipsis,
                                                   fontSize: 17.0,
                                                   color: MColor.backButton,
                                                   fontWeight: FontWeight.bold,
@@ -207,8 +191,7 @@ class _OrderConfRemarkBottomSheetState
                         maxLength: 300,
                         decoration: InputDecoration(
                           counterText: "",
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 15),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                           border: OutlineInputBorder(
                             borderSide: BorderSide.none,
                             borderRadius: BorderRadius.circular(10),
@@ -229,8 +212,7 @@ class _OrderConfRemarkBottomSheetState
                       StreamBuilder<List<BUModal>>(
                         stream: buStreamController.stream,
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
                             return const Center(
                               child: CircularProgressIndicator(),
                             );
@@ -265,12 +247,9 @@ class _OrderConfRemarkBottomSheetState
                                 textActiveColor: MColor.activeTextColor,
                                 pressEnabled: true,
                                 onPressed: (item) {
-                                  buList[index].selected =
-                                      !buList[index].selected;
+                                  buList[index].selected = !buList[index].selected;
 
-                                  selectedBUList = buList
-                                      .where((element) => element.selected)
-                                      .toList();
+                                  selectedBUList = buList.where((element) => element.selected).toList();
 
                                   buStreamController.add(buList);
                                 },
@@ -278,10 +257,7 @@ class _OrderConfRemarkBottomSheetState
                                 elevation: 0,
                                 activeColor: const Color(0xffFFC9CC),
                                 border: Border.all(
-                                    color: buList[index].selected
-                                        ? MColor.colorPrimary
-                                        : const Color(0xffC5C5C5),
-                                    width: 1),
+                                    color: buList[index].selected ? MColor.colorPrimary : const Color(0xffC5C5C5), width: 1),
                                 color: const Color(0xffFAFAFA),
                               );
                             },
@@ -305,8 +281,7 @@ class _OrderConfRemarkBottomSheetState
                                   SizedBox(
                                     width: 20,
                                     child: Checkbox(
-                                      fillColor: MaterialStateProperty.all(
-                                          MColor.colorPrimary),
+                                      fillColor: MaterialStateProperty.all(MColor.colorPrimary),
                                       value: issueResolve,
                                       onChanged: (value) {
                                         issueResolve = value!;
@@ -339,8 +314,7 @@ class _OrderConfRemarkBottomSheetState
                     } else if (groupValue.id.isEmpty) {
                       Utility.showToast("Please select a reason");
                     } else {
-                      List<BUModal> bus =
-                          buList.where((element) => element.selected).toList();
+                      List<BUModal> bus = buList.where((element) => element.selected).toList();
 
                       String selectedBu = "";
 
@@ -361,11 +335,7 @@ class _OrderConfRemarkBottomSheetState
                         "is_resolve": issueResolve ? 1 : 0
                       };
 
-                      widget.onReasonSelected(
-                          groupValue,
-                          txtRemarkController.text,
-                          selectedBUList,
-                          issueResolve);
+                      widget.onReasonSelected(groupValue, txtRemarkController.text, selectedBUList, issueResolve);
                       Navigator.pop(context);
                     }
 
@@ -373,8 +343,7 @@ class _OrderConfRemarkBottomSheetState
                   },
                   style: ButtonStyle(
                     fixedSize: MaterialStateProperty.all(const Size(160, 50)),
-                    backgroundColor:
-                        MaterialStateProperty.all(MColor.colorPrimary),
+                    backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
                     elevation: MaterialStateProperty.all(0),
                     shape: MaterialStateProperty.all(
                       RoundedRectangleBorder(
@@ -404,6 +373,11 @@ class _OrderConfRemarkBottomSheetState
       GetReasonsResponse response = await repository.getReasons();
       if (response.success) {
         reasons = response.data;
+
+        if (widget.reason != null) {
+          groupValue = reasons.singleWhere((element) => element.id == widget.reason!.id);
+        }
+
         reasonStreamController.add(reasons);
       } else {
         reasonStreamController.addError(response.message);

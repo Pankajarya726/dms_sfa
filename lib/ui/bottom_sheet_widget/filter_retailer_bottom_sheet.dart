@@ -19,8 +19,7 @@ class FilterRetailerBottomSheet extends StatefulWidget {
   final String type;
   final BeatsModal beat;
   final List<BeatsModal> beatList;
-  final Function(String day, String type, BeatsModal selectedBeat,
-      List<BeatsModal> beatList) onFilter;
+  final Function(String day, String type, BeatsModal selectedBeat, List<BeatsModal> beatList) onFilter;
 
   const FilterRetailerBottomSheet({
     Key? key,
@@ -32,8 +31,7 @@ class FilterRetailerBottomSheet extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _FilterRetailerBottomSheetState createState() =>
-      _FilterRetailerBottomSheetState();
+  _FilterRetailerBottomSheetState createState() => _FilterRetailerBottomSheetState();
 }
 
 class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
@@ -50,6 +48,7 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
     StringConst.sunday,
   ];
   List<String> priorityType = [
+    "All",
     StringConst.retailer,
     StringConst.teleRetailer,
   ];
@@ -170,6 +169,13 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                           onBeatSelected: (beatsM) {
                             if (beatsM != null) {
                               beatsModal = beatsM;
+                              beats.remove(beatsModal!);
+
+                              if (beats.isNotEmpty) {
+                                beats.insert(1, beatsModal!);
+                              } else {
+                                beats.add(beatsModal!);
+                              }
                             }
                           },
                         );
@@ -181,10 +187,10 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                 ),
                 DropDownField(
                   onMenuItemSelected: (listener) {},
-                  prevSelected: selectedEnrollmentType,
+                  prevSelected: selectedEnrollmentType.isEmpty ? "All" : selectedEnrollmentType,
                   onSelect: (value) {
                     debugPrint("select-->");
-                    selectedEnrollmentType = value;
+                    selectedEnrollmentType = value == "All" ? "" : value;
                   },
                   hint: "Select Outlet Type",
                   menuList: priorityType,
@@ -193,8 +199,7 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                   height: 35,
                 ),
                 Padding(
-                  padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -205,9 +210,7 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                               selectedEnrollmentType,
                               beatsModal != null
                                   ? beatsModal!
-                                  : (beats.length > 1
-                                      ? BeatsModal(id: "", name: "All")
-                                      : BeatsModal(id: "", name: "")),
+                                  : (beats.length > 1 ? BeatsModal(id: "", name: "All") : BeatsModal(id: "", name: "")),
                               beats);
                           Navigator.pop(context);
                         },
@@ -244,8 +247,7 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
       beatsStreamController.addError("loading");
       Map<String, dynamic> input = HashMap<String, dynamic>();
       input["day"] = selectedDay;
-      GetAllBeatsResponse response =
-          await repository.getBeatByOrderBookingDay(input);
+      GetAllBeatsResponse response = await repository.getBeatByOrderBookingDay(input);
       beats.clear();
       beatsModal = null;
       if (response.success) {
