@@ -100,11 +100,11 @@ class _TaskHistoryState extends State<TaskHistory> {
                   if (taskHistoryList[index].resolveDate.isNotEmpty) {
                     DateTime enrolledDate =
                         DateTime.parse(taskHistoryList[index].resolveDate);
-                    days = currentDate!.difference(enrolledDate).inDays;
+                    days = days + currentDate!.difference(enrolledDate).inDays;
                     if (days < 2) {
-                      daysPending = days.toString() + " day pending";
+                      daysPending = "Solved in " + days.toString() + " day";
                     } else {
-                      daysPending = days.toString() + " days pending";
+                      daysPending = "Solved in " + days.toString() + " days";
                     }
                   }
                 }
