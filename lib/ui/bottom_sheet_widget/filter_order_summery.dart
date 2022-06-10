@@ -283,6 +283,8 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
                                 txtLocation.text = type.name;
                                 customer = null;
                                 txtCustomer.clear();
+
+                                getCustomer();
                               }
                             },
                             header: "Select Location",

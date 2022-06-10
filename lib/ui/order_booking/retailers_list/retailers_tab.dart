@@ -18,6 +18,7 @@ import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
@@ -212,7 +213,9 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
     // retailers.clear();
     int page = pageNo;
 
-    if (await Network.isConnected()) {
+    if (await Network.isConnected() && !EasyLoading.isShow) {
+      EasyLoading.show();
+
       Map<String, dynamic> input = HashMap<String, dynamic>();
       input["order_status"] = widget.index;
       input["beat_id"] = selectedBeat!.id;
@@ -224,6 +227,7 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
       input["retailer_type"] = retailerType;
 
       GetRetailersResponse response = await repository.getRetailersOrderWise(input);
+      EasyLoading.dismiss();
       refreshController.loadComplete();
       refreshController.refreshCompleted();
       if (response.success) {

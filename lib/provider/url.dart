@@ -35,14 +35,13 @@ class Url {
   static const String getBrandAndCategory = "getBrandAndCategoryBeatWise";
   static const String getAllBeats = "getBeatForLoginUser";
   static const String getBeatByOrderBookingDay = "getBeatByOrderBookingDayV1";
-
   static const String getRetailerOrderWise = "getRetailerOrderWiseV3";
 
   // static const String getRetailerOrderWise = "getRetailerOrderWise";
   // static const String getRetailerOrderWiseV1 = "getRetailerOrderWiseV1";
   // static const String getRetailerOrderWiseV2 = "getRetailerOrderWiseV2";
   // static const String getRetailerOrderWiseV4 = "getRetailerOrderWiseV4";
-  .
+
   static const String getRetailerInfo = "retailerInfo";
   static const String getProducts = "getAllProductBeatWise";
   static const String getSuggestedProduct = "getSuggestedProduct";

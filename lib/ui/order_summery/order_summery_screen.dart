@@ -579,7 +579,7 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
       Map<String, dynamic> input = {};
       input["from_date"] = DateFormat("yyyy-MM-dd").format(fromDate);
       input["to_date"] = DateFormat("yyyy-MM-dd").format(toDate);
-      input["location_type"] = locationType != null ? locationType!.id : "";
+      input["location_type"] = locationType != null ? locationType!.id.toLowerCase() : "";
       input["location_id"] = location != null ? location!.id : "";
       input["customer_id"] = customer != null ? customer!.id : "";
 
