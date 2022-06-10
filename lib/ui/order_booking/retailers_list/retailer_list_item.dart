@@ -13,14 +13,12 @@ import 'package:url_launcher/url_launcher.dart';
 class RetailerListItems extends StatefulWidget {
   final int index;
   final RetailersModal retailer;
-  final String beatId;
   final int orderStatus;
 
   const RetailerListItems({
     Key? key,
     required this.index,
     required this.retailer,
-    required this.beatId,
     required this.orderStatus,
   }) : super(key: key);
 

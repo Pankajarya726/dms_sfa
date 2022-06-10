@@ -150,7 +150,7 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
                     index: widget.index,
                     retailer: retailersList[index],
                     orderStatus: 0,
-                    beatId: snapshot.data![index].beatId,
+                    // beatId: snapshot.data![index].beatId,
                   );
                 });
           }

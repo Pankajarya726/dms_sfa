@@ -41,8 +41,8 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
 
   @override
   void initState() {
-    widget.onInit(this);
     super.initState();
+    widget.onInit(this);
   }
 
   @override

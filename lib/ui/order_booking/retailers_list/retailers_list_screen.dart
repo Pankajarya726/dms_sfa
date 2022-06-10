@@ -10,6 +10,7 @@ import 'package:dms/ui/bottom_sheet_widget/route_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/sort_retailer_bottom_sheet.dart';
 import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/ui/order_booking/retailers_list/bloc/retailer_bloc.dart';
+import 'package:dms/ui/order_booking/retailers_list/bloc/retailers_state.dart';
 import 'package:dms/ui/order_booking/retailers_list/model/get_all_beats_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/retailers_tab.dart';
 import 'package:dms/ui/order_booking/search_retailers/search_retailier_screen.dart';
@@ -36,7 +37,7 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
   RetailersBloc retailersBloc = RetailersBloc();
   List<BeatsModal> beatList = [];
   SelectBeatListener? selectBeatListener;
-  String selectedDay = "";
+  String selectedDay = DateFormat("EEEE").format(DateTime.now());
   String selectedEnrollmentType = "";
   String sortSelected = "";
   BeatsModal? beatsModal;
@@ -48,12 +49,12 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
 
   @override
   void initState() {
+    super.initState();
     WidgetsBinding.instance!.addObserver(this);
     tabController = TabController(length: 3, vsync: this);
+    // retailersBloc.add(GetBeatEvent());
     getBeats();
-
     // EasyLoading.show();
-    super.initState();
   }
 
   @override
@@ -67,6 +68,7 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
         selectedDay = "";
         beatList.clear();
         beatsModal = null;
+        // retailersBloc.add(GetBeatEvent());
         getBeats();
       }
     }
@@ -95,317 +97,412 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
         length: 3,
         child: BlocProvider<RetailersBloc>(
           create: (context) => retailersBloc,
-          child: Scaffold(
-            appBar: AppBar(
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  InkWell(
-                    borderRadius: BorderRadius.circular(25),
-                    onTap: () {
-                      showModalBottomSheet(
-                          context: context,
-                          shape: bottomSheetShape,
-                          isScrollControlled: true,
-                          builder: (context) {
-                            return SortingRetailersBottomSheet(
-                              selectedType: sortSelected,
-                              onSelect: (selected) {
-                                sortSelected = selected;
-                                if (selectBeatListener != null) {
-                                  selectBeatListener!.onSorting(sortSelected);
-                                }
-                              },
-                            );
-                          });
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.all(5.0),
-                      child: Image(
-                        width: 25,
-                        height: 25,
-                        image: AssetImage("assets/sorting.png"),
-                      ),
-                    ),
-                  ),
-                  InkWell(
-                    borderRadius: BorderRadius.circular(25),
-                    onTap: () {
-                      showModalBottomSheet(
-                          context: context,
-                          shape: bottomSheetShape,
-                          isScrollControlled: true,
-                          builder: (context) {
-                            return RouteBottomSheet(day: selectedDay);
-                          });
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.all(5.0),
-                      child: Image(
-                        width: 25,
-                        height: 25,
-                        image: AssetImage("assets/route.png"),
-                      ),
-                    ),
-                  ),
-                  const Expanded(
-                    child: Center(
-                      child: Text(
-                        StringConst.retailers,
-                        style: TextStyle(
-                          color: MColor.backButton,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Center(
-                    child: MaterialButton(
-                      height: 30,
-                      minWidth: 50,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const OutletInformation(),
-                          ),
-                        );
+          child: BlocListener<RetailersBloc, RetailerState>(
+            listener: (context, state) {
+              if (state is GetBeatState) {
+                beatList = state.beats;
+              }
+            },
+            child: Scaffold(
+              appBar: AppBar(
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    InkWell(
+                      borderRadius: BorderRadius.circular(25),
+                      onTap: () {
+                        showModalBottomSheet(
+                            context: context,
+                            shape: bottomSheetShape,
+                            isScrollControlled: true,
+                            builder: (context) {
+                              return SortingRetailersBottomSheet(
+                                selectedType: sortSelected,
+                                onSelect: (selected) {
+                                  sortSelected = selected;
+                                  if (selectBeatListener != null) {
+                                    selectBeatListener!.onSorting(sortSelected);
+                                  }
+                                },
+                              );
+                            });
                       },
-                      color: MColor.colorSecondary,
-                      child: const Text(
-                        StringConst.addCaps,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Image(
+                          width: 25,
+                          height: 25,
+                          image: AssetImage("assets/sorting.png"),
                         ),
                       ),
                     ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                          context: context,
-                          shape: bottomSheetShape,
-                          isScrollControlled: true,
-                          builder: (context) {
-                            return FilterRetailerBottomSheet(
-                              beatList: beatList,
-                              day: selectedDay,
-                              type: selectedEnrollmentType,
-                              beat: beatsModal != null ? beatsModal! : BeatsModal(id: "", name: ""),
-                              onFilter: (String day, String enrollmentType, BeatsModal selectedBeat, List<BeatsModal> beats) async {
-                                log("filter--->${beats.toList()}");
+                    InkWell(
+                      borderRadius: BorderRadius.circular(25),
+                      onTap: () {
+                        showModalBottomSheet(
+                            context: context,
+                            shape: bottomSheetShape,
+                            isScrollControlled: true,
+                            builder: (context) {
+                              return RouteBottomSheet(day: selectedDay);
+                            });
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Image(
+                          width: 25,
+                          height: 25,
+                          image: AssetImage("assets/route.png"),
+                        ),
+                      ),
+                    ),
+                    const Expanded(
+                      child: Center(
+                        child: Text(
+                          StringConst.retailers,
+                          style: TextStyle(
+                            color: MColor.backButton,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: MaterialButton(
+                        height: 30,
+                        minWidth: 50,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const OutletInformation(),
+                            ),
+                          );
+                        },
+                        color: MColor.colorSecondary,
+                        child: const Text(
+                          StringConst.addCaps,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                            context: context,
+                            shape: bottomSheetShape,
+                            isScrollControlled: true,
+                            builder: (context) {
+                              return FilterRetailerBottomSheet(
+                                beatList: beatList,
+                                day: selectedDay,
+                                type: selectedEnrollmentType,
+                                beat: beatsModal != null ? beatsModal! : BeatsModal(id: "", name: ""),
+                                onFilter: (String day, String enrollmentType, BeatsModal selectedBeat, List<BeatsModal> beats) async {
+                                  log("filter--->${beats.toList()}");
 
-                                selectedDay = day;
-                                selectedEnrollmentType = enrollmentType;
-                                beatsModal = selectedBeat;
-                                beatList = beats;
-                                beatStream.add(beatList);
+                                  selectedDay = day;
+                                  selectedEnrollmentType = enrollmentType;
+                                  beatsModal = selectedBeat;
+                                  beatList = beats;
+                                  beatStream.add(beatList);
+                                  if (selectBeatListener != null) {
+                                    selectBeatListener!.onBeatSelect(beatsModal!, selectedDay, selectedEnrollmentType);
+                                  }
+                                },
+                              );
+                            });
+                      },
+                      icon: const Image(
+                        width: 30,
+                        image: AssetImage("assets/filter.png"),
+                      ),
+                    )
+                  ],
+                ),
+                leadingWidth: 45,
+                leading: IconButton(
+                  splashRadius: 20,
+                  onPressed: () {
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    } else {
+                      Navigator.pushAndRemoveUntil(
+                          context, MaterialPageRoute(builder: (_) => const DrawerScreen()), ModalRoute.withName("/"));
+                    }
+                  },
+                  icon: const Image(
+                    image: AssetImage("assets/back.png"),
+                    color: Colors.black,
+                  ),
+                ),
+                titleSpacing: 0,
+                bottom: PreferredSize(
+                  preferredSize: const Size.fromHeight(100),
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(15, 0, 15, 8),
+                        child: TextFormField(
+                          style: const TextStyle(fontSize: 16),
+                          readOnly: true,
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => SearchRetailerScreen(
+                                          retailerType: selectedEnrollmentType,
+                                          beatsModal: beatsModal != null ? beatsModal! : BeatsModal(id: "", name: ""),
+                                          day: selectedDay,
+                                          index: tabController.index + 1,
+                                        )));
+                          },
+                          decoration: InputDecoration(
+                              hintText: StringConst.search,
+                              hintStyle: const TextStyle(fontSize: 16),
+                              contentPadding: const EdgeInsets.all(10),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5),
+                                gapPadding: 2,
+                                borderSide: const BorderSide(
+                                  width: 1,
+                                  color: Color(0xFF6E6E6E),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5),
+                                gapPadding: 2,
+                                borderSide: const BorderSide(
+                                  width: 1,
+                                  color: Color(0xFF6E6E6E),
+                                ),
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.search,
+                                color: Color(0xff555555),
+                              )),
+                        ),
+                      ),
+                      Container(
+                        height: 50,
+                        color: const Color(0xffEDEDED),
+                        child: TabBar(
+                            controller: tabController,
+                            indicatorSize: TabBarIndicatorSize.label,
+                            indicatorWeight: 3,
+                            indicatorColor: MColor.colorPrimary,
+                            labelPadding: const EdgeInsets.symmetric(horizontal: 0),
+                            onTap: (index) {
+                              if (duplicateTabIndex != index) {
+                                tabStream.add(index + 1);
+                              }
+                              duplicateTabIndex = index;
+                            },
+                            tabs: [
+                              Tab(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Text(
+                                    StringConst.notConnected,
+                                    style: Theme.of(context).textTheme.bodyText1!.merge(
+                                          TextStyle(
+                                            color: const Color(0xff303030).withOpacity(0.85),
+                                            letterSpacing: 0.5,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 17,
+                                          ),
+                                        ),
+                                  ),
+                                ),
+                              ),
+                              Tab(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Text(
+                                    StringConst.noOrder,
+                                    style: Theme.of(context).textTheme.bodyText2!.merge(
+                                          TextStyle(
+                                            color: const Color(0xff303030).withOpacity(0.85),
+                                            letterSpacing: 0.5,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 17,
+                                          ),
+                                        ),
+                                  ),
+                                ),
+                              ),
+                              Tab(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Text(
+                                    StringConst.order,
+                                    style: Theme.of(context).textTheme.bodyText2!.merge(
+                                          TextStyle(
+                                            color: const Color(0xff303030).withOpacity(0.85),
+                                            letterSpacing: 0.5,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 17,
+                                          ),
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            ]),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              /*body: TabBarView(
+                children: [
+                  BlocConsumer<RetailersBloc, RetailerState>(
+                    listener: (context, state) {},
+                    builder: (context, state) {
+                      return NotConnectedTab(
+                        beatList: beatList,
+                        onBeatSelect: (BeatsModal beat) {
+                          beatsModal = beat;
+                        },
+                        selectedBeat: beatsModal,
+                        day: selectedDay,
+                      );
+                    },
+                  ),
+                  NoOrderTab(),
+                  OrderTab(),
+                ],
+              ),*/
+              body: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  /* BlocBuilder<RetailersBloc, RetailerState>(
+                    builder: (context, state) {
+                      if (state is GetBeatState) {
+                        beatList = state.beats;
+                        beatsModal = beatList.first;
+                      }
+
+                      if (beatList.isEmpty) {
+                        return Container();
+                      }
+
+                      return SizedBox(
+                        height: 50,
+                        width: MediaQuery.of(context).size.width,
+                        child: BeatWidget(
+                          tags: beatList,
+                          selectedBeat: beatsModal ?? BeatsModal(id: "", name: "All"),
+                          onSelect: (BeatsModal tag) {
+                            debugPrint("onBeatSelect-->${tag.name}");
+                            beatsModal = tag;
+                            if (selectBeatListener != null) {
+                              selectBeatListener!.onBeatSelect(beatsModal!, selectedDay, selectedEnrollmentType);
+                            }
+                          },
+                        ),
+                      );
+                    },
+                  ),*/
+                  StreamBuilder<List<BeatsModal>>(
+                      stream: beatStream.stream,
+                      builder: (context, snapshot) {
+                        if (snapshot.error.toString() == "loading") {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 5),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        }
+
+                        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                          List<BeatsModal> beats = snapshot.data!;
+
+                          log("filter--->${beats.toList()}");
+                          return SizedBox(
+                            height: 50,
+                            width: MediaQuery.of(context).size.width,
+                            child: BeatWidget(
+                              tags: beats,
+                              selectedBeat: beatsModal,
+                              onSelect: (BeatsModal tag) {
+                                debugPrint("onBeatSelect-->${tag.name}");
+                                beatsModal = tag;
+
                                 if (selectBeatListener != null) {
                                   selectBeatListener!.onBeatSelect(beatsModal!, selectedDay, selectedEnrollmentType);
                                 }
                               },
-                            );
-                          });
-                    },
-                    icon: const Image(
-                      width: 30,
-                      image: AssetImage("assets/filter.png"),
-                    ),
-                  )
-                ],
-              ),
-              leadingWidth: 45,
-              leading: IconButton(
-                splashRadius: 20,
-                onPressed: () {
-                  if (Navigator.canPop(context)) {
-                    Navigator.pop(context);
-                  } else {
-                    Navigator.pushAndRemoveUntil(
-                        context, MaterialPageRoute(builder: (_) => const DrawerScreen()), ModalRoute.withName("/"));
-                  }
-                },
-                icon: const Image(
-                  image: AssetImage("assets/back.png"),
-                  color: Colors.black,
-                ),
-              ),
-              titleSpacing: 0,
-              bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(100),
-                child: Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(15, 0, 15, 8),
-                      child: TextFormField(
-                        style: const TextStyle(fontSize: 16),
-                        readOnly: true,
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => SearchRetailerScreen(
-                                        retailerType: selectedEnrollmentType,
-                                        beatsModal: beatsModal != null ? beatsModal! : BeatsModal(id: "", name: ""),
-                                        day: selectedDay,
-                                        index: tabController.index + 1,
-                                      )));
-                        },
-                        decoration: InputDecoration(
-                            hintText: StringConst.search,
-                            hintStyle: const TextStyle(fontSize: 16),
-                            contentPadding: const EdgeInsets.all(10),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5),
-                              gapPadding: 2,
-                              borderSide: const BorderSide(
-                                width: 1,
-                                color: Color(0xFF6E6E6E),
-                              ),
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5),
-                              gapPadding: 2,
-                              borderSide: const BorderSide(
-                                width: 1,
-                                color: Color(0xFF6E6E6E),
-                              ),
-                            ),
-                            prefixIcon: const Icon(
-                              Icons.search,
-                              color: Color(0xff555555),
-                            )),
-                      ),
-                    ),
-                    Container(
-                      height: 50,
-                      color: const Color(0xffEDEDED),
-                      child: TabBar(
-                          controller: tabController,
-                          indicatorSize: TabBarIndicatorSize.label,
-                          indicatorWeight: 3,
-                          indicatorColor: MColor.colorPrimary,
-                          labelPadding: const EdgeInsets.symmetric(horizontal: 0),
-                          onTap: (index) {
-                            if (duplicateTabIndex != index) {
-                              tabStream.add(index + 1);
-                            }
-                            duplicateTabIndex = index;
-                          },
-                          tabs: [
-                            Tab(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                                child: Text(
-                                  StringConst.notConnected,
-                                  style: Theme.of(context).textTheme.bodyText1!.merge(
-                                        TextStyle(
-                                          color: const Color(0xff303030).withOpacity(0.85),
-                                          letterSpacing: 0.5,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 17,
-                                        ),
-                                      ),
-                                ),
-                              ),
-                            ),
-                            Tab(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                                child: Text(
-                                  StringConst.noOrder,
-                                  style: Theme.of(context).textTheme.bodyText2!.merge(
-                                        TextStyle(
-                                          color: const Color(0xff303030).withOpacity(0.85),
-                                          letterSpacing: 0.5,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 17,
-                                        ),
-                                      ),
-                                ),
-                              ),
-                            ),
-                            Tab(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                                child: Text(
-                                  StringConst.order,
-                                  style: Theme.of(context).textTheme.bodyText2!.merge(
-                                        TextStyle(
-                                          color: const Color(0xff303030).withOpacity(0.85),
-                                          letterSpacing: 0.5,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 17,
-                                        ),
-                                      ),
-                                ),
-                              ),
-                            ),
-                          ]),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            body: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                StreamBuilder<List<BeatsModal>>(
-                    stream: beatStream.stream,
-                    builder: (context, snapshot) {
-                      if (snapshot.error.toString() == "loading") {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 5),
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      }
+                          );
+                        }
 
-                      if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                        List<BeatsModal> beats = snapshot.data!;
+                        return Container();
+                      }),
+                  /*Expanded(
+                    child: BlocBuilder<RetailersBloc, RetailerState>(
+                      builder: (context, state) {
+                        if (state is BeatLoadingState) {
+                          return Container();
+                        }
 
-                        log("filter--->${beats.toList()}");
-                        return SizedBox(
-                          height: 50,
-                          width: MediaQuery.of(context).size.width,
-                          child: BeatWidget(
-                            tags: beats,
-                            selectedBeat: beatsModal,
-                            onSelect: (BeatsModal tag) {
-                              debugPrint("onBeatSelect-->${tag.name}");
-                              beatsModal = tag;
+                        if (beatList.isEmpty) {
+                          return Container();
+                        }
 
-                              if (selectBeatListener != null) {
-                                selectBeatListener!.onBeatSelect(beatsModal!, selectedDay, selectedEnrollmentType);
-                              }
+                        return TabBarView(controller: tabController, physics: const NeverScrollableScrollPhysics(), children: [
+                          RetailerTab(
+                            selectedBeat: beatsModal == null ? BeatsModal(id: "", name: "All") : beatsModal!,
+                            index: 1,
+                            day: selectedDay,
+                            onInit: (SelectBeatListener listener) {
+                              selectBeatListener = listener;
                             },
                           ),
-                        );
-                      }
+                          RetailerTab(
+                            selectedBeat: beatsModal == null ? BeatsModal(id: "", name: "All") : beatsModal!,
+                            index: 2,
+                            day: selectedDay,
+                            onInit: (SelectBeatListener listener) {
+                              selectBeatListener = listener;
+                            },
+                          ),
+                          RetailerTab(
+                            selectedBeat: beatsModal == null ? BeatsModal(id: "", name: "All") : beatsModal!,
+                            index: 3,
+                            day: selectedDay,
+                            onInit: (SelectBeatListener listener) {
+                              selectBeatListener = listener;
+                            },
+                          ),
+                        ]);
+                      },
+                    ),
+                  )*/
 
-                      return Container();
-                    }),
-                Expanded(
-                  child: StreamBuilder<int>(
-                    stream: tabStream.stream,
-                    builder: (context, snap) {
-                      if (snap.hasData) {
-                        return RetailerTab(
-                          selectedBeat: beatsModal == null ? BeatsModal(id: "", name: "All") : beatsModal!,
-                          index: snap.data!,
-                          day: selectedDay,
-                          onInit: (SelectBeatListener listener) {
-                            selectBeatListener = listener;
-                          },
-                        );
-                      }
-                      return Container();
-                    },
+                  Expanded(
+                    child: StreamBuilder<int>(
+                      stream: tabStream.stream,
+                      builder: (context, snap) {
+                        if (snap.hasData) {
+                          return RetailerTab(
+                            selectedBeat: beatsModal == null ? BeatsModal(id: "", name: "All") : beatsModal!,
+                            index: snap.data!,
+                            day: selectedDay,
+                            onInit: (SelectBeatListener listener) {
+                              selectBeatListener = listener;
+                            },
+                          );
+                        }
+                        return Container();
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

@@ -191,7 +191,7 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
                     return RetailerListItems(
                       index: widget.index,
                       retailer: snapshot.data![index],
-                      beatId: selectedBeat!.id,
+                      // beatId: selectedBeat!.id,
                       orderStatus: widget.index == 0
                           ? 1
                           : widget.index == 1
