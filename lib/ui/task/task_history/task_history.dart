@@ -166,7 +166,7 @@ class _TaskHistoryItemsState extends State<TaskHistoryItems> {
         borderRadius: BorderRadius.circular(11),
         color: widget.taskHistoryModal.taskType == "HIT"
             ? const Color(0xffFD4848)
-            : widget.taskHistoryModal.taskType == "KEY"
+            : widget.taskHistoryModal.taskType == "KT"
                 ? const Color(0xff54C0EB)
                 : widget.taskHistoryModal.taskType == "ST"
                     ? const Color(0xffF19028)
