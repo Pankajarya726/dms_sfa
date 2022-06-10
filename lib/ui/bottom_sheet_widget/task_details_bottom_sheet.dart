@@ -106,15 +106,17 @@ class _TaskDetailsBottomSheetState extends State<TaskDetailsBottomSheet> {
                       const SizedBox(
                         height: 15,
                       ),
-                      Text(
-                        pendingTaskModal.escalationTag.first.tagName,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xff272727),
-                          letterSpacing: 0.67,
-                          fontSize: 16,
-                        ),
-                      ),
+                      pendingTaskModal.escalationTag.isNotEmpty
+                          ? Text(
+                              pendingTaskModal.escalationTag.first.tagName,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff272727),
+                                letterSpacing: 0.67,
+                                fontSize: 16,
+                              ),
+                            )
+                          : Container(),
                       const SizedBox(
                         height: 8,
                       ),

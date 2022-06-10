@@ -7,6 +7,7 @@ import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class TaskHistory extends StatefulWidget {
   final String retailerId;
@@ -24,6 +25,9 @@ class TaskHistory extends StatefulWidget {
 class _TaskHistoryState extends State<TaskHistory> {
   List<TaskHistoryModal> taskHistoryList = [];
   DateTime? currentDate;
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
+  TaskHistoryBloc taskHistoryBloc = TaskHistoryBloc();
 
   @override
   Widget build(BuildContext context) {
@@ -50,15 +54,14 @@ class _TaskHistoryState extends State<TaskHistory> {
         ),
       ),
       body: BlocProvider(
-        create: (context) => TaskHistoryBloc(),
+        create: (context) => taskHistoryBloc,
         child: BlocBuilder<TaskHistoryBloc, TaskHistoryStates>(
           builder: (context, state) {
             if (state is TaskHistoryInitialState) {
               Map<String, dynamic> input = HashMap<String, dynamic>();
               input["retailer_id"] = widget.retailerId;
               input["beat_id"] = widget.beatId;
-              BlocProvider.of<TaskHistoryBloc>(context)
-                  .add(GetTaskHistoryEvent(input: input));
+              taskHistoryBloc.add(GetTaskHistoryEvent(input: input));
             }
             if (state is TaskHistoryLodingState) {
               return const Center(
@@ -74,52 +77,69 @@ class _TaskHistoryState extends State<TaskHistory> {
                 child: Text(state.failureMessage),
               );
             }
-            return ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-              itemCount: taskHistoryList.length,
-              separatorBuilder: (context, index) {
-                return const SizedBox(
-                  height: 20,
-                );
-              },
-              itemBuilder: (context, index) {
-                int days = 1;
-                String daysPending = "";
-                if (taskHistoryList[index].isResolve == "0") {
-                  if (taskHistoryList[index].taskDate.isNotEmpty) {
-                    DateTime enrolledDate =
-                        DateTime.parse(taskHistoryList[index].taskDate);
-                    days = days + currentDate!.difference(enrolledDate).inDays;
-                    if (days < 2) {
-                      daysPending = days.toString() + " day pending";
-                    } else {
-                      daysPending = days.toString() + " days pending";
+            return SmartRefresher(
+              primary: false,
+              controller: refreshController,
+              onRefresh: onRefresh,
+              enablePullDown: true,
+              child: ListView.separated(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                itemCount: taskHistoryList.length,
+                separatorBuilder: (context, index) {
+                  return const SizedBox(
+                    height: 20,
+                  );
+                },
+                itemBuilder: (context, index) {
+                  int days = 1;
+                  String daysPending = "";
+                  if (taskHistoryList[index].isResolve == "0") {
+                    if (taskHistoryList[index].taskDate.isNotEmpty) {
+                      DateTime enrolledDate =
+                          DateTime.parse(taskHistoryList[index].taskDate);
+                      days =
+                          days + currentDate!.difference(enrolledDate).inDays;
+                      if (days < 2) {
+                        daysPending = days.toString() + " day pending";
+                      } else {
+                        daysPending = days.toString() + " days pending";
+                      }
+                    }
+                  } else {
+                    if (taskHistoryList[index].resolveDate.isNotEmpty) {
+                      DateTime enrolledDate =
+                          DateTime.parse(taskHistoryList[index].resolveDate);
+                      days =
+                          days + currentDate!.difference(enrolledDate).inDays;
+                      if (days < 2) {
+                        daysPending = "Solved in " + days.toString() + " day";
+                      } else {
+                        daysPending = "Solved in " + days.toString() + " days";
+                      }
                     }
                   }
-                } else {
-                  if (taskHistoryList[index].resolveDate.isNotEmpty) {
-                    DateTime enrolledDate =
-                        DateTime.parse(taskHistoryList[index].resolveDate);
-                    days = currentDate!.difference(enrolledDate).inDays;
-                    if (days < 2) {
-                      daysPending = days.toString() + " day pending";
-                    } else {
-                      daysPending = days.toString() + " days pending";
-                    }
-                  }
-                }
 
-                taskHistoryList[index].daysPending = daysPending;
-                return TaskHistoryItems(
-                  index: index,
-                  taskHistoryModal: taskHistoryList[index],
-                );
-              },
+                  taskHistoryList[index].daysPending = daysPending;
+                  return TaskHistoryItems(
+                    index: index,
+                    taskHistoryModal: taskHistoryList[index],
+                  );
+                },
+              ),
             );
           },
         ),
       ),
     );
+  }
+
+  void onRefresh() async {
+    Map<String, dynamic> input = HashMap<String, dynamic>();
+    input["retailer_id"] = widget.retailerId;
+    input["beat_id"] = widget.beatId;
+    taskHistoryBloc.add(GetTaskHistoryEvent(input: input));
+    refreshController.refreshCompleted();
   }
 }
 

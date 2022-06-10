@@ -66,8 +66,9 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                       modal: widget.modal,
                     ),
                     DetailGritItem(
-                      value: widget.modal.lastEscalation.first.reassignDate
-                              .isNotEmpty
+                      value: widget.modal.lastEscalation.isNotEmpty &&
+                              widget.modal.lastEscalation.first.reassignDate
+                                  .isNotEmpty
                           ? widget.modal.lastEscalation.first.reassignDate
                           : "",
                       image: "assets/escalation.png",
@@ -343,22 +344,30 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                                             .spaceBetween,
                                                     children: [
                                                       Flexible(
-                                                        child: Text(
-                                                          pendingTaskList[index]
-                                                              .escalationTag
-                                                              .first
-                                                              .tagName,
-                                                          maxLines: 3,
-                                                          style:
-                                                              const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: Color(
-                                                                0xff272727),
-                                                            letterSpacing: 0.67,
-                                                            fontSize: 15,
-                                                          ),
-                                                        ),
+                                                        child: pendingTaskList[
+                                                                    index]
+                                                                .escalationTag
+                                                                .isNotEmpty
+                                                            ? Text(
+                                                                pendingTaskList[
+                                                                        index]
+                                                                    .escalationTag
+                                                                    .first
+                                                                    .tagName,
+                                                                maxLines: 3,
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Color(
+                                                                      0xff272727),
+                                                                  letterSpacing:
+                                                                      0.67,
+                                                                  fontSize: 15,
+                                                                ),
+                                                              )
+                                                            : const Text(""),
                                                       ),
                                                       Image(
                                                         image: AssetImage(
