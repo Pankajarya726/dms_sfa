@@ -169,6 +169,17 @@ class _FilterTaskBottomSheetState extends State<FilterTaskBottomSheet> {
                         onBeatSelected: (beatsM) {
                           if (beatsM != null) {
                             beatsModal = beatsM;
+                            beatsList.remove(beatsModal!);
+
+                            if (beatsList.isNotEmpty) {
+                              if (beatsModal!.name == "All") {
+                                beatsList.insert(0, beatsModal!);
+                              } else {
+                                beatsList.insert(1, beatsModal!);
+                              }
+                            } else {
+                              beatsList.add(beatsModal!);
+                            }
                           }
                         },
                       );

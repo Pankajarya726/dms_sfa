@@ -203,32 +203,33 @@ class _ProductInformationState extends State<ProductInformation> {
     //
     // input["products"] = jsonEncode(categoryList);
     log("inputs--->" + input.toString());
+    registerApi(input);
 
-    showModalBottomSheet(
-        context: context,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
-        ),
-        builder: (context) {
-          return SelectOtpNumberBottomSheet(
-            form: widget.form,
-            onDone: (String number) {
-              input["otp_number"] = number;
-              try {
-                registerApi(input);
-              } catch (exception) {
-                debugPrint("exception-->$exception");
-              }
-            },
-            onSubmit: () {
-              try {
-                registerApi(input);
-              } catch (exception) {
-                debugPrint("exception-->$exception");
-              }
-            },
-          );
-        });
+    // showModalBottomSheet(
+    //     context: context,
+    //     shape: const RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+    //     ),
+    //     builder: (context) {
+    //       return SelectOtpNumberBottomSheet(
+    //         form: widget.form,
+    //         onDone: (String number) {
+    //           input["otp_number"] = number;
+    //           try {
+    //             registerApi(input);
+    //           } catch (exception) {
+    //             debugPrint("exception-->$exception");
+    //           }
+    //         },
+    //         onSubmit: () {
+    //           try {
+    //             registerApi(input);
+    //           } catch (exception) {
+    //             debugPrint("exception-->$exception");
+    //           }
+    //         },
+    //       );
+    //     });
   }
 
   void registerApi(Map<String, dynamic> input) async {
