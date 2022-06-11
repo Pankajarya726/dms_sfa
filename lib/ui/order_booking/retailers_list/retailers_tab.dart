@@ -64,7 +64,8 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
     widget.onInit(this);
     selectedBeat ??= widget.selectedBeat;
     day = widget.day.isEmpty ? DateFormat.EEEE().format(DateTime.now()) : widget.day;
-    retailerStreamController.addError("loading");
+    // retailerStreamController.addError("loading");
+    retailerStreamController.add([]);
     getRetailers();
     getLocation();
     super.initState();
@@ -79,7 +80,8 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
     userLocationBloc.add(GetUserLocationEvent());
     retailers.clear();
     pageNo = 1;
-    retailerStreamController.addError("loading");
+    // retailerStreamController.addError("loading");
+    retailerStreamController.add([]);
     getRetailers();
     super.didUpdateWidget(oldWidget);
   }
@@ -153,7 +155,8 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
                     onRefresh: () {
                       pageNo = 1;
                       retailers.clear();
-                      retailerStreamController.addError("loading");
+                      // retailerStreamController.addError("loading");
+                      retailerStreamController.add([]);
                       getRetailers();
                     },
                   ),
@@ -214,7 +217,9 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
     int page = pageNo;
 
     if (await Network.isConnected() && !EasyLoading.isShow) {
-      EasyLoading.show();
+      if (pageNo == 1) {
+        EasyLoading.show();
+      }
 
       Map<String, dynamic> input = HashMap<String, dynamic>();
       input["order_status"] = widget.index;
@@ -269,7 +274,8 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
 
     retailers.clear();
     pageNo = 1;
-    retailerStreamController.addError("loading");
+    // retailerStreamController.addError("loading");
+    retailerStreamController.add([]);
     getRetailers();
   }
 
@@ -296,7 +302,8 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
     }
     retailers.clear();
     pageNo = 1;
-    retailerStreamController.addError("loading");
+    // retailerStreamController.addError("loading");
+    retailerStreamController.add([]);
     getRetailers();
   }
 
@@ -325,7 +332,8 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
     retailers.clear();
     pageNo = 1;
     getRetailers();
-    retailerStreamController.addError("loading");
+    // retailerStreamController.addError("loading");
+    // retailerStreamController.add([]);
     refreshController.refreshCompleted();
   }
 

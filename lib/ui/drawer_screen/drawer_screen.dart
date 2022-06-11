@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:dms/provider/url.dart';
 import 'package:dms/ui/drawer_menu/home_screen/home_screen.dart';
 import 'package:dms/ui/end_day/end_day_screen.dart';
 import 'package:dms/ui/login_screen/login_screen.dart';
@@ -408,6 +410,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                     ),
               onPressed: () async {
                 if (titleText == StringConst.logout) {
+                  await DioCacheManager(CacheConfig(baseUrl: Url.baseUrl)).clearExpired();
                   await SharedPreference.clearSharedPreference(context);
                   Navigator.pushAndRemoveUntil(
                       context, MaterialPageRoute(builder: (context) => const LoginScreen()), ModalRoute.withName("/"));
