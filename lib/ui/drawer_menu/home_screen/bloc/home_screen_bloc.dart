@@ -19,7 +19,7 @@ class HomeScreenBloc extends Bloc<HomeScreenEvents, HomeScreenStates> {
       yield* getUserDetails(event);
     }
     if (event is GetMenusEvent) {
-      // yield HomeScreenlodaingState();
+      yield HomeScreenlodaingState();
       yield* getMenus(event);
     }
   }

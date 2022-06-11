@@ -236,15 +236,23 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
         ),
         body: BlocBuilder<HomeScreenBloc, HomeScreenStates>(
           builder: (context, state) {
+            debugPrint("state->$state");
             if (state is HomeScreenInitialState) {
               homeScreenBloc.add(GetMenusEvent());
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
+            // if (state is HomeScreenlodaingState) {
+            //   return const Center(
+            //     child: CircularProgressIndicator(),
+            //   );
+            // }
 
             if (state is GetMenusState) {
               menu = state.menu;
+              homeScreenBloc.add(GetUserDetailsEvent());
+              refreshController.refreshCompleted();
             }
 
             if (state is HomeScreenFailureState) {
@@ -253,7 +261,7 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
               );
             }
             return SmartRefresher(
-              primary: false,
+              // primary: false,
               controller: refreshController,
               onRefresh: onRefresh,
               enablePullDown: true,
@@ -382,8 +390,6 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
 
   void onRefresh() async {
     homeScreenBloc.add(GetMenusEvent());
-    homeScreenBloc.add(GetUserDetailsEvent());
-    refreshController.refreshCompleted();
   }
 
   @override

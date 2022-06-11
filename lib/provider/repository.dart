@@ -158,15 +158,15 @@ class ApiRepository {
     try {
       Response response = await dio.get(
         Url.getMenus,
-        options: buildCacheOptions(
-          const Duration(days: 3),
-          maxStale: const Duration(days: 7),
-        ),
+        // options: buildCacheOptions(
+        //   const Duration(days: 3),
+        //   maxStale: const Duration(days: 7),
+        // ),
       );
       if (null != response.headers.value(DIO_CACHE_HEADER_KEY_DATA_SOURCE)) {
         debugPrint("data come from cache");
       } else {
-        debugPrint("data come from net");
+        debugPrint("data come from network");
       }
       GetMenusResponse result = GetMenusResponse.fromJson(response.toString());
       return result;
