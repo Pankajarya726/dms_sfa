@@ -56,7 +56,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
   TextEditingController txtAdhaar = TextEditingController();
   TextEditingController txtBirthday = TextEditingController();
   TextEditingController txtAnniversary = TextEditingController();
-  RefreshController refreshController = RefreshController(initialRefresh: false);
+  RefreshController refreshController =
+      RefreshController(initialRefresh: false);
   GlobalKey globalKeyName = GlobalKey();
   GlobalKey globalKeyPrimMob = GlobalKey();
   GlobalKey globalKeySecMob = GlobalKey();
@@ -76,7 +77,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
   }
 
   restorePrevSession() {
-    ownerPhotoFile = widget.form.ownerImage.isEmpty ? null : File(widget.form.ownerImage);
+    ownerPhotoFile =
+        widget.form.ownerImage.isEmpty ? null : File(widget.form.ownerImage);
     whatsAppSmsRadio = widget.form.isWhatsappSms;
     txtOwnerName.text = widget.form.ownerName;
     txtPrimaryMobile.text = widget.form.primaryMobile;
@@ -86,7 +88,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
 
     callTimeSlotModel = widget.form.callTimeSlot;
     if (callTimeSlotModel != null) {
-      txtCallTime.text = callTimeSlotModel!.from + " to " + callTimeSlotModel!.to;
+      txtCallTime.text =
+          callTimeSlotModel!.from + " to " + callTimeSlotModel!.to;
     }
 
     primaryLanguage = widget.form.primaryLang;
@@ -206,7 +209,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
                     globalKey: globalKeySecMob,
                     onChange: (text) {
                       if (text == txtPrimaryMobile.text) {
-                        Utility.showToast("Primary and secondary mobile number should not be same");
+                        Utility.showToast(
+                            "Primary and secondary mobile number should not be same");
                       }
                       widget.form.secondaryMobile = text;
                     },
@@ -389,8 +393,10 @@ class _OwnerInformationState extends State<OwnerInformation> {
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
                       if (state is CommonBlocBirthdayState) {
-                        txtBirthday.text = DateFormat("yyyy-MM-dd").format(state.dateTime);
-                        widget.form.birthday = DateFormat("yyyy-MM-dd").format(state.dateTime);
+                        txtBirthday.text =
+                            DateFormat("yyyy-MM-dd").format(state.dateTime);
+                        widget.form.birthday =
+                            DateFormat("yyyy-MM-dd").format(state.dateTime);
                       }
 
                       return DateEditText(
@@ -418,8 +424,10 @@ class _OwnerInformationState extends State<OwnerInformation> {
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
                       if (state is CommonBlocAnniversaryState) {
-                        txtAnniversary.text = DateFormat("yyyy-MM-dd").format(state.dateTime);
-                        widget.form.anniversary = DateFormat("yyyy-MM-dd").format(state.dateTime);
+                        txtAnniversary.text =
+                            DateFormat("yyyy-MM-dd").format(state.dateTime);
+                        widget.form.anniversary =
+                            DateFormat("yyyy-MM-dd").format(state.dateTime);
                       }
                       return DateEditText(
                         controller: txtAnniversary,
@@ -480,7 +488,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
             } else if (txtPrimaryMobile.text.isEmpty) {
               Utility.showToast("Please enter primary mobile");
             } else if (txtPrimaryMobile.text == txtSecondaryMobile.text) {
-              Utility.showToast("Primary and secondary mobile number should not be same");
+              Utility.showToast(
+                  "Primary and secondary mobile number should not be same");
             } else if (txtCallTime.text.isEmpty) {
               Utility.showToast("Please select call time slot");
             } else if (txtPrimaryLang.text.isEmpty) {
@@ -491,22 +500,32 @@ class _OwnerInformationState extends State<OwnerInformation> {
             //       "Please select opt-in for whatsapp message / SMS");
             // }
             else if (txtOwnerName.text.length < 3) {
-              Utility.showToast("Owner name should be minimum 3 characters long");
+              Utility.showToast(
+                  "Owner name should be minimum 3 characters long");
             } else if (txtPrimaryMobile.text.length < 10) {
               Utility.showToast("Please enter valid primary mobile number");
             } else if (widget.form.checkMobileNumber == false) {
-              Utility.showToast("Mobile number already exist");
-            } else if (txtSecondaryMobile.text.length < 10 && txtSecondaryMobile.text.isNotEmpty) {
+              // Utility.showToast("Mobile number already exist");
+              checkMobileNumber();
+              return;
+            } else if (txtSecondaryMobile.text.isNotEmpty &&
+                (!txtSecondaryMobile.text.contains(RegExp('^[6-9]{1}')) ||
+                    txtSecondaryMobile.text.length < 10)) {
               Utility.showToast("Please enter valid secondary mobile number");
-            } else if (txtHelperMobile.text.length < 10 && txtHelperMobile.text.isNotEmpty) {
+            } else if (txtHelperMobile.text.isNotEmpty &&
+                (!txtHelperMobile.text.contains(RegExp('^[6-9]{1}')) ||
+                    txtHelperMobile.text.length < 10)) {
               Utility.showToast("Please enter valid helper mobile number");
             } else if (txtEmail.text.isNotEmpty &&
                 !txtEmail.text.contains(RegExp(
                     r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'))) {
               Utility.showToast("Please enter valid email address");
-            } else if (!txtPAN.text.contains(RegExp("[A-Z]{5}[0-9]{4}[A-Z]{1}")) && txtPAN.text.isNotEmpty) {
+            } else if (!txtPAN.text
+                    .contains(RegExp("[A-Z]{5}[0-9]{4}[A-Z]{1}")) &&
+                txtPAN.text.isNotEmpty) {
               Utility.showToast("Please enter valid PAN number");
-            } else if (!txtAdhaar.text.contains(RegExp('^[2-9]{1}[0-9]{11}')) && txtAdhaar.text.isNotEmpty) {
+            } else if (!txtAdhaar.text.contains(RegExp('^[2-9]{1}[0-9]{11}')) &&
+                txtAdhaar.text.isNotEmpty) {
               Utility.showToast("Please enter valid aadhar number");
             } else {
               widget.form.ownerName = txtOwnerName.text.trim();
@@ -522,7 +541,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
               widget.form.aadhaarNumber = txtAdhaar.text.trim();
               widget.form.birthday = txtBirthday.text.trim();
               widget.form.anniversary = txtAnniversary.text.trim();
-              widget.form.ownerImage = ownerPhotoFile != null ? ownerPhotoFile!.path : "";
+              widget.form.ownerImage =
+                  ownerPhotoFile != null ? ownerPhotoFile!.path : "";
 
               Navigator.push(
                 context,
@@ -649,7 +669,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
               activeColor: MColor.colorPrimary,
               fillColor: MaterialStateProperty.all(MColor.colorPrimary),
               onChanged: (value) {
-                commonBloc.add(CommonBlocWhatsAppRadioEvent(whatsAppRadioTag: value));
+                commonBloc
+                    .add(CommonBlocWhatsAppRadioEvent(whatsAppRadioTag: value));
               },
             ),
           ),
@@ -843,7 +864,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       onCallTimeSlotSelect: (callTimeSlot) {
                         if (callTimeSlot != null) {
                           callTimeSlotModel = callTimeSlot;
-                          txtCallTime.text = callTimeSlot.from + " to " + callTimeSlot.to;
+                          txtCallTime.text =
+                              callTimeSlot.from + " to " + callTimeSlot.to;
                           widget.form.callTimeSlot = callTimeSlotModel;
                         }
                       },

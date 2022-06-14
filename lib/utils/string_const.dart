@@ -1,4 +1,5 @@
 class StringConst {
+  static const reset = "Reset";
   static const addCaps = "ADD";
   static const startMyDayCaps = "START MY DAY";
   static const exploreCaps = "EXPLORE";
@@ -98,7 +99,7 @@ class StringConst {
   static const no = "No";
   static const day = "Day";
   static const enterHere = "Enter here";
-  static const picDate = "Pic your date";
+  static const picDate = "Pick date";
   static const selectHint = "Select";
   static const selectDistrict = "Select District";
   static const done = "Done";

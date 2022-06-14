@@ -94,14 +94,42 @@ class _SelectDistributorBottomSheetState
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                StringConst.selectDistributor,
-                                style: TextStyle(
-                                  fontSize: 19,
-                                  color: MColor.colorPrimary,
-                                  letterSpacing: 0.67,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    StringConst.selectDistributor,
+                                    style: TextStyle(
+                                      fontSize: 19,
+                                      color: MColor.colorPrimary,
+                                      letterSpacing: 0.67,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      groupValue = -1;
+                                      distributorStream.add([]);
+                                      selectedDistributor = null;
+                                      widget.onDistributorSelect(
+                                          DistributorModel(
+                                              id: -1,
+                                              userId: 0,
+                                              name: "",
+                                              customerCodes: ""));
+                                    },
+                                    child: const Text(
+                                      StringConst.reset,
+                                      style: TextStyle(
+                                        fontSize: 19,
+                                        color: MColor.colorPrimary,
+                                        letterSpacing: 0.67,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  )
+                                ],
                               ),
                               const SizedBox(
                                 height: 10,
@@ -169,6 +197,17 @@ class _SelectDistributorBottomSheetState
                                                     snapshot.data![index].id;
                                                 distributorStream
                                                     .add(snapshot.data!);
+                                                if (groupValue != -1) {
+                                                  selectedDistributor =
+                                                      distributorList
+                                                          .singleWhere(
+                                                              (element) =>
+                                                                  element.id ==
+                                                                  groupValue);
+                                                  widget.onDistributorSelect(
+                                                      selectedDistributor!);
+                                                }
+                                                Navigator.pop(context);
                                               },
                                               child: Padding(
                                                 padding:
@@ -253,43 +292,43 @@ class _SelectDistributorBottomSheetState
                                   : const Center(
                                       child: Text("Data not found"),
                                     ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Center(
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    if (groupValue != -1) {
-                                      selectedDistributor = distributorList
-                                          .singleWhere((element) =>
-                                              element.id == groupValue);
-                                      widget.onDistributorSelect(
-                                          selectedDistributor!);
-                                    }
-                                    Navigator.pop(context);
-                                  },
-                                  style: ButtonStyle(
-                                    fixedSize: MaterialStateProperty.all(
-                                        const Size(180, 55)),
-                                    backgroundColor: MaterialStateProperty.all(
-                                        MColor.colorPrimary),
-                                    elevation: MaterialStateProperty.all(0),
-                                    shape: MaterialStateProperty.all(
-                                      RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    StringConst.done,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              // const SizedBox(
+                              //   height: 20,
+                              // ),
+                              // Center(
+                              //   child: ElevatedButton(
+                              //     onPressed: () {
+                              //       if (groupValue != -1) {
+                              //         selectedDistributor = distributorList
+                              //             .singleWhere((element) =>
+                              //                 element.id == groupValue);
+                              //         widget.onDistributorSelect(
+                              //             selectedDistributor!);
+                              //       }
+                              //       Navigator.pop(context);
+                              //     },
+                              //     style: ButtonStyle(
+                              //       fixedSize: MaterialStateProperty.all(
+                              //           const Size(180, 55)),
+                              //       backgroundColor: MaterialStateProperty.all(
+                              //           MColor.colorPrimary),
+                              //       elevation: MaterialStateProperty.all(0),
+                              //       shape: MaterialStateProperty.all(
+                              //         RoundedRectangleBorder(
+                              //           borderRadius: BorderRadius.circular(30),
+                              //         ),
+                              //       ),
+                              //     ),
+                              //     child: const Text(
+                              //       StringConst.done,
+                              //       style: TextStyle(
+                              //         color: Colors.white,
+                              //         fontSize: 24,
+                              //         fontWeight: FontWeight.bold,
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
                               const SizedBox(
                                 height: 10,
                               ),
