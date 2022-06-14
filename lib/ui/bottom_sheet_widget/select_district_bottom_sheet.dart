@@ -161,6 +161,17 @@ class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
                                                     snapshot.data![index].id;
                                                 districtStream
                                                     .add(snapshot.data!);
+                                                if (groupValue != -1) {
+                                                  selectedDistrict =
+                                                      districtList.singleWhere(
+                                                          (element) =>
+                                                              element.id ==
+                                                              groupValue);
+                                                  widget.onDistrictSelect(
+                                                      selectedDistrict!);
+                                                }
+
+                                                Navigator.pop(context);
                                               },
                                               child: Padding(
                                                 padding:
@@ -245,44 +256,43 @@ class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
                                   : const Center(
                                       child: Text("Data not found"),
                                     ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Center(
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    if (groupValue != -1) {
-                                      selectedDistrict =
-                                          districtList.singleWhere((element) =>
-                                              element.id == groupValue);
-                                      widget
-                                          .onDistrictSelect(selectedDistrict!);
-                                    }
-
-                                    Navigator.pop(context);
-                                  },
-                                  style: ButtonStyle(
-                                    fixedSize: MaterialStateProperty.all(
-                                        const Size(180, 55)),
-                                    backgroundColor: MaterialStateProperty.all(
-                                        MColor.colorPrimary),
-                                    elevation: MaterialStateProperty.all(0),
-                                    shape: MaterialStateProperty.all(
-                                      RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    StringConst.done,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              // const SizedBox(
+                              //   height: 20,
+                              // ),
+                              // Center(
+                              //   child: ElevatedButton(
+                              //     onPressed: () {
+                              //       if (groupValue != -1) {
+                              //         selectedDistrict =
+                              //             districtList.singleWhere((element) =>
+                              //                 element.id == groupValue);
+                              //         widget
+                              //             .onDistrictSelect(selectedDistrict!);
+                              //       }
+                              //       Navigator.pop(context);
+                              //     },
+                              //     style: ButtonStyle(
+                              //       fixedSize: MaterialStateProperty.all(
+                              //           const Size(180, 55)),
+                              //       backgroundColor: MaterialStateProperty.all(
+                              //           MColor.colorPrimary),
+                              //       elevation: MaterialStateProperty.all(0),
+                              //       shape: MaterialStateProperty.all(
+                              //         RoundedRectangleBorder(
+                              //           borderRadius: BorderRadius.circular(30),
+                              //         ),
+                              //       ),
+                              //     ),
+                              //     child: const Text(
+                              //       StringConst.done,
+                              //       style: TextStyle(
+                              //         color: Colors.white,
+                              //         fontSize: 24,
+                              //         fontWeight: FontWeight.bold,
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
                               const SizedBox(
                                 height: 10,
                               ),

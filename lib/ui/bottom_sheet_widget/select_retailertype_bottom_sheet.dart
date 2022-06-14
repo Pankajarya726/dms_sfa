@@ -165,6 +165,17 @@ class _SelectRetailerTypeBottomSheetState
                                                     snapshot.data![index].id;
                                                 retailerTypeStream
                                                     .add(snapshot.data!);
+                                                if (groupValue != -1) {
+                                                  retailerTypeModel =
+                                                      retailerTypeList
+                                                          .singleWhere(
+                                                              (element) =>
+                                                                  element.id ==
+                                                                  groupValue);
+                                                  widget.onRetailerTypeSelect(
+                                                      retailerTypeModel);
+                                                }
+                                                Navigator.pop(context);
                                               },
                                               child: Padding(
                                                 padding:
@@ -249,43 +260,43 @@ class _SelectRetailerTypeBottomSheetState
                                   : const Center(
                                       child: Text("Data not found"),
                                     ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Center(
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    if (groupValue != -1) {
-                                      retailerTypeModel = retailerTypeList
-                                          .singleWhere((element) =>
-                                              element.id == groupValue);
-                                      widget.onRetailerTypeSelect(
-                                          retailerTypeModel);
-                                    }
-                                    Navigator.pop(context);
-                                  },
-                                  style: ButtonStyle(
-                                    fixedSize: MaterialStateProperty.all(
-                                        const Size(180, 55)),
-                                    backgroundColor: MaterialStateProperty.all(
-                                        MColor.colorPrimary),
-                                    elevation: MaterialStateProperty.all(0),
-                                    shape: MaterialStateProperty.all(
-                                      RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    StringConst.done,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              // const SizedBox(
+                              //   height: 20,
+                              // ),
+                              // Center(
+                              //   child: ElevatedButton(
+                              //     onPressed: () {
+                              //       if (groupValue != -1) {
+                              //         retailerTypeModel = retailerTypeList
+                              //             .singleWhere((element) =>
+                              //                 element.id == groupValue);
+                              //         widget.onRetailerTypeSelect(
+                              //             retailerTypeModel);
+                              //       }
+                              //       Navigator.pop(context);
+                              //     },
+                              //     style: ButtonStyle(
+                              //       fixedSize: MaterialStateProperty.all(
+                              //           const Size(180, 55)),
+                              //       backgroundColor: MaterialStateProperty.all(
+                              //           MColor.colorPrimary),
+                              //       elevation: MaterialStateProperty.all(0),
+                              //       shape: MaterialStateProperty.all(
+                              //         RoundedRectangleBorder(
+                              //           borderRadius: BorderRadius.circular(30),
+                              //         ),
+                              //       ),
+                              //     ),
+                              //     child: const Text(
+                              //       StringConst.done,
+                              //       style: TextStyle(
+                              //         color: Colors.white,
+                              //         fontSize: 24,
+                              //         fontWeight: FontWeight.bold,
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
                               const SizedBox(
                                 height: 10,
                               ),

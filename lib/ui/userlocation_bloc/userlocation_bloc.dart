@@ -18,14 +18,16 @@ class UserLocationBloc extends Bloc<UserLocationEvents, UserLocationStates> {
     }
   }
 
-  Stream<UserLocationStates> getUserLocation(GetUserLocationEvent event) async* {
+  Stream<UserLocationStates> getUserLocation(
+      GetUserLocationEvent event) async* {
     try {
       Position position = await location();
 
       debugPrint("position--->$position");
       double latitude = position.latitude;
       double longitude = position.longitude;
-      List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(position.latitude, position.longitude);
       Placemark place = placemarks[0];
 
       String locality = place.locality!;
@@ -37,16 +39,52 @@ class UserLocationBloc extends Bloc<UserLocationEvents, UserLocationStates> {
 
       // In some cases, street and name are same, to handle this situation we applied this condition
       if (street == name) {
-        address = street + " " + subLocality + " " + locality + " " + postalCode;
+        if (street.isNotEmpty) {
+          street = street + ",";
+        }
+        if (subLocality.isNotEmpty) {
+          subLocality = subLocality + ",";
+        }
+        if (locality.isNotEmpty) {
+          locality = locality + ",";
+        }
+
+        address =
+            street + " " + subLocality + " " + locality + " " + postalCode;
       } else {
-        address = street + " " + name + " " + subLocality + " " + locality + " " + postalCode;
+        if (street.isNotEmpty) {
+          street = street + ",";
+        }
+        if (name.isNotEmpty) {
+          name = name + ",";
+        }
+        if (subLocality.isNotEmpty) {
+          subLocality = subLocality + ",";
+        }
+        if (locality.isNotEmpty) {
+          locality = locality + ",";
+        }
+        address = street +
+            " " +
+            name +
+            " " +
+            subLocality +
+            " " +
+            locality +
+            " " +
+            postalCode;
       }
 
       yield GetUserLocationState(
-          currentAddress: address, latitude: latitude, longitude: longitude, pincode: postalCode, locality: locality);
+          currentAddress: address,
+          latitude: latitude,
+          longitude: longitude,
+          pincode: postalCode,
+          locality: locality);
     } catch (exception) {
       debugPrint("exception-->$exception");
-      yield UserLocationFailureState(failureMessage: "Click here to get current location!");
+      yield UserLocationFailureState(
+          failureMessage: "Click here to get current location!");
     }
   }
 
@@ -68,20 +106,25 @@ class UserLocationBloc extends Bloc<UserLocationEvents, UserLocationStates> {
       debugPrint("requestPermissionResult--->$permission");
       if (permission == LocationPermission.denied) {
         Fluttertoast.showToast(
-            msg: "Location permission are denied, Please enable location permission to continue.", toastLength: Toast.LENGTH_LONG);
+            msg:
+                "Location permission are denied, Please enable location permission to continue.",
+            toastLength: Toast.LENGTH_LONG);
         return Future.error('Location permissions are denied');
       }
     }
     if (permission == LocationPermission.deniedForever) {
       // Permissions are denied forever, handle appropriately.
       Fluttertoast.showToast(
-          msg: "Location permission are permanently denied go to app settings and allow gps location permission",
+          msg:
+              "Location permission are permanently denied go to app settings and allow gps location permission",
           toastLength: Toast.LENGTH_LONG);
-      return Future.error('Location permissions are permanently denied, we cannot request permissions.');
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
     }
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
 
-    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
   }
 }

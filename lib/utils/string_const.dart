@@ -1,4 +1,5 @@
 class StringConst {
+  static const reset = "Reset";
   static const addCaps = "ADD";
   static const startMyDayCaps = "START MY DAY";
   static const exploreCaps = "EXPLORE";

@@ -328,7 +328,7 @@ class _OutletInformationState extends State<OutletInformation> {
                               state.longitude.toString();
                           txtAddressController.text = state.currentAddress;
                           txtPincodeController.text = state.pincode;
-                          cityName = state.locality;
+                          cityName = state.locality.replaceAll(",", "");
                         }
                       }
 
@@ -1030,10 +1030,13 @@ class _OutletInformationState extends State<OutletInformation> {
                       distributorModel: distributorModel,
                       onDistributorSelect: (distributor) {
                         if (distributor != null) {
-                          distributorModel = distributor;
+                          distributorModel =
+                              distributor.id != -1 ? distributor : null;
                           txtSelectDistributorController.text =
                               distributor.name;
-                          distributorId = distributor.id.toString();
+                          distributorId = distributor.id != -1
+                              ? distributor.id.toString()
+                              : null;
                         }
                         txtSelectBeatNameController.text = "";
                         txtOrderBookingController.text = "";

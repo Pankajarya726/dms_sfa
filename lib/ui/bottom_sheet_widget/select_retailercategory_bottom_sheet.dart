@@ -112,6 +112,14 @@ class _SelectRetailerCategoryBottomSheetState
                               onTap: () {
                                 groupValue = snapshot.data![index].id;
                                 retailerCategoryStream.add(snapshot.data!);
+                                if (groupValue != -1) {
+                                  retailerCategoryModel = retailerCategoryList
+                                      .singleWhere((element) =>
+                                          element.id == groupValue);
+                                  widget.onRetailerCategorySelect(
+                                      retailerCategoryModel);
+                                }
+                                Navigator.pop(context);
                               },
                               child: Padding(
                                 padding:
@@ -180,44 +188,43 @@ class _SelectRetailerCategoryBottomSheetState
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (groupValue != -1) {
-                            retailerCategoryModel =
-                                retailerCategoryList.singleWhere(
-                                    (element) => element.id == groupValue);
-                            widget.onRetailerCategorySelect(
-                                retailerCategoryModel);
-                          }
-
-                          Navigator.pop(context);
-                        },
-                        style: ButtonStyle(
-                          fixedSize:
-                              MaterialStateProperty.all(const Size(180, 55)),
-                          backgroundColor:
-                              MaterialStateProperty.all(MColor.colorPrimary),
-                          elevation: MaterialStateProperty.all(0),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                        ),
-                        child: const Text(
-                          StringConst.done,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // const SizedBox(
+                    //   height: 20,
+                    // ),
+                    // Center(
+                    //   child: ElevatedButton(
+                    //     onPressed: () {
+                    //       if (groupValue != -1) {
+                    //         retailerCategoryModel =
+                    //             retailerCategoryList.singleWhere(
+                    //                 (element) => element.id == groupValue);
+                    //         widget.onRetailerCategorySelect(
+                    //             retailerCategoryModel);
+                    //       }
+                    //       Navigator.pop(context);
+                    //     },
+                    //     style: ButtonStyle(
+                    //       fixedSize:
+                    //           MaterialStateProperty.all(const Size(180, 55)),
+                    //       backgroundColor:
+                    //           MaterialStateProperty.all(MColor.colorPrimary),
+                    //       elevation: MaterialStateProperty.all(0),
+                    //       shape: MaterialStateProperty.all(
+                    //         RoundedRectangleBorder(
+                    //           borderRadius: BorderRadius.circular(30),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     child: const Text(
+                    //       StringConst.done,
+                    //       style: TextStyle(
+                    //         color: Colors.white,
+                    //         fontSize: 24,
+                    //         fontWeight: FontWeight.bold,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     const SizedBox(
                       height: 10,
                     ),

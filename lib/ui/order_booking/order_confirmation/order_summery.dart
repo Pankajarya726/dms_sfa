@@ -5,6 +5,7 @@ import 'package:dms/database/db_constant.dart';
 import 'package:dms/listeners/reason_listener.dart';
 import 'package:dms/main.dart';
 import 'package:dms/model/base_response.dart';
+import 'package:dms/ui/drawer_menu/home_screen/home_screen.dart';
 import 'package:dms/ui/order_booking/order_confirmation/model/get_bu_response.dart';
 import 'package:dms/ui/order_booking/retailers_list/retailers_list_screen.dart';
 import 'package:dms/utils/colors.dart';
@@ -24,14 +25,20 @@ class OrderSummery extends StatefulWidget {
   final String orderId;
   final Function(ReasonsListener? reasonsListener) onInit;
 
-  const OrderSummery({Key? key, required this.onInit, required this.beatId, required this.orderId, required this.retailerId})
+  const OrderSummery(
+      {Key? key,
+      required this.onInit,
+      required this.beatId,
+      required this.orderId,
+      required this.retailerId})
       : super(key: key);
 
   @override
   State<OrderSummery> createState() => _OrderSummeryState();
 }
 
-class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener {
+class _OrderSummeryState extends State<OrderSummery>
+    implements ReasonsListener {
   List<Widget> rowList = [];
   TextEditingController txtReadyStockController = TextEditingController();
   ReasonsModal reason = ReasonsModal(taskType: "", id: "", tagName: "");
@@ -75,7 +82,10 @@ class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener 
                 padding: EdgeInsets.all(15.0),
                 child: Text(
                   "Is this a ready stock bill?",
-                  style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
               PopupMenuButton(
@@ -139,7 +149,11 @@ class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener 
             children: [
               const Text(
                 "CONFIRM",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 0.5),
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 0.5),
               ),
               const SizedBox(
                 width: 5,
@@ -204,7 +218,9 @@ class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener 
                 DataCell(value: brand.brandName, flex: 11),
                 DataCell(value: brand.moqTotal, flex: 2),
                 DataCell(value: brand.pkgTotal, flex: 2),
-                DataCell(value: double.parse(brand.total).toStringAsFixed(2), flex: 3),
+                DataCell(
+                    value: double.parse(brand.total).toStringAsFixed(2),
+                    flex: 3),
               ],
             ),
           ),
@@ -221,10 +237,13 @@ class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener 
               children: [
                 DataCell(value: "$i", flex: 2),
                 DataCell(value: item.description, flex: 5),
-                DataCell(value: double.parse(item.mrp).toStringAsFixed(2), flex: 2),
+                DataCell(
+                    value: double.parse(item.mrp).toStringAsFixed(2), flex: 2),
                 DataCell1(
-                    price: double.parse(item.skuRatePerPiece).toStringAsFixed(2),
-                    schemePrice: double.parse(item.schemeRatePerPcs).toStringAsFixed(2),
+                    price:
+                        double.parse(item.skuRatePerPiece).toStringAsFixed(2),
+                    schemePrice:
+                        double.parse(item.schemeRatePerPcs).toStringAsFixed(2),
                     flex: 2),
                 // DataCell(value: item.skuRatePerPiece, flex: 2),
                 DataCell(value: item.moqQty.toString(), flex: 2),
@@ -288,11 +307,16 @@ class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener 
       productMap["ptr_pkg_price"] = product.skuRatePerPkg;
       productMap["ptr_moq_price"] = product.skuRatePerMoq;
       productMap["ptr_rate_per_pcs"] = product.skuRatePerPiece;
-      productMap["scheme_rate_per_pcs"] = product.schemeId.isNotEmpty ? product.schemeRatePerPcs : "0";
-      productMap["scheme_pkg_price"] =
-          product.schemeId.isNotEmpty ? (double.parse(product.schemeRatePerPcs) * product.pcsPerPackaging).toString() : "0";
-      productMap["scheme_moq_price"] =
-          product.schemeId.isNotEmpty ? (double.parse(product.schemeRatePerPcs) * product.pcsPerMoq).toString() : "0";
+      productMap["scheme_rate_per_pcs"] =
+          product.schemeId.isNotEmpty ? product.schemeRatePerPcs : "0";
+      productMap["scheme_pkg_price"] = product.schemeId.isNotEmpty
+          ? (double.parse(product.schemeRatePerPcs) * product.pcsPerPackaging)
+              .toString()
+          : "0";
+      productMap["scheme_moq_price"] = product.schemeId.isNotEmpty
+          ? (double.parse(product.schemeRatePerPcs) * product.pcsPerMoq)
+              .toString()
+          : "0";
       productMap["qty_pkg"] = product.pkgOty;
       productMap["qty_moq"] = product.moqQty;
       productMap["rate_category_id"] = product.rateCategoryId;
@@ -342,7 +366,10 @@ class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener 
 
     log("input--->${jsonEncode(input)}");
     bool? save = await Utility.showConfirmAlert(
-        title: 'Are you sure you want to confirm this Order?', context: context, cancelText: "Cancel", confirmText: "Confirm");
+        title: 'Are you sure you want to confirm this Order?',
+        context: context,
+        cancelText: "Cancel",
+        confirmText: "Confirm");
     if (save != null && save) {
       if (await Network.isConnected()) {
         EasyLoading.show();
@@ -357,8 +384,12 @@ class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener 
         Utility.showToast(response.message);
         if (response.success) {
           await databaseHelper.clearCart();
-          Navigator.of(context)
-              .pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const RetailerListScreen()), (Route<dynamic> route) => false);
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (_) => HomeScreen(
+                        onInit: (listener) {},
+                      )),
+              (Route<dynamic> route) => false);
         }
       } else {
         Utility.showToast(Constants.internetAlert);
@@ -367,7 +398,8 @@ class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener 
   }
 
   @override
-  void onReasonSelect(ReasonsModal reason, String remark, List<BUModal> buList, bool issueResolve) {
+  void onReasonSelect(ReasonsModal reason, String remark, List<BUModal> buList,
+      bool issueResolve) {
     this.reason = reason;
     this.remark = remark;
     this.buList = buList;
@@ -410,14 +442,17 @@ class DataCell extends StatelessWidget {
   final String value;
   final int flex;
 
-  const DataCell({Key? key, required this.value, required this.flex}) : super(key: key);
+  const DataCell({Key? key, required this.value, required this.flex})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Flexible(
       child: Container(
         padding: const EdgeInsets.all(5),
-        decoration: const BoxDecoration(border: Border(right: BorderSide(width: 0.6, color: Color(0xff555555)))),
+        decoration: const BoxDecoration(
+            border: Border(
+                right: BorderSide(width: 0.6, color: Color(0xff555555)))),
         alignment: Alignment.center,
         child: Text(
           value,
@@ -436,14 +471,21 @@ class DataCell1 extends StatelessWidget {
   final String schemePrice;
   final int flex;
 
-  const DataCell1({Key? key, required this.price, required this.schemePrice, required this.flex}) : super(key: key);
+  const DataCell1(
+      {Key? key,
+      required this.price,
+      required this.schemePrice,
+      required this.flex})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Flexible(
       child: Container(
         padding: const EdgeInsets.all(5),
-        decoration: const BoxDecoration(border: Border(right: BorderSide(width: 0.6, color: Color(0xff555555)))),
+        decoration: const BoxDecoration(
+            border: Border(
+                right: BorderSide(width: 0.6, color: Color(0xff555555)))),
         alignment: Alignment.center,
         child: RichText(
           text: TextSpan(children: [
@@ -452,7 +494,9 @@ class DataCell1 extends StatelessWidget {
               style: TextStyle(
                   color: MColor.textColor,
                   fontSize: 12,
-                  decoration: double.parse(schemePrice) == 0 ? TextDecoration.none : TextDecoration.lineThrough),
+                  decoration: double.parse(schemePrice) == 0
+                      ? TextDecoration.none
+                      : TextDecoration.lineThrough),
             ),
             TextSpan(
               text: double.parse(schemePrice) == 0 ? "" : "\n" + schemePrice,
