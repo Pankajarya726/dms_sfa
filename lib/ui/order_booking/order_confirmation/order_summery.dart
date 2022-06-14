@@ -5,8 +5,8 @@ import 'package:dms/database/db_constant.dart';
 import 'package:dms/listeners/reason_listener.dart';
 import 'package:dms/main.dart';
 import 'package:dms/model/base_response.dart';
+import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/ui/order_booking/order_confirmation/model/get_bu_response.dart';
-import 'package:dms/ui/order_booking/retailers_list/retailers_list_screen.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
@@ -358,7 +358,7 @@ class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener 
         if (response.success) {
           await databaseHelper.clearCart();
           Navigator.of(context)
-              .pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const RetailerListScreen()), (Route<dynamic> route) => false);
+              .pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const DrawerScreen()), (Route<dynamic> route) => false);
         }
       } else {
         Utility.showToast(Constants.internetAlert);
