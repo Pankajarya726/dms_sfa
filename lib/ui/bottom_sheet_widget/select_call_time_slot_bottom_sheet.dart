@@ -145,6 +145,17 @@ class _SelectCallTimeSlotBottomSheetState
                                                 groupValue = value!;
                                                 callTimeSlotStream
                                                     .add(snapshot.data!);
+                                                if (groupValue != -1) {
+                                                  callTimeSlotModel =
+                                                      callTimeSlotList
+                                                          .singleWhere(
+                                                              (element) =>
+                                                                  element.id ==
+                                                                  groupValue);
+                                                  widget.onCallTimeSlotSelect(
+                                                      callTimeSlotModel);
+                                                }
+                                                Navigator.pop(context);
                                               },
                                             ),
                                           ),

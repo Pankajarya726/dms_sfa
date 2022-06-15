@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:dms/main.dart';
 import 'package:dms/ui/add_store/model/select_language_response.dart';
 import 'package:dms/utils/colors.dart';
@@ -21,7 +20,8 @@ class SelectLanguageBottomSheet extends StatefulWidget {
       : super(key: key);
 
   @override
-  _SelectLanguageBottomSheetState createState() => _SelectLanguageBottomSheetState();
+  _SelectLanguageBottomSheetState createState() =>
+      _SelectLanguageBottomSheetState();
 }
 
 class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
@@ -84,13 +84,15 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
                     initialData: languageModelList,
                     builder: (context, snapshot) {
                       return Padding(
-                        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              StringConst.selectLangFirst + widget.bottomSheetHeading,
+                              StringConst.selectLangFirst +
+                                  widget.bottomSheetHeading,
                               style: const TextStyle(
                                 fontSize: 19,
                                 color: MColor.colorPrimary,
@@ -107,7 +109,9 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
                                 if (text.isNotEmpty) {
                                   List<LanguageModel> searchList = [];
                                   for (var element in languageModelList) {
-                                    if (element.languageName.toLowerCase().contains(text.trim().toLowerCase())) {
+                                    if (element.languageName
+                                        .toLowerCase()
+                                        .contains(text.trim().toLowerCase())) {
                                       searchList.add(element);
                                     }
                                   }
@@ -153,38 +157,72 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
                                 ? Flexible(
                                     child: SingleChildScrollView(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.end,
-                                        children: List.generate(snapshot.data!.length, (index) {
-                                          if (snapshot.data![index].languageName == widget.previousSelectedLang) {
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: List.generate(
+                                            snapshot.data!.length, (index) {
+                                          if (snapshot
+                                                  .data![index].languageName ==
+                                              widget.previousSelectedLang) {
                                             return Container();
                                           }
                                           return InkWell(
                                             onTap: () {
-                                              groupValue = snapshot.data![index].id;
-                                              languageStream.add(snapshot.data!);
+                                              groupValue =
+                                                  snapshot.data![index].id;
+                                              languageStream
+                                                  .add(snapshot.data!);
                                               if (groupValue != -1) {
-                                                languageModel = languageModelList.singleWhere((element) => element.id == groupValue);
-                                                widget.onLanguageSelect(languageModel);
+                                                languageModel =
+                                                    languageModelList
+                                                        .singleWhere(
+                                                            (element) =>
+                                                                element.id ==
+                                                                groupValue);
+                                                widget.onLanguageSelect(
+                                                    languageModel);
                                               }
                                               Navigator.pop(context);
                                             },
                                             child: Padding(
-                                              padding: const EdgeInsets.symmetric(vertical: 10),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 10),
                                               child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   SizedBox(
                                                     height: 20,
                                                     width: 20,
                                                     child: Radio<int>(
-                                                      value: snapshot.data![index].id,
+                                                      value: snapshot
+                                                          .data![index].id,
                                                       groupValue: groupValue,
-                                                      activeColor: MColor.colorPrimary,
-                                                      fillColor: MaterialStateProperty.all(MColor.colorPrimary),
+                                                      activeColor:
+                                                          MColor.colorPrimary,
+                                                      fillColor:
+                                                          MaterialStateProperty
+                                                              .all(MColor
+                                                                  .colorPrimary),
                                                       onChanged: (value) {
                                                         groupValue = value!;
-                                                        languageStream.add(snapshot.data!);
+                                                        languageStream.add(
+                                                            snapshot.data!);
+                                                        if (groupValue != -1) {
+                                                          languageModel = languageModelList
+                                                              .singleWhere(
+                                                                  (element) =>
+                                                                      element
+                                                                          .id ==
+                                                                      groupValue);
+                                                          widget
+                                                              .onLanguageSelect(
+                                                                  languageModel);
+                                                        }
+                                                        Navigator.pop(context);
                                                       },
                                                     ),
                                                   ),
@@ -193,13 +231,17 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
                                                   ),
                                                   Flexible(
                                                     child: Text(
-                                                      snapshot.data![index].languageName,
+                                                      snapshot.data![index]
+                                                          .languageName,
                                                       maxLines: 5,
                                                       style: const TextStyle(
-                                                        overflow: TextOverflow.ellipsis,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                         fontSize: 17.0,
-                                                        color: MColor.backButton,
-                                                        fontWeight: FontWeight.bold,
+                                                        color:
+                                                            MColor.backButton,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                       ),
                                                     ),
                                                   ),

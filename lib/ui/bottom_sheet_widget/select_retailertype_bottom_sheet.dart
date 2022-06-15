@@ -205,6 +205,19 @@ class _SelectRetailerTypeBottomSheetState
                                                           retailerTypeStream
                                                               .add(snapshot
                                                                   .data!);
+                                                          if (groupValue !=
+                                                              -1) {
+                                                            retailerTypeModel =
+                                                                retailerTypeList.singleWhere(
+                                                                    (element) =>
+                                                                        element
+                                                                            .id ==
+                                                                        groupValue);
+                                                            widget.onRetailerTypeSelect(
+                                                                retailerTypeModel);
+                                                          }
+                                                          Navigator.pop(
+                                                              context);
                                                         },
                                                       ),
                                                     ),

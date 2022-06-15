@@ -236,6 +236,19 @@ class _SelectDistributorBottomSheetState
                                                           groupValue = value!;
                                                           distributorStream.add(
                                                               snapshot.data!);
+                                                          if (groupValue !=
+                                                              -1) {
+                                                            selectedDistributor =
+                                                                distributorList.singleWhere(
+                                                                    (element) =>
+                                                                        element
+                                                                            .id ==
+                                                                        groupValue);
+                                                            widget.onDistributorSelect(
+                                                                selectedDistributor!);
+                                                          }
+                                                          Navigator.pop(
+                                                              context);
                                                         },
                                                       ),
                                                     ),
