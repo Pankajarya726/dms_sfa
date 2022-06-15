@@ -71,6 +71,10 @@ class _BoxMoqSheetState extends State<BoxMoqSheet> {
                 scrollController: FixedExtentScrollController(initialItem: widget.selected),
                 magnification: 1.0,
                 looping: true,
+                backgroundColor: Colors.white,
+                selectionOverlay: const CupertinoPickerDefaultSelectionOverlay(
+                  background: CupertinoColors.tertiaryLabel,
+                ),
 
                 onSelectedItemChanged: (item) {
                   qty = item;
@@ -81,7 +85,7 @@ class _BoxMoqSheetState extends State<BoxMoqSheet> {
                   (index) => Text(
                     "$index",
                     style: const TextStyle(
-                      fontSize: 19,
+                      fontSize: 22,
                     ),
                   ),
                 ),
