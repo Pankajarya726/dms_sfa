@@ -90,6 +90,39 @@ class _FilterOrderBookingBottomSheetState
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //   children: [
+                    //     const Text(
+                    //       StringConst.filter,
+                    //       style: TextStyle(
+                    //         fontSize: 19,
+                    //         color: MColor.colorPrimary,
+                    //         letterSpacing: 0.67,
+                    //         fontWeight: FontWeight.bold,
+                    //       ),
+                    //     ),
+                    //     InkWell(
+                    //       onTap: () {
+                    //         groupValue = -1;
+                    //         mrpStreamController.add(mrpList);
+                    //         filterMrpModal = null;
+                    //         widget.onMrpSelected(
+                    //             FilterMrpModal(id: "-1", mrp: ""));
+                    //       },
+                    //       child: const Text(
+                    //         StringConst.reset,
+                    //         style: TextStyle(
+                    //           fontSize: 19,
+                    //           color: MColor.colorPrimary,
+                    //           letterSpacing: 0.67,
+                    //           fontWeight: FontWeight.bold,
+                    //         ),
+                    //       ),
+                    //     )
+                    //   ],
+                    // ),
+
                     const Text(
                       StringConst.filter,
                       style: TextStyle(
@@ -113,6 +146,14 @@ class _FilterOrderBookingBottomSheetState
                                   groupValue =
                                       int.parse(snapshot.data![index].id);
                                   mrpStreamController.add(snapshot.data!);
+                                  if (groupValue != -1) {
+                                    filterMrpModal = mrpList.singleWhere(
+                                        (element) =>
+                                            element.id ==
+                                            groupValue.toString());
+                                    widget.onMrpSelected(filterMrpModal!);
+                                  }
+                                  Navigator.pop(context);
                                 },
                                 child: Padding(
                                   padding:
@@ -136,6 +177,15 @@ class _FilterOrderBookingBottomSheetState
                                             groupValue = value!;
                                             mrpStreamController
                                                 .add(snapshot.data!);
+                                            if (groupValue != -1) {
+                                              filterMrpModal = mrpList
+                                                  .singleWhere((element) =>
+                                                      element.id ==
+                                                      groupValue.toString());
+                                              widget.onMrpSelected(
+                                                  filterMrpModal!);
+                                            }
+                                            Navigator.pop(context);
                                           },
                                         ),
                                       ),
@@ -183,45 +233,45 @@ class _FilterOrderBookingBottomSheetState
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).viewInsets.bottom),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          MaterialButton(
-                            onPressed: () {
-                              if (groupValue != -1) {
-                                filterMrpModal = mrpList.singleWhere(
-                                    (element) =>
-                                        element.id == groupValue.toString());
-                                widget.onMrpSelected(filterMrpModal!);
-                              }
-                              Navigator.pop(context);
-                            },
-                            height: 50,
-                            padding: const EdgeInsets.symmetric(horizontal: 55),
-                            color: MColor.colorPrimary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            elevation: 0,
-                            child: const Text(
-                              StringConst.done,
-                              style: TextStyle(
-                                letterSpacing: 0.67,
-                                color: Colors.white,
-                                fontSize: 23,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    // const SizedBox(
+                    //   height: 20,
+                    // ),
+                    // Padding(
+                    //   padding: EdgeInsets.only(
+                    //       bottom: MediaQuery.of(context).viewInsets.bottom),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //     children: [
+                    //       MaterialButton(
+                    //         onPressed: () {
+                    //           if (groupValue != -1) {
+                    //             filterMrpModal = mrpList.singleWhere(
+                    //                 (element) =>
+                    //                     element.id == groupValue.toString());
+                    //             widget.onMrpSelected(filterMrpModal!);
+                    //           }
+                    //           Navigator.pop(context);
+                    //         },
+                    //         height: 50,
+                    //         padding: const EdgeInsets.symmetric(horizontal: 55),
+                    //         color: MColor.colorPrimary,
+                    //         shape: RoundedRectangleBorder(
+                    //           borderRadius: BorderRadius.circular(30),
+                    //         ),
+                    //         elevation: 0,
+                    //         child: const Text(
+                    //           StringConst.done,
+                    //           style: TextStyle(
+                    //             letterSpacing: 0.67,
+                    //             color: Colors.white,
+                    //             fontSize: 23,
+                    //             fontWeight: FontWeight.bold,
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                     const SizedBox(
                       height: 10,
                     ),

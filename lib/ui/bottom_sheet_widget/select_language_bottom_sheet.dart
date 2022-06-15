@@ -211,6 +211,18 @@ class _SelectLanguageBottomSheetState extends State<SelectLanguageBottomSheet> {
                                                         groupValue = value!;
                                                         languageStream.add(
                                                             snapshot.data!);
+                                                        if (groupValue != -1) {
+                                                          languageModel = languageModelList
+                                                              .singleWhere(
+                                                                  (element) =>
+                                                                      element
+                                                                          .id ==
+                                                                      groupValue);
+                                                          widget
+                                                              .onLanguageSelect(
+                                                                  languageModel);
+                                                        }
+                                                        Navigator.pop(context);
                                                       },
                                                     ),
                                                   ),

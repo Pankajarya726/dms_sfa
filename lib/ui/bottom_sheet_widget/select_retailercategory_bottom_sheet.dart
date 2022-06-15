@@ -141,6 +141,16 @@ class _SelectRetailerCategoryBottomSheetState
                                           groupValue = value!;
                                           retailerCategoryStream
                                               .add(snapshot.data!);
+                                          if (groupValue != -1) {
+                                            retailerCategoryModel =
+                                                retailerCategoryList
+                                                    .singleWhere((element) =>
+                                                        element.id ==
+                                                        groupValue);
+                                            widget.onRetailerCategorySelect(
+                                                retailerCategoryModel);
+                                          }
+                                          Navigator.pop(context);
                                         },
                                       ),
                                     ),

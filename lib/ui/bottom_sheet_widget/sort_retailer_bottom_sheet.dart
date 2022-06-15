@@ -97,36 +97,36 @@ class _SortingRetailersBottomSheetState
                 ),
               ),
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  widget.onSelect(selectedType);
-                  Navigator.pop(context);
-                },
-                style: ButtonStyle(
-                  fixedSize: MaterialStateProperty.all(const Size(170, 50)),
-                  backgroundColor:
-                      MaterialStateProperty.all(MColor.colorPrimary),
-                  elevation: MaterialStateProperty.all(0),
-                  shape: MaterialStateProperty.all(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                ),
-                child: const Text(
-                  StringConst.done,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
+            // const SizedBox(
+            //   height: 20,
+            // ),
+            // Center(
+            //   child: ElevatedButton(
+            //     onPressed: () {
+            //       widget.onSelect(selectedType);
+            //       Navigator.pop(context);
+            //     },
+            //     style: ButtonStyle(
+            //       fixedSize: MaterialStateProperty.all(const Size(170, 50)),
+            //       backgroundColor:
+            //           MaterialStateProperty.all(MColor.colorPrimary),
+            //       elevation: MaterialStateProperty.all(0),
+            //       shape: MaterialStateProperty.all(
+            //         RoundedRectangleBorder(
+            //           borderRadius: BorderRadius.circular(30),
+            //         ),
+            //       ),
+            //     ),
+            //     child: const Text(
+            //       StringConst.done,
+            //       style: TextStyle(
+            //         color: Colors.white,
+            //         fontSize: 24,
+            //         fontWeight: FontWeight.bold,
+            //       ),
+            //     ),
+            //   ),
+            // ),
             const SizedBox(
               height: 10,
             ),
@@ -142,6 +142,8 @@ class _SortingRetailersBottomSheetState
         commonBloc
             .add(CommonBlocEnrollTypeRadioEvent(enrollmentRadioTag: value));
         selectedType = sortingList[value];
+        widget.onSelect(selectedType);
+        Navigator.pop(context);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -161,6 +163,8 @@ class _SortingRetailersBottomSheetState
                   commonBloc.add(CommonBlocEnrollTypeRadioEvent(
                       enrollmentRadioTag: value!));
                   selectedType = sortingList[value].toString();
+                  widget.onSelect(selectedType);
+                  Navigator.pop(context);
                 },
               ),
             ),

@@ -200,6 +200,19 @@ class _SelectDistrictBottomSheetState extends State<SelectDistrictBottomSheet> {
                                                           groupValue = value!;
                                                           districtStream.add(
                                                               snapshot.data!);
+                                                          if (groupValue !=
+                                                              -1) {
+                                                            selectedDistrict =
+                                                                districtList.singleWhere(
+                                                                    (element) =>
+                                                                        element
+                                                                            .id ==
+                                                                        groupValue);
+                                                            widget.onDistrictSelect(
+                                                                selectedDistrict!);
+                                                          }
+                                                          Navigator.pop(
+                                                              context);
                                                         },
                                                       ),
                                                     ),

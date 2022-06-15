@@ -203,6 +203,21 @@ class _SelectBeatNameBottomSheetState extends State<SelectBeatNameBottomSheet> {
                                                           groupValue = value!;
                                                           beatStream.add(
                                                               snapshot.data!);
+                                                          if (groupValue !=
+                                                              -1) {
+                                                            beatsModal = beatList
+                                                                .singleWhere(
+                                                                    (element) =>
+                                                                        element
+                                                                            .id ==
+                                                                        groupValue
+                                                                            .toString());
+                                                            widget
+                                                                .onBeatNameSelect(
+                                                                    beatsModal!);
+                                                          }
+                                                          Navigator.pop(
+                                                              context);
                                                         },
                                                       ),
                                                     ),
