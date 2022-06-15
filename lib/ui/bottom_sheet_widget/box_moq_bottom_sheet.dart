@@ -8,9 +8,16 @@ class BoxMoqSheet extends StatefulWidget {
   final String sheetHeading;
   final String sheetType;
   final int selected;
+  final int maxQty;
 
   final Function(int qty) onSelect;
-  const BoxMoqSheet({Key? key, required this.sheetHeading, required this.sheetType, required this.selected, required this.onSelect})
+  const BoxMoqSheet(
+      {Key? key,
+      required this.sheetHeading,
+      required this.sheetType,
+      required this.selected,
+      required this.onSelect,
+      required this.maxQty})
       : super(key: key);
 
   @override
@@ -70,7 +77,7 @@ class _BoxMoqSheetState extends State<BoxMoqSheet> {
                   debugPrint("item->$item");
                 },
                 children: List.generate(
-                  10,
+                  widget.maxQty + 1,
                   (index) => Text(
                     "$index",
                     style: const TextStyle(

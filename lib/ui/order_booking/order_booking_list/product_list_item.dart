@@ -48,6 +48,8 @@ class _ProductListItemState extends State<ProductListItem> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("${int.parse(widget.products.pcsPerPackaging) ~/ int.parse(widget.products.pcsPerMoq)}");
+    debugPrint("${int.parse(widget.products.pcsPerPackaging) / int.parse(widget.products.pcsPerMoq)}");
     return Container(
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.only(left: 5),
@@ -208,6 +210,7 @@ class _ProductListItemState extends State<ProductListItem> {
                                 PkgWidget(
                                   name: widget.products.packagingName,
                                   qty: pkgQty,
+                                  maxQty: 9,
                                   productId: widget.products.id,
                                   onChange: (int qty) {
                                     updateQty(pkgQty: qty, moqQty: widget.products.moqQty);
@@ -216,6 +219,7 @@ class _ProductListItemState extends State<ProductListItem> {
                                 PkgWidget(
                                   name: widget.products.moqName,
                                   qty: moqQty,
+                                  maxQty: int.parse(widget.products.pcsPerPackaging) ~/ int.parse(widget.products.pcsPerMoq) - 1,
                                   productId: widget.products.id,
                                   onChange: (int qty) {
                                     updateQty(pkgQty: widget.products.pkgQty, moqQty: qty);
@@ -318,8 +322,10 @@ class PkgWidget extends StatefulWidget {
   final String name;
   final Function(int qty) onChange;
   final String productId;
+  final int maxQty;
 
-  const PkgWidget({Key? key, required this.qty, required this.name, required this.onChange, required this.productId})
+  const PkgWidget(
+      {Key? key, required this.qty, required this.name, required this.onChange, required this.productId, required this.maxQty})
       : super(key: key);
 
   @override
@@ -353,6 +359,7 @@ class _PkgWidgetState extends State<PkgWidget> {
                     widget.onChange(qty);
                     setState(() {});
                   },
+                  maxQty: widget.maxQty,
                 ));
       },
       child: Container(

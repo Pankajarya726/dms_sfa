@@ -184,6 +184,7 @@ class _SchemeProductListItemsState extends State<SchemeProductListItems> {
                   onSelect: (qty) {},
                   sheetHeading: textLabel,
                   sheetType: sheetType,
+                  maxQty: 9,
                 ));
       },
       child: Container(
