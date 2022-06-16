@@ -8,11 +8,9 @@ import 'package:dms/ui/edit_profile/edit_profile_bloc/edit_profile_state.dart';
 import 'package:dms/ui/edit_profile/model/update_profile_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/utility.dart';
-import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -83,7 +81,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   Navigator.pop(context, true);
                 }
                 if (state is EditProfileFailureState) {
-                  Utility.showToast( state.message);
+                  Utility.showToast(state.message);
                 }
                 if (state is GetUserDetailsSuccessState) {
                   user = state.user;
@@ -226,26 +224,39 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             ElevatedButton(
                               onPressed: () {
                                 Utility.hideKeyboard();
-                                if (edtNAme.text.isNotEmpty && edtEmail.text.isNotEmpty) {
-                                  if (EmailValidator.validate(edtEmail.text) == true) {
-                                    if (image != null) {
-                                      editProfileBloc.add(
-                                        EditProfileEvent(name: edtNAme.text, emailId: edtEmail.text, imgFile: File(image!.path)),
-                                      );
-                                    } else {
-                                      editProfileBloc.add(
-                                        EditProfileEvent(
-                                          name: edtNAme.text,
-                                          emailId: edtEmail.text,
-                                        ),
-                                      );
-                                    }
-                                  } else {
-                                    Utility.showToast( "Enter valid email format");
-                                  }
+                                if (image != null) {
+                                  editProfileBloc.add(
+                                    EditProfileEvent(name: edtNAme.text, emailId: edtEmail.text, imgFile: File(image!.path)),
+                                  );
                                 } else {
-                                  Utility.showToast( "Fields can't be empty");
+                                  editProfileBloc.add(
+                                    EditProfileEvent(
+                                      name: edtNAme.text,
+                                      emailId: edtEmail.text,
+                                    ),
+                                  );
                                 }
+
+                                // if (edtNAme.text.isNotEmpty && edtEmail.text.isNotEmpty) {
+                                //   if (EmailValidator.validate(edtEmail.text) == true) {
+                                //     if (image != null) {
+                                //       editProfileBloc.add(
+                                //         EditProfileEvent(name: edtNAme.text, emailId: edtEmail.text, imgFile: File(image!.path)),
+                                //       );
+                                //     } else {
+                                //       editProfileBloc.add(
+                                //         EditProfileEvent(
+                                //           name: edtNAme.text,
+                                //           emailId: edtEmail.text,
+                                //         ),
+                                //       );
+                                //     }
+                                //   } else {
+                                //     Utility.showToast( "Enter valid email format");
+                                //   }
+                                // } else {
+                                //   Utility.showToast( "Fields can't be empty");
+                                // }
                               },
                               style: ButtonStyle(
                                 fixedSize: MaterialStateProperty.all(const Size(220, 60)),
