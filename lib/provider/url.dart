@@ -30,7 +30,7 @@ class Url {
   static const String retailerEnrollmentSave = "retailerEnrollmentSave";
   static const String verifyOtp = "verifyOtp";
   static const String getOrderBookingDay = "getOrderBooking_day";
-  static const String searchRetailer = "searchRetailer";
+  static const String searchRetailer = "searchRetailerV1";
   static const String getBrandAndCategory = "getBrandAndCategoryBeatWise";
   static const String getAllBeats = "getBeatForLoginUser";
   static const String getBeatByOrderBookingDay = "getBeatByOrderBookingDayV1";
