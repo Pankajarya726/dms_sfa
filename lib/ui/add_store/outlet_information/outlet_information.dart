@@ -1023,6 +1023,7 @@ class _OutletInformationState extends State<OutletInformation> {
                     txtOrderBookingController.text = "";
                     distributorModel = null;
                     beatModal = null;
+                    distributorId = "";
                   },
                 )
               : txtController == txtSelectDistributorController
@@ -1055,6 +1056,8 @@ class _OutletInformationState extends State<OutletInformation> {
                               txtSelectBeatNameController.text = beat.name;
                               if (txtSelectDistributorController.text.isEmpty) {
                                 txtSelectDistrictController.clear();
+                                districtModel = null;
+                                districtId = "";
                               }
                               getOrderBookingDay();
                             }
