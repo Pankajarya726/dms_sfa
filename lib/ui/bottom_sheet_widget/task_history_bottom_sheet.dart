@@ -200,8 +200,12 @@ class TaskHistoryWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          const Image(
-            image: AssetImage("assets/hit.png"),
+          Image(
+            image: AssetImage(modal.taskType == "HIT"
+                ? "assets/hit.png"
+                : modal.taskType == "ST"
+                    ? "assets/special.png"
+                    : "assets/key.png"),
           ),
           const SizedBox(
             width: 10,
