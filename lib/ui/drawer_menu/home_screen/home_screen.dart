@@ -256,9 +256,25 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
             }
 
             if (state is HomeScreenFailureState) {
-              return Center(
-                child: Text(state.failureMessage),
-              );
+              refreshController.refreshCompleted();
+              // return Center(
+              //   child: MaterialButton(
+              //     onPressed: () {
+              //       homeScreenBloc.add(GetMenusEvent());
+              //     },
+              //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              //     color: MColor.colorPrimary,
+              //     child: const Text(
+              //       "Refresh",
+              //       style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, letterSpacing: 0.5, fontSize: 16),
+              //     ),
+              //   ),
+              // );
+              // return NoInternetConnection(
+              //   onRefresh: () {
+              //     homeScreenBloc.add(GetMenusEvent());
+              //   },
+              // );
             }
             return SmartRefresher(
               // primary: false,

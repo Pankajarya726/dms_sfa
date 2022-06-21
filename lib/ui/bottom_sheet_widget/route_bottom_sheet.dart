@@ -16,8 +16,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:intl/intl.dart';
-import 'package:ntp/ntp.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RouteBottomSheet extends StatefulWidget {
@@ -134,13 +132,17 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
                           textActiveColor: MColor.activeTextColor,
                           pressEnabled: true,
                           onPressed: (item) {
-                            beats[index].selected = !beats[index].selected;
-
+                            for (var element in beats) {
+                              element.selected = false;
+                            }
+                            beats[index].selected = true;
                             beatsStreamController.add(beats);
                           },
-                          singleItem: false,
+                          singleItem: true,
+                          // change to single beat selection
                           elevation: 0,
                           activeColor: const Color(0xffFFC9CC),
+
                           border: Border.all(color: beats[index].selected ? MColor.colorPrimary : const Color(0xffc5c5c5), width: 1),
                           color: const Color(0xffFAFAFA),
                         );
@@ -227,20 +229,17 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
 
   void getBeats() async {
     if (await Network.isConnected()) {
-      DateTime dateTime = await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
-        return DateTime.now();
-      });
-      Map<String, dynamic> input = {"day": DateFormat("EEEE").format(dateTime)};
+      Map<String, dynamic> input = {"day": widget.day};
       GetAllBeatsResponse response = await repository.getBeatByOrderBookingDay(input);
       if (response.success) {
         beats = response.data!;
 
-        await Future.forEach(beats, (BeatsModal bu) {
-          int i = beats.indexWhere((element) => element.id == bu.id);
-          if (i != -1) {
-            beats[i].selected = true;
-          }
-        });
+        // await Future.forEach(beats, (BeatsModal bu) {
+        //   int i = beats.indexWhere((element) => element.id == bu.id);
+        //   if (i != -1) {
+        //     beats[i].selected = true;
+        //   }
+        // });
 
         beatsStreamController.add(beats);
       } else {
@@ -253,32 +252,33 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
 
   void getRetailers() async {
     if (await Network.isConnected()) {
-
-
-      List<BeatsModal> selected = beats.where((element) => element.selected).toList();
-
+      int i = beats.indexWhere((element) => element.selected);
       String beatId = "";
-
-      if(selected.isNotEmpty){
-
-
-        for(int i=0;i<selected.length;i++){
-
-          if(i==selected.length-1){
-            beatId = selected[i].id;
-          }else{
-            beatId = selected[i].id+",";
-          }
-
-        }
+      if (i > -1) {
+        BeatsModal b = beats[i];
+        beatId = b.id;
+      } else {
+        Utility.showToast("Please select beat");
+        return;
       }
 
+      // if (selected.isNotEmpty) {
+      //   for (int i = 0; i < selected.length; i++) {
+      //     if (i == selected.length - 1) {
+      //       beatId += selected[i].id;
+      //     } else {
+      //       beatId += selected[i].id + ",";
+      //     }
+      //   }
+      // }
 
+      Position position = await MyLocation.getCurrentLocation();
 
       Map<String, dynamic> input = HashMap<String, dynamic>();
       input["order_status"] = "1";
       input["beat_id"] = beatId;
       input["day"] = widget.day;
+
       input["retailer_type"] = retailerCheck && teleRetailerCheck
           ? ""
           : retailerCheck
@@ -286,8 +286,11 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
               : teleRetailerCheck
                   ? "2"
                   : "";
+
+      input["lat"] = position.latitude.toString();
+      input["long"] = position.longitude.toString();
       EasyLoading.show(status: "Loading...");
-      GetRetailersResponse response = await repository.getRetailersOrderWise(input);
+      GetRetailersResponse response = await repository.getRoute(input);
       EasyLoading.dismiss();
       if (response.success) {
         if (response.data!.isNotEmpty) {
@@ -313,14 +316,15 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
       String url = "";
 
       if (list.length > 1) {
-        destination = list.last.lat + "," + list.last.lng;
-        for (int i = 0; i < list.length - 1; i++) {
+        for (int i = 0; i < list.length; i++) {
           if (i == list.length - 1) {
             if (list[i].lat.isNotEmpty && list[i].lng.isNotEmpty) {
+              destination = list[i].lat + "," + list[i].lng;
               waypoint += "${list[i].lat},${list[i].lng}";
             }
           } else {
             if (list[i].lat.isNotEmpty && list[i].lng.isNotEmpty) {
+              destination = list[i].lat + "," + list[i].lng;
               waypoint += "${list[i].lat},${list[i].lng}|";
             }
           }
@@ -329,12 +333,9 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
         destination = list.first.lat + "," + list.first.lng;
       }
 
-
-        // source = "22.715088511443923,75.86964084100623";
-      // destination = "22.71776838847584,75.85447157736643";
-      // waypoint =
-      //     "22.716526236699924,75.86440962634244|22.717271529118445,75.86255129198103|22.718526305557464,75.86029141716736|22.71882987877391,75.85717586159898";
-
+      debugPrint("source---->$source");
+      debugPrint("destination---->$destination");
+      debugPrint("waypoint---->$waypoint");
       url =
           'https://www.google.com/maps/dir/?api=1&origin=$source&destination=$destination&waypoints=$waypoint&travelmode=driving&dir_action=navigate';
       debugPrint("url---->$url");

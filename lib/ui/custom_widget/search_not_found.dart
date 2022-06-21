@@ -22,9 +22,8 @@ class SearchNotFound extends StatelessWidget {
             height: 15,
           ),
           const Text(
-            "No Search Found",
-            style: TextStyle(
-                color: Colors.black, fontSize: 17, fontWeight: FontWeight.w500),
+            "Search Not Found",
+            style: TextStyle(color: Colors.black, fontSize: 17, fontWeight: FontWeight.w500),
           ),
           const SizedBox(
             height: 10,
@@ -34,10 +33,7 @@ class SearchNotFound extends StatelessWidget {
             child: const Text(
               "There is no search at the moment please refresh the page.",
               textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Color(0xff555555),
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500),
+              style: TextStyle(color: Color(0xff555555), fontSize: 15, fontWeight: FontWeight.w500),
             ),
           ),
           const SizedBox(
@@ -47,16 +43,11 @@ class SearchNotFound extends StatelessWidget {
             onPressed: () {
               onRefresh();
             },
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             color: MColor.colorPrimary,
             child: const Text(
               "Refresh",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.5,
-                  fontSize: 16),
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, letterSpacing: 0.5, fontSize: 16),
             ),
           )
         ],

@@ -50,11 +50,11 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
   @override
   void initState() {
     getOrderSummery();
-    subject.stream.debounce((event) => TimerStream(event, const Duration(milliseconds: 1000))).listen((query) {
+    subject.stream.debounce((event) => TimerStream(event, const Duration(milliseconds: 200))).listen((query) {
       debugPrint("query--->$query");
       List<OrderSummery> searchList = [];
       searchList = summeryList.where((element) => element.customerName.toLowerCase().contains(query.toLowerCase())).toList();
-      summeryStream.sink.add(searchList);
+      summeryStream.add(searchList);
     });
     super.initState();
   }
@@ -120,10 +120,13 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
                       style: const TextStyle(fontSize: 16),
                       readOnly: false,
                       onChanged: (text) {
-                        if (text.trim().length >= 3) {
-                          subject.add(text);
-                        } else if (text.isEmpty) {
+                        if (text.trim().isEmpty) {
                           summeryStream.add(summeryList);
+                        } else {
+                          List<OrderSummery> searchList = [];
+                          searchList =
+                              summeryList.where((element) => element.customerName.toLowerCase().contains(text.toLowerCase())).toList();
+                          summeryStream.add(searchList);
                         }
                       },
                       onTap: () {
@@ -477,7 +480,7 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
                                   if (data.pdfLink.trim().isEmpty) {
                                     Utility.showToast("File not exists");
                                   } else {
-                                    download(data.pdfLink);
+                                    download(data.pdfLink.trim());
                                   }
                                 },
                                 backgroundColor: MColor.colorPrimary,
@@ -514,7 +517,7 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
         // Isolate(controlPort);
         await launch(url);
       } else {
-        Utility.showToast("Unable to get route...");
+        Utility.showToast("File not exist...");
       }
 
       // String url = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
@@ -571,7 +574,9 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
       //     debugPrint("e --> " + e.toString());
       //   }
       // }
-    } else {}
+    } else {
+      Utility.showToast(Constants.internetAlert);
+    }
   }
 
   void getOrderSummery() async {

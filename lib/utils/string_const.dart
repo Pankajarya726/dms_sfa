@@ -15,7 +15,7 @@ class StringConst {
   static const orderCaps = "ORDER";
   static const noOrderCaps = "NO ORDER";
   static const retailers = "Retailers";
-  static const retailer = "Retailer";
+  static const retailer = "Physical Order Outlet";
   static const login = "Login";
   static const logout = "Logout";
   static const endDay = "End day";
@@ -88,13 +88,13 @@ class StringConst {
   static const isKRO = "Is KRO?";
   static const gstNo = "GST No";
   static const pan = "PAN";
-  static const adharNumber = "Aadhar Number";
+  static const adharNumber = "Aadhaar Number";
   static const email = "Email";
   static const birthday = "Birthday";
   static const anniversary = "Wedding Anniversary";
   static const outletPhoto = "Outlet Photo *";
   static const ownerPhoto = "Owner Photo";
-  static const teleRetailer = "Tele-Retailer";
+  static const teleRetailer = "Tele-Order Outlet";
   static const yes = "Yes";
   static const no = "No";
   static const day = "Day";
@@ -105,8 +105,7 @@ class StringConst {
   static const done = "Done";
   static const selectLangFirst = "Select Language ";
   static const selectLangSecond = "Select Language ";
-  static const whatsAppSms =
-      "Does retailer want to opt-in for Whatsapp message / SMS? *";
+  static const whatsAppSms = "Does retailer want to opt-in for Whatsapp message / SMS? *";
   static const filter = "Filter";
   static const productInformation = "Product Info";
   static const schemeInfo = "Scheme Info";

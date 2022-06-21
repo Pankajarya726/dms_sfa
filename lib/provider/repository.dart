@@ -1444,4 +1444,25 @@ class ApiRepository {
       return GetOrderSummeryResponse(success: false, message: "", data: []);
     }
   }
+
+  Future<GetRetailersResponse> getRoute(Map<String, dynamic> input) async {
+    try {
+      Response response = await dio.post(Url.getRoute, data: input, cancelToken: cancelToken);
+      GetRetailersResponse baseResponse = GetRetailersResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = StringConst.somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return GetRetailersResponse(
+        success: false,
+        message: message,
+      );
+    }
+  }
 }

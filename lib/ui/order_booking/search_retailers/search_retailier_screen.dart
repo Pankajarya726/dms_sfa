@@ -39,13 +39,15 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
 
   @override
   void initState() {
-    subject.stream
-        .debounce(
-            (event) => TimerStream(event, const Duration(milliseconds: 1000)))
-        .listen((query) {
-      debugPrint("query--->$query");
-      retailersList.clear();
-      searchApi(query);
+    subject.stream.debounce((event) => TimerStream(event, const Duration(milliseconds: 1000))).listen((text) {
+      debugPrint("query--->$text");
+      if (text.trim().isEmpty) {
+        retailersList.clear();
+        searchStream.addError("Enter Name or mobile number to search retailer");
+      } else if (text.trim().length >= 3) {
+        retailersList.clear();
+        searchApi(text);
+      }
     });
     if (widget.retailerType == StringConst.retailer) {
       retailerType = "1";
@@ -71,14 +73,7 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
               autofocus: true,
               controller: edtSearch,
               onChanged: (text) {
-                if (text.trim().isEmpty) {
-                  retailersList.clear();
-                  searchStream.addError(
-                      "Enter Name or mobile number to search retailer");
-                } else if (text.trim().length >= 3) {
-                  retailersList.clear();
-                  subject.add(text);
-                }
+                subject.add(text);
               },
               decoration: InputDecoration(
                   hintText: "Search",
@@ -87,18 +82,15 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide:
-                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide:
-                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide:
-                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   suffixIcon: IconButton(
                     splashRadius: 20,
                     icon: const Icon(
@@ -109,8 +101,7 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
                       if (edtSearch.text.trim().isNotEmpty) {
                         edtSearch.clear();
                         retailersList.clear();
-                        searchStream.addError(
-                            "Enter Name or mobile number to search retailer");
+                        searchStream.addError("Enter Name or mobile number to search retailer");
                       } else {
                         Navigator.pop(context);
                       }
@@ -131,7 +122,8 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
           if (snapshot.hasData && snapshot.data!.isEmpty) {
             return Center(
               child: SearchNotFound(onRefresh: () {
-                searchApi(edtSearch.text);
+                subject.add(edtSearch.text);
+                // searchApi(edtSearch.text);
               }),
             );
           }
@@ -164,7 +156,8 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
               return Center(
                 child: NoInternetConnection(
                   onRefresh: () {
-                    searchApi(edtSearch.text);
+                    subject.add(edtSearch.text);
+                    // searchApi(edtSearch.text);
                   },
                 ),
               );

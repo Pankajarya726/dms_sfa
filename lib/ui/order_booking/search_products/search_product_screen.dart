@@ -36,10 +36,16 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
 
   @override
   void initState() {
-    subject.stream.debounce((event) => TimerStream(event, const Duration(milliseconds: 1000))).listen((query) {
-      debugPrint("query--->$query");
-      productsList.clear();
-      searchApi(query);
+    searchStream.addError("Enter product name to search products");
+    subject.stream.debounce((event) => TimerStream(event, const Duration(milliseconds: 400))).listen((text) {
+      debugPrint("query--->$text");
+      if (text.isEmpty) {
+        productsList.clear();
+        searchStream.addError("Enter product name to search products");
+      } else if (text.trim().length >= 3) {
+        productsList.clear();
+        searchApi(text);
+      }
     });
     // subject.debounce((event) => TimerStream(event, const Duration(milliseconds: 600)).listen((event) { }));
     // .switchMap((query) async* {
@@ -64,13 +70,7 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
               autofocus: true,
               controller: edtSearch,
               onChanged: (text) {
-                if (text.isEmpty) {
-                  productsList.clear();
-                  searchStream.addError("Enter product name to search products");
-                } else if (text.trim().length >= 3) {
-                  productsList.clear();
-                  subject.add(text);
-                }
+                subject.add(text);
               },
               decoration: InputDecoration(
                   hintText: StringConst.search,
@@ -121,7 +121,8 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
               return Center(
                 child: SearchNotFound(
                   onRefresh: () {
-                    searchApi(edtSearch.text);
+                    subject.add(edtSearch.text);
+                    // searchApi(edtSearch.text);
                   },
                 ),
               );
@@ -155,7 +156,8 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
               return Center(
                 child: NoInternetConnection(
                   onRefresh: () {
-                    searchApi(edtSearch.text);
+                    subject.add(edtSearch.text);
+                    // searchApi(edtSearch.text);
                   },
                 ),
               );
