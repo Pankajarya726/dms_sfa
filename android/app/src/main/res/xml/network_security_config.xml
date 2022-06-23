@@ -3,6 +3,7 @@
 
 		<domain includeSubdomains="true">dmsapp.tekzee.in</domain>
 		<domain includeSubdomains="true">sfa.vyapaar-vistaar.in</domain>
+		<domain includeSubdomains="true">dms-upload.s3.ap-southeast-1.amazonaws.com</domain>
 
 	</domain-config>
 </network-security-config>

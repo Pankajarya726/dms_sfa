@@ -15,7 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RouteBottomSheet extends StatefulWidget {
@@ -272,7 +272,7 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
       //   }
       // }
 
-      Position position = await MyLocation.getCurrentLocation();
+      LocationData? position = await MyLocation.getCurrentLocation();
 
       Map<String, dynamic> input = HashMap<String, dynamic>();
       input["order_status"] = "1";
@@ -287,8 +287,13 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
                   ? "2"
                   : "";
 
-      input["lat"] = position.latitude.toString();
-      input["long"] = position.longitude.toString();
+      if (position != null) {
+        input["lat"] = position.latitude.toString();
+        input["long"] = position.longitude.toString();
+      } else {
+        return;
+      }
+
       EasyLoading.show(status: "Loading...");
       GetRetailersResponse response = await repository.getRoute(input);
       EasyLoading.dismiss();
@@ -310,8 +315,12 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
       String destination = "";
       String source = "";
 
-      Position position = await MyLocation.getCurrentLocation();
-      source = position.latitude.toString() + "," + position.longitude.toString();
+      LocationData? position = await MyLocation.getCurrentLocation();
+      if (position != null) {
+        source = position.latitude.toString() + "," + position.longitude.toString();
+      } else {
+        return;
+      }
 
       String url = "";
 

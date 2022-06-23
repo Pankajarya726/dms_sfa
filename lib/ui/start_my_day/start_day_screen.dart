@@ -588,6 +588,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                               children: [
                                 BlocBuilder<UserLocationBloc, UserLocationStates>(
                                   builder: (context, state) {
+                                    debugPrint("state--.$state");
                                     if (state is UserLocationInitialState) {
                                       userLocationBloc.add(GetUserLocationEvent());
                                     }
@@ -938,11 +939,12 @@ class _StartDayScreenState extends State<StartDayScreen> {
     imageFile = null;
     selectedPrimaryTag = null;
     selectedSecondaryTags.clear();
+    userLocationBloc.add(GetUserLocationEvent());
     commonBloc.add(CommonBlocGetMeetingEvent(getMeeting: false));
     startMyDayBloc.add(GetQuotesAndImagesEvent());
     // addPlanBloc.add(GetSavedPlanEvent(selectedDate: DateFormat("yyyy-MM-dd").format(DateTime.now())));
     addPlanBloc.add(GetTagEvent());
-    userLocationBloc.add(GetUserLocationEvent());
+
     refreshController.refreshCompleted();
   }
 

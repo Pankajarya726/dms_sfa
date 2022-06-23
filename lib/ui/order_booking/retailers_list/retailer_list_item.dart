@@ -7,7 +7,7 @@ import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/my_location.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RetailerListItems extends StatefulWidget {
@@ -234,16 +234,20 @@ class _RetailerListItemsState extends State<RetailerListItems> {
 
   void drawRoute(String lat, String lng) async {
     try {
-      Position position = await MyLocation.getCurrentLocation();
-      String source = position.latitude.toString() + "," + position.longitude.toString();
-      String destination = lat.toString() + "," + lng.toString();
-      String url =
-          'https://www.google.com/maps/dir/?api=1&origin=$source&destination=$destination&travelmode=driving&dir_action=navigate';
-      debugPrint("url---->$url");
-      if (await canLaunch(url)) {
-        await launch(url);
+      LocationData? position = await MyLocation.getCurrentLocation();
+      if (position != null) {
+        String source = position.latitude.toString() + "," + position.longitude.toString();
+        String destination = lat.toString() + "," + lng.toString();
+        String url =
+            'https://www.google.com/maps/dir/?api=1&origin=$source&destination=$destination&travelmode=driving&dir_action=navigate';
+        debugPrint("url---->$url");
+        if (await canLaunch(url)) {
+          await launch(url);
+        } else {
+          Utility.showToast("Unable to get route...");
+        }
       } else {
-        Utility.showToast("Unable to get route...");
+        Utility.showToast("Can not fetch your location, Please try again later");
       }
     } catch (exception) {
       debugPrint("exception--->$exception");

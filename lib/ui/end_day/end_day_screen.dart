@@ -16,8 +16,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:location/location.dart';
 import 'package:ntp/ntp.dart';
 
 class EndDayScreen extends StatefulWidget {
@@ -344,34 +344,38 @@ class _EndDayScreenState extends State<EndDayScreen> {
     });
 
     try {
-      Position position = await MyLocation.getCurrentLocation();
-      List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
-      Placemark place = placemarks[0];
-      String locality = place.locality!;
-      String name = place.name!;
-      String postalCode = place.postalCode!;
-      String street = place.street!;
-      String subLocality = place.subLocality!;
-      String address = "";
-      if (street == name) {
-        address = street + " " + subLocality + " " + locality + " " + postalCode;
+      LocationData? position = await MyLocation.getCurrentLocation();
+      if (position != null) {
+        List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude!, position.longitude!);
+        Placemark place = placemarks[0];
+        String locality = place.locality!;
+        String name = place.name!;
+        String postalCode = place.postalCode!;
+        String street = place.street!;
+        String subLocality = place.subLocality!;
+        String address = "";
+        if (street == name) {
+          address = street + " " + subLocality + " " + locality + " " + postalCode;
+        } else {
+          address = street + " " + name + " " + subLocality + " " + locality + " " + postalCode;
+        }
+        Map input = HashMap<String, dynamic>();
+        input["user_id"] = await Utility.getStringPreference(SharedPreference.userId);
+        input["start_day_date"] = DateFormat("yyyy-MM-dd").format(_ntpTime);
+        input["end_day_time"] = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
+        input["end_day_address"] = address;
+        input["end_day_latitude"] = position.latitude.toString();
+        input["end_day_longitude"] = position.longitude.toString();
+        input["total_visit"] = edtTc.text.trim().toString();
+        input["total_order"] = edtPc.text.trim().toString();
+        input["total_sale_amount"] = edtTotalSale.text.trim().toString();
+        input["avg_sale_value"] = edtAverageSale.text.trim().toString();
+        input["end_day_remark"] = edtRemark.text.trim();
+        debugPrint("input-->$input");
+        confirmEndDayApi(input);
       } else {
-        address = street + " " + name + " " + subLocality + " " + locality + " " + postalCode;
+        Utility.showToast("Can not fetch your location, Please try again later");
       }
-      Map input = HashMap<String, dynamic>();
-      input["user_id"] = await Utility.getStringPreference(SharedPreference.userId);
-      input["start_day_date"] = DateFormat("yyyy-MM-dd").format(_ntpTime);
-      input["end_day_time"] = "${_ntpTime.hour}:${_ntpTime.minute}:${_ntpTime.second}";
-      input["end_day_address"] = address;
-      input["end_day_latitude"] = position.latitude.toString();
-      input["end_day_longitude"] = position.longitude.toString();
-      input["total_visit"] = edtTc.text.trim().toString();
-      input["total_order"] = edtPc.text.trim().toString();
-      input["total_sale_amount"] = edtTotalSale.text.trim().toString();
-      input["avg_sale_value"] = edtAverageSale.text.trim().toString();
-      input["end_day_remark"] = edtRemark.text.trim();
-      debugPrint("input-->$input");
-      confirmEndDayApi(input);
     } catch (exception) {
       debugPrint("exception--->$exception");
       return;

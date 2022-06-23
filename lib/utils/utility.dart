@@ -55,8 +55,8 @@ class Utility {
   }
 
   static Future<String> findLocalPath() async {
-    final directory = Platform.isAndroid ? await getTemporaryDirectory() : await getApplicationDocumentsDirectory();
-    return directory.path;
+    final directory = Platform.isAndroid ? await getExternalStorageDirectory() : await getApplicationDocumentsDirectory();
+    return directory!.path;
   }
 
   static Future<bool?> showConfirmAlert(

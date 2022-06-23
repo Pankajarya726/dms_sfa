@@ -1,6 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
-import 'package:dms/provider/url.dart';
 import 'package:dms/ui/change_password/change_password_screen.dart';
 import 'package:dms/ui/edit_profile/edit_profile_screen.dart';
 import 'package:dms/ui/edit_profile/model/update_profile_response.dart';
@@ -275,7 +273,6 @@ class _SettingScreenState extends State<SettingsScreen> {
             MaterialButton(
               child: const Text("Logout", style: TextStyle(color: Color(0xfff4511e), fontWeight: FontWeight.w600)),
               onPressed: () async {
-                await DioCacheManager(CacheConfig(baseUrl: Url.baseUrl)).clearExpired();
                 Navigator.pushAndRemoveUntil(
                     context, MaterialPageRoute(builder: (context) => const LoginScreen()), ModalRoute.withName("/"));
                 SharedPreference.clearSharedPreference(context);

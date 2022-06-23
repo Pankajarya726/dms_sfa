@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:dms/database/database_helper.dart';
 import 'package:dms/navigation/navigation_service.dart';
 import 'package:dms/provider/repository.dart';
@@ -10,6 +9,7 @@ import 'package:dms/ui/splash_screen/splash_screen.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -48,8 +48,13 @@ configLoading() {
 
 final currencyFormat = NumberFormat.simpleCurrency(locale: "hi_IN", decimalDigits: 2);
 
-void main() {
-  dio.interceptors.add(DioCacheManager(CacheConfig(baseUrl: Url.baseUrl)).interceptor);
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await FlutterDownloader.initialize(
+      debug: true, // optional: set to false to disable printing logs to console (default: true)
+      ignoreSsl: true // option: set to false to disable working with http links (default: false)
+      );
+
   dio.interceptors.add(LogInterceptor(
       requestHeader: true,
       requestBody: true,
