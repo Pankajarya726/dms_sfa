@@ -15,11 +15,13 @@ class UpdateProfileResponse {
   String message;
   User? data;
 
-  factory UpdateProfileResponse.fromJson(String str) => UpdateProfileResponse.fromMap(json.decode(str));
+  factory UpdateProfileResponse.fromJson(String str) =>
+      UpdateProfileResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory UpdateProfileResponse.fromMap(Map<String, dynamic> json) => UpdateProfileResponse(
+  factory UpdateProfileResponse.fromMap(Map<String, dynamic> json) =>
+      UpdateProfileResponse(
         success: json["success"] ?? false,
         message: json["message"] ?? "",
         data: json["data"] == null ? null : User.fromMap(json["data"]),
