@@ -46,10 +46,12 @@ configLoading() {
     ..dismissOnTap = false;
 }
 
-final currencyFormat = NumberFormat.simpleCurrency(locale: "hi_IN", decimalDigits: 2);
+final currencyFormat =
+    NumberFormat.simpleCurrency(locale: "hi_IN", decimalDigits: 2);
 
 void main() {
-  dio.interceptors.add(DioCacheManager(CacheConfig(baseUrl: Url.baseUrl)).interceptor);
+  dio.interceptors
+      .add(DioCacheManager(CacheConfig(baseUrl: Url.baseUrl)).interceptor);
   dio.interceptors.add(LogInterceptor(
       requestHeader: true,
       requestBody: true,
@@ -136,7 +138,9 @@ class _MyAppState extends State<MyApp> {
           brightness: Brightness.light,
           inputDecorationTheme: InputDecorationTheme(
             filled: true,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(25), borderSide: BorderSide.none),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(25),
+                borderSide: BorderSide.none),
             fillColor: const Color(0xFFF2F2F2),
           ),
           appBarTheme: const AppBarTheme(
@@ -144,7 +148,8 @@ class _MyAppState extends State<MyApp> {
             elevation: 0,
             iconTheme: IconThemeData(color: Colors.black),
             centerTitle: true,
-            titleTextStyle: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+            titleTextStyle: TextStyle(
+                color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
             systemOverlayStyle: SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
               statusBarBrightness: Brightness.light,
