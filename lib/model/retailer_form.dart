@@ -48,6 +48,18 @@ class RetailerForm {
   String ownerImage = "";
   String email = "";
   String cityId = "";
+
+  String street_name = "";
+  String street = "";
+  String country_code = "";
+  String country = "";
+  String postal_code = "";
+  String administrative_area = "";
+  String subadministrative_area = "";
+  String locality = "";
+  String sublocality = "";
+  String thoroughfare = "";
+  String subthoroughfare = "";
   bool checkMobileNumber = false;
 
   Map<String, dynamic> category = {};
@@ -69,14 +81,8 @@ class RetailerForm {
         "pan": pan,
         "adhar_number": aadhaarNumber,
         "birthday": birthday,
-        "owner_image": ownerImage.isEmpty
-            ? null
-            : MultipartFile.fromFileSync(ownerImage,
-                filename: path.basename(ownerImage)),
-        "outlet_image": outletImage.isEmpty
-            ? null
-            : MultipartFile.fromFileSync(outletImage,
-                filename: path.basename(outletImage)),
+        "owner_image": ownerImage.isEmpty ? null : MultipartFile.fromFileSync(ownerImage, filename: path.basename(ownerImage)),
+        "outlet_image": outletImage.isEmpty ? null : MultipartFile.fromFileSync(outletImage, filename: path.basename(outletImage)),
         "anniversary": anniversary,
         "outlet_name": outletName,
         "outlet_close_time": outletCloseTime,
@@ -100,6 +106,17 @@ class RetailerForm {
         "retailer_category": retailerCategoryId,
         "is_whatsapp_sms": isWhatsappSms,
         "order_booking_day_1": orderBookingDay1,
-        "order_booking_day_2": orderBookingDay2
+        "order_booking_day_2": orderBookingDay2,
+        "street_name": street_name,
+        "street": street,
+        "country_code": country_code,
+        "country": country,
+        "postal_code": postal_code,
+        "administrative_area": administrative_area,
+        "subadministrative_area": subadministrative_area,
+        "locality": locality,
+        "sublocality": sublocality,
+        "thoroughfare": thoroughfare,
+        "subthoroughfare": subthoroughfare,
       };
 }

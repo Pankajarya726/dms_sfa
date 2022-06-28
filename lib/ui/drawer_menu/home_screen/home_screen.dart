@@ -76,6 +76,7 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
               ),
             ),
           ),
+          leadingWidth: 50,
           title: BlocBuilder<HomeScreenBloc, HomeScreenStates>(
             bloc: homeScreenBloc,
             builder: (context, state) {

@@ -180,7 +180,7 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
                 decoration: const InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                     suffixIcon: Image(
-                      image: AssetImage("assets/date.png"),
+                      image: AssetImage("assets/images/date.png"),
                     )),
                 onTap: () async {
                   showModalBottomSheet(
