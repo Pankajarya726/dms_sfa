@@ -6,14 +6,15 @@ import 'package:dms/ui/start_my_day/model/end_my_day_response.dart';
 import 'package:dms/ui/start_my_day/model/quotes_and_images_response.dart';
 import 'package:dms/ui/start_my_day/model/start_my_day_response.dart.dart';
 import 'package:dms/utils/constants.dart';
+import 'package:dms/utils/my_location.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:location/location.dart';
 import 'package:ntp/ntp.dart';
 
 import '../../../main.dart';
@@ -81,22 +82,25 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
 
       try {
         EasyLoading.show();
-        Position position = await location();
+        LocationData? position = await MyLocation.getCurrentLocation();
         EasyLoading.dismiss();
+        if (position != null) {
+          List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude!, position.longitude!);
+          Placemark place = placemarks[0];
+          String locality = place.locality!;
+          String name = place.name!;
+          String postalCode = place.postalCode!;
+          String street = place.street!;
+          String subLocality = place.subLocality!;
 
-        List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
-        Placemark place = placemarks[0];
-        String locality = place.locality!;
-        String name = place.name!;
-        String postalCode = place.postalCode!;
-        String street = place.street!;
-        String subLocality = place.subLocality!;
-
-        // In some cases, street and name are same, to handle this situation we applied this condition
-        if (street == name) {
-          address = street + " " + subLocality + " " + locality + " " + postalCode;
+          // In some cases, street and name are same, to handle this situation we applied this condition
+          if (street == name) {
+            address = street + " " + subLocality + " " + locality + " " + postalCode;
+          } else {
+            address = street + " " + name + " " + subLocality + " " + locality + " " + postalCode;
+          }
         } else {
-          address = street + " " + name + " " + subLocality + " " + locality + " " + postalCode;
+          Utility.showToast("Can not fetch your location, Please try again later");
         }
       } catch (exception) {
         // yield EndMyDayFailureState(
@@ -124,29 +128,29 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
       Utility.showToast(Constants.internetAlert);
     }
   }
-
-  Future<Position> location() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-    // Test if location services are enabled.
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        Utility.showToast("Please turn on the location for continue!");
-        return Future.error('Location permissions are denied');
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
-
-      return Future.error('Location permissions are permanently denied, we cannot request permissions.');
-    }
-    // When we reach here, permissions are granted and we can
-    // continue accessing the position of the device.
-
-    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-  }
+  //
+  // Future<Position> location() async {
+  //   bool serviceEnabled;
+  //   // PermissionStatus permissionStatus;
+  //   // Test if location services are enabled.
+  //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  //
+  //   PermissionStatus permissionStatus = await Geolocator.checkPermission();
+  //   if (permission == LocationPermission.denied) {
+  //     permission = await Geolocator.requestPermission();
+  //     if (permission == LocationPermission.denied) {
+  //       Utility.showToast("Please turn on the location for continue!");
+  //       return Future.error('Location permissions are denied');
+  //     }
+  //   }
+  //   if (permission == LocationPermission.deniedForever) {
+  //     // Permissions are denied forever, handle appropriately.
+  //
+  //     return Future.error('Location permissions are permanently denied, we cannot request permissions.');
+  //   }
+  //   // When we reach here, permissions are granted and we can
+  //   // continue accessing the position of the device.
+  //
+  //   return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  // }
 }

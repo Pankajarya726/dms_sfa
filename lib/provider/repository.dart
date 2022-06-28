@@ -2,7 +2,6 @@ import 'dart:collection';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:dms/main.dart';
 import 'package:dms/model/base_response.dart';
 import 'package:dms/model/get_all_tag_response.dart';
@@ -67,8 +66,10 @@ class ApiRepository {
 
   Future<SplashResponse> validateAppVersion(Map input) async {
     try {
-      Response response = await dio.post(Url.validateAppVer,
-          data: input, options: buildCacheOptions(const Duration(days: 7), forceRefresh: true, maxStale: const Duration(days: 7)));
+      Response response = await dio.post(
+        Url.validateAppVer,
+        data: input,
+      );
       SplashResponse result = SplashResponse.fromJson(response.toString());
       return result;
     } catch (error, stacktrace) {
@@ -158,16 +159,8 @@ class ApiRepository {
     try {
       Response response = await dio.get(
         Url.getMenus,
-        // options: buildCacheOptions(
-        //   const Duration(days: 3),
-        //   maxStale: const Duration(days: 7),
-        // ),
       );
-      if (null != response.headers.value(DIO_CACHE_HEADER_KEY_DATA_SOURCE)) {
-        debugPrint("data come from cache");
-      } else {
-        debugPrint("data come from network");
-      }
+
       GetMenusResponse result = GetMenusResponse.fromJson(response.toString());
       return result;
     } catch (error, stacktrace) {
