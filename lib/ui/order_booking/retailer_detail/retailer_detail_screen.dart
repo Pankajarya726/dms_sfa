@@ -863,34 +863,31 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                         ],
                       ),
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                          width: 45,
-                          height: 45,
-                          child: Align(
-                            alignment: Alignment.bottomRight,
-                            child: Image(
-                              width: 25,
-                              height: 25,
-                              image: AssetImage(
-                                  widget.retailer.enrollmentTypeId == "1"
-                                      ? "assets/retailer.png"
-                                      : "assets/tele.png"),
+                    SizedBox(
+                      height: 45,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Image(
+                            width: 22,
+                            height: 22,
+                            image: AssetImage(
+                                widget.retailer.enrollmentTypeId == "1"
+                                    ? "assets/retailer.png"
+                                    : "assets/tele.png"),
+                          ),
+                          Text(
+                            widget.retailer.uniqueCode,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                              fontSize: 15,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                        ),
-                        Text(
-                          widget.retailer.uniqueCode,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black,
-                            fontSize: 15,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),

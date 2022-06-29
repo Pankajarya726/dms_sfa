@@ -51,7 +51,7 @@ class _RetailerListScreenState extends State<RetailerListScreen>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
     tabController = TabController(length: 3, vsync: this);
     // retailersBloc.add(GetBeatEvent());
     getBeats();
@@ -80,7 +80,7 @@ class _RetailerListScreenState extends State<RetailerListScreen>
 
   @override
   void dispose() {
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
