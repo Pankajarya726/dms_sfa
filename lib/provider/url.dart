@@ -61,7 +61,7 @@ class Url {
   static const String taskEscalate = "taskEscalateAndResolve";
   static const String getTaskHistory = "getTaskHistory";
   static const String taskResolve = "taskResolve";
-  static const String checkMobileNumber = "checkMobile";
+  static const String checkMobileNumber = "checkMobileV1";
   static const String getFilterLocation = "getFilterLocationV1";
   static const String getCustomerType = "getCustomerType";
   static const String getFilterWiseCustomer = "getFilterWiseCustomer";

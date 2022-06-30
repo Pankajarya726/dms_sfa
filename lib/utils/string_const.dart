@@ -73,7 +73,7 @@ class StringConst {
   static const address = "Address";
   static const landmark = "Landmark *";
   static const pincode = "Pincode";
-  static const primaryMobile = "Owner Primary Mobile Number *";
+  static const primaryMobile = "Owner Primary Mobile Number";
   static const secondaryMobile = "Owner Secondary Mobile Number";
   static const helperMobile = "Helper Mobile Number";
   static const existingRetailer = "Existing Retailer *";
