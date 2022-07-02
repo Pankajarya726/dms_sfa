@@ -18,6 +18,7 @@ import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,6 +29,7 @@ import '../../../main.dart';
 
 class OwnerInformation extends StatefulWidget {
   final RetailerForm form;
+
   const OwnerInformation({
     Key? key,
     required this.form,
@@ -56,8 +58,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
   TextEditingController txtAdhaar = TextEditingController();
   TextEditingController txtBirthday = TextEditingController();
   TextEditingController txtAnniversary = TextEditingController();
-  RefreshController refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController refreshController = RefreshController(initialRefresh: false);
   GlobalKey globalKeyName = GlobalKey();
   GlobalKey globalKeyPrimMob = GlobalKey();
   GlobalKey globalKeySecMob = GlobalKey();
@@ -77,8 +78,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
   }
 
   restorePrevSession() {
-    ownerPhotoFile =
-        widget.form.ownerImage.isEmpty ? null : File(widget.form.ownerImage);
+    ownerPhotoFile = widget.form.ownerImage.isEmpty ? null : File(widget.form.ownerImage);
     whatsAppSmsRadio = widget.form.isWhatsappSms;
     txtOwnerName.text = widget.form.ownerName;
     txtPrimaryMobile.text = widget.form.primaryMobile;
@@ -88,8 +88,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
 
     callTimeSlotModel = widget.form.callTimeSlot;
     if (callTimeSlotModel != null) {
-      txtCallTime.text =
-          callTimeSlotModel!.from + " to " + callTimeSlotModel!.to;
+      txtCallTime.text = callTimeSlotModel!.from + " to " + callTimeSlotModel!.to;
     }
 
     primaryLanguage = widget.form.primaryLang;
@@ -173,21 +172,68 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       const SizedBox(
                         width: 10,
                       ),
-                      textWidget(StringConst.primaryMobile),
+                      widget.form.enrollmentTypeId == "1"
+                          ? textWidget("Owner Primary Mobile Number ")
+                          : textWidget("Owner Primary Mobile Number* "),
                     ],
                   ),
                   sizedBoxWidget(12.0),
-                  MobileEditText(
-                    hint: StringConst.enterHere,
-                    controller: txtPrimaryMobile,
-                    globalKey: globalKeyPrimMob,
-                    onChange: (text) {
-                      if (text.length == 10) {
-                        checkMobileNumber();
-                      }
-                      widget.form.primaryMobile = text;
-                    },
-                  ),
+                  widget.form.enrollmentTypeId == "1"
+                      ? TextFormField(
+                          onTap: () async {
+                            await Future.delayed(const Duration(milliseconds: 500));
+                            RenderObject? object = globalKeyPrimMob.currentContext!.findRenderObject();
+                            object!.showOnScreen();
+                          },
+                          autofocus: false,
+                          onChanged: (text) {
+                            if (text.length == 10) {
+                              checkMobileNumber();
+                            }
+                            widget.form.primaryMobile = text;
+                          },
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.67,
+                            color: MColor.backButton,
+                          ),
+                          keyboardType: TextInputType.text,
+                          maxLength: 10,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp(r"[a-z A-Z 0-9]")),
+                            // FilteringTextInputFormatter.deny(RegExp(r"\s"))
+                          ],
+                          controller: txtPrimaryMobile,
+                          decoration: InputDecoration(
+                            counterText: "",
+                            hintText: StringConst.enterHere,
+                            hintStyle: const TextStyle(
+                              color: MColor.backButton,
+                              letterSpacing: 0.67,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                            contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                            filled: true,
+                            fillColor: const Color(0xffF2F2F2),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        )
+                      : MobileEditText(
+                          hint: StringConst.enterHere,
+                          controller: txtPrimaryMobile,
+                          globalKey: globalKeyPrimMob,
+                          onChange: (text) {
+                            if (text.length == 10) {
+                              checkMobileNumber();
+                            }
+                            widget.form.primaryMobile = text;
+                          },
+                        ),
                   sizedBoxWidget(20.0),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,8 +255,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
                     globalKey: globalKeySecMob,
                     onChange: (text) {
                       if (text == txtPrimaryMobile.text) {
-                        Utility.showToast(
-                            "Primary and secondary mobile number should not be same");
+                        Utility.showToast("Primary and secondary mobile number should not be same");
                       }
                       widget.form.secondaryMobile = text;
                     },
@@ -269,7 +314,9 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       const SizedBox(
                         width: 10,
                       ),
-                      textWidget(StringConst.callTimeSlotMand),
+                      widget.form.enrollmentTypeId == "1"
+                          ? textWidget(StringConst.callTimeSlot)
+                          : textWidget(StringConst.callTimeSlotMand),
                     ],
                   ),
                   SizedBox(
@@ -393,10 +440,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
                       if (state is CommonBlocBirthdayState) {
-                        txtBirthday.text =
-                            DateFormat("yyyy-MM-dd").format(state.dateTime);
-                        widget.form.birthday =
-                            DateFormat("yyyy-MM-dd").format(state.dateTime);
+                        txtBirthday.text = DateFormat("yyyy-MM-dd").format(state.dateTime);
+                        widget.form.birthday = DateFormat("yyyy-MM-dd").format(state.dateTime);
                       }
 
                       return DateEditText(
@@ -424,10 +469,8 @@ class _OwnerInformationState extends State<OwnerInformation> {
                   BlocBuilder<CommonBloc, CommonBlocStates>(
                     builder: (context, state) {
                       if (state is CommonBlocAnniversaryState) {
-                        txtAnniversary.text =
-                            DateFormat("yyyy-MM-dd").format(state.dateTime);
-                        widget.form.anniversary =
-                            DateFormat("yyyy-MM-dd").format(state.dateTime);
+                        txtAnniversary.text = DateFormat("yyyy-MM-dd").format(state.dateTime);
+                        widget.form.anniversary = DateFormat("yyyy-MM-dd").format(state.dateTime);
                       }
                       return DateEditText(
                         controller: txtAnniversary,
@@ -483,14 +526,20 @@ class _OwnerInformationState extends State<OwnerInformation> {
           onPressed: () async {
             Utility.hideKeyboard();
             FocusScope.of(context).unfocus();
+
+            debugPrint("widget.form.enrollmentTypeId -->${widget.form.enrollmentTypeId}");
+
             if (txtOwnerName.text.trim().isEmpty) {
               Utility.showToast("Please enter owner name");
-            } else if (txtPrimaryMobile.text.isEmpty) {
+            } else if (widget.form.enrollmentTypeId == "2" && txtPrimaryMobile.text.isEmpty) {
               Utility.showToast("Please enter primary mobile");
-            } else if (txtPrimaryMobile.text == txtSecondaryMobile.text) {
-              Utility.showToast(
-                  "Primary and secondary mobile number should not be same");
-            } else if (txtCallTime.text.isEmpty) {
+            } else if (widget.form.enrollmentTypeId == "2" && txtPrimaryMobile.text == txtSecondaryMobile.text) {
+              Utility.showToast("Primary and secondary mobile number should not be same");
+            } else if (widget.form.enrollmentTypeId == "1" &&
+                txtPrimaryMobile.text.isNotEmpty &&
+                txtPrimaryMobile.text == txtSecondaryMobile.text) {
+              Utility.showToast("Primary and secondary mobile number should not be same");
+            } else if (widget.form.enrollmentTypeId == "2" && txtCallTime.text.isEmpty) {
               Utility.showToast("Please select call time slot");
             } else if (txtPrimaryLang.text.isEmpty) {
               Utility.showToast("Please select language 1st");
@@ -500,32 +549,32 @@ class _OwnerInformationState extends State<OwnerInformation> {
             //       "Please select opt-in for whatsapp message / SMS");
             // }
             else if (txtOwnerName.text.length < 3) {
-              Utility.showToast(
-                  "Owner name should be minimum 3 characters long");
-            } else if (txtPrimaryMobile.text.length < 10) {
+              Utility.showToast("Owner name should be minimum 3 characters long");
+            } else if (widget.form.enrollmentTypeId == "2" && txtPrimaryMobile.text.length < 10) {
               Utility.showToast("Please enter valid primary mobile number");
-            } else if (widget.form.checkMobileNumber == false) {
+            } else if (widget.form.enrollmentTypeId == "2" && widget.form.checkMobileNumber == false) {
+              // Utility.showToast("Mobile number already exist");
+              checkMobileNumber();
+              return;
+            } else if (widget.form.enrollmentTypeId == "1" &&
+                txtPrimaryMobile.text.isNotEmpty &&
+                widget.form.checkMobileNumber == false) {
               // Utility.showToast("Mobile number already exist");
               checkMobileNumber();
               return;
             } else if (txtSecondaryMobile.text.isNotEmpty &&
-                (!txtSecondaryMobile.text.contains(RegExp('^[6-9]{1}')) ||
-                    txtSecondaryMobile.text.length < 10)) {
+                (!txtSecondaryMobile.text.contains(RegExp('^[6-9]{1}')) || txtSecondaryMobile.text.length < 10)) {
               Utility.showToast("Please enter valid secondary mobile number");
             } else if (txtHelperMobile.text.isNotEmpty &&
-                (!txtHelperMobile.text.contains(RegExp('^[6-9]{1}')) ||
-                    txtHelperMobile.text.length < 10)) {
+                (!txtHelperMobile.text.contains(RegExp('^[6-9]{1}')) || txtHelperMobile.text.length < 10)) {
               Utility.showToast("Please enter valid helper mobile number");
             } else if (txtEmail.text.isNotEmpty &&
                 !txtEmail.text.contains(RegExp(
                     r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'))) {
               Utility.showToast("Please enter valid email address");
-            } else if (!txtPAN.text
-                    .contains(RegExp("[A-Z]{5}[0-9]{4}[A-Z]{1}")) &&
-                txtPAN.text.isNotEmpty) {
+            } else if (!txtPAN.text.contains(RegExp("[A-Z]{5}[0-9]{4}[A-Z]{1}")) && txtPAN.text.isNotEmpty) {
               Utility.showToast("Please enter valid PAN number");
-            } else if (!txtAdhaar.text.contains(RegExp('^[2-9]{1}[0-9]{11}')) &&
-                txtAdhaar.text.isNotEmpty) {
+            } else if (!txtAdhaar.text.contains(RegExp('^[2-9]{1}[0-9]{11}')) && txtAdhaar.text.isNotEmpty) {
               Utility.showToast("Please enter valid aadhar number");
             } else {
               widget.form.ownerName = txtOwnerName.text.trim();
@@ -541,8 +590,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
               widget.form.aadhaarNumber = txtAdhaar.text.trim();
               widget.form.birthday = txtBirthday.text.trim();
               widget.form.anniversary = txtAnniversary.text.trim();
-              widget.form.ownerImage =
-                  ownerPhotoFile != null ? ownerPhotoFile!.path : "";
+              widget.form.ownerImage = ownerPhotoFile != null ? ownerPhotoFile!.path : "";
 
               Navigator.push(
                 context,
@@ -579,6 +627,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
   void checkMobileNumber() async {
     Map<String, dynamic> input = HashMap<String, dynamic>();
     input["mobile_number"] = txtPrimaryMobile.text;
+    input["enrollment_type_id"] = widget.form.enrollmentTypeId;
     CheckMobileResponse response = await repository.checkMobileNumber(input);
     if (await Network.isConnected()) {
       if (response.success) {
@@ -639,7 +688,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
     );
   }
 
-  Widget textWidget(currentText) {
+  Widget textWidget(String currentText) {
     return Flexible(
       child: Text(
         currentText,
@@ -669,8 +718,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
               activeColor: MColor.colorPrimary,
               fillColor: MaterialStateProperty.all(MColor.colorPrimary),
               onChanged: (value) {
-                commonBloc
-                    .add(CommonBlocWhatsAppRadioEvent(whatsAppRadioTag: value));
+                commonBloc.add(CommonBlocWhatsAppRadioEvent(whatsAppRadioTag: value));
               },
             ),
           ),
@@ -864,8 +912,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       onCallTimeSlotSelect: (callTimeSlot) {
                         if (callTimeSlot != null) {
                           callTimeSlotModel = callTimeSlot;
-                          txtCallTime.text =
-                              callTimeSlot.from + " to " + callTimeSlot.to;
+                          txtCallTime.text = callTimeSlot.from + " to " + callTimeSlot.to;
                           widget.form.callTimeSlot = callTimeSlotModel;
                         }
                       },

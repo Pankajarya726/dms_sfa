@@ -26,14 +26,18 @@ class UserLocationBloc extends Bloc<UserLocationEvents, UserLocationStates> {
       if (position != null) {
         double latitude = position.latitude!;
         double longitude = position.longitude!;
+        //22.83148761129894 75.79094411948394
         List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude!, position.longitude!);
+        // List<Placemark> placemarks = await placemarkFromCoordinates(22.670349226468897, 75.88507683629933);
         Placemark place = placemarks[0];
 
-        String locality = place.locality!;
-        String name = place.name!;
-        String postalCode = place.postalCode!;
-        String street = place.street!;
-        String subLocality = place.subLocality!;
+        debugPrint("place-->${place.toString()}");
+
+        String locality = place.locality ?? "";
+        String name = place.name ?? "";
+        String postalCode = place.postalCode ?? "";
+        String street = place.street ?? "";
+        String subLocality = place.subLocality ?? "";
         String address;
 
         // In some cases, street and name are same, to handle this situation we applied this condition
@@ -66,7 +70,7 @@ class UserLocationBloc extends Bloc<UserLocationEvents, UserLocationStates> {
         }
 
         yield GetUserLocationState(
-            currentAddress: address, latitude: latitude, longitude: longitude, pincode: postalCode, locality: locality);
+            currentAddress: address, latitude: latitude, longitude: longitude, pincode: postalCode, locality: locality, place: place);
       } else {
         yield UserLocationFailureState(failureMessage: "Click here to get current location!");
       }

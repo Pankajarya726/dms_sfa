@@ -1,6 +1,6 @@
 class Url {
-  static const String baseUrl = "http://dmsapp.tekzee.in/api/";
-  // static const String baseUrl = "https://sfa.vyapaar-vistaar.in/api/";
+  // static const String baseUrl = "http://dmsapp.tekzee.in/api/";
+  static const String baseUrl = "https://sfa.vyapaar-vistaar.in/api/";
   static const String validateAppVer = "validateAppVersion";
   static const String login = "login";
   static const String getQuotesAndImages = "getQuotesWithImage";
@@ -27,7 +27,8 @@ class Url {
   static const String getCallTimeSlot = "getCallTimeSlot";
   static const String getRetailerProducts = "getRetailerProducts";
   static const String getDistributorsBeat = "getDistibutorsBeat";
-  static const String retailerEnrollmentSave = "retailerEnrollmentSave";
+  // static const String retailerEnrollmentSave = "retailerEnrollmentSave";
+  static const String retailerEnrollmentSave = "retailerEnrollmentSaveV1";
   static const String verifyOtp = "verifyOtp";
   static const String getOrderBookingDay = "getOrderBooking_day";
   static const String searchRetailer = "searchRetailerV1";
@@ -36,11 +37,6 @@ class Url {
   static const String getBeatByOrderBookingDay = "getBeatByOrderBookingDayV1";
   static const String getRetailerOrderWise = "getRetailerOrderWiseV3";
   static const String getRoute = "getRoute";
-
-  // static const String getRetailerOrderWise = "getRetailerOrderWise";
-  // static const String getRetailerOrderWiseV1 = "getRetailerOrderWiseV1";
-  // static const String getRetailerOrderWiseV2 = "getRetailerOrderWiseV2";
-  // static const String getRetailerOrderWiseV4 = "getRetailerOrderWiseV4";
 
   static const String getRetailerInfo = "retailerInfo";
   static const String getProducts = "getAllProductBeatWise";
@@ -65,7 +61,7 @@ class Url {
   static const String taskEscalate = "taskEscalateAndResolve";
   static const String getTaskHistory = "getTaskHistory";
   static const String taskResolve = "taskResolve";
-  static const String checkMobileNumber = "checkMobile";
+  static const String checkMobileNumber = "checkMobileV1";
   static const String getFilterLocation = "getFilterLocationV1";
   static const String getCustomerType = "getCustomerType";
   static const String getFilterWiseCustomer = "getFilterWiseCustomer";

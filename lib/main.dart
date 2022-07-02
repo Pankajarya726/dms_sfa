@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:dms/database/database_helper.dart';
 import 'package:dms/navigation/navigation_service.dart';
@@ -51,17 +49,17 @@ final currencyFormat = NumberFormat.simpleCurrency(locale: "hi_IN", decimalDigit
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterDownloader.initialize(
-      debug: true, // optional: set to false to disable printing logs to console (default: true)
+      debug: false, // optional: set to false to disable printing logs to console (default: true)
       ignoreSsl: true // option: set to false to disable working with http links (default: false)
       );
 
-  dio.interceptors.add(LogInterceptor(
-      requestHeader: true,
-      requestBody: true,
-      responseBody: true,
-      logPrint: (text) {
-        log(text.toString());
-      }));
+  // dio.interceptors.add(LogInterceptor(
+  //     requestHeader: true,
+  //     requestBody: true,
+  //     responseBody: true,
+  //     logPrint: (text) {
+  //       log(text.toString());
+  //     }));
 
   runApp(const MyApp());
 }

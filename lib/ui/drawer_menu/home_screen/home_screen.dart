@@ -7,6 +7,7 @@ import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_events.dart';
 import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_states.dart';
 import 'package:dms/ui/my_plan/my_plan.dart';
 import 'package:dms/ui/order_booking/retailers_list/retailers_list_screen.dart';
+import 'package:dms/ui/order_summery/order_summery_screen.dart';
 import 'package:dms/ui/task/task/task_list_screen.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/string_const.dart';
@@ -76,6 +77,7 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
               ),
             ),
           ),
+          leadingWidth: 50,
           title: BlocBuilder<HomeScreenBloc, HomeScreenStates>(
             bloc: homeScreenBloc,
             builder: (context, state) {
@@ -210,14 +212,14 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
               BottomNavigationBarItem(
                 icon: Container(
                   padding: const EdgeInsets.symmetric(vertical: 1),
-                  child: SvgPicture.asset(
-                    "assets/performance.svg",
+                  child: Image.asset(
+                    "assets/dealer.png",
                     height: 25,
                     width: 25,
                     fit: BoxFit.contain,
                   ),
                 ),
-                label: "Performance",
+                label: "Dealer info",
               ),
               BottomNavigationBarItem(
                 icon: Container(
@@ -375,6 +377,13 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
         break;
       case 6:
         Utility.showToast(StringConst.comingSoon);
+        break;
+      case 7:
+        Utility.showToast(StringConst.comingSoon);
+        break;
+      case 8:
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const OrderSummeryScreen()));
+        // Utility.showToast(StringConst.comingSoon);
         break;
     }
   }

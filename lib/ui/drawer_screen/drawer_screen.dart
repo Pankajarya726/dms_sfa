@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dms/ui/drawer_menu/home_screen/home_screen.dart';
 import 'package:dms/ui/end_day/end_day_screen.dart';
 import 'package:dms/ui/login_screen/login_screen.dart';
-import 'package:dms/ui/order_summery/order_summery_screen.dart';
 import 'package:dms/ui/screen_after_login/screen_after_login.dart';
 import 'package:dms/ui/settings_screen/settings_screen.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_bloc.dart';
@@ -210,7 +209,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   fit: BoxFit.contain,
                 ),
               ),
-              ListTile(
+              /*  ListTile(
                 onTap: () {
                   // controller.close!.call();
                   controller.close!.call();
@@ -228,7 +227,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   width: 28,
                   fit: BoxFit.contain,
                 ),
-              ),
+              ),*/
               ListTile(
                 onTap: () {
                   // controller.close!.call();

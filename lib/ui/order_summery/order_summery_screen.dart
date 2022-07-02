@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:dms/main.dart';
@@ -19,7 +18,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -53,14 +51,9 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
   OrderSummeryBloc orderSummeryBloc = OrderSummeryBloc();
   final subject = BehaviorSubject<String>();
 
-  ReceivePort _port = ReceivePort();
-
   @override
   void initState() {
     getOrderSummery();
-    _bindBackgroundIsolate();
-
-    FlutterDownloader.registerCallback(downloadCallback);
 
     subject.stream.debounce((event) => TimerStream(event, const Duration(milliseconds: 200))).listen((query) {
       debugPrint("query--->$query");
@@ -71,78 +64,9 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
     super.initState();
   }
 
-  //
-  // @pragma('vm:entry-point')
-  // static void downloadCallback(String id, DownloadTaskStatus status, int progress) {
-  //   final SendPort send = IsolateNameServer.lookupPortByName('downloader_send_port');
-  //   send.send([id, status, progress]);
-  // }
-
   @override
   void dispose() {
-    _unbindBackgroundIsolate();
     super.dispose();
-  }
-
-  void _bindBackgroundIsolate() {
-    final isSuccess = IsolateNameServer.registerPortWithName(
-      _port.sendPort,
-      'downloader_send_port',
-    );
-    if (!isSuccess) {
-      _unbindBackgroundIsolate();
-      _bindBackgroundIsolate();
-      return;
-    }
-    _port.listen((dynamic data) {
-      final taskId = (data as List<dynamic>)[0] as String;
-      final status = data[1] as DownloadTaskStatus;
-      final progress = data[2] as int;
-
-      print(
-        'Callback on UI isolate: '
-        'task ($taskId) is in status ($status) and process ($progress)',
-      );
-
-      if (progress == 0) {
-        EasyLoading.show(status: "Downloading File...");
-      }
-      if (progress == -1) {
-        EasyLoading.dismiss();
-        Utility.showToast("Filed to download, Please try again...");
-      }
-
-      if (progress == 100) {
-        EasyLoading.dismiss();
-        _openDownloadedFile(taskId);
-      }
-
-      // if (_tasks != null && _tasks!.isNotEmpty) {
-      //   final task = _tasks!.firstWhere((task) => task.taskId == taskId);
-      //   setState(() {
-      //     task
-      //       ..status = status
-      //       ..progress = progress;
-      //   });
-      // }
-    });
-  }
-
-  void _unbindBackgroundIsolate() {
-    IsolateNameServer.removePortNameMapping('downloader_send_port');
-  }
-
-  static void downloadCallback(
-    String id,
-    DownloadTaskStatus status,
-    int progress,
-  ) {
-    print(
-      'Callback on background isolate: '
-      'task ($id) is in status ($status) and process ($progress)',
-    );
-
-    IsolateNameServer.lookupPortByName('downloader_send_port')?.send([id, status, progress]);
   }
 
   @override
@@ -636,107 +560,11 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
               print('DOWNLOAD ERROR: $error');
             });
         EasyLoading.dismiss();
-
-        // final taskId = await FlutterDownloader.enqueue(
-        //     url: url,
-        //     savedDir: savedDir.path,
-        //     showNotification: true,
-        //     // show download progress in status bar (for Android)
-        //     openFileFromNotification: true,
-        //     // click on notification to open downloaded file (for Android)
-        //     saveInPublicStorage: true,
-        //     fileName: name);
       }
     } else {
       Utility.showToast(Constants.internetAlert);
     }
   }
-
-  Future<bool> _openDownloadedFile(final task) {
-    if (task != null) {
-      return FlutterDownloader.open(taskId: task);
-    } else {
-      return Future.value(false);
-    }
-  }
-
-  /*void download(String url) async {
-    if (await Network.isConnected()) {
-      try {
-        if (await canLaunchUrl(Uri.parse(url))) {
-          // Isolate(controlPort);
-
-          await launchUrl(Uri.parse(url));
-        } else {
-          Utility.showToast("File not exist...");
-        }
-      } catch (exception) {
-        Utility.showToast(exception.toString());
-      }
-      // String url = url;
-
-      // String localPath = await Utility.findLocalPath() + Platform.pathSeparator + 'DMS-SFA';
-      final d = Directory('/storage/emulated/0/Download');
-
-      debugPrint("dddd->$d");
-      String localPath = d.path;
-
-      var savedDir = Directory(localPath);
-      bool hasExisted = await savedDir.exists();
-      if (!hasExisted) {
-        savedDir.create();
-      }
-
-      String name = url.split("/").last;
-
-      debugPrint("name--$name");
-
-      String savePath = localPath + "/" + name;
-      debugPrint("savePath--$savePath");
-
-      PermissionStatus status = await Permission.storage.request();
-
-      debugPrint("Status-->$status");
-
-      if (status == PermissionStatus.granted) {
-        try {
-          EasyLoading.show(status: "downloading file..");
-
-          await dio.downloadUri(Uri.parse(url), savePath).then((value) => debugPrint("value-->$value"));
-
-          // Response response = await dio.get(
-          //   url,
-          //   onReceiveProgress: (received, total) async {
-          //     if (total != -1) {
-          //       // await EasyLoading.showProgress((received / total * 100));
-          //       debugPrint((received / total * 100).toStringAsFixed(0) + "%");
-          //     }
-          //   },
-          //   options: Options(
-          //       responseType: ResponseType.bytes,
-          //       followRedirects: true,
-          //       validateStatus: (status) {
-          //         return status! < 500;
-          //       }),
-          // );
-          // debugPrint("resume response" + response.toString());
-          // debugPrint(response.headers.toString());
-          // File file = File(savePath);
-          // var raf = file.openSync(mode: FileMode.write);
-          // raf.writeFromSync(response.data);
-          // await raf.close();
-          EasyLoading.dismiss();
-          OpenFile.open(savePath);
-          debugPrint("file.path --> " + savePath);
-        } catch (e) {
-          EasyLoading.dismiss();
-          debugPrint("e --> " + e.toString());
-        }
-      }
-    } else {
-      Utility.showToast(Constants.internetAlert);
-    }
-  }*/
 
   void getOrderSummery() async {
     if (await Network.isConnected()) {
