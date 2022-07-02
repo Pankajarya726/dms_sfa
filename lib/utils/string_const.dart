@@ -73,6 +73,7 @@ class StringConst {
   static const address = "Address";
   static const landmark = "Landmark *";
   static const pincode = "Pincode";
+  static const pincodeMand = "Pincode*";
   static const primaryMobile = "Owner Primary Mobile Number";
   static const secondaryMobile = "Owner Secondary Mobile Number";
   static const helperMobile = "Helper Mobile Number";
@@ -165,4 +166,6 @@ class StringConst {
   static const noOrdersTaken = "No orders taken yet!";
   static const buNotOrdered = "No Order Yet";
   static const dataNotFound = "Data not found";
+  static const priceCategory = "Price Category";
+  static const selectPriceCategory = "Select Price Category*";
 }

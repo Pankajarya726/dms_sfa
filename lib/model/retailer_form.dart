@@ -35,6 +35,7 @@ class RetailerForm {
   String primaryMobile = "";
   String secondaryMobile = "";
   String helperMobile = "";
+  String priceCategory = "";
 
   CallTimeSlotModel? callTimeSlot;
   LanguageModel? primaryLang;
@@ -118,5 +119,6 @@ class RetailerForm {
         "sublocality": sublocality,
         "thoroughfare": thoroughfare,
         "subthoroughfare": subthoroughfare,
+        "price_category": priceCategory,
       };
 }

@@ -132,7 +132,12 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
                             return InkWell(
                               onTap: () {
                                 groupValue = snapshot.data![index].id;
-                                searchStream.add(snapshot.data!);
+                                if (groupValue != "") {
+                                  selected = selection.singleWhere((element) => element.id == groupValue);
+                                  widget.onSelect(selected!);
+                                }
+                                Navigator.pop(context);
+                                // searchStream.add(snapshot.data!);
                               },
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 10),
@@ -150,7 +155,12 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
                                         fillColor: MaterialStateProperty.all(MColor.colorPrimary),
                                         onChanged: (value) {
                                           groupValue = value!;
-                                          searchStream.add(snapshot.data!);
+                                          if (groupValue != "") {
+                                            selected = selection.singleWhere((element) => element.id == groupValue);
+                                            widget.onSelect(selected!);
+                                          }
+                                          Navigator.pop(context);
+                                          // searchStream.add(snapshot.data!);
                                         },
                                       ),
                                     ),
@@ -216,7 +226,6 @@ class _SelectionBottomSheetState extends State<SelectionBottomSheet> {
                     selected = selection.singleWhere((element) => element.id == groupValue);
                     widget.onSelect(selected!);
                   }
-
                   Navigator.pop(context);
                 },
                 style: ButtonStyle(

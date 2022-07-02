@@ -29,6 +29,7 @@ import '../../../main.dart';
 
 class OwnerInformation extends StatefulWidget {
   final RetailerForm form;
+
   const OwnerInformation({
     Key? key,
     required this.form,
@@ -313,7 +314,9 @@ class _OwnerInformationState extends State<OwnerInformation> {
                       const SizedBox(
                         width: 10,
                       ),
-                      textWidget(StringConst.callTimeSlotMand),
+                      widget.form.enrollmentTypeId == "1"
+                          ? textWidget(StringConst.callTimeSlot)
+                          : textWidget(StringConst.callTimeSlotMand),
                     ],
                   ),
                   SizedBox(
@@ -536,7 +539,7 @@ class _OwnerInformationState extends State<OwnerInformation> {
                 txtPrimaryMobile.text.isNotEmpty &&
                 txtPrimaryMobile.text == txtSecondaryMobile.text) {
               Utility.showToast("Primary and secondary mobile number should not be same");
-            } else if (txtCallTime.text.isEmpty) {
+            } else if (widget.form.enrollmentTypeId == "2" && txtCallTime.text.isEmpty) {
               Utility.showToast("Please select call time slot");
             } else if (txtPrimaryLang.text.isEmpty) {
               Utility.showToast("Please select language 1st");

@@ -19,6 +19,7 @@ import 'package:dms/ui/bottom_sheet_widget/select_distributor_bottom_sheet.dart'
 import 'package:dms/ui/bottom_sheet_widget/select_district_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_retailercategory_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/select_retailertype_bottom_sheet.dart';
+import 'package:dms/ui/bottom_sheet_widget/selection_bottom_sheet.dart';
 import 'package:dms/ui/common_bloc/common_bloc.dart';
 import 'package:dms/ui/common_bloc/common_bloc_events.dart';
 import 'package:dms/ui/common_bloc/common_bloc_states.dart';
@@ -32,6 +33,7 @@ import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -70,6 +72,7 @@ class _OutletInformationState extends State<OutletInformation> {
   TextEditingController txtLandmarkController = TextEditingController();
   TextEditingController txtSelectRetailerTypeController = TextEditingController();
   TextEditingController txtSelectRetailerCategoryController = TextEditingController();
+  TextEditingController txtPriceCategory = TextEditingController();
   TextEditingController txtGSTController = TextEditingController();
   List<EnrolmentTypeModel>? enrolmentTypeModel = [];
   RefreshController refreshController = RefreshController(initialRefresh: false);
@@ -108,6 +111,14 @@ class _OutletInformationState extends State<OutletInformation> {
   String sublocality = "";
   String thoroughfare = "";
   String subthoroughfare = "";
+
+  List<Selection> priceCategories = [
+    Selection(name: "PTR1", id: "1"),
+    Selection(name: "PTR2", id: "2"),
+    Selection(name: "PTR3", id: "3"),
+  ];
+
+  Selection selectedPriceCategory = Selection(id: "", name: "");
 
   @override
   void initState() {
@@ -414,19 +425,42 @@ class _OutletInformationState extends State<OutletInformation> {
                               const SizedBox(
                                 width: 10,
                               ),
-                              textWidget(StringConst.pincode),
+                              textWidget(StringConst.pincodeMand),
                             ],
                           ),
                           SizedBox(
                             key: globalKeyAddress,
                             height: 12.0,
                           ),
-                          FreezedEditText(
+                          TextFormField(
+                            autofocus: false,
                             controller: txtPincodeController,
-                            hint: StringConst.enterHere,
-                            onChange: (text) {
-                              txtPincodeController.text = text;
-                            },
+                            maxLength: 6,
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.67,
+                              color: MColor.backButton,
+                            ),
+                            decoration: InputDecoration(
+                              counterText: "",
+                              hintText: StringConst.enterHere,
+                              hintStyle: const TextStyle(
+                                color: MColor.backButton,
+                                letterSpacing: 0.67,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                              contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                              filled: true,
+                              fillColor: const Color(0xffF2F2F2),
+                              counter: Container(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
                           ),
                           sizedBoxWidget(12.0),
                         ],
@@ -503,6 +537,64 @@ class _OutletInformationState extends State<OutletInformation> {
                   ),
                   sizedBoxWidget(12.0),
                   textFields(txtSelectRetailerCategoryController, StringConst.selectHint),
+                  sizedBoxWidget(20.0),
+                  Row(
+                    children: [
+                      Image.asset("assets/avg.png"),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      textWidget(StringConst.selectPriceCategory),
+                    ],
+                  ),
+                  sizedBoxWidget(12.0),
+                  TextFormField(
+                    onTap: () async {
+                      FocusScope.of(context).unfocus();
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (context) => SelectionBottomSheet(
+                              selection: priceCategories,
+                              selected: selectedPriceCategory,
+                              onSelect: (Selection selected) {
+                                selectedPriceCategory = selected;
+                                txtPriceCategory.text = selected.name;
+                              },
+                              header: "Select Price Category"));
+                    },
+                    readOnly: true,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.67,
+                      color: MColor.backButton,
+                    ),
+                    controller: txtPriceCategory,
+                    decoration: InputDecoration(
+                      suffixIcon: const Padding(
+                        padding: EdgeInsets.only(right: 15),
+                        child: Icon(
+                          Icons.keyboard_arrow_down_outlined,
+                          color: MColor.backButton,
+                          size: 30,
+                        ),
+                      ),
+                      hintText: StringConst.priceCategory,
+                      hintStyle: const TextStyle(
+                        color: MColor.backButton,
+                        letterSpacing: 0.67,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                      contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                      filled: true,
+                      fillColor: const Color(0xffF2F2F2),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
                   sizedBoxWidget(20.0),
                   Row(
                     children: [
@@ -598,12 +690,18 @@ class _OutletInformationState extends State<OutletInformation> {
               Utility.showToast("Please enter outlet close time");
             } else if (txtLandmarkController.text.trim().isEmpty) {
               Utility.showToast("Please enter landmark");
+            } else if (txtPincodeController.text.trim().isEmpty) {
+              Utility.showToast("Please enter pincode");
+            } else if (txtPincodeController.text.trim().length != 6) {
+              Utility.showToast("Please enter valid pincode");
             } else if (existingRetailerRadio == "") {
               Utility.showToast("Please select existing retailer");
             } else if (txtSelectRetailerTypeController.text.isEmpty) {
               Utility.showToast("Please select retailer type");
             } else if (txtSelectRetailerCategoryController.text.isEmpty) {
               Utility.showToast("Please select retailer category");
+            } else if (txtPriceCategory.text.isEmpty) {
+              Utility.showToast("Please select price category");
             } else if (outletPhotoFile == null) {
               Utility.showToast("Please capture outlet photo");
             } else if (txtOutletNameController.text.length < 3) {
@@ -648,6 +746,7 @@ class _OutletInformationState extends State<OutletInformation> {
               form.subthoroughfare = subthoroughfare;
 
               form.isExistingRetailer = existingRetailerRadio == 1 ? "1" : "0";
+              form.priceCategory = txtPriceCategory.text.trim();
               form.retailerTypeId = retailerTypeId ?? "";
               form.retailerCategoryId = retailerCategoryName ?? "";
               form.isKro = isKRORadio == 3 ? "1" : "0";

@@ -1,6 +1,6 @@
 class Url {
-  static const String baseUrl = "http://dmsapp.tekzee.in/api/";
-  // static const String baseUrl = "https://sfa.vyapaar-vistaar.in/api/";
+  // static const String baseUrl = "http://dmsapp.tekzee.in/api/";
+  static const String baseUrl = "https://sfa.vyapaar-vistaar.in/api/";
   static const String validateAppVer = "validateAppVersion";
   static const String login = "login";
   static const String getQuotesAndImages = "getQuotesWithImage";

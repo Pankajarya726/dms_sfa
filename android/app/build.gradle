@@ -59,8 +59,8 @@ android {
         applicationId "com.vvapps.dms"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 10
-        versionName '1.9'
+        versionCode 11
+        versionName '2.0'
         signingConfig signingConfigs.release
     }
 
