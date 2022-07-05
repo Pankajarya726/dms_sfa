@@ -145,6 +145,8 @@ class Product {
     required this.variantId,
     required this.variantName,
     required this.variantDescription,
+    required this.longDescription,
+    required this.shortDescription,
     required this.mrp,
     required this.ptrPkgPrice,
     required this.ptrMoqPrice,
@@ -153,6 +155,8 @@ class Product {
     required this.totalAmount,
     required this.qtyPkg,
     required this.qtyMoq,
+    required this.ptrRatePerPcs,
+    required this.schemeRatePerPcs,
   });
 
   String id;
@@ -162,6 +166,8 @@ class Product {
   String variantId;
   String variantName;
   String variantDescription;
+  String longDescription;
+  String shortDescription;
   String mrp;
   String ptrPkgPrice;
   String ptrMoqPrice;
@@ -170,6 +176,8 @@ class Product {
   String totalAmount;
   String qtyPkg;
   String qtyMoq;
+  String ptrRatePerPcs;
+  String schemeRatePerPcs;
 
   factory Product.fromJson(String str) => Product.fromMap(json.decode(str));
 
@@ -181,12 +189,16 @@ class Product {
         variantId: json["variant_id"] == null ? "" : json["variant_id"].toString(),
         variantName: json["variant_name"] == null ? "" : json["variant_name"].toString(),
         variantDescription: json["variant_description"] == null ? "" : json["variant_description"].toString(),
+        longDescription: json["long_description"] == null ? "" : json["long_description"].toString(),
+        shortDescription: json["short_description"] == null ? "" : json["short_description"].toString(),
         mrp: json["mrp"] == null ? "0" : json["mrp"].toString(),
         ptrPkgPrice: json["ptr_pkg_price"] == null ? "0" : json["ptr_pkg_price"].toString(),
         ptrMoqPrice: json["ptr_moq_price"] == null ? "0" : json["ptr_moq_price"].toString(),
         schemePkgPrice: json["scheme_pkg_price"] == null ? "0" : json["scheme_pkg_price"].toString(),
         schemeMoqPrice: json["scheme_moq_price"] == null ? "0" : json["scheme_moq_price"].toString(),
         totalAmount: json["total_amount"] == null ? "0" : json["total_amount"].toString(),
+        ptrRatePerPcs: json["ptr_rate_per_pcs"] == null ? "0" : json["ptr_rate_per_pcs"].toString(),
+        schemeRatePerPcs: json["scheme_rate_per_pcs"] == null ? "0" : json["scheme_rate_per_pcs"].toString(),
         qtyPkg: json["qty_pkg"] == null ? "0" : json["qty_pkg"].toString(),
         qtyMoq: json["qty_moq"] == null ? "0" : json["qty_moq"].toString(),
       );

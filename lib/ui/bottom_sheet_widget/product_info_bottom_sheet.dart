@@ -35,6 +35,11 @@ class _ProductInfoBottomSheetState extends State<ProductInfoBottomSheet> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: BoxConstraints(
@@ -87,27 +92,24 @@ class _ProductInfoBottomSheetState extends State<ProductInfoBottomSheet> {
                     widget.products.weight,
                   ),
                   getText(
-                    textLabel[3],
+                    "Pcs Per ${widget.products.moqName}: ",
                     widget.products.pcsPerMoq,
                   ),
                   getText(
-                    textLabel[4],
+                    "Pcs Per ${widget.products.packagingName}: ",
                     widget.products.pcsPerPackaging,
                   ),
                   getText(
                     textLabel[5],
-                    currencyFormat
-                        .format(double.parse(widget.products.skuRatePerPiece)),
+                    currencyFormat.format(double.parse(widget.products.skuRatePerPiece)),
                   ),
                   getText(
                     textLabel[6],
-                    currencyFormat
-                        .format(double.parse(widget.products.skuRatePerMoq)),
+                    currencyFormat.format(double.parse(widget.products.skuRatePerMoq)),
                   ),
                   getText(
                     textLabel[7],
-                    currencyFormat
-                        .format(double.parse(widget.products.skuRatePerPkg)),
+                    currencyFormat.format(double.parse(widget.products.skuRatePerPkg)),
                   ),
                 ],
               ),
@@ -150,22 +152,14 @@ class _ProductInfoBottomSheetState extends State<ProductInfoBottomSheet> {
                             ),
                             getText(
                               textLabel2[0],
-                              widget.products.schemes.first.discountPercentage
-                                      .isNotEmpty
-                                  ? widget.products.schemes.first
-                                          .discountPercentage +
-                                      "%"
-                                  : currencyFormat.format(double.parse(widget
-                                      .products.schemes.first.discountAmount)),
+                              widget.products.schemes.first.discountPercentage.isNotEmpty
+                                  ? widget.products.schemes.first.discountPercentage + "%"
+                                  : currencyFormat.format(double.parse(widget.products.schemes.first.discountAmount)),
                             ),
+                            getText(textLabel2[1],
+                                DateFormat("dd-MM-yyyy").format(DateTime.parse(widget.products.schemes.first.fromDate))),
                             getText(
-                                textLabel2[1],
-                                DateFormat("dd-MM-yyyy").format(DateTime.parse(
-                                    widget.products.schemes.first.fromDate))),
-                            getText(
-                                textLabel2[2],
-                                DateFormat("dd-MM-yyyy").format(DateTime.parse(
-                                    widget.products.schemes.first.toDate))),
+                                textLabel2[2], DateFormat("dd-MM-yyyy").format(DateTime.parse(widget.products.schemes.first.toDate))),
                           ],
                         )
                       : const Text(

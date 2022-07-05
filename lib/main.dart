@@ -58,13 +58,13 @@ void main() async {
           true // option: set to false to disable working with http links (default: false)
       );
 
-  // dio.interceptors.add(LogInterceptor(
-  //     requestHeader: true,
-  //     requestBody: true,
-  //     responseBody: true,
-  //     logPrint: (text) {
-  //       log(text.toString());
-  //     }));
+  dio.interceptors.add(LogInterceptor(
+      requestHeader: true,
+      requestBody: true,
+      responseBody: true,
+      logPrint: (text) {
+        log(text.toString());
+      }));
 
   runApp(const MyApp());
 }
