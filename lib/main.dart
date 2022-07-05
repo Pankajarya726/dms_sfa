@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:dms/database/database_helper.dart';
 import 'package:dms/navigation/navigation_service.dart';
@@ -53,13 +55,13 @@ void main() async {
       ignoreSsl: true // option: set to false to disable working with http links (default: false)
       );
 
-  // dio.interceptors.add(LogInterceptor(
-  //     requestHeader: true,
-  //     requestBody: true,
-  //     responseBody: true,
-  //     logPrint: (text) {
-  //       log(text.toString());
-  //     }));
+  dio.interceptors.add(LogInterceptor(
+      requestHeader: true,
+      requestBody: true,
+      responseBody: true,
+      logPrint: (text) {
+        log(text.toString());
+      }));
 
   runApp(const MyApp());
 }
