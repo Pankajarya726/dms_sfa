@@ -7,6 +7,7 @@ import 'package:dms/provider/repository.dart';
 import 'package:dms/provider/url.dart';
 import 'package:dms/ui/splash_screen/splash_screen.dart';
 import 'package:dms/utils/colors.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -51,17 +52,19 @@ final currencyFormat = NumberFormat.simpleCurrency(locale: "hi_IN", decimalDigit
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterDownloader.initialize(
-      debug: false, // optional: set to false to disable printing logs to console (default: true)
+      debug: kDebugMode, // optional: set to false to disable printing logs to console (default: true)
       ignoreSsl: true // option: set to false to disable working with http links (default: false)
       );
 
-  dio.interceptors.add(LogInterceptor(
-      requestHeader: true,
-      requestBody: true,
-      responseBody: true,
-      logPrint: (text) {
-        log(text.toString());
-      }));
+  if (kDebugMode) {
+    dio.interceptors.add(LogInterceptor(
+        requestHeader: true,
+        requestBody: true,
+        responseBody: true,
+        logPrint: (text) {
+          log(text.toString());
+        }));
+  }
 
   runApp(const MyApp());
 }

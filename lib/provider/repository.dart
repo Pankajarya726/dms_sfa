@@ -27,6 +27,7 @@ import 'package:dms/ui/drawer_menu/home_screen/model/get_menus_response.dart';
 import 'package:dms/ui/drawer_menu/home_screen/model/user_details_response.dart';
 import 'package:dms/ui/edit_profile/model/update_profile_response.dart';
 import 'package:dms/ui/login_screen/login_model/login_response.dart';
+import 'package:dms/ui/my_performance/model/get_my_performance_response.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_brand_category_resonse.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_filter_mrp_response.dart';
 import 'package:dms/ui/order_booking/order_booking_list/model/get_products_response.dart';
@@ -50,6 +51,7 @@ import 'package:dms/ui/task/task/model/get_retailers_task_response.dart';
 import 'package:dms/ui/task/task_details/model/retailer_details_response.dart';
 import 'package:dms/ui/task/task_details/model/task_escalate_response.dart';
 import 'package:dms/ui/task/task_history/model/task_history_respone.dart';
+import 'package:dms/ui/team_performance/model/get_team_performance_response.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
@@ -85,8 +87,8 @@ class ApiRepository {
     }
   }
 
-  Future<LoginResponse> login(String mobileNumber, String password) async {
-    Map<String, dynamic> data = {"mobile_number": mobileNumber, "password": password};
+  Future<LoginResponse> login(String mobileNumber, String password, String deviceId) async {
+    Map<String, dynamic> data = {"mobile_number": mobileNumber, "password": password, "imei_number": deviceId};
 
     try {
       Response response = await dio.post(
@@ -1453,6 +1455,48 @@ class ApiRepository {
       }
       debugPrint("Exception occurred: $message stackTrace: $stacktrace");
       return GetRetailersResponse(
+        success: false,
+        message: message,
+      );
+    }
+  }
+
+  Future<GetMyPerformanceResponse> getMyPerformance(Map<String, dynamic> input) async {
+    try {
+      Response response = await dio.post(Url.myPerformance, data: input, cancelToken: cancelToken);
+      GetMyPerformanceResponse baseResponse = GetMyPerformanceResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = StringConst.somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return GetMyPerformanceResponse(
+        success: false,
+        message: message,
+      );
+    }
+  }
+
+  Future<GetTeamPerformanceResponse> getTeamPerformance(Map<String, dynamic> input) async {
+    try {
+      Response response = await dio.post(Url.teamPerformance, data: input, cancelToken: cancelToken);
+      GetTeamPerformanceResponse baseResponse = GetTeamPerformanceResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = StringConst.somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return GetTeamPerformanceResponse(
         success: false,
         message: message,
       );

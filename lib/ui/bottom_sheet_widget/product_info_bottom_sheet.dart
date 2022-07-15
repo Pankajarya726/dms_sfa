@@ -104,11 +104,11 @@ class _ProductInfoBottomSheetState extends State<ProductInfoBottomSheet> {
                     currencyFormat.format(double.parse(widget.products.skuRatePerPiece)),
                   ),
                   getText(
-                    textLabel[6],
+                    "PTR Per ${widget.products.moqName}: ",
                     currencyFormat.format(double.parse(widget.products.skuRatePerMoq)),
                   ),
                   getText(
-                    textLabel[7],
+                    "PTR Per ${widget.products.packagingName}: ",
                     currencyFormat.format(double.parse(widget.products.skuRatePerPkg)),
                   ),
                 ],

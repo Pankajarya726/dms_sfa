@@ -8,9 +8,10 @@ class LoginEvents extends Equatable {
 class LoginEvent extends LoginEvents {
   final String mobileNumber;
   final String password;
-  LoginEvent({required this.mobileNumber, required this.password});
+  final String deviceId;
+  LoginEvent({required this.mobileNumber, required this.password, required this.deviceId});
   @override
-  List<Object?> get props => [mobileNumber, password];
+  List<Object?> get props => [mobileNumber, password, deviceId];
 }
 
 class GetUserEvent extends LoginEvents {

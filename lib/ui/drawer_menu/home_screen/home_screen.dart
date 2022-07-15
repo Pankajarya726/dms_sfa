@@ -5,11 +5,14 @@ import 'package:dms/ui/add_store/outlet_information/outlet_information.dart';
 import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_bloc.dart';
 import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_events.dart';
 import 'package:dms/ui/drawer_menu/home_screen/bloc/home_screen_states.dart';
+import 'package:dms/ui/my_performance/my_performance_screen.dart';
 import 'package:dms/ui/my_plan/my_plan.dart';
 import 'package:dms/ui/order_booking/retailers_list/retailers_list_screen.dart';
 import 'package:dms/ui/order_summery/order_summery_screen.dart';
 import 'package:dms/ui/task/task/task_list_screen.dart';
+import 'package:dms/ui/team_performance/team_performance_screen.dart';
 import 'package:dms/utils/constants.dart';
+import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
@@ -311,7 +314,7 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
                           borderRadius: BorderRadius.circular(15),
                         ),
                         onTap: () {
-                          navigateToHomeItems(menu[index].id);
+                          navigateToHomeItems(menu[index].id, menu[index].menuName);
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10),
@@ -355,10 +358,12 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
     );
   }
 
-  void navigateToHomeItems(index) {
+  void navigateToHomeItems(index, String menuName) async {
     switch (index) {
       case 1:
-        Utility.showToast(StringConst.comingSoon);
+        String userId = await Utility.getStringPreference(SharedPreference.userId);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => TeamPerformanceScreen(title: menuName, userId: userId)));
+        // Utility.showToast(StringConst.comingSoon);
         break;
       case 2:
         Utility.showToast(StringConst.comingSoon);
@@ -379,7 +384,9 @@ class _HomeScreenState extends State<HomeScreen> implements ProfileUpdateListene
         Utility.showToast(StringConst.comingSoon);
         break;
       case 7:
-        Utility.showToast(StringConst.comingSoon);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => MyPerformanceScreen(title: menuName)));
+
+        // Utility.showToast(StringConst.comingSoon);
         break;
       case 8:
         Navigator.push(context, MaterialPageRoute(builder: (context) => const OrderSummeryScreen()));

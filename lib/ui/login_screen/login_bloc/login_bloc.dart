@@ -26,7 +26,7 @@ class LoginBloc extends Bloc<LoginEvents, LoginState> {
   Stream<LoginState> login(LoginEvent event) async* {
     if (await Network.isConnected()) {
       EasyLoading.show();
-      LoginResponse response = await repository.login(event.mobileNumber, event.password);
+      LoginResponse response = await repository.login(event.mobileNumber, event.password, event.deviceId);
 
       if (response.success) {
         SharedPreference.setStringPreference(SharedPreference.accessToken, response.data!.accessToken);

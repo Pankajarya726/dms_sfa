@@ -36,7 +36,7 @@ class _OrderHistoryBottomSheetState extends State<OrderHistoryBottomSheet> {
           ? Stack(
               children: [
                 SingleChildScrollView(
-                  padding: const EdgeInsets.only(bottom: 70),
+                  padding: const EdgeInsets.only(bottom: 80),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,7 +200,7 @@ class OrderHistoryWidget extends StatelessWidget {
                   ),
                   children: <TextSpan>[
                     TextSpan(
-                      text: product.categoryName,
+                      text: product.brandName,
                       style: const TextStyle(
                         color: Colors.black,
                         fontSize: 16,
@@ -212,7 +212,7 @@ class OrderHistoryWidget extends StatelessWidget {
               ),
               RichText(
                 text: TextSpan(
-                  text: "MRP: ",
+                  text: "PTR: ",
                   style: const TextStyle(
                     color: Color(0xff555555),
                     fontSize: 16,
@@ -220,7 +220,16 @@ class OrderHistoryWidget extends StatelessWidget {
                   ),
                   children: <TextSpan>[
                     TextSpan(
-                      text: product.mrp,
+                      text: product.ptrRatePerPcs,
+                      style: TextStyle(
+                        color: double.parse(product.schemeRatePerPcs) == 0 ? Colors.black : const Color(0xff555555),
+                        fontSize: 16,
+                        letterSpacing: 0.67,
+                        decoration: double.parse(product.schemeRatePerPcs) == 0 ? TextDecoration.none : TextDecoration.lineThrough,
+                      ),
+                    ),
+                    TextSpan(
+                      text: double.parse(product.schemeRatePerPcs) == 0 ? "" : " " + product.schemeRatePerPcs,
                       style: const TextStyle(
                         color: Colors.black,
                         fontSize: 16,

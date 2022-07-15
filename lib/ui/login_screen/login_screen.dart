@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/ui/login_screen/login_bloc/login_bloc.dart';
 import 'package:dms/ui/login_screen/login_bloc/login_event.dart';
@@ -22,12 +24,33 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  static const platform = MethodChannel('com.vvapps.sfa/imei');
   final mobileNumber = TextEditingController();
   final password = TextEditingController();
   String startMyDay = "";
 
   LoginBloc loginBloc = LoginBloc();
   GlobalKey globalKey = GlobalKey();
+  String _deviceImei = "";
+  @override
+  void initState() {
+    super.initState();
+    getImei();
+  }
+
+  Future<void> getImei() async {
+    try {
+      final String result = await platform.invokeMethod('getImeiNumber');
+      _deviceImei = result;
+      log("result--->$result");
+    } catch (e) {
+      print(e);
+    }
+
+    if (!mounted) return;
+
+    print(_deviceImei);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -202,7 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: ElevatedButton(
                           onPressed: () {
                             Utility.hideKeyboard();
-                            sendLoginData(context, mobileNumber.text.toString(), password.text.toString());
+                            sendLoginData(context, mobileNumber.text.toString(), password.text.toString(), _deviceImei);
                             // Navigator.of(context).pushReplacement(
                             //   MaterialPageRoute(
                             //     builder: (BuildContext context) =>
@@ -241,11 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  sendLoginData(
-    BuildContext context,
-    String mobileNumber,
-    String password,
-  ) {
+  sendLoginData(BuildContext context, String mobileNumber, String password, String imei) {
     RegExp regxMobile = RegExp(r'(^[0-9]{10}$)');
     // RegExp regxPassword =
     //     RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
@@ -263,7 +282,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // }
     else {
       BlocProvider.of<LoginBloc>(context).add(
-        LoginEvent(mobileNumber: mobileNumber, password: password),
+        LoginEvent(mobileNumber: mobileNumber, password: password, deviceId: imei),
       );
     }
   }

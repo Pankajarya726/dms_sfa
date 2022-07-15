@@ -3,6 +3,7 @@ class Url {
   // static const String baseUrl = "https://sfa.vyapaar-vistaar.in/api/";
   static const String validateAppVer = "validateAppVersion";
   static const String login = "login";
+  // static const String login = "loginV1";
   static const String getQuotesAndImages = "getQuotesWithImage";
   static const String getMenus = "getApiMenus";
   static const String editProfile = "profileEdit";
@@ -66,4 +67,6 @@ class Url {
   static const String getCustomerType = "getCustomerType";
   static const String getFilterWiseCustomer = "getFilterWiseCustomer";
   static const String getOrderSummary = "getOrderSummary";
+  static const String myPerformance = "myperformance";
+  static const String teamPerformance = "teamperformance";
 }

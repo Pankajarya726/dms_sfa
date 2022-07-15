@@ -157,6 +157,8 @@ class Product {
     required this.qtyMoq,
     required this.ptrRatePerPcs,
     required this.schemeRatePerPcs,
+    required this.brandId,
+    required this.brandName,
   });
 
   String id;
@@ -178,6 +180,8 @@ class Product {
   String qtyMoq;
   String ptrRatePerPcs;
   String schemeRatePerPcs;
+  String brandId;
+  String brandName;
 
   factory Product.fromJson(String str) => Product.fromMap(json.decode(str));
 
@@ -201,5 +205,7 @@ class Product {
         schemeRatePerPcs: json["scheme_rate_per_pcs"] == null ? "0" : json["scheme_rate_per_pcs"].toString(),
         qtyPkg: json["qty_pkg"] == null ? "0" : json["qty_pkg"].toString(),
         qtyMoq: json["qty_moq"] == null ? "0" : json["qty_moq"].toString(),
+        brandId: json["brand_id"] == null ? "0" : json["brand_id"].toString(),
+        brandName: json["brand_name"] == null ? "" : json["brand_name"].toString(),
       );
 }
