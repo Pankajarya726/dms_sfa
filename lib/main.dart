@@ -10,7 +10,6 @@ import 'package:dms/utils/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -51,10 +50,6 @@ final currencyFormat = NumberFormat.simpleCurrency(locale: "hi_IN", decimalDigit
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await FlutterDownloader.initialize(
-      debug: kDebugMode, // optional: set to false to disable printing logs to console (default: true)
-      ignoreSsl: true // option: set to false to disable working with http links (default: false)
-      );
 
   if (kDebugMode) {
     dio.interceptors.add(LogInterceptor(

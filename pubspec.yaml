@@ -83,7 +83,6 @@ dependencies:
   flutter_image_compress:
   open_file: ^3.2.1
   share_plus: ^4.0.9
-  flutter_downloader:
   flutter_file_downloader:
   device_info_plus:
   percent_indicator:

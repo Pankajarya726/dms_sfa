@@ -14,9 +14,14 @@ class MyPerformanceBloc extends Bloc<MyPerformanceEvent, MyPerformanceState> {
   @override
   Stream<MyPerformanceState> mapEventToState(MyPerformanceEvent event) async* {
     if (event is GetPerformanceEvent) {
-      yield MyPerformanceLoadingState();
+      yield PerformanceLoadingState();
 
       yield* getMyPerformance(event);
+    }
+
+    if (event is MyPerformanceTabChangeEvent) {
+      yield MyPerformanceLoadingState();
+      yield MyPerformanceTabChangeState(index: event.index);
     }
   }
 

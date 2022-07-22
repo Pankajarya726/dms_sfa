@@ -18,6 +18,10 @@ class TeamPerformanceBloc extends Bloc<TeamPerformanceEvent, TeamPerformanceStat
 
       yield* getTeamPerformance(event);
     }
+    if (event is TeamPerformanceTabChangeEvent) {
+      yield TeamPerformanceLoadingState();
+      yield TeamPerformanceTabChangeState(index: event.index);
+    }
   }
 
   Stream<TeamPerformanceState> getTeamPerformance(GetPerformanceEvent event) async* {

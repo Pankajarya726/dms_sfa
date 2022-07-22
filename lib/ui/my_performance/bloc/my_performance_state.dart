@@ -19,9 +19,22 @@ class GetMyPerformanceState extends MyPerformanceState {
 
 class MyPerformanceLoadingState extends MyPerformanceState {}
 
+class PerformanceLoadingState extends MyPerformanceState {}
+
 class GetMyPerformanceFailureState extends MyPerformanceState {
   final String msg;
+
   GetMyPerformanceFailureState({required this.msg});
+
   @override
   List<Object?> get props => [msg];
+}
+
+class MyPerformanceTabChangeState extends MyPerformanceState {
+  final int index;
+
+  MyPerformanceTabChangeState({required this.index});
+
+  @override
+  List<Object?> get props => [index];
 }

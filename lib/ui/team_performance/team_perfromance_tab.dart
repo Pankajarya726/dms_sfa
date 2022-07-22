@@ -1,3 +1,4 @@
+import 'package:dms/ui/my_performance/perfromance_tab.dart';
 import 'package:dms/ui/team_performance/bloc/team_performance_event.dart';
 import 'package:dms/ui/team_performance/model/get_team_performance_response.dart';
 import 'package:dms/ui/team_performance/team_performance_screen.dart';
@@ -17,28 +18,47 @@ class TeamPerformanceTab extends StatefulWidget {
   final TeamPerformanceBloc bloc;
   final String title;
   final String userId;
-
+  final DateTime dateTime;
+  final Function(OnDateChangeListener listener) init;
   const TeamPerformanceTab(
-      {Key? key, required this.index, required this.bloc, required this.type, required this.userId, this.title = "Team Report"})
+      {Key? key,
+      required this.index,
+      required this.bloc,
+      required this.type,
+      required this.userId,
+      this.title = "Team Report",
+      required this.init,
+      required this.dateTime})
       : super(key: key);
 
   @override
   State<TeamPerformanceTab> createState() => _TeamPerformanceTabState();
 }
 
-class _TeamPerformanceTabState extends State<TeamPerformanceTab> with AutomaticKeepAliveClientMixin {
+class _TeamPerformanceTabState extends State<TeamPerformanceTab> with OnDateChangeListener {
   DateTime dateTime = DateTime.now();
   TeamPerformance? performance;
 
   @override
   void initState() {
+    widget.init(this);
+    dateTime = widget.dateTime;
     widget.bloc.add(GetPerformanceEvent(date: DateFormat("yyyy-MM-dd").format(dateTime), type: widget.type, userId: widget.userId));
     super.initState();
   }
 
   @override
+  void didUpdateWidget(covariant TeamPerformanceTab oldWidget) {
+    debugPrint("didUpdateWidget--->$dateTime");
+    debugPrint("didUpdateWidget--->${widget.index}");
+    debugPrint("didUpdateWidget--->${oldWidget.index}");
+    dateTime = widget.dateTime;
+    widget.bloc.add(GetPerformanceEvent(date: DateFormat("yyyy-MM-dd").format(dateTime), type: widget.type, userId: widget.userId));
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // super.build(context);
     return BlocConsumer<TeamPerformanceBloc, TeamPerformanceState>(
       bloc: widget.bloc,
       listener: (context, state) {},
@@ -270,12 +290,12 @@ class _TeamPerformanceTabState extends State<TeamPerformanceTab> with AutomaticK
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        const Text(
-                          "Present Days",
-                          style: TextStyle(color: MColor.inactiveTextColor, fontSize: 18, fontWeight: FontWeight.bold),
+                        Text(
+                          widget.index == 0 ? "Present Day" : "Present Days",
+                          style: const TextStyle(color: MColor.inactiveTextColor, fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          performance!.presentDays,
+                          widget.index == 0 ? performance!.presentDays : performance!.presentDays + "%",
                           style: const TextStyle(color: MColor.colorSecondary, fontSize: 20, fontWeight: FontWeight.bold),
                         )
                       ],
@@ -408,5 +428,8 @@ class _TeamPerformanceTabState extends State<TeamPerformanceTab> with AutomaticK
   }
 
   @override
-  bool get wantKeepAlive => false;
+  void onDateSelect(DateTime date) {
+    dateTime = date;
+    widget.bloc.add(GetPerformanceEvent(date: DateFormat("yyyy-MM-dd").format(dateTime), type: widget.type, userId: widget.userId));
+  }
 }

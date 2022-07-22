@@ -11,26 +11,20 @@ class GetPendingTaskResponse {
   String message;
   List<PendingTaskModal>? data;
 
-  factory GetPendingTaskResponse.fromJson(String str) =>
-      GetPendingTaskResponse.fromMap(json.decode(str));
+  factory GetPendingTaskResponse.fromJson(String str) => GetPendingTaskResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory GetPendingTaskResponse.fromMap(Map<String, dynamic> json) =>
-      GetPendingTaskResponse(
+  factory GetPendingTaskResponse.fromMap(Map<String, dynamic> json) => GetPendingTaskResponse(
         success: json["success"] ?? false,
         message: json["message"] ?? "",
-        data: json["data"] == null
-            ? []
-            : List<PendingTaskModal>.from(
-                json["data"].map((x) => PendingTaskModal.fromMap(x))),
+        data: json["data"] == null ? [] : List<PendingTaskModal>.from(json["data"].map((x) => PendingTaskModal.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
         "success": success,
         "message": message,
-        "data":
-            data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
+        "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
       };
 }
 
@@ -42,6 +36,7 @@ class PendingTaskModal {
     required this.taskType,
     required this.escalationRemark,
     required this.taskRemark,
+    required this.action,
     required this.escalationTo,
     required this.escalationTag,
     required this.buId,
@@ -53,37 +48,29 @@ class PendingTaskModal {
   String taskType;
   String escalationRemark;
   String taskRemark;
+  String action;
   List<EscalationTo> escalationTo;
   List<EscalationTag> escalationTag;
   List<BuId> buId;
 
-  factory PendingTaskModal.fromJson(String str) =>
-      PendingTaskModal.fromMap(json.decode(str));
+  factory PendingTaskModal.fromJson(String str) => PendingTaskModal.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory PendingTaskModal.fromMap(Map<String, dynamic> json) =>
-      PendingTaskModal(
+  factory PendingTaskModal.fromMap(Map<String, dynamic> json) => PendingTaskModal(
         id: json["id"] == null ? "" : json["id"].toString(),
         taskCode: json["task_code"] == null ? "" : json["task_code"].toString(),
         taskDate: json["task_date"] == null ? "" : json["task_date"].toString(),
         taskType: json["task_type"] == null ? "" : json["task_type"].toString(),
-        escalationRemark: json["escalation_remark"] == null
-            ? ""
-            : json["escalation_remark"].toString(),
-        taskRemark:
-            json["task_remark"] == null ? "" : json["task_remark"].toString(),
-        escalationTo: json["escalation_to"] == null
-            ? []
-            : List<EscalationTo>.from(
-                json["escalation_to"].map((x) => EscalationTo.fromMap(x))),
+        action: json["action"] == null ? "0" : json["action"].toString(),
+        escalationRemark: json["escalation_remark"] == null ? "" : json["escalation_remark"].toString(),
+        taskRemark: json["task_remark"] == null ? "" : json["task_remark"].toString(),
+        escalationTo:
+            json["escalation_to"] == null ? [] : List<EscalationTo>.from(json["escalation_to"].map((x) => EscalationTo.fromMap(x))),
         escalationTag: json["escalation_tag"] == null
             ? []
-            : List<EscalationTag>.from(
-                json["escalation_tag"].map((x) => EscalationTag.fromMap(x))),
-        buId: json["bu_id"] == null
-            ? []
-            : List<BuId>.from(json["bu_id"].map((x) => BuId.fromMap(x))),
+            : List<EscalationTag>.from(json["escalation_tag"].map((x) => EscalationTag.fromMap(x))),
+        buId: json["bu_id"] == null ? [] : List<BuId>.from(json["bu_id"].map((x) => BuId.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -93,14 +80,10 @@ class PendingTaskModal {
         "task_type": taskType,
         "escalation_remark": escalationRemark,
         "task_remark": taskRemark,
-        "escalation_to": escalationTo == null
-            ? []
-            : List<dynamic>.from(escalationTo.map((x) => x.toMap())),
-        "escalation_tag": escalationTag == null
-            ? []
-            : List<dynamic>.from(escalationTag.map((x) => x.toMap())),
-        "bu_id":
-            buId == null ? [] : List<dynamic>.from(buId.map((x) => x.toMap())),
+        "action": action,
+        "escalation_to": escalationTo == null ? [] : List<dynamic>.from(escalationTo.map((x) => x.toMap())),
+        "escalation_tag": escalationTag == null ? [] : List<dynamic>.from(escalationTag.map((x) => x.toMap())),
+        "bu_id": buId == null ? [] : List<dynamic>.from(buId.map((x) => x.toMap())),
       };
 }
 
@@ -137,8 +120,7 @@ class EscalationTag {
   String id;
   String tagName;
 
-  factory EscalationTag.fromJson(String str) =>
-      EscalationTag.fromMap(json.decode(str));
+  factory EscalationTag.fromJson(String str) => EscalationTag.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
@@ -162,8 +144,7 @@ class EscalationTo {
   String id;
   String name;
 
-  factory EscalationTo.fromJson(String str) =>
-      EscalationTo.fromMap(json.decode(str));
+  factory EscalationTo.fromJson(String str) => EscalationTo.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
@@ -177,8 +158,6 @@ class EscalationTo {
         "name": name,
       };
 }
-
-
 
 // import 'dart:convert';
 

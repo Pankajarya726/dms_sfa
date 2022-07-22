@@ -25,3 +25,12 @@ class GetTeamPerformanceFailureState extends TeamPerformanceState {
   @override
   List<Object?> get props => [msg];
 }
+
+class TeamPerformanceTabChangeState extends TeamPerformanceState {
+  final int index;
+
+  TeamPerformanceTabChangeState({required this.index});
+
+  @override
+  List<Object?> get props => [index];
+}

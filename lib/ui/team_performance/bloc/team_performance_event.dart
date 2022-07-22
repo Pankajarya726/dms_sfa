@@ -15,3 +15,12 @@ class GetPerformanceEvent extends TeamPerformanceEvent {
   @override
   List<Object?> get props => [type, date, userId];
 }
+
+class TeamPerformanceTabChangeEvent extends TeamPerformanceEvent {
+  final int index;
+
+  TeamPerformanceTabChangeEvent({required this.index});
+
+  @override
+  List<Object?> get props => [index];
+}

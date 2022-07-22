@@ -14,3 +14,12 @@ class GetPerformanceEvent extends MyPerformanceEvent {
   @override
   List<Object?> get props => [type, date];
 }
+
+class MyPerformanceTabChangeEvent extends MyPerformanceEvent {
+  final int index;
+
+  MyPerformanceTabChangeEvent({required this.index});
+
+  @override
+  List<Object?> get props => [index];
+}

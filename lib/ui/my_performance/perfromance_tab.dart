@@ -8,35 +8,58 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
+abstract class OnDateChangeListener {
+  void onDateSelect(DateTime date);
+}
+
 class PerformanceTab extends StatefulWidget {
   final int index;
   final String type;
-  final MyPerformanceBloc bloc;
 
-  const PerformanceTab({Key? key, required this.index, required this.bloc, required this.type}) : super(key: key);
+  final MyPerformanceBloc bloc;
+  final DateTime dateTime;
+  final Function(OnDateChangeListener listener) init;
+
+  const PerformanceTab(
+      {Key? key, required this.index, required this.bloc, required this.type, required this.init, required this.dateTime})
+      : super(key: key);
 
   @override
   State<PerformanceTab> createState() => _PerformanceTabState();
 }
 
-class _PerformanceTabState extends State<PerformanceTab> with AutomaticKeepAliveClientMixin {
+class _PerformanceTabState extends State<PerformanceTab> with OnDateChangeListener {
   DateTime dateTime = DateTime.now();
   MyPerformance? performance;
 
   @override
   void initState() {
+    dateTime = widget.dateTime;
+    widget.init(this);
+
+    debugPrint("dateTime--->$dateTime");
     widget.bloc.add(GetPerformanceEvent(date: DateFormat("yyyy-MM-dd").format(dateTime), type: widget.type));
+
     super.initState();
   }
 
   @override
+  void didUpdateWidget(covariant PerformanceTab oldWidget) {
+    debugPrint("didUpdateWidget--->$dateTime");
+    debugPrint("didUpdateWidget--->${widget.index}");
+    debugPrint("didUpdateWidget--->${oldWidget.index}");
+    dateTime = widget.dateTime;
+    widget.bloc.add(GetPerformanceEvent(date: DateFormat("yyyy-MM-dd").format(dateTime), type: widget.type));
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    super.build(context);
     return BlocConsumer<MyPerformanceBloc, MyPerformanceState>(
       bloc: widget.bloc,
       listener: (context, state) {},
       builder: (context, state) {
-        if (state is MyPerformanceLoadingState) {
+        if (state is PerformanceLoadingState) {
           return const Center(
             child: CircularProgressIndicator(),
           );
@@ -96,7 +119,7 @@ class _PerformanceTabState extends State<PerformanceTab> with AutomaticKeepAlive
                       circularStrokeCap: CircularStrokeCap.butt,
                       radius: (MediaQuery.of(context).size.width / 2 - 30) / 2,
                       lineWidth: 18.0,
-                      percent: double.parse(performance!.conversion) / 100,
+                      percent: (double.parse(performance!.conversion) / 100) > 1.0 ? 1 : (double.parse(performance!.conversion) / 100),
                       backgroundColor: Colors.grey.shade200,
                       backgroundWidth: 16,
 
@@ -253,12 +276,12 @@ class _PerformanceTabState extends State<PerformanceTab> with AutomaticKeepAlive
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        const Text(
-                          "Present Days",
-                          style: TextStyle(color: MColor.inactiveTextColor, fontSize: 18, fontWeight: FontWeight.bold),
+                        Text(
+                          widget.index == 0 ? "Present Day" : "Present Days",
+                          style: const TextStyle(color: MColor.inactiveTextColor, fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          performance!.presentDays,
+                          widget.index == 0 ? performance!.presentDays : performance!.presentDays + "%",
                           style: const TextStyle(color: MColor.colorSecondary, fontSize: 20, fontWeight: FontWeight.bold),
                         )
                       ],
@@ -340,5 +363,8 @@ class _PerformanceTabState extends State<PerformanceTab> with AutomaticKeepAlive
   }
 
   @override
-  bool get wantKeepAlive => false;
+  void onDateSelect(DateTime date) {
+    dateTime = date;
+    widget.bloc.add(GetPerformanceEvent(date: DateFormat("yyyy-MM-dd").format(dateTime), type: widget.type));
+  }
 }

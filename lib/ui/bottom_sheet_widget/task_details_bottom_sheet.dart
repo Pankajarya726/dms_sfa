@@ -1,4 +1,5 @@
 import 'dart:collection';
+
 import 'package:dms/ui/task/task_details/bloc/task_details_bloc.dart';
 import 'package:dms/ui/task/task_details/bloc/task_details_events.dart';
 import 'package:dms/ui/task/task_details/bloc/task_details_states.dart';
@@ -38,7 +39,8 @@ class _TaskDetailsBottomSheetState extends State<TaskDetailsBottomSheet> {
       escalationRemark: "",
       taskRemark: "",
       escalationTo: [],
-      buId: []);
+      buId: [],
+      action: '0');
   TaskDetailsBloc taskDetailsBloc = TaskDetailsBloc();
 
   @override
@@ -128,8 +130,7 @@ class _TaskDetailsBottomSheetState extends State<TaskDetailsBottomSheet> {
                         spacing: 10,
                         itemBuilder: (index) {
                           return ItemTags(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 6, horizontal: 10),
+                            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
                             pressEnabled: false,
                             index: index,
                             textActiveColor: Colors.black,
@@ -243,8 +244,7 @@ class _TaskDetailsBottomSheetState extends State<TaskDetailsBottomSheet> {
                         controller: txtRemarkController,
                         decoration: InputDecoration(
                           counterText: "",
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 15),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                           border: OutlineInputBorder(
                             borderSide: BorderSide.none,
                             borderRadius: BorderRadius.circular(10),
@@ -285,10 +285,8 @@ class _TaskDetailsBottomSheetState extends State<TaskDetailsBottomSheet> {
                         taskDetailsBloc.add(EscalateTaskEvent(input: input));
                       },
                       style: ButtonStyle(
-                        fixedSize:
-                            MaterialStateProperty.all(const Size(160, 50)),
-                        backgroundColor:
-                            MaterialStateProperty.all(MColor.colorPrimary),
+                        fixedSize: MaterialStateProperty.all(const Size(160, 50)),
+                        backgroundColor: MaterialStateProperty.all(MColor.colorPrimary),
                         elevation: MaterialStateProperty.all(0),
                         shape: MaterialStateProperty.all(
                           RoundedRectangleBorder(

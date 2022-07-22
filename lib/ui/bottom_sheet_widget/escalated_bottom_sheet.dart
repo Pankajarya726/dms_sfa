@@ -45,7 +45,8 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
       escalationRemark: "",
       taskRemark: "",
       escalationTo: [],
-      buId: []);
+      buId: [],
+      action: '0');
   TaskDetailsBloc taskDetailsBloc = TaskDetailsBloc();
 
   @override
@@ -139,8 +140,7 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
                         spacing: 10,
                         itemBuilder: (index) {
                           return ItemTags(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 6, horizontal: 10),
+                            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
                             pressEnabled: false,
                             index: index,
                             textActiveColor: Colors.black,
@@ -218,8 +218,7 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
                         controller: txtRemarkController,
                         decoration: InputDecoration(
                           counterText: "",
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 15),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                           border: OutlineInputBorder(
                             borderSide: BorderSide.none,
                             borderRadius: BorderRadius.circular(10),
@@ -245,11 +244,7 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
                       FocusScope.of(context).unfocus();
                       if (pendingTaskModal.escalationTo.length < 2) {
                         if (txtRemarkController.text.isNotEmpty) {
-                          submitDialog(
-                                  context,
-                                  pendingTaskModal.escalationTo.first,
-                                  "Do you wish to escalate this task to ")
-                              .then(
+                          submitDialog(context, pendingTaskModal.escalationTo.first, "Do you wish to escalate this task to ").then(
                             (value) => {
                               if (value.toString().isNotEmpty)
                                 {
@@ -311,9 +306,7 @@ class _EscalatedBottomSheetState extends State<EscalatedBottomSheet> {
                       Utility.hideKeyboard();
                       FocusScope.of(context).unfocus();
                       if (txtRemarkController.text.isNotEmpty) {
-                        submitDialog(context, EscalationTo(id: "", name: ""),
-                                "Are you sure to submit?")
-                            .then(
+                        submitDialog(context, EscalationTo(id: "", name: ""), "Are you sure to submit?").then(
                           (value) => {
                             if (value.toString().isNotEmpty)
                               {
