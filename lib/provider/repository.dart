@@ -873,6 +873,27 @@ class ApiRepository {
     }
   }
 
+  Future<GetRetailersResponse> getTodayVisit(Map input) async {
+    try {
+      Response response = await dio.post(Url.getTodayVisit, data: input, cancelToken: cancelToken);
+      GetRetailersResponse baseResponse = GetRetailersResponse.fromJson(response.toString());
+      return baseResponse;
+    } catch (error, stacktrace) {
+      String message = "";
+      if (error is DioError) {
+        ServerError e = ServerError.withError(error: error);
+        message = e.getErrorMessage();
+      } else {
+        message = StringConst.somethingWR;
+      }
+      debugPrint("Exception occurred: $message stackTrace: $stacktrace");
+      return GetRetailersResponse(
+        success: false,
+        message: message,
+      );
+    }
+  }
+
   Future<RetailersDetailsResponse> getRetailerInfo(Map input) async {
     try {
       Response response = await dio.post(Url.getRetailerInfo, data: input);

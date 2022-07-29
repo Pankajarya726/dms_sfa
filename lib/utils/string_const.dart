@@ -153,6 +153,7 @@ class StringConst {
   static const special = "Special";
   static const key = "Key";
   static const notConnected = "Not Connected";
+  static const todayVisit = "Today visit";
   static const noOrder = "No Order";
   static const order = "Order";
   static const lastVisit = "Last Visit";

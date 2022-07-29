@@ -35,6 +35,13 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     super.initState();
   }
 
+  // @override
+  // void didUpdateWidget(OrderDetailScreen oldWidget) {
+  //   debugPrint("OrderDetailScreen -> didUpdateWidget->");
+  //   orderBloc.add(GetOrderEvent(retailerId: widget.retailer.customerId, beatId: widget.retailer.beatId));
+  //   super.didUpdateWidget(oldWidget);
+  // }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -48,9 +55,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               BlocBuilder<OrderDetailBloc, OrderDetailState>(
                 builder: (context, state) {
                   if (state is OrderDetailInitialState) {
-                    orderBloc.add(GetOrderEvent(
-                        retailerId: widget.retailer.customerId,
-                        beatId: widget.retailer.beatId));
+                    orderBloc.add(GetOrderEvent(retailerId: widget.retailer.customerId, beatId: widget.retailer.beatId));
                     return const Center(
                       child: CircularProgressIndicator(),
                     );
@@ -71,8 +76,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   return Container();
                 },
               ),
-              BlocBuilder<OrderDetailBloc, OrderDetailState>(
-                  builder: (context, state) {
+              BlocBuilder<OrderDetailBloc, OrderDetailState>(builder: (context, state) {
                 if (task == null) {
                   return Container();
                 }
@@ -86,10 +90,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       ),
                       const Text(
                         "Remarks:",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
+                        style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(
                         height: 10,
@@ -164,15 +165,18 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               // ),
               MaterialButton(
                 elevation: 0,
-                onPressed: () {
+                onPressed: () async {
                   if (order != null) {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (_) => OrderBookingListScreen(
-                              showOrder: true,
-                              beatId: widget.retailer.beatId.toString(),
-                              retailerId: widget.retailer.customerId.toString(),
-                              orderId: order!.orderId.toString(),
-                            )));
+                    await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => OrderBookingListScreen(
+                                  showOrder: true,
+                                  beatId: widget.retailer.beatId.toString(),
+                                  retailerId: widget.retailer.customerId.toString(),
+                                  orderId: order!.orderId.toString(),
+                                )));
+                    orderBloc.add(GetOrderEvent(retailerId: widget.retailer.customerId, beatId: widget.retailer.beatId));
                   } else {
                     Utility.showToast("Order not found");
                   }
@@ -183,11 +187,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 minWidth: MediaQuery.of(context).size.width,
                 child: const Text(
                   "UPDATE",
-                  style: TextStyle(
-                      color: Colors.white,
-                      letterSpacing: 0.67,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18),
+                  style: TextStyle(color: Colors.white, letterSpacing: 0.67, fontWeight: FontWeight.bold, fontSize: 18),
                 ),
               ),
             ],
@@ -250,8 +250,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               child: AppBar(
                 elevation: 5,
                 toolbarHeight: 60,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                 backgroundColor: Colors.white,
                 primary: false,
                 automaticallyImplyLeading: false,
@@ -273,10 +272,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             fit: BoxFit.cover,
                           );
                         },
-                        errorWidget: (context, url, error) =>
-                            Image.asset("assets/placeholder.png"),
-                        placeholder: (context, url) =>
-                            Image.asset("assets/placeholder.png"),
+                        errorWidget: (context, url, error) => Image.asset("assets/placeholder.png"),
+                        placeholder: (context, url) => Image.asset("assets/placeholder.png"),
                       ),
                     ),
                     const SizedBox(
@@ -320,10 +317,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         child: Image(
                           width: 25,
                           height: 25,
-                          image: AssetImage(
-                              widget.retailer.enrollmentTypeId == "1"
-                                  ? "assets/retailer.png"
-                                  : "assets/tele.png"),
+                          image: AssetImage(widget.retailer.enrollmentTypeId == "1" ? "assets/retailer.png" : "assets/tele.png"),
                         ),
                       ),
                     )

@@ -1,6 +1,6 @@
 class Url {
-  static const String baseUrl = "http://dmsapp.tekzee.in/api/";
-  // static const String baseUrl = "https://sfa.vyapaar-vistaar.in/api/";
+  // static const String baseUrl = "http://dmsapp.tekzee.in/api/";
+  static const String baseUrl = "https://sfa2.vyapaar-vistaar.in/api/";
   static const String validateAppVer = "validateAppVersion";
   static const String login = "login";
   // static const String login = "loginV1";
@@ -32,11 +32,13 @@ class Url {
   static const String retailerEnrollmentSave = "retailerEnrollmentSaveV1";
   static const String verifyOtp = "verifyOtp";
   static const String getOrderBookingDay = "getOrderBooking_day";
+  // static const String searchRetailer = "searchRetailer";
   static const String searchRetailer = "searchRetailerV1";
   static const String getBrandAndCategory = "getBrandAndCategoryBeatWise";
   static const String getAllBeats = "getBeatForLoginUser";
   static const String getBeatByOrderBookingDay = "getBeatByOrderBookingDayV1";
   static const String getRetailerOrderWise = "getRetailerOrderWiseV3";
+  static const String getTodayVisit = "getTodaysVisitList";
   static const String getRoute = "getRoute";
 
   static const String getRetailerInfo = "retailerInfo";

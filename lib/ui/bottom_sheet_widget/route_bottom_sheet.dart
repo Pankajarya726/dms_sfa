@@ -16,7 +16,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:location/location.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:map_launcher/map_launcher.dart';
 
 class RouteBottomSheet extends StatefulWidget {
   final String day;
@@ -315,6 +315,8 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
       String destination = "";
       String source = "";
 
+      List<Coords> cords = [];
+
       LocationData? position = await MyLocation.getCurrentLocation();
       if (position != null) {
         source = position.latitude.toString() + "," + position.longitude.toString();
@@ -330,11 +332,14 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
             if (list[i].lat.isNotEmpty && list[i].lng.isNotEmpty) {
               destination = list[i].lat + "," + list[i].lng;
               waypoint += "${list[i].lat},${list[i].lng}";
+              cords.add(Coords(double.parse(list[i].lat), double.parse(list[i].lng)));
             }
           } else {
             if (list[i].lat.isNotEmpty && list[i].lng.isNotEmpty) {
               destination = list[i].lat + "," + list[i].lng;
               waypoint += "${list[i].lat},${list[i].lng}|";
+
+              cords.add(Coords(double.parse(list[i].lat), double.parse(list[i].lng)));
             }
           }
         }
@@ -348,11 +353,34 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
       url =
           'https://www.google.com/maps/dir/?api=1&origin=$source&destination=$destination&waypoints=$waypoint&travelmode=driving&dir_action=navigate';
       debugPrint("url---->$url");
-      if (await canLaunch(url)) {
-        await launch(url);
-      } else {
-        Utility.showToast("Unable to get route...");
-      }
+      // if (!await launchUrl(Uri.parse(url))) {
+      //   Utility.showToast("Unable to get route...");
+      //   // throw 'Could not launch $url';
+      // }
+
+      final availableMaps = await MapLauncher.installedMaps;
+      debugPrint("availableMaps---->$availableMaps");
+
+      availableMaps.first.showDirections(
+          destination: Coords(position.latitude!, position.longitude!),
+          origin: Coords(position.latitude!, position.longitude!),
+          directionsMode: DirectionsMode.driving,
+          waypoints: cords);
+
+      MapLauncher.showDirections(
+          destination: Coords(position.latitude!, position.longitude!),
+          origin: Coords(position.latitude!, position.longitude!),
+          directionsMode: DirectionsMode.driving,
+          waypoints: cords,
+          mapType: MapType.google);
+      // if (await MapLauncher.isMapAvailable(MapType.google)) {
+      //   await MapLauncher.showMarker(
+      //     mapType: MapType.google,
+      //     coords: Coords(37.759392, -122.5107336),
+      //     title: title,
+      //     description: description,
+      //   );
+      // }
     } catch (exception) {
       debugPrint("exception---->$exception");
       Utility.showToast("Unable to get route...");

@@ -112,6 +112,12 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'VV Sales Mitra',
       debugShowCheckedModeBanner: false,
+      // builder: (context, child) {
+      //   return MediaQuery(
+      //     child: child,
+      //     data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+      //   );
+      // },
       builder: EasyLoading.init(),
       navigatorKey: navigationService.navigatorKey,
       theme: ThemeData(

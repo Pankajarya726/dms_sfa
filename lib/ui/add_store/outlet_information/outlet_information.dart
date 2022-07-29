@@ -410,14 +410,56 @@ class _OutletInformationState extends State<OutletInformation> {
                             ],
                           ),
                           sizedBoxWidget(12.0),
-                          NormalEditText(
+
+                          TextFormField(
+                            autofocus: false,
+                            maxLength: 200,
+                            readOnly: true,
+                            onTap: () async {
+                              globalKeyAddress.currentContext!.findRenderObject();
+                            },
+                            minLines: 1,
+                            maxLines: 4,
+                            textAlignVertical: TextAlignVertical.center,
+                            keyboardType: TextInputType.streetAddress,
                             controller: txtAddressController,
-                            onChange: (text) {
+                            onChanged: (text) {
                               txtAddressController.text = text;
                             },
-                            globalKey: globalKeyAddress,
-                            name: StringConst.address,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.67,
+                              color: MColor.backButton,
+                            ),
+                            decoration: InputDecoration(
+                              hintText: StringConst.enterHere,
+                              counterText: "",
+                              hintStyle: const TextStyle(
+                                color: MColor.backButton,
+                                letterSpacing: 0.67,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                              contentPadding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                              filled: true,
+                              fillColor: const Color(0xffF2F2F2),
+                              counter: Container(),
+                              // border: OutlineInputBorder(
+                              //   borderRadius: BorderRadius.circular(25),
+                              //   borderSide: BorderSide.none,
+                              // ),
+                            ),
                           ),
+                          // NormalEditText(
+                          //   controller: txtAddressController,
+                          //
+                          //   onChange: (text) {
+                          //     txtAddressController.text = text;
+                          //   },
+                          //   globalKey: globalKeyAddress,
+                          //   name: StringConst.address,
+                          // ),
                           sizedBoxWidget(12.0),
                           Row(
                             children: [

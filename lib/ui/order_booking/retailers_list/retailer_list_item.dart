@@ -8,7 +8,7 @@ import 'package:dms/utils/my_location.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:map_launcher/map_launcher.dart';
 
 class RetailerListItems extends StatefulWidget {
   final int index;
@@ -41,9 +41,15 @@ class _RetailerListItemsState extends State<RetailerListItems> {
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(11),
-        color: widget.index == 1
+        /* color: widget.index == 1 || widget.index == 0
             ? Colors.transparent
             : widget.index == 2
+                ? const Color.fromRGBO(197, 181, 0, 1)
+                : const Color.fromRGBO(44, 183, 67, 1),*/
+
+        color: widget.retailer.orderStatus == 1 || widget.retailer.orderStatus == 0
+            ? Colors.transparent
+            : widget.retailer.orderStatus == 2
                 ? const Color.fromRGBO(197, 181, 0, 1)
                 : const Color.fromRGBO(44, 183, 67, 1),
         boxShadow: const [
@@ -60,7 +66,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
             borderRadius: BorderRadius.circular(10),
           ),
           onTap: () async {
-            if (widget.index == 3) {
+            if (widget.retailer.orderStatus == 3) {
               await databaseHelper.clearDatabase();
 
               Navigator.push(
@@ -77,7 +83,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                 MaterialPageRoute(
                   builder: (_) => RetailerDetailScreen(
                     retailer: widget.retailer,
-                    orderStatus: widget.index,
+                    orderStatus: widget.retailer.orderStatus,
                   ),
                 ),
               );
@@ -241,11 +247,24 @@ class _RetailerListItemsState extends State<RetailerListItems> {
         String url =
             'https://www.google.com/maps/dir/?api=1&origin=$source&destination=$destination&travelmode=driving&dir_action=navigate';
         debugPrint("url---->$url");
-        if (await canLaunch(url)) {
-          await launch(url);
-        } else {
-          Utility.showToast("Unable to get route...");
-        }
+
+        MapLauncher.showDirections(
+            destination: Coords(position.latitude!, position.longitude!),
+            origin: Coords(position.latitude!, position.longitude!),
+            directionsMode: DirectionsMode.driving,
+            mapType: MapType.google);
+
+        // await MapsLauncher.launchCoordinates(double.parse(lat), double.parse(lng));
+
+        // if (!await launchUrl(Uri.parse(url))) {
+        //   Utility.showToast("Unable to get route...");
+        //   // throw 'Could not launch $url';
+        // }
+        // if (await canLaunch(url)) {
+        //   await launch(url);
+        // } else {
+        //   Utility.showToast("Unable to get route...");
+        // }
       } else {
         Utility.showToast("Can not fetch your location, Please try again later");
       }

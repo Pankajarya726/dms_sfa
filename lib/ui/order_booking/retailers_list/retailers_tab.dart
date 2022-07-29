@@ -31,14 +31,11 @@ class RetailerTab extends StatefulWidget {
   final BeatsModal selectedBeat;
   final String day;
   final Function(SelectBeatListener listener) onInit;
+  final List<BeatsModal> beatList;
 
-  const RetailerTab({
-    Key? key,
-    required this.index,
-    required this.onInit,
-    required this.day,
-    required this.selectedBeat,
-  }) : super(key: key);
+  const RetailerTab(
+      {Key? key, required this.index, required this.onInit, required this.day, required this.selectedBeat, required this.beatList})
+      : super(key: key);
 
   @override
   _RetailerTabState createState() => _RetailerTabState();
@@ -191,15 +188,15 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
                     );
                   },
                   itemBuilder: (context, index) {
+                    if (snapshot.data![index].orderStatus == 0) {
+                      snapshot.data![index].orderStatus = widget.index;
+                    }
+
                     return RetailerListItems(
                       index: widget.index,
                       retailer: snapshot.data![index],
                       // beatId: selectedBeat!.id,
-                      orderStatus: widget.index == 0
-                          ? 1
-                          : widget.index == 1
-                              ? 2
-                              : 3,
+                      orderStatus: widget.index,
                     );
                   },
                 ),
@@ -213,41 +210,75 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
 
   void getRetailers() async {
     debugPrint("getRetailers-->$pageNo${selectedBeat!.id}");
-    // retailers.clear();
-    int page = pageNo;
+    if (widget.index == 0) {
+      if (await Network.isConnected() /* && !EasyLoading.isShow*/) {
+        Map<String, dynamic> input = HashMap<String, dynamic>();
 
-    if (await Network.isConnected() /* && !EasyLoading.isShow*/) {
-      if (pageNo == 1) {
-        EasyLoading.show();
-      }
+        String beatId = "";
+        if (selectedBeat == null || selectedBeat!.id == "") {
+          for (int i = 0; i < widget.beatList.length; i++) {
+            if (i == widget.beatList.length - 1) {
+              beatId += widget.beatList[i].id;
+            } else {
+              beatId += widget.beatList[i].id + ",";
+            }
+          }
+        } else {
+          beatId = selectedBeat!.id;
+        }
 
-      Map<String, dynamic> input = HashMap<String, dynamic>();
-      input["order_status"] = widget.index;
-      input["beat_id"] = selectedBeat!.id;
-      input["day"] = day;
-      input["page_no"] = pageNo;
-      input["lat"] = latitude;
-      input["long"] = longitude;
-      input["sort_by"] = sortingType;
-      input["retailer_type"] = retailerType;
+        input["beat_id"] = beatId;
+        input["day"] = day;
 
-      GetRetailersResponse response = await repository.getRetailersOrderWise(input);
-      EasyLoading.dismiss();
-      refreshController.loadComplete();
-      refreshController.refreshCompleted();
-      if (response.success) {
-        pageNo = pageNo + 1;
-        retailers.addAll(response.data!);
-        retailerStreamController.add(retailers);
-      } else {
-        debugPrint("pageNo-->$pageNo---$page");
-        if (pageNo == 1) {
+        GetRetailersResponse response = await repository.getTodayVisit(input);
+        EasyLoading.dismiss();
+        refreshController.loadComplete();
+        refreshController.refreshCompleted();
+        if (response.success) {
+          retailers.clear();
+          retailers = response.data!;
+          retailerStreamController.add(retailers);
+        } else {
           retailerStreamController.add([]);
         }
-        // retailerStreamController.add([]);
+      } else {
+        retailerStreamController.addError(StringConst.internetCheck);
       }
     } else {
-      retailerStreamController.addError(StringConst.internetCheck);
+      int page = pageNo;
+      if (await Network.isConnected() /* && !EasyLoading.isShow*/) {
+        if (pageNo == 1) {
+          EasyLoading.show();
+        }
+
+        Map<String, dynamic> input = HashMap<String, dynamic>();
+        input["order_status"] = widget.index;
+        input["beat_id"] = selectedBeat!.id;
+        input["day"] = day;
+        input["page_no"] = pageNo;
+        input["lat"] = latitude;
+        input["long"] = longitude;
+        input["sort_by"] = sortingType;
+        input["retailer_type"] = retailerType;
+
+        GetRetailersResponse response = await repository.getRetailersOrderWise(input);
+        EasyLoading.dismiss();
+        refreshController.loadComplete();
+        refreshController.refreshCompleted();
+        if (response.success) {
+          pageNo = pageNo + 1;
+          retailers.addAll(response.data!);
+          retailerStreamController.add(retailers);
+        } else {
+          debugPrint("pageNo-->$pageNo---$page");
+          if (pageNo == 1) {
+            retailerStreamController.add([]);
+          }
+          // retailerStreamController.add([]);
+        }
+      } else {
+        retailerStreamController.addError(StringConst.internetCheck);
+      }
     }
   }
 

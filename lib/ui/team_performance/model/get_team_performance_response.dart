@@ -103,6 +103,8 @@ class TeamMember {
   String name;
   String designation;
 
+  // print(designation!);
+
   factory TeamMember.fromJson(String str) => TeamMember.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());

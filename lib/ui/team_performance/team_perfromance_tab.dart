@@ -292,11 +292,11 @@ class _TeamPerformanceTabState extends State<TeamPerformanceTab> with OnDateChan
                       children: [
                         Text(
                           widget.index == 0 ? "Present Day" : "Present Days",
-                          style: const TextStyle(color: MColor.inactiveTextColor, fontSize: 18, fontWeight: FontWeight.bold),
+                          style: const TextStyle(color: MColor.inactiveTextColor, fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         Text(
                           widget.index == 0 ? performance!.presentDays : performance!.presentDays + "%",
-                          style: const TextStyle(color: MColor.colorSecondary, fontSize: 20, fontWeight: FontWeight.bold),
+                          style: const TextStyle(color: MColor.colorSecondary, fontSize: 18, fontWeight: FontWeight.bold),
                         )
                       ],
                     ),
@@ -314,11 +314,11 @@ class _TeamPerformanceTabState extends State<TeamPerformanceTab> with OnDateChan
                       children: [
                         const Text(
                           "Enrollment",
-                          style: TextStyle(color: MColor.inactiveTextColor, fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(color: MColor.inactiveTextColor, fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         Text(
                           performance!.totalEnrollment,
-                          style: const TextStyle(color: MColor.textColor, fontSize: 20, fontWeight: FontWeight.bold),
+                          style: const TextStyle(color: MColor.textColor, fontSize: 18, fontWeight: FontWeight.bold),
                         )
                       ],
                     ),
@@ -336,11 +336,11 @@ class _TeamPerformanceTabState extends State<TeamPerformanceTab> with OnDateChan
                       children: [
                         const Text(
                           "Pending Task",
-                          style: TextStyle(color: MColor.inactiveTextColor, fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(color: MColor.inactiveTextColor, fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         Text(
                           performance!.pendingTask,
-                          style: const TextStyle(color: MColor.textColor, fontSize: 20, fontWeight: FontWeight.bold),
+                          style: const TextStyle(color: MColor.textColor, fontSize: 18, fontWeight: FontWeight.bold),
                         )
                       ],
                     ),
@@ -358,11 +358,11 @@ class _TeamPerformanceTabState extends State<TeamPerformanceTab> with OnDateChan
                       children: [
                         const Text(
                           "Completed Task",
-                          style: TextStyle(color: MColor.inactiveTextColor, fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(color: MColor.inactiveTextColor, fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         Text(
                           performance!.completedTask,
-                          style: const TextStyle(color: MColor.textColor, fontSize: 20, fontWeight: FontWeight.bold),
+                          style: const TextStyle(color: MColor.textColor, fontSize: 18, fontWeight: FontWeight.bold),
                         )
                       ],
                     ),
@@ -385,7 +385,7 @@ class _TeamPerformanceTabState extends State<TeamPerformanceTab> with OnDateChan
                 itemBuilder: (context, index) {
                   return InkWell(
                     onTap: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>

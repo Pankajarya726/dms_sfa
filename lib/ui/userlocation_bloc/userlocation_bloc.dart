@@ -28,7 +28,7 @@ class UserLocationBloc extends Bloc<UserLocationEvents, UserLocationStates> {
         double longitude = position.longitude!;
         //22.83148761129894 75.79094411948394
         List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude!, position.longitude!);
-        // List<Placemark> placemarks = await placemarkFromCoordinates(22.670349226468897, 75.88507683629933);
+        // List<Placemark> placemarks = await placemarkFromCoordinates(22.83148761129894, 75.79094411948394);
         Placemark place = placemarks[0];
 
         debugPrint("place-->${place.toString()}");
@@ -43,30 +43,39 @@ class UserLocationBloc extends Bloc<UserLocationEvents, UserLocationStates> {
         // In some cases, street and name are same, to handle this situation we applied this condition
         if (street == name) {
           if (street.isNotEmpty) {
-            street = street + ",";
+            street = street + ", ";
+            if (street.toLowerCase().contains("unnamed")) {
+              street = "";
+            }
           }
           if (subLocality.isNotEmpty) {
-            subLocality = subLocality + ",";
+            subLocality = subLocality + ", ";
           }
           if (locality.isNotEmpty) {
-            locality = locality + ",";
+            locality = locality + ", ";
           }
 
-          address = street + " " + subLocality + " " + locality + " " + postalCode;
+          address = street + subLocality + locality + postalCode;
         } else {
           if (street.isNotEmpty) {
-            street = street + ",";
+            street = street + ", ";
+            if (street.toLowerCase().contains("unnamed")) {
+              street = "";
+            }
           }
           if (name.isNotEmpty) {
-            name = name + ",";
+            name = name + ", ";
+            if (name.toLowerCase().contains("unnamed")) {
+              street = "";
+            }
           }
           if (subLocality.isNotEmpty) {
-            subLocality = subLocality + ",";
+            subLocality = subLocality + ", ";
           }
           if (locality.isNotEmpty) {
-            locality = locality + ",";
+            locality = locality + ", ";
           }
-          address = street + " " + name + " " + subLocality + " " + locality + " " + postalCode;
+          address = street + name + subLocality + locality + postalCode;
         }
 
         yield GetUserLocationState(

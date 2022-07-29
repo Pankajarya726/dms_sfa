@@ -71,6 +71,8 @@ class _FilterOrderSummerySheetState extends State<FilterOrderSummerySheet> {
 
   @override
   initState() {
+    // customerType...
+
     txtDate.text = DateFormat("dd/MM/yyyy").format(fromDate);
     if (widget.customer != null) {
       customer = widget.customer;

@@ -26,6 +26,7 @@ class GetRetailersResponse {
 
 class RetailersModal {
   RetailersModal({
+    required this.orderStatus,
     required this.customerId,
     required this.userId,
     required this.uniqueCode,
@@ -50,6 +51,7 @@ class RetailersModal {
     required this.distance,
   });
 
+  int orderStatus;
   String customerId;
   String userId;
   String uniqueCode;
@@ -76,6 +78,7 @@ class RetailersModal {
   factory RetailersModal.fromJson(String str) => RetailersModal.fromMap(json.decode(str));
 
   factory RetailersModal.fromMap(Map<String, dynamic> json) => RetailersModal(
+        orderStatus: json["order_status"] ?? 0,
         customerId: json["customer_id"] == null ? "" : json["customer_id"].toString(),
         userId: json["user_id"] == null ? "" : json["user_id"].toString(),
         uniqueCode: json["unique_code"] == null ? "" : json["unique_code"].toString(),
