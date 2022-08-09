@@ -25,7 +25,6 @@ import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
@@ -594,7 +593,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                     }
 
                                     if (state is UserLocationLoadingState) {
-                                      // EasyLoading.show();
+                                      // Utility.showLoading();
                                     }
 
                                     if (state is GetUserLocationState) {
@@ -604,7 +603,7 @@ class _StartDayScreenState extends State<StartDayScreen> {
                                     }
                                     if (state is UserLocationFailureState) {
                                       if (EasyLoading.isShow) {
-                                        EasyLoading.dismiss();
+                                        Utility.dismissLoading();
                                       }
                                       currentAddress = state.failureMessage;
                                     }

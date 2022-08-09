@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -47,6 +48,18 @@ class Utility {
   static showToast(String message) {
     if (message.trim().isNotEmpty) {
       Fluttertoast.showToast(msg: message);
+    }
+  }
+
+  static showLoading({String? msg}) {
+    if (!EasyLoading.isShow) {
+      EasyLoading.show();
+    }
+  }
+
+  static dismissLoading() {
+    if (EasyLoading.isShow) {
+      EasyLoading.dismiss();
     }
   }
 

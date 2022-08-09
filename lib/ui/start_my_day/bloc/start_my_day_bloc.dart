@@ -11,7 +11,6 @@ import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
@@ -57,9 +56,9 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
 
   Stream<StartMyDayStates> startMyDay(StartMyDayEvent event) async* {
     if (await Network.isConnected()) {
-      EasyLoading.show();
+      Utility.showLoading();
       StartMyDayResponse response = await repository.startMyDayApi(event.input);
-      EasyLoading.dismiss();
+      Utility.dismissLoading();
       if (response.success) {
         yield StartMyDaySuccessState(successMessage: response.message);
       } else {
@@ -81,9 +80,9 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
       String address = "";
 
       try {
-        EasyLoading.show();
+        Utility.showLoading();
         LocationData? position = await MyLocation.getCurrentLocation();
-        EasyLoading.dismiss();
+        Utility.dismissLoading();
         if (position != null) {
           List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude!, position.longitude!);
           Placemark place = placemarks[0];
@@ -107,14 +106,14 @@ class StartMyDayBloc extends Bloc<StartMyDayEvents, StartMyDayStates> {
         //     failureMessage: "Please turn on GPS location to end day");
       }
 
-      EasyLoading.show();
+      Utility.showLoading();
       EndMyDayResponse response = await repository.endMyDay(
         userId,
         DateFormat("yyyy-MM-dd").format(_ntpTime),
         webtime,
         address,
       );
-      EasyLoading.dismiss();
+      Utility.dismissLoading();
       if (response.success) {
         yield EndMyDaySuccessState(endMyDayResponse: response);
       } else {

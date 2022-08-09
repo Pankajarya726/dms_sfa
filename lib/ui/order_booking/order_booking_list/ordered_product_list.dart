@@ -26,6 +26,7 @@ class _OrderedProductListState extends State<OrderedProductList> with AutomaticK
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return StreamBuilder<List<ProductsModal>>(
         stream: productStream.stream,
         builder: (context, snapshot) {

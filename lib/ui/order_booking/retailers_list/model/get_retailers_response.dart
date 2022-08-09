@@ -73,7 +73,7 @@ class RetailersModal {
   String lng;
   String lat;
   String outletPicture;
-  double distance;
+  String distance;
 
   factory RetailersModal.fromJson(String str) => RetailersModal.fromMap(json.decode(str));
 
@@ -100,10 +100,10 @@ class RetailersModal {
         lng: json["lng"] == null ? "0.0" : json["lng"].toString(),
         lat: json["lat"] == null ? "0.0" : json["lat"].toString(),
         outletPicture: json["outlet_picture"] == null ? "" : json["outlet_picture"].toString(),
-        distance: json["distance"] == null ? 0.0 : json["distance"].toDouble(),
+        distance: json["distance"] == null ? "0.0" : json["distance"].toString(),
       );
 
   setDistance(String distance) {
-    this.distance = double.parse(distance);
+    this.distance = distance;
   }
 }

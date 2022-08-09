@@ -15,24 +15,16 @@ class GetOrderResponse {
   List<Order> orders;
   List<Product> data;
 
-  factory GetOrderResponse.fromJson(String str) =>
-      GetOrderResponse.fromMap(json.decode(str));
+  factory GetOrderResponse.fromJson(String str) => GetOrderResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory GetOrderResponse.fromMap(Map<String, dynamic> json) =>
-      GetOrderResponse(
+  factory GetOrderResponse.fromMap(Map<String, dynamic> json) => GetOrderResponse(
         success: json["success"] ?? false,
         message: json["message"] ?? "",
-        task: json["task"] == null
-            ? []
-            : List<Task>.from(json["task"].map((x) => Task.fromMap(x))),
-        orders: json["orders"] == null
-            ? []
-            : List<Order>.from(json["orders"].map((x) => Order.fromMap(x))),
-        data: json["data"] == null
-            ? []
-            : List<Product>.from(json["data"].map((x) => Product.fromMap(x))),
+        task: json["task"] == null ? [] : List<Task>.from(json["task"].map((x) => Task.fromMap(x))),
+        orders: json["orders"] == null ? [] : List<Order>.from(json["orders"].map((x) => Order.fromMap(x))),
+        data: json["data"] == null ? [] : List<Product>.from(json["data"].map((x) => Product.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -123,71 +115,39 @@ class Product {
 
   factory Product.fromMap(Map<String, dynamic> json) => Product(
         id: json["id"] == null ? '0' : json["id"].toString(),
-        productName:
-            json["product_name"] == null ? "" : json["product_name"].toString(),
+        productName: json["product_name"] == null ? "" : json["product_name"].toString(),
         mrp: json["mrp"] == null ? "0" : json["mrp"].toString(),
-        schemeRatePerPcs: json["scheme_rate_per_pcs"] == null
-            ? "0"
-            : json["scheme_rate_per_pcs"].toString(),
+        schemeRatePerPcs: json["scheme_rate_per_pcs"] == null ? "0" : json["scheme_rate_per_pcs"].toString(),
         image: json["image"] ?? "",
-        skuRatePerPkg: json["sku_rate_per_pkg"] == null
-            ? "0"
-            : json["sku_rate_per_pkg"].toString(),
-        skuRatePerMoq: json["sku_rate_per_moq"] == null
-            ? "0"
-            : json["sku_rate_per_moq"].toString(),
-        skuRatePerPiece: json["sku_rate_per_piece"] == null
-            ? "0"
-            : json["sku_rate_per_piece"].toString(),
+        skuRatePerPkg: json["sku_rate_per_pkg"] == null ? "0" : json["sku_rate_per_pkg"].toString(),
+        skuRatePerMoq: json["sku_rate_per_moq"] == null ? "0" : json["sku_rate_per_moq"].toString(),
+        skuRatePerPiece: json["sku_rate_per_piece"] == null ? "0" : json["sku_rate_per_piece"].toString(),
         moqId: json["moq_id"] == null ? "0" : json["moq_id"].toString(),
         moqName: json["moq_name"] == null ? "" : json["moq_name"].toString(),
-        packagingId: json["packaging_id"] == null
-            ? "0"
-            : json["packaging_id"].toString(),
-        packagingName: json["packaging_name"] == null
-            ? ""
-            : json["packaging_name"].toString(),
+        packagingId: json["packaging_id"] == null ? "0" : json["packaging_id"].toString(),
+        packagingName: json["packaging_name"] == null ? "" : json["packaging_name"].toString(),
         skuCode: json["sku_code"] == null ? "" : json["sku_code"].toString(),
         weight: json["weight"] == null ? "" : json["weight"].toString(),
-        variantId:
-            json["variant_id"] == null ? "0" : json["variant_id"].toString(),
-        variantName:
-            json["variant_name"] == null ? "" : json["variant_name"].toString(),
+        variantId: json["variant_id"] == null ? "0" : json["variant_id"].toString(),
+        variantName: json["variant_name"] == null ? "" : json["variant_name"].toString(),
         brandId: json["brand_id"] == null ? "0" : json["brand_id"].toString(),
-        brandName:
-            json["brand_name"] == null ? "" : json["brand_name"].toString(),
-        categoryId:
-            json["category_id"] == null ? "0" : json["category_id"].toString(),
-        categoryName: json["category_name"] == null
-            ? ""
-            : json["category_name"].toString(),
-        longDescription: json["long_description"] == null
-            ? ""
-            : json["long_description"].toString(),
+        brandName: json["brand_name"] == null ? "" : json["brand_name"].toString(),
+        categoryId: json["category_id"] == null ? "0" : json["category_id"].toString(),
+        categoryName: json["category_name"] == null ? "" : json["category_name"].toString(),
+        longDescription: json["long_description"] == null ? "" : json["long_description"].toString(),
         pcsPerMoq: json["pcs_per_moq"] ?? 0,
         pcsPerPackaging: json["pcs_per_packaging"] ?? 0,
         saleableStockPcs: json["saleable_stock_pcs"] ?? 0,
-        priceAfterDiscount: json["price_after_discount"] == null
-            ? "0"
-            : json["price_after_discount"].toString(),
-        customerId:
-            json["customer_id"] == null ? "0" : json["customer_id"].toString(),
+        priceAfterDiscount: json["price_after_discount"] == null ? "0" : json["price_after_discount"].toString(),
+        customerId: json["customer_id"] == null ? "0" : json["customer_id"].toString(),
         buId: json["bu_id"] == null ? "0" : json["bu_id"].toString(),
-        rateCategoryId: json["rate_category_id"] == null
-            ? "0"
-            : json["rate_category_id"].toString(),
+        rateCategoryId: json["rate_category_id"] == null ? "0" : json["rate_category_id"].toString(),
         orderId: json["order_id"] == null ? "0" : json["order_id"].toString(),
-        orderSkuId: json["order_sku_id"] == null
-            ? "0"
-            : json["order_sku_id"].toString(),
+        orderSkuId: json["order_sku_id"] == null ? "0" : json["order_sku_id"].toString(),
         orderQtyMoq: json["order_qty_moq"] ?? 0,
         orderQtyPkg: json["order_qty_pkg"] ?? 0,
-        orderSkuAmount: json["order_sku_amount"] == null
-            ? "0"
-            : json["order_sku_amount"].toString(),
-        schemes: json["schemes"] == null
-            ? []
-            : List<Scheme>.from(json["schemes"].map((x) => Scheme.fromMap(x))),
+        orderSkuAmount: json["order_sku_amount"] == null ? "0" : json["order_sku_amount"].toString(),
+        schemes: json["schemes"] == null ? [] : List<Scheme>.from(json["schemes"].map((x) => Scheme.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -281,48 +241,26 @@ class Scheme {
 
   factory Scheme.fromMap(Map<String, dynamic> json) => Scheme(
         id: json["id"] == null ? "" : json["id"].toString(),
-        schemeName:
-            json["scheme_name"] == null ? "" : json["scheme_name"].toString(),
-        schemeType:
-            json["scheme_type"] == null ? "" : json["scheme_type"].toString(),
-        skuMasterId: json["sku_master_id"] == null
-            ? ""
-            : json["sku_master_id"].toString(),
-        skubuCode:
-            json["skubu_code"] == null ? "" : json["skubu_code"].toString(),
-        productCategory: json["product_category"] == null
-            ? ""
-            : json["product_category"].toString(),
-        customerId:
-            json["customer_id"] == null ? "" : json["customer_id"].toString(),
-        customerCode: json["customer_code"] == null
-            ? ""
-            : json["customer_code"].toString(),
+        schemeName: json["scheme_name"] == null ? "" : json["scheme_name"].toString(),
+        schemeType: json["scheme_type"] == null ? "" : json["scheme_type"].toString(),
+        skuMasterId: json["sku_master_id"] == null ? "" : json["sku_master_id"].toString(),
+        skubuCode: json["skubu_code"] == null ? "" : json["skubu_code"].toString(),
+        productCategory: json["product_category"] == null ? "" : json["product_category"].toString(),
+        customerId: json["customer_id"] == null ? "" : json["customer_id"].toString(),
+        customerCode: json["customer_code"] == null ? "" : json["customer_code"].toString(),
         zoneId: json["zone_id"] == null ? "" : json["zone_id"].toString(),
         stateId: json["state_id"] == null ? "" : json["state_id"].toString(),
-        districtId:
-            json["district_id"] == null ? "" : json["district_id"].toString(),
+        districtId: json["district_id"] == null ? "" : json["district_id"].toString(),
         cityId: json["city_id"] == null ? "" : json["city_id"].toString(),
         discountPercentage: json["discount_percentage"].toString(),
-        discountAmount: json["discount_amount"] == null
-            ? ""
-            : json["discount_amount"].toString(),
+        discountAmount: json["discount_amount"] == null ? "" : json["discount_amount"].toString(),
         uom: json["uom"] == null ? "" : json["uom"].toString(),
-        fromDate: json["from_date"] == null
-            ? DateTime.now()
-            : DateTime.parse(json["from_date"]),
-        toDate: json["to_date"] == null
-            ? DateTime.now()
-            : DateTime.parse(json["to_date"]),
+        fromDate: json["from_date"] == null ? DateTime.now() : DateTime.parse(json["from_date"]),
+        toDate: json["to_date"] == null ? DateTime.now() : DateTime.parse(json["to_date"]),
         isActive: json["is_active"] == null ? "" : json["is_active"].toString(),
-        createdBy:
-            json["created_by"] == null ? "" : json["created_by"].toString(),
-        createdAt: json["created_at"] == null
-            ? DateTime.now()
-            : DateTime.parse(json["created_at"]),
-        updatedAt: json["updated_at"] == null
-            ? DateTime.now()
-            : DateTime.parse(json["updated_at"]),
+        createdBy: json["created_by"] == null ? "" : json["created_by"].toString(),
+        createdAt: json["created_at"] == null ? DateTime.now() : DateTime.parse(json["created_at"]),
+        updatedAt: json["updated_at"] == null ? DateTime.now() : DateTime.parse(json["updated_at"]),
       );
 
   Map<String, dynamic> toMap() => {
@@ -341,12 +279,10 @@ class Scheme {
         "discount_percentage": discountPercentage,
         "discount_amount": discountAmount,
         "uom": uom,
-        "from_date": fromDate == null
-            ? null
-            : "${fromDate.year.toString().padLeft(4, '0')}-${fromDate.month.toString().padLeft(2, '0')}-${fromDate.day.toString().padLeft(2, '0')}",
-        "to_date": toDate == null
-            ? null
-            : "${toDate.year.toString().padLeft(4, '0')}-${toDate.month.toString().padLeft(2, '0')}-${toDate.day.toString().padLeft(2, '0')}",
+        "from_date":
+            "${fromDate.year.toString().padLeft(4, '0')}-${fromDate.month.toString().padLeft(2, '0')}-${fromDate.day.toString().padLeft(2, '0')}",
+        "to_date":
+            "${toDate.year.toString().padLeft(4, '0')}-${toDate.month.toString().padLeft(2, '0')}-${toDate.day.toString().padLeft(2, '0')}",
         "is_active": isActive,
         "created_by": createdBy,
         "created_at": createdAt.toIso8601String(),
@@ -378,9 +314,7 @@ class Order {
         retailerId: json["retailer_id"] ?? 0,
         totalPkg: json["total_pkg"] ?? 0,
         totalMoq: json["total_moq"] ?? 0,
-        totalAmount: json["total_amount"] == null
-            ? "0"
-            : json["total_amount"].toString(),
+        totalAmount: json["total_amount"] == null ? "0" : json["total_amount"].toString(),
       );
 
   Map<String, dynamic> toMap() => {
@@ -414,14 +348,9 @@ class Task {
   factory Task.fromMap(Map<String, dynamic> json) => Task(
         id: json["id"] == null ? "0" : json["id"].toString(),
         taskId: json["task_id"] == null ? "0" : json["task_id"].toString(),
-        escalationTag: json["escalation_tag"] == null
-            ? ""
-            : json["escalation_tag"].toString(),
-        taskRemark:
-            json["task_remark"] == null ? "" : json["task_remark"].toString(),
-        buId: json["bu_id"] == null
-            ? []
-            : List<BuId>.from(json["bu_id"].map((x) => BuId.fromMap(x))),
+        escalationTag: json["escalation_tag"] == null ? "" : json["escalation_tag"].toString(),
+        taskRemark: json["task_remark"] == null ? "" : json["task_remark"].toString(),
+        buId: json["bu_id"] == null ? [] : List<BuId>.from(json["bu_id"].map((x) => BuId.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -429,9 +358,7 @@ class Task {
         "task_id": taskId,
         "escalation_tag": escalationTag,
         "task_remark": taskRemark,
-        "bu_id": buId == null
-            ? null
-            : List<dynamic>.from(buId.map((x) => x.toMap())),
+        "bu_id": List<dynamic>.from(buId.map((x) => x.toMap())),
       };
 }
 
@@ -449,12 +376,12 @@ class BuId {
   String toJson() => json.encode(toMap());
 
   factory BuId.fromMap(Map<String, dynamic> json) => BuId(
-        id: json["id"] == null ? null : json["id"],
-        buName: json["bu_name"] == null ? null : json["bu_name"],
+        id: json["id"] ?? 0,
+        buName: json["bu_name"] ?? "",
       );
 
   Map<String, dynamic> toMap() => {
-        "id": id == null ? null : id,
-        "bu_name": buName == null ? null : buName,
+        "id": id,
+        "bu_name": buName,
       };
 }

@@ -11,24 +11,20 @@ class TaskResponse {
   String message;
   List<Task>? data;
 
-  factory TaskResponse.fromJson(String str) =>
-      TaskResponse.fromMap(json.decode(str));
+  factory TaskResponse.fromJson(String str) => TaskResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
   factory TaskResponse.fromMap(Map<String, dynamic> json) => TaskResponse(
         success: json["success"] ?? false,
         message: json["message"] ?? "",
-        data: json["data"] == null
-            ? []
-            : List<Task>.from(json["data"].map((x) => Task.fromMap(x))),
+        data: json["data"] == null ? [] : List<Task>.from(json["data"].map((x) => Task.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
         "success": success,
         "message": message,
-        "data":
-            data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
+        "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
       };
 }
 
@@ -61,24 +57,15 @@ class Task {
   String toJson() => json.encode(toMap());
 
   factory Task.fromMap(Map<String, dynamic> json) => Task(
-        outletCode:
-            json["outlet_code"] == null ? "" : json["outlet_code"].toString(),
-        outletName:
-            json["outlet_name"] == null ? "" : json["outlet_name"].toString(),
+        outletCode: json["outlet_code"] == null ? "" : json["outlet_code"].toString(),
+        outletName: json["outlet_name"] == null ? "" : json["outlet_name"].toString(),
         taskId: json["task_id"] == null ? "" : json["task_id"].toString(),
         id: json["id"] == null ? "" : json["id"].toString(),
-        escalationTag: json["escalation_tag"] == null
-            ? ""
-            : json["escalation_tag"].toString(),
-        escalationTagId: json["escalation_tag_id"] == null
-            ? ""
-            : json["escalation_tag_id"].toString(),
-        taskRemark:
-            json["task_remark"] == null ? "" : json["task_remark"].toString(),
+        escalationTag: json["escalation_tag"] == null ? "" : json["escalation_tag"].toString(),
+        escalationTagId: json["escalation_tag_id"] == null ? "" : json["escalation_tag_id"].toString(),
+        taskRemark: json["task_remark"] == null ? "" : json["task_remark"].toString(),
         taskDate: json["task_date"] == null ? "" : json["task_date"].toString(),
-        bus: json["bus"] == null
-            ? []
-            : List<Bus>.from(json["bus"].map((x) => Bus.fromMap(x))),
+        bus: json["bus"] == null ? [] : List<Bus>.from(json["bus"].map((x) => Bus.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -90,8 +77,7 @@ class Task {
         "escalation_tag_id": escalationTagId,
         "task_remark": taskRemark,
         "task_date": taskDate,
-        "bus":
-            bus == null ? null : List<dynamic>.from(bus.map((x) => x.toMap())),
+        "bus": List<dynamic>.from(bus.map((x) => x.toMap())),
       };
 }
 

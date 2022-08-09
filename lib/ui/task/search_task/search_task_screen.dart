@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:collection';
+
 import 'package:dms/main.dart';
 import 'package:dms/ui/custom_widget/no_internet.dart';
 import 'package:dms/ui/custom_widget/search_not_found.dart';
-import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/ui/task/task/model/get_retailers_task_response.dart';
 import 'package:dms/ui/task/task/task_list_item.dart';
 import 'package:dms/utils/constants.dart';
@@ -15,6 +15,7 @@ import 'package:rxdart/rxdart.dart';
 
 class SearchTaskScreen extends StatefulWidget {
   final String day;
+
   const SearchTaskScreen({
     Key? key,
     required this.day,
@@ -34,10 +35,7 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
 
   @override
   void initState() {
-    subject.stream
-        .debounce(
-            (event) => TimerStream(event, const Duration(milliseconds: 1000)))
-        .listen((query) {
+    subject.stream.debounce((event) => TimerStream(event, const Duration(milliseconds: 1000))).listen((query) {
       debugPrint("query--->$query");
       retailersList.clear();
       searchApi(query);
@@ -61,8 +59,7 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
               onChanged: (text) {
                 if (text.trim().isEmpty) {
                   retailersList.clear();
-                  searchStream.addError(
-                      "Enter Name or mobile number to search retailer");
+                  searchStream.addError("Enter Name or mobile number to search retailer");
                 } else if (text.trim().length >= 3) {
                   retailersList.clear();
                   subject.add(text);
@@ -75,18 +72,15 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide:
-                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide:
-                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       gapPadding: 2,
-                      borderSide:
-                          const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
                   suffixIcon: IconButton(
                     splashRadius: 20,
                     icon: const Icon(
@@ -97,8 +91,7 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
                       if (edtSearch.text.trim().isNotEmpty) {
                         edtSearch.clear();
                         retailersList.clear();
-                        searchStream.addError(
-                            "Enter Name or mobile number to search retailer");
+                        searchStream.addError("Enter Name or mobile number to search retailer");
                       } else {
                         Navigator.pop(context);
                       }
@@ -139,33 +132,26 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
                   // calculate months from enrolled date to current date
                   if (snapshot.data![index].enrollmentDate.isNotEmpty) {
                     int monthCounts = 0;
-                    DateTime enrolledDate =
-                        DateTime.parse(snapshot.data![index].enrollmentDate);
+                    DateTime enrolledDate = DateTime.parse(snapshot.data![index].enrollmentDate);
                     if (enrolledDate.year == currentDate!.year) {
                       monthCounts = currentDate!.month - enrolledDate.month;
                       if (monthCounts < 2) {
-                        snapshot.data![index].totalMonths =
-                            monthCounts.toString() + " month ago";
+                        snapshot.data![index].totalMonths = monthCounts.toString() + " month ago";
                       } else {
-                        snapshot.data![index].totalMonths =
-                            monthCounts.toString() + " months ago";
+                        snapshot.data![index].totalMonths = monthCounts.toString() + " months ago";
                       }
                     } else {
                       monthCounts = 12 - enrolledDate.month;
                       monthCounts = monthCounts + currentDate!.month;
                       int count = 0;
-                      for (int i = enrolledDate.year + 1;
-                          i <= currentDate!.year - 1;
-                          i++) {
+                      for (int i = enrolledDate.year + 1; i <= currentDate!.year - 1; i++) {
                         count++;
                       }
                       monthCounts = monthCounts + (count * 12);
                       if (monthCounts < 2) {
-                        snapshot.data![index].totalMonths =
-                            monthCounts.toString() + " month ago";
+                        snapshot.data![index].totalMonths = monthCounts.toString() + " month ago";
                       } else {
-                        snapshot.data![index].totalMonths =
-                            monthCounts.toString() + " months ago";
+                        snapshot.data![index].totalMonths = monthCounts.toString() + " months ago";
                       }
                     }
                   }
@@ -205,8 +191,7 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
   void searchApi(String text) async {
     if (await Network.isConnected()) {
       if (day.isEmpty) {
-        DateTime dateTime =
-            await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
+        DateTime dateTime = await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
           return DateTime.now();
         });
         day = DateFormat("EEEE").format(dateTime);
@@ -216,11 +201,9 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
       input["search"] = text;
       input["day"] = day;
       searchStream.addError("loading");
-      GetRetailersTaskResponse response =
-          await repository.searchTaskRetailers(input);
+      GetRetailersTaskResponse response = await repository.searchTaskRetailers(input);
       if (response.success) {
-        currentDate =
-            await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
+        currentDate = await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
           return DateTime.now();
         });
         retailersList = response.data!;

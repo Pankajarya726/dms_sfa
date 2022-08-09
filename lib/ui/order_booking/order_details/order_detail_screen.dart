@@ -9,7 +9,6 @@ import 'package:dms/ui/order_booking/order_details/model/get_order_response.dart
 import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/utility.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
@@ -174,7 +173,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                   showOrder: true,
                                   beatId: widget.retailer.beatId.toString(),
                                   retailerId: widget.retailer.customerId.toString(),
-                                  orderId: order!.orderId.toString(),
+                                  orderId: order!.orderId.toString(), outletCode: widget.retailer.uniqueCode, outletName: widget.retailer.outlatName,
                                 )));
                     orderBloc.add(GetOrderEvent(retailerId: widget.retailer.customerId, beatId: widget.retailer.beatId));
                   } else {

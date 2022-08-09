@@ -11,20 +11,27 @@ import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/utility.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'model/get_reason_response.dart';
 
 class OrderSummery extends StatefulWidget {
   final String beatId;
   final String retailerId;
+  final String outletName;
+  final String outletCode;
   final String orderId;
   final Function(ReasonsListener? reasonsListener) onInit;
 
-  const OrderSummery({Key? key, required this.onInit, required this.beatId, required this.orderId, required this.retailerId})
+  const OrderSummery(
+      {Key? key,
+      required this.onInit,
+      required this.beatId,
+      required this.outletName,
+      required this.outletCode,
+      required this.orderId,
+      required this.retailerId})
       : super(key: key);
 
   @override
@@ -54,6 +61,61 @@ class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener 
         slivers: [
           SliverList(
             delegate: SliverChildListDelegate([
+              const SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                          text: "Outlet Name: ",
+                          style: TextStyle(
+                              color: const Color(0xff555555),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontFamily: GoogleFonts.roboto().fontFamily)),
+                      TextSpan(
+                          text: widget.outletName,
+                          style: TextStyle(
+                              color: const Color(0xff777777),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              fontFamily: GoogleFonts.roboto().fontFamily)),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                          text: "Outlet Code: ",
+                          style: TextStyle(
+                              color: const Color(0xff555555),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontFamily: GoogleFonts.roboto().fontFamily)),
+                      TextSpan(
+                          text: widget.outletCode,
+                          style: TextStyle(
+                              color: const Color(0xff777777),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              fontFamily: GoogleFonts.roboto().fontFamily)),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
               ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -345,7 +407,7 @@ class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener 
         title: 'Are you sure you want to confirm this Order?', context: context, cancelText: "Cancel", confirmText: "Confirm");
     if (save != null && save) {
       if (await Network.isConnected()) {
-        EasyLoading.show();
+        Utility.showLoading();
         BaseResponse response;
         if (widget.orderId.isEmpty) {
           response = await repository.saveOrder(input);
@@ -353,7 +415,7 @@ class _OrderSummeryState extends State<OrderSummery> implements ReasonsListener 
           response = await repository.updateOrder(input);
         }
 
-        EasyLoading.dismiss();
+        Utility.dismissLoading();
         Utility.showToast(response.message);
         if (response.success) {
           await databaseHelper.clearCart();
@@ -451,12 +513,17 @@ class DataCell1 extends StatelessWidget {
               text: price,
               style: TextStyle(
                   color: MColor.textColor,
-                  fontSize: 12,
+                  fontSize: 10,
+                  fontFamily: GoogleFonts.roboto().fontFamily,
                   decoration: double.parse(schemePrice) == 0 ? TextDecoration.none : TextDecoration.lineThrough),
             ),
             TextSpan(
               text: double.parse(schemePrice) == 0 ? "" : "\n" + schemePrice,
-              style: const TextStyle(color: MColor.textColor, fontSize: 12),
+              style: TextStyle(
+                color: MColor.textColor,
+                fontSize: 10,
+                fontFamily: GoogleFonts.roboto().fontFamily,
+              ),
             )
           ]),
           maxLines: 5,

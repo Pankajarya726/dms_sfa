@@ -13,21 +13,23 @@ class OrderConfirmationScreen extends StatefulWidget {
   final String beatId;
   final String retailerId;
   final String orderId;
+  final String outletName;
+  final String outletCode;
 
   const OrderConfirmationScreen(
       {Key? key,
       required this.beatId,
       required this.retailerId,
+      required this.outletName,
+      required this.outletCode,
       required this.orderId})
       : super(key: key);
 
   @override
-  _OrderConfirmationScreenState createState() =>
-      _OrderConfirmationScreenState();
+  _OrderConfirmationScreenState createState() => _OrderConfirmationScreenState();
 }
 
-class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
-    with TickerProviderStateMixin {
+class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with TickerProviderStateMixin {
   late TabController _tabController;
   ValueNotifier<int> valueNotifier = ValueNotifier(0);
 
@@ -37,8 +39,8 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
   bool issueResolve = false;
 
   ReasonsListener? reasonsListener;
-  GlobalKey _globalKey = GlobalKey();
-  GlobalKey _globalKey1 = GlobalKey();
+  final GlobalKey _globalKey = GlobalKey();
+  final GlobalKey _globalKey1 = GlobalKey();
   @override
   void initState() {
     _tabController = TabController(length: 2, initialIndex: 0, vsync: this);
@@ -73,18 +75,13 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
                                   remark: remark,
                                   buList: buList,
                                   issueResolve: issueResolve,
-                                  onReasonSelected:
-                                      (reason, remark, buList, issueResolve) {
+                                  onReasonSelected: (reason, remark, buList, issueResolve) {
                                     this.reason = reason;
                                     this.remark = remark;
                                     this.buList = buList;
                                     this.issueResolve = issueResolve;
                                     if (reasonsListener != null) {
-                                      reasonsListener!.onReasonSelect(
-                                          this.reason,
-                                          this.remark,
-                                          this.buList,
-                                          this.issueResolve);
+                                      reasonsListener!.onReasonSelect(this.reason, this.remark, this.buList, this.issueResolve);
                                     }
                                   },
                                 );
@@ -92,9 +89,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
                             );
                           },
                           icon: Container(
-                            decoration: const BoxDecoration(
-                                color: MColor.colorSecondary,
-                                shape: BoxShape.circle),
+                            decoration: const BoxDecoration(color: MColor.colorSecondary, shape: BoxShape.circle),
                             padding: const EdgeInsets.all(6),
                             alignment: Alignment.center,
                             child: const Image(
@@ -119,29 +114,21 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
                 indicatorPadding: const EdgeInsets.symmetric(horizontal: 15),
                 physics: const NeverScrollableScrollPhysics(),
                 onTap: (index) {
-                  debugPrint(
-                      _globalKey1.currentContext!.size!.height.toString());
-                  debugPrint(
-                      _globalKey.currentContext!.size!.height.toString());
+                  debugPrint(_globalKey1.currentContext!.size!.height.toString());
+                  debugPrint(_globalKey.currentContext!.size!.height.toString());
                   valueNotifier.value = index;
                 },
                 tabs: const [
                   Tab(
                     child: Text(
                       "Focus SKU",
-                      style: TextStyle(
-                          color: Color(0xff303030),
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Color(0xff303030), fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
                   Tab(
                     child: Text(
                       "Summary",
-                      style: TextStyle(
-                          color: Color(0xff303030),
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Color(0xff303030), fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
@@ -165,6 +152,8 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen>
               beatId: widget.beatId,
               retailerId: widget.retailerId,
               orderId: widget.orderId,
+              outletName: widget.outletName,
+              outletCode: widget.outletCode,
               onInit: (listener) {
                 reasonsListener = listener;
               },

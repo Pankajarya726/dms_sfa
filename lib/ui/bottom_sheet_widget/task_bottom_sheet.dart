@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:dms/main.dart';
 import 'package:dms/model/base_response.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
@@ -49,8 +50,7 @@ class _TaskBottomSheetState extends State<TaskBottomSheet> {
         minHeight: MediaQuery.of(context).size.height * 0.20,
       ),
       child: Padding(
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,8 +72,7 @@ class _TaskBottomSheetState extends State<TaskBottomSheet> {
                       height: 10,
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(
-                          left: 15.0, right: 15, bottom: 5, top: 5),
+                      padding: const EdgeInsets.only(left: 15.0, right: 15, bottom: 5, top: 5),
                       child: TextFormField(
                         controller: tecRemark,
                         minLines: 3,
@@ -81,8 +80,7 @@ class _TaskBottomSheetState extends State<TaskBottomSheet> {
                         maxLength: 300,
                         decoration: InputDecoration(
                           counterText: "",
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 15),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide.none,
@@ -112,11 +110,7 @@ class _TaskBottomSheetState extends State<TaskBottomSheet> {
                   color: MColor.colorSecondary,
                   child: const Text(
                     StringConst.done,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5),
+                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 0.5),
                   ),
                 ),
                 MaterialButton(
@@ -130,11 +124,7 @@ class _TaskBottomSheetState extends State<TaskBottomSheet> {
                   color: MColor.colorPrimary,
                   child: const Text(
                     StringConst.cancel,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5),
+                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 0.5),
                   ),
                 ),
               ],
@@ -162,14 +152,10 @@ class _TaskBottomSheetState extends State<TaskBottomSheet> {
         }
       }
 
-      Map<String, dynamic> input = {
-        "task_id": taskId,
-        "outlet_code": widget.retailerCode,
-        "remark": tecRemark.text.trim()
-      };
+      Map<String, dynamic> input = {"task_id": taskId, "outlet_code": widget.retailerCode, "remark": tecRemark.text.trim()};
 
       BaseResponse response = await repository.resolveTask(input);
-      EasyLoading.dismiss();
+      Utility.dismissLoading();
       if (response.success) {
         Utility.showToast(response.message);
         Navigator.pop(context, task.length);
@@ -235,9 +221,7 @@ class _TaskItemState extends State<TaskItem> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15),
-      decoration: const BoxDecoration(
-          border:
-              Border(bottom: BorderSide(width: 0.5, color: Color(0xffC5C5C5)))),
+      decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 0.5, color: Color(0xffC5C5C5)))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

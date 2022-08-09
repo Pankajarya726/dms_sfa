@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:dms/main.dart';
 import 'package:dms/model/base_response.dart';
@@ -14,14 +13,11 @@ import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
-import 'package:group_radio_button/group_radio_button.dart';
-import 'package:intl/intl.dart';
-import 'package:ntp/ntp.dart';
 
 class NoOrderReasonSheet extends StatefulWidget {
   final String retailerId;
-  const NoOrderReasonSheet({Key? key, required this.retailerId})
-      : super(key: key);
+
+  const NoOrderReasonSheet({Key? key, required this.retailerId}) : super(key: key);
 
   @override
   _NoOrderReasonSheetState createState() => _NoOrderReasonSheetState();
@@ -33,8 +29,7 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
   List<ReasonsModal> reasonList = [];
   List<BUModal> buList = [];
   ReasonsModal groupValue = ReasonsModal(id: "", tagName: "", taskType: "");
-  StreamController<List<ReasonsModal>> reasonStreamController =
-      StreamController();
+  StreamController<List<ReasonsModal>> reasonStreamController = StreamController();
   StreamController<List<BUModal>> buStreamController = StreamController();
 
   TextEditingController edtRemark = TextEditingController();
@@ -55,8 +50,7 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
         minHeight: MediaQuery.of(context).size.height * 0.20,
       ),
       child: Padding(
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -84,13 +78,10 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                                       reasonStreamController.add(reasonList);
                                     },
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 10),
+                                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                                       child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           SizedBox(
                                             height: 20,
@@ -99,13 +90,10 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                                               value: reasonList[index],
                                               groupValue: groupValue,
                                               activeColor: MColor.colorPrimary,
-                                              fillColor:
-                                                  MaterialStateProperty.all(
-                                                      MColor.colorPrimary),
+                                              fillColor: MaterialStateProperty.all(MColor.colorPrimary),
                                               onChanged: (value) {
                                                 groupValue = value!;
-                                                reasonStreamController
-                                                    .add(reasonList);
+                                                reasonStreamController.add(reasonList);
                                               },
                                             ),
                                           ),
@@ -161,19 +149,15 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                         decoration: InputDecoration(
                             counterText: "",
                             hintText: "Enter your Reason",
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 15),
-                            border: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius: BorderRadius.circular(10))),
+                            contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                            border: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.circular(10))),
                       ),
                     ),
                     const Padding(
                       padding: EdgeInsets.all(15.0),
                       child: Text(
                         "Select BU",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
                     Padding(
@@ -181,8 +165,7 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                       child: StreamBuilder<List<BUModal>>(
                         stream: buStreamController.stream,
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
                             return const Center(
                               child: CircularProgressIndicator(),
                             );
@@ -217,8 +200,7 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                                 textActiveColor: MColor.activeTextColor,
                                 pressEnabled: true,
                                 onPressed: (item) {
-                                  buList[index].selected =
-                                      !buList[index].selected;
+                                  buList[index].selected = !buList[index].selected;
 
                                   buStreamController.add(buList);
                                 },
@@ -226,10 +208,7 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                                 elevation: 0,
                                 activeColor: const Color(0xffFFC9CC),
                                 border: Border.all(
-                                    color: buList[index].selected
-                                        ? MColor.colorPrimary
-                                        : const Color(0xffc5c5c5),
-                                    width: 1),
+                                    color: buList[index].selected ? MColor.colorPrimary : const Color(0xffc5c5c5), width: 1),
                                 color: const Color(0xffFAFAFA),
                               );
                             },
@@ -268,8 +247,7 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
               children: [
                 DoneButton(
                   onPressed: () async {
-                    List<BUModal> bus =
-                        buList.where((element) => element.selected).toList();
+                    List<BUModal> bus = buList.where((element) => element.selected).toList();
 
                     String selectedBu = "";
 
@@ -310,7 +288,7 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
     if (await Network.isConnected()) {
       EasyLoading.show(status: "Loading...");
       BaseResponse response = await repository.saveNoOrder(input);
-      EasyLoading.dismiss();
+      Utility.dismissLoading();
       if (response.success) {
         Utility.showToast(response.message);
         Navigator.pop(context, true);
@@ -334,11 +312,10 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
 
   void getBu() async {
     if (await Network.isConnected()) {
-      DateTime dateTime =
-          await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
-        return DateTime.now();
-      });
-      Map<String, dynamic> input = {"day": DateFormat("EEEE").format(dateTime)};
+      // DateTime dateTime = await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
+      //   return DateTime.now();
+      // });
+      // Map<String, dynamic> input = {"day": DateFormat("EEEE").format(dateTime)};
       GetBuResponse response = await repository.getBu();
       if (response.success) {
         buList = response.data!;

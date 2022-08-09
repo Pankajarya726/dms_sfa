@@ -24,7 +24,7 @@ class GetOrderSummeryResponse {
   Map<String, dynamic> toMap() => {
         "success": success,
         "message": message,
-        "data": data == null ? null : List<dynamic>.from(data.map((x) => x.toMap())),
+        "data": List<dynamic>.from(data.map((x) => x.toMap())),
       };
 }
 
@@ -85,9 +85,8 @@ class OrderSummery {
   Map<String, dynamic> toMap() => {
         "customer_id": customerId,
         "customer_name": customerName,
-        "date": date == null
-            ? null
-            : "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}",
+        "date":
+            "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}",
         "district_id": districtId,
         "district_name": districtName,
         "city_id": cityId,

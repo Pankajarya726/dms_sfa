@@ -81,9 +81,9 @@ class PendingTaskModal {
         "escalation_remark": escalationRemark,
         "task_remark": taskRemark,
         "action": action,
-        "escalation_to": escalationTo == null ? [] : List<dynamic>.from(escalationTo.map((x) => x.toMap())),
-        "escalation_tag": escalationTag == null ? [] : List<dynamic>.from(escalationTag.map((x) => x.toMap())),
-        "bu_id": buId == null ? [] : List<dynamic>.from(buId.map((x) => x.toMap())),
+        "escalation_to": List<dynamic>.from(escalationTo.map((x) => x.toMap())),
+        "escalation_tag": List<dynamic>.from(escalationTag.map((x) => x.toMap())),
+        "bu_id": List<dynamic>.from(buId.map((x) => x.toMap())),
       };
 }
 

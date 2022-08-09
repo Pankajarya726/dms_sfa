@@ -56,7 +56,7 @@ class BrandAndCategoryModel {
   Map<String, dynamic> toMap() => {
         "id": id,
         "brand_name": name,
-        "category": category == null ? [] : List<dynamic>.from(category.map((x) => x.toMap())),
+        "category": List<dynamic>.from(category.map((x) => x.toMap())),
       };
 
   @override

@@ -33,6 +33,7 @@ class RetailerDetailsModal {
     required this.beatId,
     required this.beatName,
     required this.primaryAddress,
+    required this.landmark,
     required this.lat,
     required this.lng,
     required this.enrollmentTypeId,
@@ -58,6 +59,7 @@ class RetailerDetailsModal {
   String beatId;
   String beatName;
   String primaryAddress;
+  String landmark;
   String lat;
   String lng;
   String enrollmentTypeId;
@@ -85,6 +87,7 @@ class RetailerDetailsModal {
         beatId: json["beat_id"] == null ? "" : json["beat_id"].toString(),
         beatName: json["beat_name"] == null ? "" : json["beat_name"].toString(),
         primaryAddress: json["primary_address"] == null ? "" : json["primary_address"].toString(),
+        landmark: json["landmark"] == null ? "" : json["landmark"].toString(),
         lat: json["lat"] == null ? "" : json["lat"].toString(),
         lng: json["lng"] == null ? "" : json["lng"].toString(),
         enrollmentTypeId: json["enrollment_type_id"] == null ? "" : json["enrollment_type_id"].toString(),

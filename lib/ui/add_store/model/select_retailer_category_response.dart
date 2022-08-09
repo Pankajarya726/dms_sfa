@@ -15,26 +15,20 @@ class SelectRetailerCategoryResponse {
   String message;
   List<RetailerCategoryModel>? data;
 
-  factory SelectRetailerCategoryResponse.fromJson(String str) =>
-      SelectRetailerCategoryResponse.fromMap(json.decode(str));
+  factory SelectRetailerCategoryResponse.fromJson(String str) => SelectRetailerCategoryResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory SelectRetailerCategoryResponse.fromMap(Map<String, dynamic> json) =>
-      SelectRetailerCategoryResponse(
-        success: json["success"] == null ? null : json["success"],
-        message: json["message"] == null ? null : json["message"],
-        data: json["data"] == null
-            ? []
-            : List<RetailerCategoryModel>.from(
-                json["data"].map((x) => RetailerCategoryModel.fromMap(x))),
+  factory SelectRetailerCategoryResponse.fromMap(Map<String, dynamic> json) => SelectRetailerCategoryResponse(
+        success: json["success"] ?? false,
+        message: json["message"] ?? "Something went wrong",
+        data: json["data"] == null ? [] : List<RetailerCategoryModel>.from(json["data"].map((x) => RetailerCategoryModel.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
-        "success": success == null ? null : success,
-        "message": message == null ? null : message,
-        "data":
-            data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
+        "success": success,
+        "message": message,
+        "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
       };
 }
 
@@ -47,19 +41,17 @@ class RetailerCategoryModel {
   int id;
   String category;
 
-  factory RetailerCategoryModel.fromJson(String str) =>
-      RetailerCategoryModel.fromMap(json.decode(str));
+  factory RetailerCategoryModel.fromJson(String str) => RetailerCategoryModel.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory RetailerCategoryModel.fromMap(Map<String, dynamic> json) =>
-      RetailerCategoryModel(
-        id: json["id"] == null ? null : json["id"],
-        category: json["category"] == null ? null : json["category"],
+  factory RetailerCategoryModel.fromMap(Map<String, dynamic> json) => RetailerCategoryModel(
+        id: json["id"] ?? 0,
+        category: json["category"] ?? "",
       );
 
   Map<String, dynamic> toMap() => {
-        "id": id == null ? null : id,
-        "category": category == null ? null : category,
+        "id": id,
+        "category": category,
       };
 }

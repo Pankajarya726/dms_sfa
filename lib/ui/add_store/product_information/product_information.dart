@@ -14,7 +14,6 @@ import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -227,9 +226,9 @@ class _ProductInformationState extends State<ProductInformation> {
     // return;
 
     if (await Network.isConnected()) {
-      EasyLoading.show();
+      Utility.showLoading();
       BaseResponse response = await repository.registerRetailer(input);
-      EasyLoading.dismiss();
+      Utility.dismissLoading();
 
       if (response.success) {
         if (input["otp_number"] == null) {
@@ -295,9 +294,9 @@ class _ProductInformationState extends State<ProductInformation> {
       input["otp_number"] = mobile;
       input["otp"] = otp;
 
-      EasyLoading.show();
+      Utility.showLoading();
       BaseResponse response = await repository.verifyOtp(input);
-      EasyLoading.dismiss();
+      Utility.dismissLoading();
 
       if (response.success) {
         Utility.showToast(response.message);

@@ -10,15 +10,12 @@ import 'package:dms/ui/order_booking/retailers_list/model/get_retailers_response
 import 'package:dms/ui/order_booking/retailers_list/retailer_list_item.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_bloc.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_events.dart';
-import 'package:dms/ui/userlocation_bloc/userlocation_states.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/my_location.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
@@ -57,6 +54,7 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
 
   @override
   void initState() {
+    getLocation();
     debugPrint("RetailerTab-->initState--->${widget.selectedBeat.name}");
     widget.onInit(this);
     selectedBeat ??= widget.selectedBeat;
@@ -64,14 +62,13 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
     // retailerStreamController.addError("loading");
     retailerStreamController.add([]);
     getRetailers();
-    getLocation();
+
     super.initState();
   }
 
   @override
   void didUpdateWidget(covariant RetailerTab oldWidget) {
-    debugPrint("RetailerTab-->didUpdateWidget--->${widget.selectedBeat.id}");
-    debugPrint("RetailerTab-->didUpdateWidget--->${oldWidget.selectedBeat.id}");
+    debugPrint("RetailerTab --> didUpdateWidget");
     selectedBeat = widget.selectedBeat;
     day = widget.day;
     userLocationBloc.add(GetUserLocationEvent());
@@ -97,7 +94,7 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
 
   @override
   Widget build(BuildContext context) {
-    var userLocation = BlocProvider(
+    /*var userLocation = BlocProvider(
       create: (context) => userLocationBloc,
       child: BlocBuilder<UserLocationBloc, UserLocationStates>(
         builder: (context, state) {
@@ -117,7 +114,7 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
           return Container();
         },
       ),
-    );
+    );*/
 
     return Column(
       children: [
@@ -165,9 +162,11 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
                 controller: refreshController,
                 onRefresh: onRefresh,
                 enablePullDown: true,
-                enablePullUp: true,
+                enablePullUp: widget.index != 0,
                 onLoading: () {
-                  getRetailers();
+                  if (widget.index != 0) {
+                    getRetailers();
+                  }
                 },
                 footer: CustomFooter(
                   builder: (context, loadStatus) {
@@ -212,26 +211,33 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
     debugPrint("getRetailers-->$pageNo${selectedBeat!.id}");
     if (widget.index == 0) {
       if (await Network.isConnected() /* && !EasyLoading.isShow*/) {
+        Utility.showLoading();
         Map<String, dynamic> input = HashMap<String, dynamic>();
 
+        if (latitude == 0.0 || longitude == 0.0) {
+          LocationData? position = await MyLocation.getCurrentLocation();
+          if (position != null) {
+            latitude = position.latitude!;
+            longitude = position.longitude!;
+          }
+        }
+
+        String lat = latitude.toString();
+        String long = longitude.toString();
         String beatId = "";
         if (selectedBeat == null || selectedBeat!.id == "") {
-          for (int i = 0; i < widget.beatList.length; i++) {
-            if (i == widget.beatList.length - 1) {
-              beatId += widget.beatList[i].id;
-            } else {
-              beatId += widget.beatList[i].id + ",";
-            }
-          }
+          beatId = widget.beatList.where((element) => element.id != "").map((e) => e.id).join(",");
         } else {
           beatId = selectedBeat!.id;
         }
-
+        input["lat"] = lat;
+        input["long"] = long;
         input["beat_id"] = beatId;
+        input["sort_by"] = "3";
         input["day"] = day;
 
         GetRetailersResponse response = await repository.getTodayVisit(input);
-        EasyLoading.dismiss();
+        Utility.dismissLoading();
         refreshController.loadComplete();
         refreshController.refreshCompleted();
         if (response.success) {
@@ -248,7 +254,7 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
       int page = pageNo;
       if (await Network.isConnected() /* && !EasyLoading.isShow*/) {
         if (pageNo == 1) {
-          EasyLoading.show();
+          Utility.showLoading();
         }
 
         Map<String, dynamic> input = HashMap<String, dynamic>();
@@ -259,10 +265,17 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
         input["lat"] = latitude;
         input["long"] = longitude;
         input["sort_by"] = sortingType;
-        input["retailer_type"] = retailerType;
+
+        if (retailerType == StringConst.retailer) {
+          input["retailer_type"] = "1";
+        } else if (retailerType == StringConst.teleRetailer) {
+          input["retailer_type"] = "2";
+        } else {
+          input["retailer_type"] = "";
+        }
 
         GetRetailersResponse response = await repository.getRetailersOrderWise(input);
-        EasyLoading.dismiss();
+        Utility.dismissLoading();
         refreshController.loadComplete();
         refreshController.refreshCompleted();
         if (response.success) {
@@ -284,9 +297,11 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
 
   @override
   void onBeatSelect(BeatsModal beatsModal, String day, String type) {
-    if (selectedBeat!.id == beatsModal.id && day == this.day) {
+    debugPrint("onBeatSelect-->");
+    if (selectedBeat!.id == beatsModal.id && day == this.day && retailerType == type) {
       return;
     }
+    debugPrint("onBeatSelect1-->");
 
     selectedBeat = beatsModal;
     if (day.isEmpty) {
@@ -294,15 +309,7 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
     } else {
       this.day = day;
     }
-
-    if (type == StringConst.retailer) {
-      retailerType = "1";
-    } else if (type == StringConst.teleRetailer) {
-      retailerType = "2";
-    } else {
-      retailerType = "";
-    }
-
+    retailerType = type;
     retailers.clear();
     pageNo = 1;
     // retailerStreamController.addError("loading");
@@ -374,7 +381,7 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
       latitude = position.latitude!;
       longitude = position.longitude!;
     } else {
-      Utility.showToast("Can not fetch your location, Please try again later");
+      // Utility.showToast("Can not fetch your location, Please try again later");
     }
   }
 }

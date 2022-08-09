@@ -1,4 +1,5 @@
 import 'dart:collection';
+
 import 'package:dms/ui/task/task_history/bloc/task_history_bloc.dart';
 import 'package:dms/ui/task/task_history/bloc/task_history_events.dart';
 import 'package:dms/ui/task/task_history/bloc/task_history_states.dart';
@@ -25,8 +26,7 @@ class TaskHistory extends StatefulWidget {
 class _TaskHistoryState extends State<TaskHistory> {
   List<TaskHistoryModal> taskHistoryList = [];
   DateTime? currentDate;
-  RefreshController refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController refreshController = RefreshController(initialRefresh: false);
   TaskHistoryBloc taskHistoryBloc = TaskHistoryBloc();
 
   @override
@@ -83,8 +83,7 @@ class _TaskHistoryState extends State<TaskHistory> {
               onRefresh: onRefresh,
               enablePullDown: true,
               child: ListView.separated(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
                 itemCount: taskHistoryList.length,
                 separatorBuilder: (context, index) {
                   return const SizedBox(
@@ -96,10 +95,8 @@ class _TaskHistoryState extends State<TaskHistory> {
                   String daysPending = "";
                   if (taskHistoryList[index].isResolve == "0") {
                     if (taskHistoryList[index].taskDate.isNotEmpty) {
-                      DateTime enrolledDate =
-                          DateTime.parse(taskHistoryList[index].taskDate);
-                      days =
-                          days + currentDate!.difference(enrolledDate).inDays;
+                      DateTime enrolledDate = DateTime.parse(taskHistoryList[index].taskDate);
+                      days = days + currentDate!.difference(enrolledDate).inDays;
                       if (days < 2) {
                         daysPending = days.toString() + " day pending";
                       } else {
@@ -108,10 +105,9 @@ class _TaskHistoryState extends State<TaskHistory> {
                     }
                   } else {
                     if (taskHistoryList[index].resolveDate.isNotEmpty) {
-                      DateTime enrolledDate =
-                          DateTime.parse(taskHistoryList[index].resolveDate);
-                      days =
-                          days + currentDate!.difference(enrolledDate).inDays;
+                      days = DateTime.parse(taskHistoryList[index].resolveDate)
+                          .difference(DateTime.parse(taskHistoryList[index].taskDate))
+                          .inDays;
                       if (days < 2) {
                         daysPending = "Solved in " + days.toString() + " day";
                       } else {
@@ -181,8 +177,7 @@ class _TaskHistoryItemsState extends State<TaskHistoryItems> {
       child: Material(
         borderRadius: BorderRadius.circular(10),
         child: Padding(
-          padding:
-              const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+          padding: const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
           child: Column(
             children: [
               Row(

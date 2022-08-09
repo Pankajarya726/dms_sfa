@@ -1,11 +1,16 @@
 import 'package:equatable/equatable.dart';
 
-class ChangePasswordEvent extends Equatable {
+class ChangePasswordEvents extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
+
+class ChangePasswordEvent extends ChangePasswordEvents {
   final String id;
   final String currentPassword;
   final String newPassword;
   final String confPassword;
-  const ChangePasswordEvent({
+  ChangePasswordEvent({
     required this.id,
     required this.currentPassword,
     required this.newPassword,

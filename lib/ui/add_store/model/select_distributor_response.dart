@@ -11,26 +11,20 @@ class SelectDistributorResponse {
   String message;
   List<DistributorModel>? data;
 
-  factory SelectDistributorResponse.fromJson(String str) =>
-      SelectDistributorResponse.fromMap(json.decode(str));
+  factory SelectDistributorResponse.fromJson(String str) => SelectDistributorResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory SelectDistributorResponse.fromMap(Map<String, dynamic> json) =>
-      SelectDistributorResponse(
-        success: json["success"] == null ? null : json["success"],
-        message: json["message"] == null ? null : json["message"],
-        data: json["data"] == null
-            ? []
-            : List<DistributorModel>.from(
-                json["data"].map((x) => DistributorModel.fromMap(x))),
+  factory SelectDistributorResponse.fromMap(Map<String, dynamic> json) => SelectDistributorResponse(
+        success: json["success"] ?? false,
+        message: json["message"] ?? "Something went wrong",
+        data: json["data"] == null ? [] : List<DistributorModel>.from(json["data"].map((x) => DistributorModel.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
-        "success": success == null ? null : success,
-        "message": message == null ? null : message,
-        "data":
-            data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
+        "success": success,
+        "message": message,
+        "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
       };
 }
 
@@ -47,24 +41,21 @@ class DistributorModel {
   String name;
   String customerCodes;
 
-  factory DistributorModel.fromJson(String str) =>
-      DistributorModel.fromMap(json.decode(str));
+  factory DistributorModel.fromJson(String str) => DistributorModel.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory DistributorModel.fromMap(Map<String, dynamic> json) =>
-      DistributorModel(
-        id: json["id"] == null ? null : json["id"],
-        userId: json["user_id"] == null ? null : json["user_id"],
-        name: json["name"] == null ? null : json["name"],
-        customerCodes:
-            json["customer_codes"] == null ? null : json["customer_codes"],
+  factory DistributorModel.fromMap(Map<String, dynamic> json) => DistributorModel(
+        id: json["id"] ?? 0,
+        userId: json["user_id"] ?? 0,
+        name: json["name"] == null ? "" : json["name"].toString(),
+        customerCodes: json["customer_codes"] == null ? "" : json["customer_codes"].toString(),
       );
 
   Map<String, dynamic> toMap() => {
-        "id": id == null ? null : id,
-        "user_id": userId == null ? null : userId,
-        "name": name == null ? null : name,
-        "customer_codes": customerCodes == null ? null : customerCodes,
+        "id": id,
+        "user_id": userId,
+        "name": name,
+        "customer_codes": customerCodes,
       };
 }

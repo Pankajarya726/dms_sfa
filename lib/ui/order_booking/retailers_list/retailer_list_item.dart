@@ -117,13 +117,17 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                           const SizedBox(
                             width: 10,
                           ),
-                          Text(
-                            widget.retailer.outlatName,
-                            style: const TextStyle(
-                              color: Color(0XFF555555),
-                              letterSpacing: 0.67,
-                              fontWeight: FontWeight.w600,
-                              overflow: TextOverflow.ellipsis,
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 2,
+                            child: Text(
+                              widget.retailer.outlatName,
+                              maxLines: 3,
+                              style: const TextStyle(
+                                color: Color(0XFF555555),
+                                letterSpacing: 0.67,
+                                fontWeight: FontWeight.w600,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
                         ],
@@ -249,7 +253,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
         debugPrint("url---->$url");
 
         MapLauncher.showDirections(
-            destination: Coords(position.latitude!, position.longitude!),
+            destination: Coords(double.parse(lat), double.parse(lng)),
             origin: Coords(position.latitude!, position.longitude!),
             directionsMode: DirectionsMode.driving,
             mapType: MapType.google);

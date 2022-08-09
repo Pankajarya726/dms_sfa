@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+
 import 'package:dms/listeners/drop_down_field_listener.dart';
 import 'package:dms/listeners/pop_up_menu_listener.dart';
 import 'package:dms/main.dart';
@@ -13,8 +14,6 @@ import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
-import 'package:ntp/ntp.dart';
 
 class FilterTaskBottomSheet extends StatefulWidget {
   final String day;
@@ -188,8 +187,7 @@ class _FilterTaskBottomSheetState extends State<FilterTaskBottomSheet> {
                   height: 35,
                 ),
                 Padding(
-                  padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -199,9 +197,7 @@ class _FilterTaskBottomSheetState extends State<FilterTaskBottomSheet> {
                               selectedDay,
                               beatsModal != null
                                   ? beatsModal!
-                                  : (beatsList.length > 1
-                                      ? BeatsModal(id: "", name: "All")
-                                      : BeatsModal(id: "", name: "")),
+                                  : (beatsList.length > 1 ? BeatsModal(id: "", name: "All") : BeatsModal(id: "", name: "")),
                               beatsList);
                           Navigator.pop(context);
                         },
@@ -238,8 +234,7 @@ class _FilterTaskBottomSheetState extends State<FilterTaskBottomSheet> {
       beatsStreamController.addError("loading");
       Map<String, dynamic> input = HashMap<String, dynamic>();
       input["day"] = selectedDay;
-      GetAllBeatsResponse response =
-          await repository.getBeatByOrderBookingDay(input);
+      GetAllBeatsResponse response = await repository.getBeatByOrderBookingDay(input);
       beatsModal = null;
       beatsList.clear();
       if (response.success) {

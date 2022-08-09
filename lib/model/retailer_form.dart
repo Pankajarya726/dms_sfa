@@ -50,17 +50,17 @@ class RetailerForm {
   String email = "";
   String cityId = "";
 
-  String street_name = "";
+  String streetName = "";
   String street = "";
-  String country_code = "";
+  String countryCode = "";
   String country = "";
-  String postal_code = "";
-  String administrative_area = "";
-  String subadministrative_area = "";
+  String postalCode = "";
+  String administrativeArea = "";
+  String subAdministrativeArea = "";
   String locality = "";
-  String sublocality = "";
+  String subLocality = "";
   String thoroughfare = "";
-  String subthoroughfare = "";
+  String subThoroughfare = "";
   bool checkMobileNumber = false;
 
   Map<String, dynamic> category = {};
@@ -108,17 +108,17 @@ class RetailerForm {
         "is_whatsapp_sms": isWhatsappSms,
         "order_booking_day_1": orderBookingDay1,
         "order_booking_day_2": orderBookingDay2,
-        "street_name": street_name,
+        "street_name": streetName,
         "street": street,
-        "country_code": country_code,
+        "country_code": countryCode,
         "country": country,
-        "postal_code": postal_code,
-        "administrative_area": administrative_area,
-        "subadministrative_area": subadministrative_area,
+        "postal_code": postalCode,
+        "administrative_area": administrativeArea,
+        "subadministrative_area": subAdministrativeArea,
         "locality": locality,
-        "sublocality": sublocality,
+        "sublocality": subLocality,
         "thoroughfare": thoroughfare,
-        "subthoroughfare": subthoroughfare,
+        "subthoroughfare": subThoroughfare,
         "price_category": priceCategory,
       };
 }

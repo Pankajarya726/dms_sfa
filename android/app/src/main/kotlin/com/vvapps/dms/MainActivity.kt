@@ -15,63 +15,46 @@ import io.flutter.plugin.common.MethodChannel
 
 class MainActivity: FlutterActivity() {
     private val CHANNEL = "com.vvapps.sfa/imei"
-    override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
-        super.configureFlutterEngine(flutterEngine)
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {
-                call, result ->
-            if(call.method=="getImeiNumber"){
-                var info = getIMEIDeviceId(context);
-
-                Log.e(javaClass.simpleName,"info--->"+info)
-                result.success(info)
-            }
-            // This method is invoked on the main thread.
-            // TODO
-        }
-    }
-
-    fun getIMEIDeviceId(context: Context): String? {
-
-        //                getIMEIDeviceId(context);
+//    override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+//        super.configureFlutterEngine(flutterEngine)
+//        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {
+//                call, result ->
+//            if(call.method=="getImeiNumber"){
+//                var info = getIMEIDeviceId(context);
 //
-//                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//                    info = Settings.Secure.getString(
-//                        context.getContentResolver(),
-//                        Settings.Secure.ANDROID_ID);
-//                }else{
-//                    val telephonyManager: TelephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                        info =  telephonyManager.imei
-//                    }else{
-//                        info = telephonyManager.getDeviceId()
-//                    }
-//                }
-//
-
-
-        val deviceId: String = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-//        deviceId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-//        } else {
-//            val mTelephony = context.getSystemService(TELEPHONY_SERVICE) as TelephonyManager
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                if (context.checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-//                    return ""
-//                }
+//                Log.e(javaClass.simpleName,"info--->"+info)
+//                result.success(info)
 //            }
-//            if (mTelephony.deviceId != null) {
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                    mTelephony.imei
-//                } else {
-//                    mTelephony.deviceId
-//                }
-//            } else {
-//                Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-//            }
+//            // This method is invoked on the main thread.
+//            // TODO
 //        }
-        Log.d("deviceId", deviceId)
-
-        return deviceId
-    }
+//    }
+//
+////    fun getIMEIDeviceId(context: Context): String? {
+//
+//        val deviceId: String = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+////        deviceId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+////            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+////        } else {
+////            val mTelephony = context.getSystemService(TELEPHONY_SERVICE) as TelephonyManager
+////            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+////                if (context.checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+////                    return ""
+////                }
+////            }
+////            if (mTelephony.deviceId != null) {
+////                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+////                    mTelephony.imei
+////                } else {
+////                    mTelephony.deviceId
+////                }
+////            } else {
+////                Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+////            }
+////        }
+//        Log.d("deviceId", deviceId)
+//
+//        return deviceId
+//    }
 }
 

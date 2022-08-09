@@ -24,7 +24,7 @@ class GetReasonsResponse {
   Map<String, dynamic> toMap() => {
         "success": success,
         "message": message,
-        "data": data == null ? [] : List<dynamic>.from(data.map((x) => x.toMap())),
+        "data": List<dynamic>.from(data.map((x) => x.toMap())),
       };
 }
 

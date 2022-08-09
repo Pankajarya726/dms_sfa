@@ -7,7 +7,6 @@ import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
 
@@ -151,7 +150,7 @@ class _ScreenAfterLoginState extends State<ScreenAfterLogin> {
         // Utility.showToast( response.message);
       }
     } else {
-      Utility.showToast( "Please check your internet connection!");
+      Utility.showToast("Please check your internet connection!");
     }
   }
 }

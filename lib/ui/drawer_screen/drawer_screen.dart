@@ -9,6 +9,7 @@ import 'package:dms/ui/start_my_day/bloc/start_my_day_events.dart';
 import 'package:dms/ui/start_my_day/bloc/start_my_day_states.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/constants.dart';
+import 'package:dms/utils/my_location.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
@@ -17,6 +18,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kf_drawer/kf_drawer.dart';
+import 'package:location/location.dart';
 import 'package:marquee/marquee.dart';
 
 class DrawerScreen extends StatefulWidget {
@@ -29,8 +31,7 @@ class DrawerScreen extends StatefulWidget {
 }
 
 class _DrawerScreenState extends State<DrawerScreen> {
-  KFDrawerController controller =
-      KFDrawerController(initialPage: KFDrawerContent());
+  KFDrawerController controller = KFDrawerController(initialPage: KFDrawerContent());
   StartMyDayBloc startMyDayBloc = StartMyDayBloc();
   ProfileUpdateListener? profileUpdateListener;
 
@@ -39,6 +40,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
   @override
   void initState() {
     super.initState();
+    getLocation();
     controller = KFDrawerController(
       initialPage: HomeScreen(
         onInit: (ProfileUpdateListener listener) {
@@ -49,9 +51,16 @@ class _DrawerScreenState extends State<DrawerScreen> {
     getStart();
   }
 
+  void getLocation() async {
+    LocationData? position = await MyLocation.getCurrentLocation();
+    if (position != null) {
+    } else {
+      // Utility.showToast("Can not fetch your location, Please try again later");
+    }
+  }
+
   Future<String> getStart() async {
-    startMyDay =
-        await SharedPreference.getStringPreference(SharedPreference.startMyDay);
+    startMyDay = await SharedPreference.getStringPreference(SharedPreference.startMyDay);
     return startMyDay;
   }
 
@@ -113,10 +122,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
                               fit: BoxFit.cover,
                             );
                           },
-                          errorWidget: (context, url, error) =>
-                              Image.asset("assets/placeholder.png"),
-                          placeholder: (context, url) =>
-                              Image.asset("assets/placeholder.png"),
+                          errorWidget: (context, url, error) => Image.asset("assets/placeholder.png"),
+                          placeholder: (context, url) => Image.asset("assets/placeholder.png"),
                         ),
                       ),
                       Expanded(
@@ -128,27 +135,18 @@ class _DrawerScreenState extends State<DrawerScreen> {
                             children: [
                               Text(
                                 Constants.name,
-                                style: const TextStyle(
-                                    fontSize: 21,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w400),
+                                style: const TextStyle(fontSize: 21, color: Colors.white, fontWeight: FontWeight.w400),
                               ),
                               Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(4)),
+                                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4)),
                                 // width: MediaQuery.of(context).size.width*0.45,
                                 child: Constants.designation.length > 20
                                     ? SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.45,
+                                        width: MediaQuery.of(context).size.width * 0.45,
                                         height: 30,
                                         child: Marquee(
                                           text: Constants.designation,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
+                                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
 
                                           // scrollAxis: Axis.horizontal,
                                           // crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,8 +198,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 onTap: () {
                   controller.close!.call();
                 },
-                title: const Text("Home",
-                    style: TextStyle(color: Colors.white, fontSize: 18)),
+                title: const Text("Home", style: TextStyle(color: Colors.white, fontSize: 18)),
                 leading: SvgPicture.asset(
                   "assets/Home.svg",
                   height: 28,
@@ -233,8 +230,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   // controller.close!.call();
                   Utility.showToast(StringConst.comingSoon);
                 },
-                title: const Text("Message",
-                    style: TextStyle(color: Colors.white, fontSize: 18)),
+                title: const Text("Message", style: TextStyle(color: Colors.white, fontSize: 18)),
                 leading: SvgPicture.asset(
                   "assets/Message.svg",
                   height: 28,
@@ -252,10 +248,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                       // Navigator.pop(context);
                     }
                     if (state is EndMyDayFailureState) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => EndDayScreen(state.data)));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => EndDayScreen(state.data)));
                     }
                   },
                   child: FutureBuilder<String>(
@@ -278,8 +271,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                           } else {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    const ScreenAfterLogin(),
+                                builder: (BuildContext context) => const ScreenAfterLogin(),
                               ),
                             );
                           }
@@ -287,13 +279,11 @@ class _DrawerScreenState extends State<DrawerScreen> {
                         title: startMyDay == "hide"
                             ? const Text(
                                 "End Day",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 18),
+                                style: TextStyle(color: Colors.white, fontSize: 18),
                               )
                             : const Text(
                                 "Start Day",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 18),
+                                style: TextStyle(color: Colors.white, fontSize: 18),
                               ),
                         leading: SvgPicture.asset(
                           "assets/End-Day.svg",
@@ -311,8 +301,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   // controller.close!.call();
                   Utility.showToast(StringConst.comingSoon);
                 },
-                title: const Text("Sync",
-                    style: TextStyle(color: Colors.white, fontSize: 18)),
+                title: const Text("Sync", style: TextStyle(color: Colors.white, fontSize: 18)),
                 leading: SvgPicture.asset(
                   "assets/Sync.svg",
                   height: 28,
@@ -331,10 +320,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
               ListTile(
                 onTap: () async {
                   controller.close!.call();
-                  await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => const SettingsScreen()));
+                  await Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen()));
 
                   setState(() {});
                   if (profileUpdateListener != null) {
@@ -357,8 +343,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   // controller.close!.call();
                   logoutDialog(context, StringConst.logout);
                 },
-                title: const Text("Logout",
-                    style: TextStyle(color: Colors.white, fontSize: 18)),
+                title: const Text("Logout", style: TextStyle(color: Colors.white, fontSize: 18)),
                 leading: SvgPicture.asset(
                   "assets/Logout.svg",
                   height: 28,
@@ -414,9 +399,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 ),
           actions: [
             MaterialButton(
-              child: const Text("Cancel",
-                  style: TextStyle(
-                      color: Colors.grey, fontWeight: FontWeight.w600)),
+              child: const Text("Cancel", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600)),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -441,10 +424,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 if (titleText == StringConst.logout) {
                   await SharedPreference.clearSharedPreference(context);
                   Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const LoginScreen()),
-                      ModalRoute.withName("/"));
+                      context, MaterialPageRoute(builder: (context) => const LoginScreen()), ModalRoute.withName("/"));
                 } else {
                   Navigator.pop(context);
                   startMyDayBloc.add(EndMyDayEvent());

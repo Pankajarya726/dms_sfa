@@ -138,7 +138,7 @@ class _RetailerListState extends State<RetailerList> {
     int page = pageNo;
 
     if (await Network.isConnected() && !EasyLoading.isShow) {
-      // EasyLoading.show();
+      //  Utility.showLoading();
 
       Map<String, dynamic> input = HashMap<String, dynamic>();
       input["order_status"] = widget.index;
@@ -157,7 +157,7 @@ class _RetailerListState extends State<RetailerList> {
       input["retailer_type"] = "";
 
       GetRetailersResponse response = await repository.getRetailersOrderWise(input);
-      // EasyLoading.dismiss();
+      // Utility.dismissLoading();
       refreshController.loadComplete();
       refreshController.refreshCompleted();
       if (response.success) {

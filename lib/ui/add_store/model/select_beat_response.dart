@@ -22,14 +22,14 @@ class SelectBeatResponse {
   String toJson() => json.encode(toMap());
 
   factory SelectBeatResponse.fromMap(Map<String, dynamic> json) => SelectBeatResponse(
-        success: json["success"] == null ? null : json["success"],
-        message: json["message"] == null ? null : json["message"],
+        success: json["success"] ?? false,
+        message: json["message"] ?? "Something went wrong",
         data: json["data"] == null ? [] : List<BeatsModal>.from(json["data"].map((x) => BeatsModal.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
-        "success": success == null ? null : success,
-        "message": message == null ? null : message,
+        "success": success,
+        "message": message,
         "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toMap())),
       };
 }

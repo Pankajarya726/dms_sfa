@@ -158,7 +158,7 @@ class ProductsModal {
         "price_after_discount": priceAfterDiscount,
         "customer_id": customerId,
         "saleable_stock_pcs": saleableStockPcs,
-        "schemes": schemes == null ? [] : List<dynamic>.from(schemes.map((x) => x.toMap())),
+        "schemes": List<dynamic>.from(schemes.map((x) => x.toMap())),
       };
 }
 

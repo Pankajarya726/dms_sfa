@@ -5,6 +5,7 @@ import 'package:dms/ui/bottom_sheet_widget/last_escalation_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/task_details_bottom_sheet.dart';
 import 'package:dms/ui/bottom_sheet_widget/task_history_bottom_sheet.dart';
 import 'package:dms/ui/drawer_menu/home_screen/home_screen.dart';
+import 'package:dms/ui/order_booking/retailer_detail/retailer_detail_screen.dart';
 import 'package:dms/ui/task/task/model/get_retailers_task_response.dart';
 import 'package:dms/ui/task/task_details/bloc/task_details_bloc.dart';
 import 'package:dms/ui/task/task_details/bloc/task_details_events.dart';
@@ -16,6 +17,7 @@ import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class TaskDetailScreen extends StatefulWidget {
   final RetailersTaskModal modal;
@@ -97,6 +99,256 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
               SliverList(
                 delegate: SliverChildListDelegate(
                   [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15, right: 10, bottom: 0, top: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: const [
+                          Text(
+                            StringConst.storeInfo,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          // IconButton(
+                          //   onPressed: () {
+                          //     // Navigator.push(
+                          //     //   context,
+                          //     //   MaterialPageRoute(builder: (context) => const OutletInformation()),
+                          //     // );
+                          //   },
+                          //   padding: EdgeInsets.zero,
+                          //   // splashRadius: 13,
+                          //   icon: Container(
+                          //     height: 25,
+                          //     width: 25,
+                          //     decoration: const BoxDecoration(
+                          //       color: MColor.colorSecondary,
+                          //       borderRadius:
+                          //           BorderRadius.all(Radius.circular(15)),
+                          //     ),
+                          //     child: const Center(
+                          //       child: Icon(
+                          //         Icons.edit,
+                          //         color: Colors.white,
+                          //         size: 18,
+                          //       ),
+                          //     ),
+                          //   ),
+                          // )
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                      margin: const EdgeInsets.only(left: 15, right: 15, bottom: 0, top: 5),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color.fromRGBO(237, 237, 237, 0.25),
+                            blurRadius: 10,
+                          )
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: RetailerDetailItem(
+                                  value: widget.modal.ownerName,
+                                  image: "assets/user.png",
+                                  name: StringConst.ownerName,
+                                  type: 1,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 5),
+                                child: Container(
+                                  width: 1,
+                                  height: 30,
+                                  color: const Color(0xffC5C5C5),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Expanded(
+                                child: RetailerDetailItem(
+                                  value: widget.modal.orderBookingDay1 +
+                                      (widget.modal.orderBookingDay2.isEmpty ? "" : "," + widget.modal.orderBookingDay2),
+                                  image: "assets/telephone.png",
+                                  name: StringConst.callingDay,
+                                  type: 1,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () async {
+                                    try {
+                                      if (widget.modal.primaryMobile.isNotEmpty) {
+                                        await launchUrlString("tel:${widget.modal.primaryMobile}");
+                                      } else {
+                                        Utility.showToast("Mobile number not available");
+                                      }
+                                    } catch (e) {
+                                      Utility.showToast(e.toString());
+                                    }
+                                  },
+                                  child: RetailerDetailItem(
+                                    value: widget.modal.primaryMobile,
+                                    image: "assets/phone_call.png",
+                                    name: StringConst.primaryNo,
+                                    type: 1,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 5),
+                                child: Container(
+                                  width: 1,
+                                  height: 30,
+                                  color: const Color(0xffC5C5C5),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () async {
+                                    try {
+                                      if (widget.modal.secondaryMobile.isNotEmpty) {
+                                        await launchUrlString("tel:${widget.modal.secondaryMobile}");
+                                      } else {
+                                        Utility.showToast("Mobile number not available");
+                                      }
+                                    } catch (e) {
+                                      Utility.showToast(e.toString());
+                                    }
+                                  },
+                                  child: RetailerDetailItem(
+                                    value: widget.modal.secondaryMobile.isEmpty ? "Not Given" : widget.modal.secondaryMobile,
+                                    image: "assets/phone_call.png",
+                                    name: StringConst.secondaryNo,
+                                    type: 1,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Image(
+                                  image: AssetImage("assets/map.png"),
+                                  width: 30,
+                                  height: 30,
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    RichText(
+                                        text: const TextSpan(children: [
+                                      TextSpan(
+                                        text: StringConst.address,
+                                        style: TextStyle(
+                                          color: Color(0xff303030),
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: " | ",
+                                        style: TextStyle(
+                                          color: MColor.colorPrimary,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: StringConst.landmark,
+                                        style: TextStyle(
+                                          color: Color(0xff303030),
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ])),
+                                    // const Text(
+                                    //   StringConst.address + " | " + StringConst.landmark,
+                                    //   style: TextStyle(
+                                    //     color: Color(0xff303030),
+                                    //     fontSize: 15,
+                                    //     fontWeight: FontWeight.bold,
+                                    //   ),
+                                    // ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width * 0.80,
+                                      child: RichText(
+                                          text: TextSpan(children: [
+                                        TextSpan(
+                                          text: widget.modal.primaryAddress,
+                                          style: const TextStyle(
+                                            color: Color(0xff303030),
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const TextSpan(
+                                          text: " | ",
+                                          style: TextStyle(
+                                            color: MColor.colorPrimary,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: widget.modal.landmark,
+                                          style: const TextStyle(
+                                            color: Color(0xff303030),
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ])),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
                     const Padding(
                       padding: EdgeInsets.only(left: 15, right: 10, bottom: 5, top: 15),
                       child: Text(
@@ -287,9 +539,9 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                                   ),
                                                   Image(
                                                     image: AssetImage(
-                                                      widget.modal.taskType == "HIT"
+                                                      pendingTaskList[index].taskType == "HIT"
                                                           ? "assets/hit.png"
-                                                          : widget.modal.taskType == "ST"
+                                                          : pendingTaskList[index].taskType == "ST"
                                                               ? "assets/special.png"
                                                               : "assets/key.png",
                                                     ),
@@ -345,7 +597,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       ),
       bottomNavigationBar: Row(
         children: [
-          MaterialButton(
+          /* MaterialButton(
             onPressed: () {},
             shape: const RoundedRectangleBorder(),
             child: const Text(
@@ -360,28 +612,26 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
             height: 50,
             elevation: 0,
             minWidth: MediaQuery.of(context).size.width / 2,
-          ),
-          Flexible(
-            child: MaterialButton(
-              shape: const RoundedRectangleBorder(),
-              onPressed: () {
-                Utility.hideKeyboard();
-                FocusScope.of(context).unfocus();
-                Navigator.pop(context);
-              },
-              child: const Text(
-                StringConst.exitCaps,
-                style: TextStyle(
-                  color: Color(0xffFFFFFF),
-                  fontSize: 20,
-                  letterSpacing: 0.72,
-                ),
+          ),*/
+          MaterialButton(
+            shape: const RoundedRectangleBorder(),
+            onPressed: () {
+              Utility.hideKeyboard();
+              FocusScope.of(context).unfocus();
+              Navigator.pop(context);
+            },
+            child: const Text(
+              StringConst.exitCaps,
+              style: TextStyle(
+                color: Color(0xffFFFFFF),
+                fontSize: 20,
+                letterSpacing: 0.72,
               ),
-              color: MColor.colorPrimary,
-              height: 50,
-              elevation: 0,
-              minWidth: MediaQuery.of(context).size.width / 2,
             ),
+            color: MColor.colorPrimary,
+            height: 50,
+            elevation: 0,
+            minWidth: MediaQuery.of(context).size.width,
           ),
         ],
       ),

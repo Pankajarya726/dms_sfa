@@ -88,7 +88,7 @@ class TeamPerformance {
         "present_days": presentDays,
         "pending_task": pendingTask,
         "completed_task": completedTask,
-        "team_member": teamMember == null ? null : List<dynamic>.from(teamMember.map((x) => x.toMap())),
+        "team_member": List<dynamic>.from(teamMember.map((x) => x.toMap())),
       };
 }
 

@@ -5,6 +5,7 @@ import 'package:dms/ui/login_screen/login_bloc/login_state.dart';
 import 'package:dms/ui/login_screen/login_model/login_response.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
+import 'package:dms/utils/utility.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
@@ -25,7 +26,7 @@ class LoginBloc extends Bloc<LoginEvents, LoginState> {
 
   Stream<LoginState> login(LoginEvent event) async* {
     if (await Network.isConnected()) {
-      EasyLoading.show();
+      Utility.showLoading();
       LoginResponse response = await repository.login(event.mobileNumber, event.password, event.deviceId);
 
       if (response.success) {
@@ -35,7 +36,7 @@ class LoginBloc extends Bloc<LoginEvents, LoginState> {
         });
         yield LoginSuccessState(data: response.data!);
       } else {
-        EasyLoading.dismiss();
+        Utility.dismissLoading();
         yield LoginFailureState(message: response.message);
       }
     } else {
@@ -49,7 +50,7 @@ class LoginBloc extends Bloc<LoginEvents, LoginState> {
 
       GetUserResponse response = await repository.getUserDetailsByUserId(userId);
       if (EasyLoading.isShow) {
-        EasyLoading.dismiss();
+        Utility.dismissLoading();
       }
       if (response.success) {
         yield GetUserDetailsState(userDetails: response);
@@ -58,7 +59,7 @@ class LoginBloc extends Bloc<LoginEvents, LoginState> {
       }
     } else {
       if (EasyLoading.isShow) {
-        EasyLoading.dismiss();
+        Utility.dismissLoading();
       }
       yield LoginFailureState(message: "Please check your internet connection!");
     }

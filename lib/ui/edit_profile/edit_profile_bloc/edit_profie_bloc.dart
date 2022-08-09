@@ -6,7 +6,6 @@ import 'package:dms/utils/network.dart';
 import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import '../../../main.dart';
 import 'edit_profile_event.dart';
@@ -27,9 +26,9 @@ class EditProfileBloc extends Bloc<EditProfileEvents, EditProfileState> {
 
   Stream<EditProfileState> editProfile(EditProfileEvent event) async* {
     if (await Network.isConnected()) {
-      EasyLoading.show();
+      Utility.showLoading();
       UpdateProfileResponse response = await repository.editProfile(event.name, event.emailId, event.imgFile);
-      EasyLoading.dismiss();
+      Utility.dismissLoading();
       if (response.success) {
         await SharedPreference.setStringPreference(SharedPreference.name, event.name);
         await SharedPreference.setStringPreference(SharedPreference.email, event.emailId);

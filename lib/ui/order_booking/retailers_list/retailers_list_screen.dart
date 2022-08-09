@@ -45,7 +45,7 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
   StreamController<int> tabStream = StreamController();
   int duplicateTabIndex = 0;
 
-  DateTime _today = DateTime.now();
+  final DateTime _today = DateTime.now();
 
   @override
   void initState() {
@@ -54,7 +54,7 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
     tabController = TabController(length: 4, vsync: this);
     // retailersBloc.add(GetBeatEvent());
     getBeats();
-    // EasyLoading.show();
+    //  Utility.showLoading();
   }
 
   @override
@@ -249,8 +249,8 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                         child: TextFormField(
                           style: const TextStyle(fontSize: 16),
                           readOnly: true,
-                          onTap: () {
-                            Navigator.push(
+                          onTap: () async {
+                            await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (_) => SearchRetailerScreen(
@@ -439,7 +439,7 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                           List<BeatsModal> beats = snapshot.data!;
 
-                          log("filter--->${beats.toList()}");
+                          log("snapshot--->${beats.toList()}");
                           return SizedBox(
                             height: 50,
                             width: MediaQuery.of(context).size.width,
@@ -506,6 +506,7 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
                       stream: tabStream.stream,
                       builder: (context, snap) {
                         if (snap.hasData) {
+                          log("snap--->");
                           return RetailerTab(
                             selectedBeat: beatsModal == null ? BeatsModal(id: "", name: "All") : beatsModal!,
                             index: snap.data!,

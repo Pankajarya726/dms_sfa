@@ -10,7 +10,6 @@ import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import 'add_plan_events.dart';
 
@@ -102,11 +101,11 @@ class AddPlanBloc extends Bloc<AddPlanEvents, AddPlanStates> {
 
   Stream<AddPlanStates> addPlan(AddPlanEvent event) async* {
     if (await Network.isConnected()) {
-      EasyLoading.show();
+      Utility.showLoading();
       AddPlanResponse response = await repository.addPlan(
         event.input,
       );
-      EasyLoading.dismiss();
+      Utility.dismissLoading();
       if (response.success) {
         Utility.showToast(response.message);
         yield AddPlanSuccessState(planDataModel: response.data!);
@@ -139,9 +138,9 @@ class AddPlanBloc extends Bloc<AddPlanEvents, AddPlanStates> {
 
   Stream<AddPlanStates> updatePlan(UpdatePlanEvent event) async* {
     if (await Network.isConnected()) {
-      EasyLoading.show();
+      Utility.showLoading();
       AddPlanUpdateDataResponse response = await repository.addPlanUpdateData(event.input);
-      EasyLoading.dismiss();
+      Utility.dismissLoading();
       if (response.success) {
         Utility.showToast(response.message);
         // yield AddPlanSuccessState(successMessage: response.message);

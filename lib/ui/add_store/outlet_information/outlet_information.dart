@@ -29,7 +29,6 @@ import 'package:dms/ui/userlocation_bloc/userlocation_bloc.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_events.dart';
 import 'package:dms/ui/userlocation_bloc/userlocation_states.dart';
 import 'package:dms/utils/colors.dart';
-import 'package:dms/utils/shared_preference.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
@@ -100,17 +99,17 @@ class _OutletInformationState extends State<OutletInformation> {
   GlobalKey globalKeyAddress = GlobalKey();
   List<OrderBookingDayModal> orderBookingDayList = [];
   String cityName = "";
-  String street_name = "";
+  String streetName = "";
   String street = "";
-  String country_code = "";
+  String countryCode = "";
   String country = "";
-  String postal_code = "";
-  String administrative_area = "";
-  String subadministrative_area = "";
+  String postalCode = "";
+  String administrativeArea = "";
+  String subAdministrativeArea = "";
   String locality = "";
-  String sublocality = "";
+  String subLocality = "";
   String thoroughfare = "";
-  String subthoroughfare = "";
+  String subThoroughfare = "";
 
   List<Selection> priceCategories = [
     Selection(name: "PTR1", id: "1"),
@@ -341,17 +340,17 @@ class _OutletInformationState extends State<OutletInformation> {
                           txtPincodeController.text = state.pincode;
                           cityName = state.locality.replaceAll(",", "");
 
-                          street_name = state.place.name ?? "";
+                          streetName = state.place.name ?? "";
                           street = state.place.street ?? "";
-                          country_code = state.place.isoCountryCode ?? "";
+                          countryCode = state.place.isoCountryCode ?? "";
                           country = state.place.country ?? "";
-                          postal_code = state.place.postalCode ?? "";
-                          administrative_area = state.place.administrativeArea ?? "";
-                          subadministrative_area = state.place.subAdministrativeArea ?? "";
+                          postalCode = state.place.postalCode ?? "";
+                          administrativeArea = state.place.administrativeArea ?? "";
+                          subAdministrativeArea = state.place.subAdministrativeArea ?? "";
                           locality = state.place.locality ?? "";
-                          sublocality = state.place.subLocality ?? "";
+                          subLocality = state.place.subLocality ?? "";
                           thoroughfare = state.place.thoroughfare ?? "";
-                          subthoroughfare = state.place.subThoroughfare ?? "";
+                          subThoroughfare = state.place.subThoroughfare ?? "";
                         }
                       }
 
@@ -414,7 +413,8 @@ class _OutletInformationState extends State<OutletInformation> {
                           TextFormField(
                             autofocus: false,
                             maxLength: 200,
-                            readOnly: true,
+                            // readOnly: true,
+
                             onTap: () async {
                               globalKeyAddress.currentContext!.findRenderObject();
                             },
@@ -423,9 +423,7 @@ class _OutletInformationState extends State<OutletInformation> {
                             textAlignVertical: TextAlignVertical.center,
                             keyboardType: TextInputType.streetAddress,
                             controller: txtAddressController,
-                            onChanged: (text) {
-                              txtAddressController.text = text;
-                            },
+
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
@@ -515,7 +513,7 @@ class _OutletInformationState extends State<OutletInformation> {
                       const SizedBox(
                         width: 10,
                       ),
-                      textWidget(StringConst.landmark),
+                      textWidget(StringConst.landmarkMend),
                     ],
                   ),
                   sizedBoxWidget(12.0),
@@ -525,7 +523,7 @@ class _OutletInformationState extends State<OutletInformation> {
                       txtLandmarkController.text = text;
                     },
                     globalKey: globalKeyLandmark,
-                    name: StringConst.landmark,
+                    name: StringConst.landmarkMend,
                   ),
                   sizedBoxWidget(12.0),
                   Row(
@@ -759,8 +757,6 @@ class _OutletInformationState extends State<OutletInformation> {
             } else if (txtLandmarkController.text.length < 3) {
               Utility.showToast("Landmark should be minimum 3 characters long");
             } else {
-              String userId = await SharedPreference.getStringPreference(SharedPreference.userId);
-
               form.districtId = districtId ?? "";
               form.distributorId = distributorId ?? "";
               form.beatId = beatModal != null ? beatModal!.id.toString() : "";
@@ -775,17 +771,17 @@ class _OutletInformationState extends State<OutletInformation> {
               form.landmark = txtLandmarkController.text.trim();
               form.cityName = cityName;
 
-              form.street_name = street_name;
+              form.streetName = streetName;
               form.street = street;
-              form.country_code = country_code;
+              form.countryCode = countryCode;
               form.country = country;
-              form.postal_code = postal_code;
-              form.administrative_area = administrative_area;
-              form.subadministrative_area = subadministrative_area;
+              form.postalCode = postalCode;
+              form.administrativeArea = administrativeArea;
+              form.subAdministrativeArea = subAdministrativeArea;
               form.locality = locality;
-              form.sublocality = sublocality;
+              form.subLocality = subLocality;
               form.thoroughfare = thoroughfare;
-              form.subthoroughfare = subthoroughfare;
+              form.subThoroughfare = subThoroughfare;
 
               form.isExistingRetailer = existingRetailerRadio == 1 ? "1" : "0";
               form.priceCategory = txtPriceCategory.text.trim();

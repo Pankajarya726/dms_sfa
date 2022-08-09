@@ -296,7 +296,7 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
 
       EasyLoading.show(status: "Loading...");
       GetRetailersResponse response = await repository.getRoute(input);
-      EasyLoading.dismiss();
+      Utility.dismissLoading();
       if (response.success) {
         if (response.data!.isNotEmpty) {
           getRoute(response.data!);

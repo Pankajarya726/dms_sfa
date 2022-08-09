@@ -71,7 +71,8 @@ class StringConst {
   static const latitude = "Latitude";
   static const longitude = "Longitude";
   static const address = "Address";
-  static const landmark = "Landmark *";
+  static const landmarkMend = "Landmark *";
+  static const landmark = "Landmark";
   static const pincode = "Pincode";
   static const pincodeMand = "Pincode*";
   static const primaryMobile = "Owner Primary Mobile Number";

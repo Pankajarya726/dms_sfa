@@ -13,7 +13,6 @@ import 'package:dms/utils/utility.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
@@ -384,9 +383,9 @@ class _EndDayScreenState extends State<EndDayScreen> {
 
   void confirmEndDayApi(Map input) async {
     if (await Network.isConnected()) {
-      EasyLoading.show();
+      Utility.showLoading();
       BaseResponse response = await repository.confirmEndDay(input);
-      EasyLoading.dismiss();
+      Utility.dismissLoading();
       Utility.showToast(response.message);
 
       if (response.success) {

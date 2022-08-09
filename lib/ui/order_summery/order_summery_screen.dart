@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:dms/main.dart';
 import 'package:dms/ui/bottom_sheet_widget/bottom_sheet_widget.dart';
@@ -14,9 +13,7 @@ import 'package:dms/utils/constants.dart';
 import 'package:dms/utils/network.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
@@ -190,7 +187,8 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                   decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8), border: Border.all(color: Color(0xffC5C5C5), width: 1)),
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: const Color(0xffC5C5C5), width: 1)),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -216,10 +214,10 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
                                 locationType != null && locationType!.id.isNotEmpty
                                     ? Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                        margin: EdgeInsets.only(left: 10),
+                                        margin: const EdgeInsets.only(left: 10),
                                         decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(8),
-                                            border: Border.all(color: Color(0xffC5C5C5), width: 1)),
+                                            border: Border.all(color: const Color(0xffC5C5C5), width: 1)),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -236,10 +234,10 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
                                 customerType != null && customerType!.id.isNotEmpty
                                     ? Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                        margin: EdgeInsets.only(left: 10),
+                                        margin: const EdgeInsets.only(left: 10),
                                         decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(8),
-                                            border: Border.all(color: Color(0xffC5C5C5), width: 1)),
+                                            border: Border.all(color: const Color(0xffC5C5C5), width: 1)),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -259,7 +257,7 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
                                         margin: const EdgeInsets.only(left: 10),
                                         decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(8),
-                                            border: Border.all(color: Color(0xffC5C5C5), width: 1)),
+                                            border: Border.all(color: const Color(0xffC5C5C5), width: 1)),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -547,19 +545,19 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
             url: url,
             name: name,
             onProgress: (String? fileName, double progress) {
-              print('FILE fileName HAS PROGRESS $fileName $progress');
+              debugPrint('FILE fileName HAS PROGRESS $fileName $progress');
             },
             onDownloadCompleted: (String path) {
-              EasyLoading.dismiss();
-              print('FILE DOWNLOADED TO PATH: $path');
+              Utility.dismissLoading();
+              debugPrint('FILE DOWNLOADED TO PATH: $path');
 
               OpenFile.open(path);
             },
             onDownloadError: (String error) {
-              EasyLoading.dismiss();
-              print('DOWNLOAD ERROR: $error');
+              Utility.dismissLoading();
+              debugPrint('DOWNLOAD ERROR: $error');
             });
-        EasyLoading.dismiss();
+        Utility.dismissLoading();
       }
     } else {
       Utility.showToast(Constants.internetAlert);

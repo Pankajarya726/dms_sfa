@@ -86,7 +86,7 @@ class DatabaseHelper {
 
     try {
       final db = await getDatabase();
-      String query = "SELECT * FROM ${DBConstant.cartTable} ";
+
       List<Map<String, dynamic>> result = await db.query(
         DBConstant.cartTable,
       );

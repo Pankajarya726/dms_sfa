@@ -2,34 +2,23 @@ import 'dart:async';
 
 import 'package:dms/model/retailer_form.dart';
 import 'package:dms/ui/common_bloc/common_bloc.dart';
-import 'package:dms/ui/common_bloc/common_bloc_events.dart';
-import 'package:dms/ui/common_bloc/common_bloc_states.dart';
 import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class SelectOtpNumberBottomSheet extends StatefulWidget {
   final Function(String mobile) onDone;
   final Function onSubmit;
   final RetailerForm form;
 
-  const SelectOtpNumberBottomSheet(
-      {Key? key,
-      required this.form,
-      required this.onDone,
-      required this.onSubmit})
-      : super(key: key);
+  const SelectOtpNumberBottomSheet({Key? key, required this.form, required this.onDone, required this.onSubmit}) : super(key: key);
 
   @override
-  _SelectOtpNumberBottomSheetState createState() =>
-      _SelectOtpNumberBottomSheetState();
+  _SelectOtpNumberBottomSheetState createState() => _SelectOtpNumberBottomSheetState();
 }
 
-class _SelectOtpNumberBottomSheetState
-    extends State<SelectOtpNumberBottomSheet> {
+class _SelectOtpNumberBottomSheetState extends State<SelectOtpNumberBottomSheet> {
   int groupValue = -1;
   TextEditingController otpController = TextEditingController();
   CommonBloc commonBloc = CommonBloc();
@@ -122,18 +111,15 @@ class _SelectOtpNumberBottomSheetState
               return;
             }
             if (groupValue == 1 && widget.form.primaryMobile.trim().isEmpty) {
-              Utility.showToast(
-                  "Primary mobile number is not entered please select different option");
+              Utility.showToast("Primary mobile number is not entered please select different option");
               return;
             }
             if (groupValue == 2 && widget.form.secondaryMobile.trim().isEmpty) {
-              Utility.showToast(
-                  "Secondary mobile number is not entered please select different option");
+              Utility.showToast("Secondary mobile number is not entered please select different option");
               return;
             }
             if (groupValue == 3 && widget.form.helperMobile.trim().isEmpty) {
-              Utility.showToast(
-                  "Helper mobile number is not entered please select different option");
+              Utility.showToast("Helper mobile number is not entered please select different option");
               return;
             }
 
@@ -150,9 +136,7 @@ class _SelectOtpNumberBottomSheetState
             Navigator.pop(context);
           }
         },
-        color: label == StringConst.done
-            ? MColor.colorPrimary
-            : MColor.colorSecondary,
+        color: label == StringConst.done ? MColor.colorPrimary : MColor.colorSecondary,
         height: 40,
         minWidth: MediaQuery.of(context).size.width / 2.3,
         shape: RoundedRectangleBorder(

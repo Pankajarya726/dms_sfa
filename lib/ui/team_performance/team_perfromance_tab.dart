@@ -385,7 +385,7 @@ class _TeamPerformanceTabState extends State<TeamPerformanceTab> with OnDateChan
                 itemBuilder: (context, index) {
                   return InkWell(
                     onTap: () {
-                      Navigator.pushReplacement(
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>

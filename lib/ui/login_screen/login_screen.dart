@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dms/ui/drawer_screen/drawer_screen.dart';
 import 'package:dms/ui/login_screen/login_bloc/login_bloc.dart';
 import 'package:dms/ui/login_screen/login_bloc/login_event.dart';
@@ -24,24 +22,24 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  static const platform = MethodChannel('com.vvapps.sfa/imei');
+  // static const platform = MethodChannel('com.vvapps.sfa/imei');
   final mobileNumber = TextEditingController();
   final password = TextEditingController();
   String startMyDay = "";
 
   LoginBloc loginBloc = LoginBloc();
   GlobalKey globalKey = GlobalKey();
-  String _deviceImei = "";
+  String deviceImei = "";
   @override
   void initState() {
     super.initState();
-    getImei();
+    // getImei();
   }
 
-  Future<void> getImei() async {
+/*  Future<void> getImei() async {
     try {
       final String result = await platform.invokeMethod('getImeiNumber');
-      _deviceImei = result;
+      deviceImei = result;
       log("result--->$result");
     } catch (e) {
       print(e);
@@ -49,8 +47,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (!mounted) return;
 
-    print(_deviceImei);
-  }
+    print(deviceImei);
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +86,6 @@ class _LoginScreenState extends State<LoginScreen> {
             Constants.leader = state.data.isLeader;
             startMyDay = state.data.startMyDay;
             SharedPreference.setStringPreference(SharedPreference.startMyDay, state.data.startMyDay);
-
             loginBloc.add(GetUserEvent());
           }
 
@@ -225,7 +222,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: ElevatedButton(
                           onPressed: () {
                             Utility.hideKeyboard();
-                            sendLoginData(context, mobileNumber.text.toString(), password.text.toString(), _deviceImei);
+                            sendLoginData(context, mobileNumber.text.toString(), password.text.toString(), deviceImei);
                             // Navigator.of(context).pushReplacement(
                             //   MaterialPageRoute(
                             //     builder: (BuildContext context) =>

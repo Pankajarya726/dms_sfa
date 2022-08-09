@@ -9,10 +9,10 @@ class MyLocation {
   static Future<LocationData?> getCurrentLocation() async {
     PermissionStatus permission;
     // Test if location services are enabled.
-    bool serviceEnabled = await mLocation.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await mLocation.requestService();
-    }
+    // bool serviceEnabled = await mLocation.serviceEnabled();
+    // if (!serviceEnabled) {
+    //   serviceEnabled = await mLocation.requestService();
+    // }
 
     permission = await mLocation.hasPermission();
     if (permission == PermissionStatus.denied) {
@@ -28,5 +28,6 @@ class MyLocation {
     } else {
       return await mLocation.getLocation();
     }
+    return null;
   }
 }
