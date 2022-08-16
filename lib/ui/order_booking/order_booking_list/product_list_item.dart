@@ -129,7 +129,6 @@ class _ProductListItemState extends State<ProductListItem> {
                     ),
                     Expanded(
                       child: Container(
-                        height: 80,
                         padding: const EdgeInsets.only(top: 1),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -144,7 +143,10 @@ class _ProductListItemState extends State<ProductListItem> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Row(
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            /*  Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 RichText(
@@ -156,7 +158,8 @@ class _ProductListItemState extends State<ProductListItem> {
                                     ),
                                     children: <TextSpan>[
                                       TextSpan(
-                                        text: currencyFormat.format(double.parse(widget.products.mrp)),
+                                        text: currencyFormat
+                                            .format(double.parse(widget.products.mrp)),
                                         style: const TextStyle(
                                           letterSpacing: 0.67,
                                           color: Colors.black,
@@ -202,6 +205,119 @@ class _ProductListItemState extends State<ProductListItem> {
                                   ),
                                 ),
                               ],
+                            ),*/
+                            RichText(
+                              text: TextSpan(
+                                text: "MRP: ",
+                                style: const TextStyle(
+                                  letterSpacing: 0.67,
+                                  color: MColor.textColor,
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: currencyFormat.format(double.parse(widget.products.mrp)),
+                                    style: const TextStyle(
+                                      letterSpacing: 0.67,
+                                      color: Colors.black,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const TextSpan(
+                                    text: " | ",
+                                    style: TextStyle(
+                                      letterSpacing: 0.67,
+                                      color: MColor.colorPrimary,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: currencyFormat
+                                        .format(double.parse(widget.products.mrp) * double.parse(widget.products.pcsPerMoq)),
+                                    style: const TextStyle(
+                                      letterSpacing: 0.67,
+                                      color: Colors.black,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                text: "PTR: ",
+                                style: const TextStyle(
+                                  letterSpacing: 0.67,
+                                  color: MColor.textColor,
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(children: [
+                                    TextSpan(
+                                      text: currencyFormat.format(double.parse(widget.products.skuRatePerPiece)),
+                                      style: TextStyle(
+                                          letterSpacing: 0.67,
+                                          color: MColor.textColor,
+                                          overflow: TextOverflow.ellipsis,
+                                          fontWeight: FontWeight.bold,
+                                          decoration: double.parse(widget.products.schemeRatePerPcs) == 0.0
+                                              ? TextDecoration.none
+                                              : TextDecoration.lineThrough),
+                                    ),
+                                    TextSpan(
+                                      text: double.parse(widget.products.schemeRatePerPcs) == 0.0
+                                          ? ""
+                                          : currencyFormat.format(double.parse(widget.products.schemeRatePerPcs)),
+                                      style: const TextStyle(
+                                        letterSpacing: 0.67,
+                                        color: MColor.textColor,
+                                        overflow: TextOverflow.ellipsis,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ]),
+                                  TextSpan(
+                                    text: " | ",
+                                    style: TextStyle(
+                                        letterSpacing: 0.67,
+                                        color: MColor.textColor,
+                                        overflow: TextOverflow.ellipsis,
+                                        fontWeight: FontWeight.bold,
+                                        decoration: double.parse(widget.products.schemeRatePerPcs) == 0.0
+                                            ? TextDecoration.none
+                                            : TextDecoration.lineThrough),
+                                  ),
+                                  TextSpan(children: [
+                                    TextSpan(
+                                      text: currencyFormat.format(double.parse(widget.products.skuRatePerMoq)),
+                                      style: TextStyle(
+                                          letterSpacing: 0.67,
+                                          color: MColor.textColor,
+                                          overflow: TextOverflow.ellipsis,
+                                          fontWeight: FontWeight.bold,
+                                          decoration: double.parse(widget.products.schemeRatePerPcs) == 0.0
+                                              ? TextDecoration.none
+                                              : TextDecoration.lineThrough),
+                                    ),
+                                    TextSpan(
+                                      text: double.parse(widget.products.schemeRatePerPcs) == 0.0
+                                          ? ""
+                                          : currencyFormat.format(double.parse(widget.products.schemeRatePerPcs) *
+                                              double.parse(widget.products.pcsPerMoq)),
+                                      style: const TextStyle(
+                                        letterSpacing: 0.67,
+                                        color: MColor.textColor,
+                                        overflow: TextOverflow.ellipsis,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ])
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 5,
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,

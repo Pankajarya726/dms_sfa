@@ -92,7 +92,7 @@ class RetailerDetailsModal {
         lng: json["lng"] == null ? "" : json["lng"].toString(),
         enrollmentTypeId: json["enrollment_type_id"] == null ? "" : json["enrollment_type_id"].toString(),
         primaryMobile: json["primary_mobile"] == null ? "" : json["primary_mobile"].toString(),
-        secondaryMobile: json["secondary_mobile"] == null ? "Not given" : json["secondary_mobile"].toString(),
+        secondaryMobile: json["secondary_mobile"] == null ? "" : json["secondary_mobile"].toString(),
         orderBookingDay:
             json["order_booking_day"] == null ? DateFormat.EEEE().format(DateTime.now()) : json["order_booking_day"].toString(),
         connectionStatus: json["connection_status"] == null ? "" : json["connection_status"].toString(),

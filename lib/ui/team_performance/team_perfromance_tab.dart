@@ -290,12 +290,12 @@ class _TeamPerformanceTabState extends State<TeamPerformanceTab> with OnDateChan
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Text(
-                          widget.index == 0 ? "Present Day" : "Present Days",
-                          style: const TextStyle(color: MColor.inactiveTextColor, fontSize: 16, fontWeight: FontWeight.bold),
+                        const Text(
+                          "Present Days",
+                          style: TextStyle(color: MColor.inactiveTextColor, fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          widget.index == 0 ? performance!.presentDays : performance!.presentDays + "%",
+                          performance!.presentDays + "%",
                           style: const TextStyle(color: MColor.colorSecondary, fontSize: 18, fontWeight: FontWeight.bold),
                         )
                       ],

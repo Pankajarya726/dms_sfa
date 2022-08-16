@@ -7,6 +7,7 @@ import 'package:dms/utils/colors.dart';
 import 'package:dms/utils/my_location.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:location/location.dart';
 import 'package:map_launcher/map_launcher.dart';
 
@@ -96,6 +97,43 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                 Row(
                   children: [
                     Expanded(
+                      child: RichText(
+                          text: TextSpan(
+                              text: widget.retailer.uniqueCode,
+                              style: GoogleFonts.roboto(
+                                color: const Color(0XFF555555),
+                                letterSpacing: 0.67,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              children: [
+                            // TextSpan(
+                            //   text: widget.retailer.uniqueCode,
+                            //   style: GoogleFonts.roboto(
+                            //     color: const Color(0XFF555555),
+                            //     letterSpacing: 0.67,
+                            //     fontWeight: FontWeight.w600,
+                            //   ),
+                            //
+                            // ),
+                            TextSpan(
+                              text: " | ",
+                              style: GoogleFonts.roboto(
+                                color: Colors.red,
+                                letterSpacing: 0.67,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            TextSpan(
+                              text: widget.retailer.outlatName ,
+                              style: GoogleFonts.roboto(
+                                color: const Color(0XFF555555),
+                                letterSpacing: 0.67,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ])),
+                    ),
+                    /* Expanded(
                       child: Row(
                         children: [
                           Text(
@@ -107,7 +145,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                             ),
                           ),
                           const SizedBox(
-                            width: 10,
+                            width: 5,
                           ),
                           Container(
                             width: 1,
@@ -115,7 +153,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                             color: Colors.red,
                           ),
                           const SizedBox(
-                            width: 10,
+                            width: 5,
                           ),
                           SizedBox(
                             width: MediaQuery.of(context).size.width / 2,
@@ -132,7 +170,7 @@ class _RetailerListItemsState extends State<RetailerListItems> {
                           ),
                         ],
                       ),
-                    ),
+                    ),*/
                     IconButton(
                       padding: const EdgeInsets.all(0),
                       constraints: const BoxConstraints(),

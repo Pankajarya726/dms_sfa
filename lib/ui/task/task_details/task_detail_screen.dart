@@ -182,7 +182,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                               Expanded(
                                 child: RetailerDetailItem(
                                   value: widget.modal.orderBookingDay1 +
-                                      (widget.modal.orderBookingDay2.isEmpty ? "" : "," + widget.modal.orderBookingDay2),
+                                      (widget.modal.orderBookingDay2.isEmpty ? "" : ",\n" + widget.modal.orderBookingDay2),
                                   image: "assets/telephone.png",
                                   name: StringConst.callingDay,
                                   type: 1,
@@ -210,7 +210,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                     }
                                   },
                                   child: RetailerDetailItem(
-                                    value: widget.modal.primaryMobile,
+                                    value: widget.modal.primaryMobile.isEmpty ? "Not Given" : widget.modal.primaryMobile,
                                     image: "assets/phone_call.png",
                                     name: StringConst.primaryNo,
                                     type: 1,
@@ -312,7 +312,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                     ),
 
                                     SizedBox(
-                                      width: MediaQuery.of(context).size.width * 0.80,
+                                      width: MediaQuery.of(context).size.width * 0.75,
                                       child: RichText(
                                           text: TextSpan(children: [
                                         TextSpan(
