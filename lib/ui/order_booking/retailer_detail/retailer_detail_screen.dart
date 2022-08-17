@@ -281,7 +281,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
                                           }
                                         },
                                         child: RetailerDetailItem(
-                                          value: retailer!.primaryMobile.isEmpty?"Not Given":retailer!.primaryMobile,
+                                          value: retailer!.primaryMobile.isEmpty ? "Not Given" : retailer!.primaryMobile,
                                           image: "assets/phone_call.png",
                                           name: StringConst.primaryNo,
                                           type: 1,
@@ -895,6 +895,7 @@ class _RetailerDetailScreenState extends State<RetailerDetailScreen> {
         isScrollControlled: true,
         builder: (context) => NoOrderReasonSheet(
               retailerId: retailer!.customerId,
+              beatId: retailer!.beatId,
             ));
 
     if (res != null && res) {

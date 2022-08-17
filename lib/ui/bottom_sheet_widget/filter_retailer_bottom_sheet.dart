@@ -19,8 +19,7 @@ class FilterRetailerBottomSheet extends StatefulWidget {
   final String type;
   final BeatsModal beat;
   final List<BeatsModal> beatList;
-  final Function(String day, String type, BeatsModal selectedBeat,
-      List<BeatsModal> beatList) onFilter;
+  final Function(String day, String type, BeatsModal selectedBeat, List<BeatsModal> beatList) onFilter;
 
   const FilterRetailerBottomSheet({
     Key? key,
@@ -32,8 +31,7 @@ class FilterRetailerBottomSheet extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _FilterRetailerBottomSheetState createState() =>
-      _FilterRetailerBottomSheetState();
+  _FilterRetailerBottomSheetState createState() => _FilterRetailerBottomSheetState();
 }
 
 class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
@@ -61,6 +59,8 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
   List<BeatsModal> beats = [];
   PopUpMenuListener? popUpMenuListener;
   StreamController<String> beatsStreamController = StreamController();
+
+  bool loading = false;
 
   @override
   void initState() {
@@ -193,9 +193,7 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                 ),
                 DropDownField(
                   onMenuItemSelected: (listener) {},
-                  prevSelected: selectedEnrollmentType.isEmpty
-                      ? "All"
-                      : selectedEnrollmentType,
+                  prevSelected: selectedEnrollmentType.isEmpty ? "All" : selectedEnrollmentType,
                   onSelect: (value) {
                     debugPrint("select-->");
                     selectedEnrollmentType = value == "All" ? "" : value;
@@ -207,23 +205,22 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
                   height: 35,
                 ),
                 Padding(
-                  padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       MaterialButton(
                         onPressed: () {
-                          widget.onFilter(
-                              selectedDay,
-                              selectedEnrollmentType,
-                              beatsModal != null
-                                  ? beatsModal!
-                                  : (beats.length > 1
-                                      ? BeatsModal(id: "", name: "All")
-                                      : BeatsModal(id: "", name: "")),
-                              beats);
-                          Navigator.pop(context);
+                          if (!loading) {
+                            widget.onFilter(
+                                selectedDay,
+                                selectedEnrollmentType,
+                                beatsModal != null
+                                    ? beatsModal!
+                                    : (beats.length > 1 ? BeatsModal(id: "", name: "All") : BeatsModal(id: "", name: "")),
+                                beats);
+                            Navigator.pop(context);
+                          }
                         },
                         height: 50,
                         padding: const EdgeInsets.symmetric(horizontal: 55),
@@ -255,13 +252,15 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
 
   getBeats() async {
     if (await Network.isConnected()) {
+      loading = true;
       beatsStreamController.addError("loading");
+
       Map<String, dynamic> input = HashMap<String, dynamic>();
       input["day"] = selectedDay;
-      GetAllBeatsResponse response =
-          await repository.getBeatByOrderBookingDay(input);
+      GetAllBeatsResponse response = await repository.getBeatByOrderBookingDay(input);
       beats.clear();
       beatsModal = null;
+      loading = false;
       if (response.success) {
         if (response.data!.length > 1) {
           beats.add(BeatsModal(id: "", name: "All"));
@@ -273,11 +272,13 @@ class _FilterRetailerBottomSheetState extends State<FilterRetailerBottomSheet> {
         beats.addAll(response.data!);
         beatsStreamController.add(seleBeat);
       } else {
+        loading = false;
         // Utility.showToast(response.message);
         seleBeat = response.message;
         beatsStreamController.add(response.message);
       }
     } else {
+      loading = false;
       Utility.showToast(Constants.internetAlert);
     }
   }

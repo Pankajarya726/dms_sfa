@@ -1,9 +1,8 @@
 class Url {
-  static const String baseUrl = "http://dmsapp.tekzee.in/api/";
-  // static const String baseUrl = "https://sfa2.vyapaar-vistaar.in/api/";
+  // static const String baseUrl = "http://dmsapp.tekzee.in/api/";
+  static const String baseUrl = "https://sfa2.vyapaar-vistaar.in/api/";
   static const String validateAppVer = "validateAppVersion";
   static const String login = "login";
-  // static const String login = "loginV1";
   static const String getQuotesAndImages = "getQuotesWithImage";
   static const String getMenus = "getApiMenus";
   static const String editProfile = "profileEdit";
@@ -31,7 +30,7 @@ class Url {
   static const String retailerEnrollmentSave = "retailerEnrollmentSaveV2";
   static const String verifyOtp = "verifyOtp";
   static const String getOrderBookingDay = "getOrderBooking_day";
-  // static const String searchRetailer = "searchRetailer";
+
   static const String searchRetailer = "searchRetailerV1";
   static const String getBrandAndCategory = "getBrandAndCategoryBeatWise";
   static const String getAllBeats = "getBeatForLoginUser";
@@ -48,17 +47,16 @@ class Url {
   static const String searchProducts = "searchProduct";
   static const String getFocusSku = "getFocusSku";
   static const String getReasons = "getReason";
-  static const String getBU = "getBusinessUnit";
+  static const String getBU = "getBusinessUnitV1";
   static const String saveOrder = "orderSubmit";
 
-  // static const String editUpdate = "OrderUpdate";
   static const String editUpdate = "OrderUpdateV1";
   static const String saveNoOrder = "saveNoOrder";
   static const String getOrder = "getOrderForEdit";
   static const String getTaskByRetailer = "getTaskByRetailerV1";
   static const String noOrderYet = "getNoOrderYet";
   static const String getRetailersTaskWise = "getRetailerTaskWiseV4";
-  // static const String getRetailersTaskWise = "getRetailerTaskWiseV5";
+
   static const String getPendingTask = "getPendingTaskV1";
   static const String searchTaskRetailers = "searchRetailerInTaskV1";
   static const String taskEscalate = "taskEscalateAndResolve";

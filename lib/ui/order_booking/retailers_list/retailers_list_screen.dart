@@ -20,6 +20,7 @@ import 'package:dms/utils/string_const.dart';
 import 'package:dms/utils/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
 
@@ -87,6 +88,7 @@ class _RetailerListScreenState extends State<RetailerListScreen> with TickerProv
     return WillPopScope(
       onWillPop: () async {
         if (Navigator.canPop(context)) {
+          EasyLoading.dismiss();
           Navigator.pop(context);
         } else {
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const DrawerScreen()), ModalRoute.withName("/"));

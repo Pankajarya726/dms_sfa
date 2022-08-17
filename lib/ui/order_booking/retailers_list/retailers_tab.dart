@@ -68,6 +68,7 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
 
   @override
   void didUpdateWidget(covariant RetailerTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
     debugPrint("RetailerTab --> didUpdateWidget");
     selectedBeat = widget.selectedBeat;
     day = widget.day;
@@ -77,7 +78,6 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
     // retailerStreamController.addError("loading");
     retailerStreamController.add([]);
     getRetailers();
-    super.didUpdateWidget(oldWidget);
   }
 
   @override

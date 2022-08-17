@@ -1077,9 +1077,9 @@ class ApiRepository {
     }
   }
 
-  Future<GetBuResponse> getBu() async {
+  Future<GetBuResponse> getBu(Map<String, dynamic> input) async {
     try {
-      Response response = await dio.get(Url.getBU);
+      Response response = await dio.post(Url.getBU, data: input);
       GetBuResponse baseResponse = GetBuResponse.fromJson(response.toString());
       return baseResponse;
     } catch (error, stacktrace) {

@@ -84,6 +84,7 @@ class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> with 
                                       reasonsListener!.onReasonSelect(this.reason, this.remark, this.buList, this.issueResolve);
                                     }
                                   },
+                                  beatId: widget.beatId,
                                 );
                               },
                             );

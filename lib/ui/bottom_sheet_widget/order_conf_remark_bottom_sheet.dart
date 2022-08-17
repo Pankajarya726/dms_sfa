@@ -19,6 +19,7 @@ class OrderConfRemarkBottomSheet extends StatefulWidget {
   final List<BUModal> buList;
   final bool issueResolve;
   final String retailerId;
+  final String beatId;
   final Function(ReasonsModal reason, String remark, List<BUModal> buList, bool issueResolve) onReasonSelected;
 
   const OrderConfRemarkBottomSheet({
@@ -29,6 +30,7 @@ class OrderConfRemarkBottomSheet extends StatefulWidget {
     required this.buList,
     required this.issueResolve,
     required this.retailerId,
+    required this.beatId,
   }) : super(key: key);
 
   @override
@@ -389,7 +391,8 @@ class _OrderConfRemarkBottomSheetState extends State<OrderConfRemarkBottomSheet>
 
   void getBu() async {
     if (await Network.isConnected()) {
-      GetBuResponse response = await repository.getBu();
+      Map<String, dynamic> input = {"beat_id": widget.beatId};
+      GetBuResponse response = await repository.getBu(input);
       if (response.success) {
         buList = response.data!;
 

@@ -22,6 +22,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'model/get_order_summery_response.dart';
@@ -43,6 +44,7 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
   Selection? customer;
   Selection? location;
 
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
   List<OrderSummery> summeryList = [];
   StreamController<List<OrderSummery>> summeryStream = StreamController();
   OrderSummeryBloc orderSummeryBloc = OrderSummeryBloc();
@@ -292,220 +294,248 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
               }
 
               if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                return ListView.separated(
-                    itemCount: snapshot.data!.length,
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    separatorBuilder: (context, index) {
-                      return const SizedBox(
-                        height: 5,
-                      );
-                    },
-                    itemBuilder: (context, index) {
-                      OrderSummery data = snapshot.data![index];
+                return SmartRefresher(
+                  controller: _refreshController,
+                  onRefresh: () {
+                    getOrderSummery();
+                  },
+                  enablePullUp: false,
+                  child: ListView.separated(
+                      itemCount: snapshot.data!.length,
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      separatorBuilder: (context, index) {
+                        return const SizedBox(
+                          height: 5,
+                        );
+                      },
+                      itemBuilder: (context, index) {
+                        OrderSummery data = snapshot.data![index];
 
-                      return Container(
-                        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white, boxShadow: const [
-                          BoxShadow(
-                              color: Color(
-                                0xffA6A6A6,
-                              ),
-                              blurRadius: 5)
-                        ]),
-                        child: Slidable(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/amount.png",
-                                      width: 30,
-                                      height: 30,
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        NumberFormat("###.0#").format(double.parse(data.totalAmount)),
-                                        style: GoogleFonts.roboto(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500),
+                        return Container(
+                          margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white, boxShadow: const [
+                            BoxShadow(
+                                color: Color(
+                                  0xffA6A6A6,
+                                ),
+                                blurRadius: 5)
+                          ]),
+                          child: Slidable(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        "assets/amount.png",
+                                        width: 30,
+                                        height: 30,
                                       ),
-                                    ),
-                                    Image.asset("assets/date.png", width: 15, height: 15, color: const Color(0xff777777)),
-                                    Text(
-                                      DateFormat("dd MMM yyyy").format(data.date),
-                                      style: const TextStyle(color: Color(0xff777777), fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Image.asset(
-                                          "assets/tc.png",
-                                          width: 27,
-                                          height: 27,
+                                      Expanded(
+                                        child: Text(
+                                          NumberFormat("###.0#").format(double.parse(data.totalAmount)),
+                                          style: GoogleFonts.roboto(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500),
                                         ),
-                                        RichText(
-                                          text: TextSpan(children: [
-                                            TextSpan(
-                                              text: " TC - ",
-                                              style: GoogleFonts.roboto(
-                                                  color: const Color(0xff777777), fontSize: 15, fontWeight: FontWeight.w500),
-                                            ),
-                                            TextSpan(
-                                              text: data.tc,
-                                              style: GoogleFonts.roboto(
-                                                  color: const Color(0xff303030), fontSize: 15, fontWeight: FontWeight.w500),
-                                            )
-                                          ]),
+                                      ),
+                                      Image.asset("assets/date.png", width: 15, height: 15, color: const Color(0xff777777)),
+                                      Text(
+                                        DateFormat("dd MMM yyyy").format(data.date),
+                                        style: const TextStyle(color: Color(0xff777777), fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Image.asset(
+                                            "assets/tc.png",
+                                            width: 27,
+                                            height: 27,
+                                          ),
+                                          RichText(
+                                            text: TextSpan(children: [
+                                              TextSpan(
+                                                text: " TC - ",
+                                                style: GoogleFonts.roboto(
+                                                    color: const Color(0xff777777), fontSize: 15, fontWeight: FontWeight.w500),
+                                              ),
+                                              TextSpan(
+                                                text: data.tc,
+                                                style: GoogleFonts.roboto(
+                                                    color: const Color(0xff303030), fontSize: 15, fontWeight: FontWeight.w500),
+                                              )
+                                            ]),
+                                          ),
+                                          // Text(
+                                          //   " TC - " + data.tc,
+                                          //   style: GoogleFonts.roboto(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w500),
+                                          // ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Image.asset(
+                                            "assets/pc.png",
+                                            width: 27,
+                                            height: 27,
+                                          ),
+                                          RichText(
+                                            text: TextSpan(children: [
+                                              TextSpan(
+                                                text: " PC - ",
+                                                style: GoogleFonts.roboto(
+                                                    color: const Color(0xff777777), fontSize: 15, fontWeight: FontWeight.w500),
+                                              ),
+                                              TextSpan(
+                                                text: data.pc,
+                                                style: GoogleFonts.roboto(
+                                                    color: const Color(0xff303030), fontSize: 15, fontWeight: FontWeight.w500),
+                                              )
+                                            ]),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Image.asset(
+                                            "assets/avg.png",
+                                            width: 27,
+                                            height: 27,
+                                          ),
+                                          RichText(
+                                            text: TextSpan(children: [
+                                              TextSpan(
+                                                text: " Avg - ",
+                                                style: GoogleFonts.roboto(
+                                                    color: const Color(0xff777777), fontSize: 15, fontWeight: FontWeight.w500),
+                                              ),
+                                              TextSpan(
+                                                text: NumberFormat("###.0#").format(double.parse(data.avg)),
+                                                style: GoogleFonts.roboto(
+                                                    color: const Color(0xff303030), fontSize: 15, fontWeight: FontWeight.w500),
+                                              )
+                                            ]),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    data.customerName,
+                                    style: GoogleFonts.roboto(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Image.asset(
+                                        "assets/beat.png",
+                                        width: 20,
+                                        height: 20,
+                                      ),
+                                      Text(
+                                        " " + data.beatName,
+                                        style: GoogleFonts.roboto(color: Colors.black, fontSize: 16, fontWeight: FontWeight.normal),
+                                      ),
+                                    ],
+                                  ),
+                                  const Divider(
+                                    thickness: 1,
+                                    color: Color(0xffC5C5C5),
+                                  ),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Image.asset("assets/district.png", width: 15, height: 15, color: const Color(0xff777777)),
+                                      Expanded(
+                                        child: Text(
+                                          " " + data.districtName,
+                                          style: GoogleFonts.roboto(
+                                              color: const Color(0xff777777), fontSize: 14, fontWeight: FontWeight.w500),
                                         ),
-                                        // Text(
-                                        //   " TC - " + data.tc,
-                                        //   style: GoogleFonts.roboto(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w500),
-                                        // ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Image.asset(
-                                          "assets/pc.png",
-                                          width: 27,
-                                          height: 27,
-                                        ),
-                                        RichText(
-                                          text: TextSpan(children: [
-                                            TextSpan(
-                                              text: " PC - ",
-                                              style: GoogleFonts.roboto(
-                                                  color: const Color(0xff777777), fontSize: 15, fontWeight: FontWeight.w500),
-                                            ),
-                                            TextSpan(
-                                              text: data.pc,
-                                              style: GoogleFonts.roboto(
-                                                  color: const Color(0xff303030), fontSize: 15, fontWeight: FontWeight.w500),
-                                            )
-                                          ]),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Image.asset(
-                                          "assets/avg.png",
-                                          width: 27,
-                                          height: 27,
-                                        ),
-                                        RichText(
-                                          text: TextSpan(children: [
-                                            TextSpan(
-                                              text: " Avg - ",
-                                              style: GoogleFonts.roboto(
-                                                  color: const Color(0xff777777), fontSize: 15, fontWeight: FontWeight.w500),
-                                            ),
-                                            TextSpan(
-                                              text: NumberFormat("###.0#").format(double.parse(data.avg)),
-                                              style: GoogleFonts.roboto(
-                                                  color: const Color(0xff303030), fontSize: 15, fontWeight: FontWeight.w500),
-                                            )
-                                          ]),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                  data.customerName,
-                                  style: GoogleFonts.roboto(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      "assets/beat.png",
-                                      width: 20,
-                                      height: 20,
-                                    ),
-                                    Text(
-                                      " " + data.beatName,
-                                      style: GoogleFonts.roboto(color: Colors.black, fontSize: 16, fontWeight: FontWeight.normal),
-                                    ),
-                                  ],
-                                ),
-                                const Divider(
-                                  thickness: 1,
-                                  color: Color(0xffC5C5C5),
-                                ),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Image.asset("assets/district.png", width: 15, height: 15, color: const Color(0xff777777)),
-                                    Expanded(
-                                      child: Text(
-                                        " " + data.districtName,
+                                      ),
+                                      Image.asset("assets/tehsil.png", width: 15, height: 15, color: const Color(0xff777777)),
+                                      Text(
+                                        " " + data.cityName,
                                         style: GoogleFonts.roboto(
                                             color: const Color(0xff777777), fontSize: 14, fontWeight: FontWeight.w500),
                                       ),
-                                    ),
-                                    Image.asset("assets/tehsil.png", width: 15, height: 15, color: const Color(0xff777777)),
-                                    Text(
-                                      " " + data.cityName,
-                                      style: GoogleFonts.roboto(
-                                          color: const Color(0xff777777), fontSize: 14, fontWeight: FontWeight.w500),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            endActionPane: ActionPane(
+                              motion: const ScrollMotion(),
+                              key: ValueKey(index),
+                              extentRatio: 0.30,
+                              dragDismissible: false,
+                              children: [
+                                SlidableAction(
+                                  borderRadius:
+                                      const BorderRadius.only(topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+                                  padding: const EdgeInsets.all(8),
+                                  flex: 2,
+                                  onPressed: (e) {
+                                    debugPrint("e-->${e.toString()}");
+                                    if (data.pdfLink.trim().isEmpty) {
+                                      Utility.showToast("File not exists");
+                                    } else {
+                                      download(data.pdfLink.trim());
+                                    }
+                                  },
+                                  backgroundColor: MColor.colorPrimary,
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.download,
+                                  label: 'Download',
                                 ),
                               ],
                             ),
                           ),
-                          endActionPane: ActionPane(
-                            motion: const ScrollMotion(),
-                            key: ValueKey(index),
-                            extentRatio: 0.30,
-                            dragDismissible: false,
-                            children: [
-                              SlidableAction(
-                                borderRadius: const BorderRadius.only(topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
-                                padding: const EdgeInsets.all(8),
-                                flex: 2,
-                                onPressed: (e) {
-                                  debugPrint("e-->${e.toString()}");
-                                  if (data.pdfLink.trim().isEmpty) {
-                                    Utility.showToast("File not exists");
-                                  } else {
-                                    download(data.pdfLink.trim());
-                                  }
-                                },
-                                backgroundColor: MColor.colorPrimary,
-                                foregroundColor: Colors.white,
-                                icon: Icons.download,
-                                label: 'Download',
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    });
+                        );
+                      }),
+                );
               }
 
               if (snapshot.hasData && snapshot.data!.isEmpty) {
-                return const Center(
-                  child: Text("Record not available"),
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text("Record not available"),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      MaterialButton(
+                        onPressed: () {
+                          getOrderSummery();
+                        },
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        color: MColor.colorPrimary,
+                        child: const Text(
+                          "Refresh",
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, letterSpacing: 0.5, fontSize: 16),
+                        ),
+                      )
+                    ],
+                  ),
                 );
               }
               if (snapshot.hasError && snapshot.error.toString() == "loading") {
@@ -533,7 +563,7 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
           savedDir.create();
         }
 
-        String name = url.split("/").last;
+        String name = DateTime.now().millisecondsSinceEpoch.toString() + url.split("/").last;
 
         debugPrint("name--$name");
 
@@ -574,6 +604,7 @@ class _OrderSummeryScreenState extends State<OrderSummeryScreen> {
       input["customer_id"] = customer != null ? customer!.id : "";
 
       GetOrderSummeryResponse response = await repository.getOrderSummery(input);
+      _refreshController.refreshCompleted();
       if (response.success) {
         summeryList = response.data;
         summeryList.sort((a, b) => a.date.compareTo(b.date));

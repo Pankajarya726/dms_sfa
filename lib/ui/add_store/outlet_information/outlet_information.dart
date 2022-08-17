@@ -202,7 +202,7 @@ class _OutletInformationState extends State<OutletInformation> {
                     }
 
                     if (state is EditStoreFailureState) {
-                      Fluttertoast.showToast(msg: state.failureMessage);
+                      // Fluttertoast.showToast(msg: state.failureMessage);
                     }
 
                     if (enrolmentTypeModel == null) {

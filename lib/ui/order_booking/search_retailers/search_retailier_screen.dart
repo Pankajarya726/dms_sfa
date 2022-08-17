@@ -36,7 +36,7 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
   StreamController<List<RetailersModal>> searchStream = StreamController();
   String retailerType = "";
   final subject = BehaviorSubject<String>();
-
+  static GlobalKey<FormState> formKey = GlobalKey<FormState>();
   @override
   void initState() {
     subject.stream.debounce((event) => TimerStream(event, const Duration(milliseconds: 1000))).listen((text) {
@@ -69,44 +69,47 @@ class _SearchRetailerScreenState extends State<SearchRetailerScreen> {
           height: 56,
           child: Padding(
             padding: const EdgeInsets.all(5.0),
-            child: TextFormField(
-              autofocus: true,
-              controller: edtSearch,
-              onChanged: (text) {
-                subject.add(text);
-              },
-              decoration: InputDecoration(
-                  hintText: "Search",
-                  hintStyle: const TextStyle(fontSize: 16),
-                  contentPadding: const EdgeInsets.all(10),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      gapPadding: 2,
-                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
-                  disabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      gapPadding: 2,
-                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      gapPadding: 2,
-                      borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
-                  suffixIcon: IconButton(
-                    splashRadius: 20,
-                    icon: const Icon(
-                      Icons.cancel,
-                      color: Color(0xff555555),
-                    ),
-                    onPressed: () {
-                      if (edtSearch.text.trim().isNotEmpty) {
-                        edtSearch.clear();
-                        retailersList.clear();
-                        searchStream.addError("Enter Name or mobile number to search retailer");
-                      } else {
-                        Navigator.pop(context);
-                      }
-                    },
-                  )),
+            child: Form(
+              key: formKey,
+              child: TextFormField(
+                autofocus: true,
+                controller: edtSearch,
+                onChanged: (text) {
+                  subject.add(text);
+                },
+                decoration: InputDecoration(
+                    hintText: "Search",
+                    hintStyle: const TextStyle(fontSize: 16),
+                    contentPadding: const EdgeInsets.all(10),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        gapPadding: 2,
+                        borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                    disabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        gapPadding: 2,
+                        borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        gapPadding: 2,
+                        borderSide: const BorderSide(width: 1, color: Color(0xffC5C5C5))),
+                    suffixIcon: IconButton(
+                      splashRadius: 20,
+                      icon: const Icon(
+                        Icons.cancel,
+                        color: Color(0xff555555),
+                      ),
+                      onPressed: () {
+                        if (edtSearch.text.trim().isNotEmpty) {
+                          edtSearch.clear();
+                          retailersList.clear();
+                          searchStream.addError("Enter Name or mobile number to search retailer");
+                        } else {
+                          Navigator.pop(context);
+                        }
+                      },
+                    )),
+              ),
             ),
           ),
         ),

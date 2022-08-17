@@ -16,8 +16,9 @@ import 'package:flutter_tags_x/flutter_tags_x.dart';
 
 class NoOrderReasonSheet extends StatefulWidget {
   final String retailerId;
+  final String beatId;
 
-  const NoOrderReasonSheet({Key? key, required this.retailerId}) : super(key: key);
+  const NoOrderReasonSheet({Key? key, required this.retailerId, required this.beatId}) : super(key: key);
 
   @override
   _NoOrderReasonSheetState createState() => _NoOrderReasonSheetState();
@@ -32,8 +33,8 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
   StreamController<List<ReasonsModal>> reasonStreamController = StreamController();
   StreamController<List<BUModal>> buStreamController = StreamController();
 
-  TextEditingController edtRemark = TextEditingController();
-
+  TextEditingController edtRemark = TextEditingController(text: "");
+  static GlobalKey<FormState> formKey = GlobalKey<FormState>();
   @override
   void initState() {
     getReason();
@@ -141,16 +142,19 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: TextFormField(
-                        controller: edtRemark,
-                        minLines: 3,
-                        maxLines: 5,
-                        maxLength: 250,
-                        decoration: InputDecoration(
-                            counterText: "",
-                            hintText: "Enter your Reason",
-                            contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                            border: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.circular(10))),
+                      child: Form(
+                        key: formKey,
+                        child: TextFormField(
+                          controller: edtRemark,
+                          minLines: 3,
+                          maxLines: 5,
+                          maxLength: 250,
+                          decoration: InputDecoration(
+                              counterText: "",
+                              hintText: "Enter your Reason",
+                              contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                              border: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.circular(10))),
+                        ),
                       ),
                     ),
                     const Padding(
@@ -315,8 +319,8 @@ class _NoOrderReasonSheetState extends State<NoOrderReasonSheet> {
       // DateTime dateTime = await NTP.now().timeout(const Duration(seconds: 5), onTimeout: () {
       //   return DateTime.now();
       // });
-      // Map<String, dynamic> input = {"day": DateFormat("EEEE").format(dateTime)};
-      GetBuResponse response = await repository.getBu();
+      Map<String, dynamic> input = {"beat_id": widget.beatId};
+      GetBuResponse response = await repository.getBu(input);
       if (response.success) {
         buList = response.data!;
 

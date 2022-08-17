@@ -316,6 +316,7 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
       String source = "";
 
       List<Coords> cords = [];
+      Coords dest = Coords(0.0, 0.0);
 
       LocationData? position = await MyLocation.getCurrentLocation();
       if (position != null) {
@@ -332,11 +333,13 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
             if (list[i].lat.isNotEmpty && list[i].lng.isNotEmpty) {
               destination = list[i].lat + "," + list[i].lng;
               waypoint += "${list[i].lat},${list[i].lng}";
+              dest = Coords(double.parse(list[i].lat), double.parse(list[i].lng));
               cords.add(Coords(double.parse(list[i].lat), double.parse(list[i].lng)));
             }
           } else {
             if (list[i].lat.isNotEmpty && list[i].lng.isNotEmpty) {
               destination = list[i].lat + "," + list[i].lng;
+              dest = Coords(double.parse(list[i].lat), double.parse(list[i].lng));
               waypoint += "${list[i].lat},${list[i].lng}|";
 
               cords.add(Coords(double.parse(list[i].lat), double.parse(list[i].lng)));
@@ -345,42 +348,19 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
         }
       } else {
         destination = list.first.lat + "," + list.first.lng;
+        dest = Coords(double.parse(list.first.lat), double.parse(list.first.lng));
       }
 
       debugPrint("source---->$source");
       debugPrint("destination---->$destination");
-      debugPrint("waypoint---->$waypoint");
-      url =
-          'https://www.google.com/maps/dir/?api=1&origin=$source&destination=$destination&waypoints=$waypoint&travelmode=driving&dir_action=navigate';
-      debugPrint("url---->$url");
-      // if (!await launchUrl(Uri.parse(url))) {
-      //   Utility.showToast("Unable to get route...");
-      //   // throw 'Could not launch $url';
-      // }
-
-      final availableMaps = await MapLauncher.installedMaps;
-      debugPrint("availableMaps---->$availableMaps");
-
-      availableMaps.first.showDirections(
-          destination: Coords(position.latitude!, position.longitude!),
-          origin: Coords(position.latitude!, position.longitude!),
-          directionsMode: DirectionsMode.driving,
-          waypoints: cords);
+      debugPrint("cords---->$cords");
 
       MapLauncher.showDirections(
-          destination: Coords(position.latitude!, position.longitude!),
+          destination: dest,
           origin: Coords(position.latitude!, position.longitude!),
           directionsMode: DirectionsMode.driving,
           waypoints: cords,
           mapType: MapType.google);
-      // if (await MapLauncher.isMapAvailable(MapType.google)) {
-      //   await MapLauncher.showMarker(
-      //     mapType: MapType.google,
-      //     coords: Coords(37.759392, -122.5107336),
-      //     title: title,
-      //     description: description,
-      //   );
-      // }
     } catch (exception) {
       debugPrint("exception---->$exception");
       Utility.showToast("Unable to get route...");
