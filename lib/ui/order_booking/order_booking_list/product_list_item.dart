@@ -268,7 +268,7 @@ class _ProductListItemState extends State<ProductListItem> {
                                     TextSpan(
                                       text: double.parse(widget.products.schemeRatePerPcs) == 0.0
                                           ? ""
-                                          : currencyFormat.format(double.parse(widget.products.schemeRatePerPcs)),
+                                          : "  " + currencyFormat.format(double.parse(widget.products.schemeRatePerPcs)),
                                       style: const TextStyle(
                                         letterSpacing: 0.67,
                                         color: MColor.textColor,
@@ -277,16 +277,14 @@ class _ProductListItemState extends State<ProductListItem> {
                                       ),
                                     ),
                                   ]),
-                                  TextSpan(
+                                  const TextSpan(
                                     text: " | ",
                                     style: TextStyle(
-                                        letterSpacing: 0.67,
-                                        color: MColor.textColor,
-                                        overflow: TextOverflow.ellipsis,
-                                        fontWeight: FontWeight.bold,
-                                        decoration: double.parse(widget.products.schemeRatePerPcs) == 0.0
-                                            ? TextDecoration.none
-                                            : TextDecoration.lineThrough),
+                                      letterSpacing: 0.67,
+                                      color: MColor.colorPrimary,
+                                      overflow: TextOverflow.ellipsis,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                   TextSpan(children: [
                                     TextSpan(
@@ -303,8 +301,9 @@ class _ProductListItemState extends State<ProductListItem> {
                                     TextSpan(
                                       text: double.parse(widget.products.schemeRatePerPcs) == 0.0
                                           ? ""
-                                          : currencyFormat.format(double.parse(widget.products.schemeRatePerPcs) *
-                                              double.parse(widget.products.pcsPerMoq)),
+                                          : "  " +
+                                              currencyFormat.format(double.parse(widget.products.schemeRatePerPcs) *
+                                                  double.parse(widget.products.pcsPerMoq)),
                                       style: const TextStyle(
                                         letterSpacing: 0.67,
                                         color: MColor.textColor,

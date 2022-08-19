@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:dms/listeners/select_beat_listener.dart';
 import 'package:dms/ui/custom_widget/no_internet.dart';
@@ -281,7 +281,14 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
         if (response.success) {
           pageNo = pageNo + 1;
           retailers.addAll(response.data!);
-          retailerStreamController.add(retailers);
+          List<RetailersModal> mRetailers = [];
+          await Future.forEach(retailers, (RetailersModal retailer) async {
+            int i = mRetailers.indexWhere((element) => element.customerId == retailer.customerId);
+            if (i < 0) {
+              mRetailers.add(retailer);
+            }
+          });
+          retailerStreamController.add(mRetailers);
         } else {
           debugPrint("pageNo-->$pageNo---$page");
           if (pageNo == 1) {
@@ -359,9 +366,9 @@ class _RetailerTabState extends State<RetailerTab> implements SelectBeatListener
     double lat2 = double.parse(passedLat);
     double lon2 = double.parse(passedLng);
     var p = 0.017453292519943295;
-    var c = cos;
+    var c = math.cos;
     var a = 0.5 - c((lat2 - lat1) * p) / 2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
-    double d = 12742 * asin(sqrt(a));
+    double d = 12742 * math.asin(math.sqrt(a));
     // print("distance after converting into kilometers = $d");
     return d.toStringAsFixed(2);
   }

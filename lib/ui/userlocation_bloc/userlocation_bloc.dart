@@ -26,8 +26,8 @@ class UserLocationBloc extends Bloc<UserLocationEvents, UserLocationStates> {
       if (position != null) {
         double latitude = position.latitude!;
         double longitude = position.longitude!;
-        List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude!, position.longitude!);
-        // List<Placemark> placemarks = await placemarkFromCoordinates(26.9161613, 81.3947546);
+        // List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude!, position.longitude!);
+        List<Placemark> placemarks = await placemarkFromCoordinates(19.1114705, 72.8587356);
         Placemark place = placemarks[0];
 
         debugPrint("place-->${place.toString()}");

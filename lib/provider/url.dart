@@ -30,7 +30,6 @@ class Url {
   static const String retailerEnrollmentSave = "retailerEnrollmentSaveV2";
   static const String verifyOtp = "verifyOtp";
   static const String getOrderBookingDay = "getOrderBooking_day";
-
   static const String searchRetailer = "searchRetailerV1";
   static const String getBrandAndCategory = "getBrandAndCategoryBeatWise";
   static const String getAllBeats = "getBeatForLoginUser";
@@ -38,7 +37,6 @@ class Url {
   static const String getRetailerOrderWise = "getRetailerOrderWiseV3";
   static const String getTodayVisit = "getTodaysVisitList";
   static const String getRoute = "getRoute";
-
   static const String getRetailerInfo = "retailerInfo";
   static const String getProducts = "getAllProductBeatWise";
   static const String getSuggestedProduct = "getSuggestedProduct";
@@ -49,14 +47,12 @@ class Url {
   static const String getReasons = "getReason";
   static const String getBU = "getBusinessUnitV1";
   static const String saveOrder = "orderSubmit";
-
   static const String editUpdate = "OrderUpdateV1";
   static const String saveNoOrder = "saveNoOrder";
   static const String getOrder = "getOrderForEdit";
   static const String getTaskByRetailer = "getTaskByRetailerV1";
   static const String noOrderYet = "getNoOrderYet";
   static const String getRetailersTaskWise = "getRetailerTaskWiseV4";
-
   static const String getPendingTask = "getPendingTaskV1";
   static const String searchTaskRetailers = "searchRetailerInTaskV1";
   static const String taskEscalate = "taskEscalateAndResolve";

@@ -106,4 +106,9 @@ class RetailersModal {
   setDistance(String distance) {
     this.distance = distance;
   }
+
+  @override
+  String toString() {
+    return 'RetailersModal{orderStatus: $orderStatus, customerId: $customerId, userId: $userId, uniqueCode: $uniqueCode, name: $name, outlatName: $outlatName, customerType: $customerType, primaryMobile: $primaryMobile, secondaryMobile: $secondaryMobile, email: $email, primaryAddress: $primaryAddress, retailerTypeId: $retailerTypeId, retailerCategory: $retailerCategory, enrollmentTypeId: $enrollmentTypeId, landmark: $landmark, locationId: $locationId, beatId: $beatId, beatName: $beatName, districtId: $districtId, lng: $lng, lat: $lat, outletPicture: $outletPicture, distance: $distance}';
+  }
 }
